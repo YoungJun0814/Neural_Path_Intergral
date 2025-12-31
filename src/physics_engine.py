@@ -124,3 +124,206 @@ class MarketSimulator:
             S[:, t] = torch.clamp(S_new, min=1e-8) # Physics constraint: price > 0
 
         return S, v
+
+
+# =============================================================================
+# Rough Volatility (rBergomi) Model / 거친 변동성 (rBergomi) 모델
+# =============================================================================
+# Reference: Bayer, Friz, Gatheral (2016) "Pricing under rough volatility"
+# 참고 문헌: Bayer, Friz, Gatheral (2016) "거친 변동성 하의 옵션 가격 결정"
+# =============================================================================
+
+class FractionalBrownianMotion:
+    """
+    분수 브라운 운동 (fBm) 생성기 / Fractional Brownian Motion Generator.
+    
+    Hurst 지수 H < 0.5 인 경우 "거친(Rough)" 경로를 생성합니다.
+    When H < 0.5, generates "rough" paths with fractal-like behavior.
+    
+    구현 방식: Cholesky 분해법 (정확하지만 O(N^2) 메모리 사용)
+    Implementation: Cholesky decomposition (exact but O(N^2) memory)
+    """
+    
+    def __init__(self, H=0.1, device='cuda'):
+        """
+        Args:
+            H: Hurst 지수 / Hurst exponent. (0 < H < 0.5 for rough volatility)
+               H = 0.5 일 때 표준 브라운 운동과 동일.
+               H = 0.5 corresponds to standard Brownian motion.
+            device: 연산 장치 / Computation device ('cuda' or 'cpu')
+        """
+        self.H = H
+        self.device = device
+    
+    def _covariance_matrix(self, n_steps, dt):
+        """
+        fBm 공분산 행렬 생성 / Generate fBm covariance matrix.
+        
+        Cov(W_H(s), W_H(t)) = 0.5 * (|s|^(2H) + |t|^(2H) - |t-s|^(2H))
+        
+        Args:
+            n_steps: 시간 스텝 수 / Number of time steps
+            dt: 시간 간격 / Time step size
+        
+        Returns:
+            공분산 행렬 (n_steps x n_steps) / Covariance matrix
+        """
+        H = self.H
+        times = torch.arange(1, n_steps + 1, device=self.device, dtype=torch.float32) * dt
+        
+        # 행렬 구성 / Construct matrix
+        t_i = times.unsqueeze(1)  # (n_steps, 1)
+        t_j = times.unsqueeze(0)  # (1, n_steps)
+        
+        # 공분산 공식 / Covariance formula
+        cov = 0.5 * (
+            torch.abs(t_i) ** (2 * H) + 
+            torch.abs(t_j) ** (2 * H) - 
+            torch.abs(t_i - t_j) ** (2 * H)
+        )
+        
+        # 수치 안정성을 위해 작은 값 추가 / Add small value for numerical stability
+        cov = cov + 1e-8 * torch.eye(n_steps, device=self.device)
+        
+        return cov
+    
+    def generate(self, n_paths, n_steps, dt):
+        """
+        fBm 경로 생성 (Cholesky 분해) / Generate fBm paths using Cholesky decomposition.
+        
+        Args:
+            n_paths: 경로 수 / Number of paths
+            n_steps: 시간 스텝 수 / Number of time steps
+            dt: 시간 간격 / Time step size
+        
+        Returns:
+            W_H: fBm 경로 (n_paths, n_steps+1), 첫 번째 열은 0 / fBm paths, first column is 0
+        """
+        # 공분산 행렬 및 Cholesky 분해 / Covariance matrix and Cholesky decomposition
+        cov = self._covariance_matrix(n_steps, dt)
+        L = torch.linalg.cholesky(cov)  # 하삼각 행렬 / Lower triangular matrix
+        
+        # 표준 정규 난수 생성 / Generate standard normal random variables
+        Z = torch.randn(n_paths, n_steps, device=self.device)
+        
+        # fBm 값 계산: W_H = L @ Z^T -> 전치해서 (n_paths, n_steps)
+        # Compute fBm: W_H = L @ Z^T -> transpose to (n_paths, n_steps)
+        W_H = (L @ Z.T).T
+        
+        # 시작점 0 추가 / Prepend zero (W_H(0) = 0)
+        zeros = torch.zeros(n_paths, 1, device=self.device)
+        W_H = torch.cat([zeros, W_H], dim=1)
+        
+        return W_H
+
+
+class RBergomiSimulator:
+    """
+    rBergomi (Rough Bergomi) 변동성 모델 시뮬레이터 / rBergomi Volatility Model Simulator.
+    
+    변동성 동역학 / Volatility Dynamics:
+        v_t = xi * exp(eta * W_H(t) - 0.5 * eta^2 * t^(2H))
+    
+    가격 동역학 / Price Dynamics:
+        dS_t = sqrt(v_t) * S_t * dW_t
+    
+    여기서 W_H는 Hurst 지수 H인 분수 브라운 운동.
+    Where W_H is fractional Brownian motion with Hurst exponent H.
+    """
+    
+    def __init__(self, H=0.1, eta=1.9, xi=0.235, rho=-0.9, device='cuda'):
+        """
+        Args:
+            H: Hurst 지수 / Hurst exponent (0 < H < 0.5)
+            eta: 변동성의 변동성 / Volatility of volatility
+            xi: 포워드 분산 초기값 / Forward variance initial level
+            rho: 상관계수 / Correlation between price and volatility
+            device: 연산 장치 / Computation device
+        """
+        self.H = H
+        self.eta = eta
+        self.xi = xi
+        self.rho = rho
+        self.device = device
+        self.fBm = FractionalBrownianMotion(H=H, device=device)
+    
+    def simulate(self, S0, T, dt, num_paths, mu=0.0, override_params=None):
+        """
+        rBergomi 모델로 가격 및 변동성 경로 시뮬레이션.
+        Simulate price and volatility paths using rBergomi model.
+        
+        Args:
+            S0: 초기 주가 / Initial asset price
+            T: 만기 시간 / Time to maturity
+            dt: 시간 간격 / Time step size
+            num_paths: 경로 수 / Number of paths
+            mu: 드리프트 (리스크 중립 시 0) / Drift (0 for risk-neutral)
+            override_params: 파라미터 오버라이드 / Parameter overrides for calibration
+        
+        Returns:
+            S: 가격 경로 (num_paths, n_steps+1) / Price paths
+            v: 변동성 경로 (num_paths, n_steps+1) / Volatility paths
+        """
+        # 파라미터 오버라이드 처리 / Handle parameter overrides
+        H = self.H
+        eta = self.eta
+        xi = self.xi
+        rho = self.rho
+        
+        if override_params is not None:
+            H = override_params.get('H', H)
+            eta = override_params.get('eta', eta)
+            xi = override_params.get('xi', xi)
+            rho = override_params.get('rho', rho)
+            # fBm 재생성이 필요할 수 있음 / May need to regenerate fBm
+            if 'H' in override_params:
+                self.fBm = FractionalBrownianMotion(H=H, device=self.device)
+        
+        n_steps = int(T / dt)
+        sqrt_dt = torch.sqrt(torch.tensor(dt, device=self.device))
+        
+        # -------------------------------------------------------------------------
+        # 1. fBm 경로 생성 / Generate fBm paths
+        # -------------------------------------------------------------------------
+        W_H = self.fBm.generate(num_paths, n_steps, dt)  # (num_paths, n_steps+1)
+        
+        # -------------------------------------------------------------------------
+        # 2. 상관된 브라운 운동 생성 / Generate correlated Brownian motion for price
+        # -------------------------------------------------------------------------
+        # dW_S = rho * dW_H_increment + sqrt(1-rho^2) * dZ
+        # 여기서 dW_H_increment ≈ W_H[t] - W_H[t-1] (근사)
+        Z = torch.randn(num_paths, n_steps, device=self.device)
+        
+        # fBm 증분 계산 / Compute fBm increments
+        dW_H = W_H[:, 1:] - W_H[:, :-1]  # (num_paths, n_steps)
+        
+        # 상관된 브라운 운동 / Correlated Brownian motion
+        sqrt_one_minus_rho2 = torch.sqrt(torch.tensor(1.0 - rho**2, device=self.device))
+        dW_S = rho * dW_H + sqrt_one_minus_rho2 * Z * sqrt_dt
+        
+        # -------------------------------------------------------------------------
+        # 3. 변동성 경로 계산 / Compute volatility paths
+        # -------------------------------------------------------------------------
+        # v_t = xi * exp(eta * W_H(t) - 0.5 * eta^2 * t^(2H))
+        times = torch.arange(n_steps + 1, device=self.device, dtype=torch.float32) * dt
+        times = times.unsqueeze(0)  # (1, n_steps+1)
+        
+        # 변동성 계산 / Volatility computation
+        v = xi * torch.exp(eta * W_H - 0.5 * eta**2 * times ** (2 * H))
+        v = torch.clamp(v, min=1e-8)  # 음수 방지 / Prevent negative values
+        
+        # -------------------------------------------------------------------------
+        # 4. 가격 경로 계산 / Compute price paths
+        # -------------------------------------------------------------------------
+        S = torch.zeros(num_paths, n_steps + 1, device=self.device)
+        S[:, 0] = S0
+        
+        for t in range(1, n_steps + 1):
+            v_prev = v[:, t - 1]
+            S_prev = S[:, t - 1]
+            
+            # dS = mu * S * dt + sqrt(v) * S * dW_S
+            dS = mu * S_prev * dt + torch.sqrt(v_prev) * S_prev * dW_S[:, t - 1]
+            S[:, t] = torch.clamp(S_prev + dS, min=1e-8)
+        
+        return S, v
