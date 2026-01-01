@@ -68,3 +68,43 @@ class PathIntegralSolver:
         # 정규화 (모든 가중치의 합이 1이 되도록)
         normalized_weights = weights / torch.sum(weights)
         return normalized_weights
+    
+    def price_option(self, S0, K, T, r, num_paths=5000, dt=0.01):
+        """
+        경로 적분을 활용한 옵션 가격 결정 / Option pricing using Path Integral.
+        
+        Path Integral 공식: Price = E[e^{-rT} * Payoff * Weight(Action)]
+        
+        Args:
+            S0: 초기 주가 / Initial price
+            K: 행사가 / Strike price
+            T: 만기 / Time to maturity
+            r: 무위험 이자율 / Risk-free rate
+            num_paths: 시뮬레이션 경로 수 / Number of paths
+            dt: 시간 간격 / Time step
+        
+        Returns:
+            price: 경로적분 기반 옵션 가격 / Path integral option price
+        """
+        # 1. 경로 생성 / Generate paths
+        S_paths, v_paths = self.sim.simulate(
+            S0=S0, v0=self.sim.theta, T=T, dt=dt, num_paths=num_paths,
+            model_type='heston'
+        )
+        
+        # 2. 각 경로의 Action 계산 / Compute action for each path
+        action = self.compute_action(S_paths, v_paths, dt)
+        
+        # 3. 경로 가중치 계산 / Compute path weights
+        weights = self.reweight_paths(action)
+        
+        # 4. 페이오프 계산 / Compute payoffs
+        S_final = S_paths[:, -1]
+        payoffs = torch.maximum(S_final - K, torch.tensor(0.0, device=self.device))
+        
+        # 5. 가중 평균 가격 (경로 적분) / Weighted average (Path Integral)
+        # Price = exp(-rT) * sum(Weight * Payoff)
+        discount = torch.exp(torch.tensor(-r * T, device=self.device))
+        price = discount * torch.sum(weights * payoffs)
+        
+        return price.cpu().item()

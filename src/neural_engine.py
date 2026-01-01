@@ -158,10 +158,10 @@ class NeuralSDESimulator:
         # 변동성 초기값 (학습 시 고정 또는 학습 가능) / Initial vol (can be fixed or learned)
         self.v0 = 0.04  # 기본값 / Default value
     
-    def simulate(self, S0, T, dt, num_paths, v0=None):
+    def simulate(self, S0, T, dt, num_paths, v0=None, training=False):
         """
-        Neural SDE 모델로 가격 경로 시뮬레이션 (추론 모드).
-        Simulate price paths using Neural SDE model (inference mode).
+        Neural SDE 모델로 가격 경로 시뮬레이션.
+        Simulate price paths using Neural SDE model.
         
         Args:
             S0: 초기 주가 / Initial asset price
@@ -169,6 +169,7 @@ class NeuralSDESimulator:
             dt: 시간 간격 / Time step size
             num_paths: 경로 수 / Number of paths
             v0: 초기 변동성 (선택) / Initial volatility (optional)
+            training: 학습 모드 여부 / Training mode flag
         
         Returns:
             S: 가격 경로 (num_paths, n_steps+1) / Price paths
@@ -178,35 +179,59 @@ class NeuralSDESimulator:
             v0 = self.v0
         
         n_steps = int(T / dt)
-        sqrt_dt = torch.sqrt(torch.tensor(dt, device=self.device))
         
-        # 경로 초기화 / Initialize paths
-        S = torch.zeros(num_paths, n_steps + 1, device=self.device)
-        v = torch.ones(num_paths, n_steps + 1, device=self.device) * v0
-        S[:, 0] = S0
+        # GPU 메모리 문제 방지 및 학습 안정성을 위해 training 모드에서는 inplace 연산 주의
+        # For training stability, avoid inplace operations
         
-        # 추론 모드 / Inference mode
-        self.drift_net.eval()
-        self.diff_net.eval()
+        # 경로 초기화 (리스트 사용) / Initialize paths (use list)
+        curr_S = torch.ones(num_paths, device=self.device) * S0
+        curr_v = torch.ones(num_paths, device=self.device) * v0
         
-        with torch.no_grad():
+        S_list = [curr_S]
+        v_list = [curr_v]
+        
+        # 네트워크 모드 설정
+        if training:
+            self.drift_net.train()
+            self.diff_net.train()
+            context = torch.enable_grad()
+        else:
+            self.drift_net.eval()
+            self.diff_net.eval()
+            context = torch.no_grad()
+            
+        with context:
+            sqrt_dt = torch.sqrt(torch.tensor(dt, device=self.device))
+            
             for t_idx in range(1, n_steps + 1):
-                t = t_idx * dt
-                S_prev = S[:, t_idx - 1]
-                v_prev = v[:, t_idx - 1]
+                t = (t_idx - 1) * dt
                 
                 # 브라운 운동 증분 / Brownian motion increment
                 dW = torch.randn(num_paths, device=self.device) * sqrt_dt
                 
                 # Neural Drift & Diffusion
-                mu = self.drift_net(S_prev, v_prev, t)
-                sigma = self.diff_net(S_prev, v_prev, t)
+                mu = self.drift_net(curr_S, curr_v, t)
+                sigma = self.diff_net(curr_S, curr_v, t)
                 
-                # Euler-Maruyama 이산화 / Euler-Maruyama discretization
+                # Euler-Maruyama 이산화 (In-place 연산 피하기)
+                # Euler-Maruyama discretization (Avoid in-place ops)
                 # dS = mu * S * dt + sigma * S * dW
-                dS = mu * S_prev * dt + sigma * S_prev * dW
+                dS = mu * curr_S * dt + sigma * curr_S * dW
                 
-                S[:, t_idx] = torch.clamp(S_prev + dS, min=1e-8)
+                # Update state
+                next_S = curr_S + dS
+                
+                # 주가 0 이하 방지 (ReLU or Softplus)
+                next_S = torch.nn.functional.relu(next_S) + 1e-8
+                
+                S_list.append(next_S)
+                v_list.append(curr_v) 
+                
+                curr_S = next_S
+        
+        # Stack results
+        S = torch.stack(S_list, dim=1)
+        v = torch.stack(v_list, dim=1)
         
         return S, v
     
@@ -237,8 +262,11 @@ class NeuralSDESimulator:
         # 시뮬레이션 (경로 수 줄여서 학습 속도 향상)
         # Simulate (reduce paths for faster training)
         num_paths = 2000
-        dt = 0.01
-        S, _ = self.simulate(S0, T, dt, num_paths)
+        # dt가 만기보다 길면 루프가 안 돌아서 gradient가 끊김. 동적 dt 설정.
+        # Use dynamic dt to ensure simulation runs even for short maturities.
+        dt = min(0.01, T / 3.0) 
+        
+        S, _ = self.simulate(S0, T, dt, num_paths, training=True)
         S_final = S[:, -1]  # 만기 시점 주가 / Price at maturity
         
         # 콜옵션 페이오프 계산 / Compute call payoffs
