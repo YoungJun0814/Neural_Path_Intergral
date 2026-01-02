@@ -44,8 +44,8 @@ class DriftNet(nn.Module):
         super().__init__()
         
         layers = []
-        # 입력층: (S, v, t) -> 3차원 / Input layer: 3 dimensions
-        layers.append(nn.Linear(3, hidden_dim))
+        # 입력층: (S, v, t, A) -> 4차원 / Input layer: 4 dimensions
+        layers.append(nn.Linear(4, hidden_dim))
         layers.append(nn.SiLU())  # Swish 활성화 함수 / Swish activation
         
         # 은닉층 / Hidden layers
@@ -58,7 +58,7 @@ class DriftNet(nn.Module):
         
         self.net = nn.Sequential(*layers)
     
-    def forward(self, S, v, t):
+    def forward(self, S, v, t, avg_S=None):
         """
         순전파 / Forward pass.
         
@@ -66,6 +66,7 @@ class DriftNet(nn.Module):
             S: 주가 텐서 (batch,) / Price tensor
             v: 변동성 텐서 (batch,) / Volatility tensor
             t: 시간 스칼라 / Time scalar
+            avg_S: 이동 평균 텐서 (batch,) / Running Average (for Asian options)
         
         Returns:
             drift: 드리프트 값 (batch,) / Drift values
@@ -75,12 +76,18 @@ class DriftNet(nn.Module):
         v_norm = torch.log(v + 1e-8)  # 로그 스케일 / Log scale
         t_norm = t * torch.ones_like(S)  # 시간 브로드캐스트 / Broadcast time
         
-        x = torch.stack([S_norm, v_norm, t_norm], dim=-1)  # (batch, 3)
+        if avg_S is None:
+            # If avg_S is missing (backward compatibility), assume it equals S (t=0 case)
+            avg_S = S
+            
+        avg_S_norm = torch.log(avg_S + 1e-8)
+        
+        x = torch.stack([S_norm, v_norm, t_norm, avg_S_norm], dim=-1)  # (batch, 4)
         raw_output = self.net(x).squeeze(-1)  # (batch,)
         
         # Bound the control to avoid exploding gradients and model collapse
-        # Range: [-0.2, 0.2] - "Gentle Nudge" strategy to avoid barrier interaction issues
-        return 0.2 * torch.tanh(raw_output)
+        # Range: [-1.0, 1.0] - Restored to 1.0 for High Precision Run: We need this strength for VR, will fix Bias with finer dt.
+        return 1.0 * torch.tanh(raw_output)
 
 
 class DiffNet(nn.Module):
@@ -336,12 +343,11 @@ class NeuralImportanceSampler:
     def get_control_fn(self):
         """
         Returns a callable function appropriate for simulate_controlled.
-        control_fn(t, S, v) -> u
+        control_fn(t, S, v, A=None) -> u
         """
-        def control_fn(t, S, v):
-            # DriftNet expects (S, v, t)
-            # t is scalar, S and v are tensors
-            return self.control_net(S, v, t)
+        def control_fn(t, S, v, A=None):
+            # DriftNet expects (S, v, t, A)
+            return self.control_net(S, v, t, A)
         return control_fn
 
     def train_step(self, S0, K, T, r, barrier_level, barrier_type, optimizer, num_paths=1000):
@@ -361,7 +367,7 @@ class NeuralImportanceSampler:
         # But wait, simulate_controlled implementation iterates in Python loop.
         # PyTorch autograd handles unrolling, so gradients should flow.
         
-        S_paths, _, log_weights, barrier_hit = self.sim.simulate_controlled(
+        S_paths, _, log_weights, barrier_hit, _ = self.sim.simulate_controlled(
             S0=S0, v0=self.sim.theta, T=T, dt=dt, num_paths=num_paths,
             control_fn=control_fn, barrier_level=barrier_level, barrier_type=barrier_type
         )

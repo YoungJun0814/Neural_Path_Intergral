@@ -117,7 +117,7 @@ class PathIntegralSolver:
         Price = E_u [ Payoff(S_u) * exp(-Action_u) ]
         """
         # 1. Controlled Simulation
-        S_paths, v_paths, log_weights, barrier_hit = self.sim.simulate_controlled(
+        S_paths, v_paths, log_weights, barrier_hit, _ = self.sim.simulate_controlled(
             S0=S0, v0=self.sim.theta, T=T, dt=dt, num_paths=num_paths,
             control_fn=control_fn, barrier_level=barrier_level, barrier_type=barrier_type
         )

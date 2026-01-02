@@ -151,13 +151,17 @@ class MarketSimulator:
         S_list.append(curr_S)
         v_list.append(curr_v)
         
-        # Girsanov Integrals (accumulated scalars, no in-place issue)
+        # Girsanov Integrals (accumulated scalars)
         int_u_dW = torch.zeros(num_paths, device=device)
         int_u_sq_dt = torch.zeros(num_paths, device=device)
         
         # Barrier Monitoring
         barrier_hit = torch.zeros(num_paths, dtype=torch.bool, device=device)
         
+        # Running Integral for Asian Option
+        running_int_S = torch.zeros(num_paths, device=device)
+        
+        # Pre-compute constants
         dt_tensor = torch.tensor(dt, device=device)
         sqrt_dt = torch.sqrt(dt_tensor)
         rho_tensor = torch.tensor(rho, device=device)
@@ -169,33 +173,45 @@ class MarketSimulator:
             z1 = torch.randn(num_paths, device=device)
             z2 = torch.randn(num_paths, device=device)
             
+            # ... (Same noise gen) ...
             dw_s = z1
             dw_v = rho_tensor * z1 + sqrt_one_minus_rho2 * z2
             
-            # 1. Variance Process (Heston)
+            # 1. Variance Process
             v_val_relu = torch.clamp(curr_v, min=1e-8)
             dv = kappa * (theta - curr_v) * dt + xi * torch.sqrt(v_val_relu) * sqrt_dt * dw_v
             next_v = torch.clamp(curr_v + dv, min=1e-8)
             
-            # 2. Control Force
+            # 2. Control Force (with Running Average)
             if control_fn is not None:
-                u_t = control_fn(t_curr, curr_S, curr_v)
+                # Calculate current running average A_t = (1/t) * int_S
+                # For stability, if t=0, use curr_S
+                if t_curr > 1e-6:
+                    curr_avg = running_int_S / t_curr
+                else:
+                    curr_avg = curr_S
+                
+                # Input to control_fn: (t, S, v, A)
+                u_t = control_fn(t_curr, curr_S, curr_v, curr_avg)
             else:
                 u_t = torch.zeros(num_paths, device=device)
                 
-            # 3. Asset Process with Control
+            # 3. Asset Process
             sigma_s = torch.sqrt(v_val_relu)
             drift_term = (mu + sigma_s * u_t) * curr_S * dt
             diffusion_term = sigma_s * curr_S * sqrt_dt * dw_s
             dS = drift_term + diffusion_term
             next_S = torch.clamp(curr_S + dS, min=1e-8)
             
-            # Append to lists (NO in-place ops)
+            # Update Running Integral (Trapezoidal rule or simple left-point)
+            # Using left-point for simplicity: int += S_t * dt
+            running_int_S = running_int_S + curr_S * dt
+            
+            # Append to lists
             S_list.append(next_S)
             v_list.append(next_v)
             
-            # 4. Girsanov Update (use += on fresh tensors is OK for leaf nodes)
-            # Actually += is in-place! Let's create new tensors.
+            # 4. Girsanov Update
             int_u_dW = int_u_dW + u_t * z1 * sqrt_dt
             int_u_sq_dt = int_u_sq_dt + (u_t ** 2) * dt
             
@@ -208,19 +224,19 @@ class MarketSimulator:
                     hit_mask = next_S >= barrier_level
                     barrier_hit = barrier_hit | hit_mask
             
-            # Update current state for next iteration
+            # Update state
             curr_S = next_S
             curr_v = next_v
 
-        # Stack lists into tensors
+        # Stack lists
         S = torch.stack(S_list, dim=1)  # (num_paths, n_steps+1)
         v = torch.stack(v_list, dim=1)
         
-        # Compute Log Weights
-        # log(dP/dQ) = - int u dW - 0.5 int u^2 dt
+        # Log Weights
         log_weights = -int_u_dW - 0.5 * int_u_sq_dt
         
-        return S, v, log_weights, barrier_hit
+        # Return running_int_S for Asian Payoff calculation
+        return S, v, log_weights, barrier_hit, running_int_S
 # Rough Volatility (rBergomi) Model / 거친 변동성 (rBergomi) 모델
 # =============================================================================
 # Reference: Bayer, Friz, Gatheral (2016) "Pricing under rough volatility"
