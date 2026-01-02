@@ -125,8 +125,102 @@ class MarketSimulator:
 
         return S, v
 
+    def simulate_controlled(self, S0, v0, T, dt, num_paths, model_type='heston', 
+                          control_fn=None, barrier_level=None, barrier_type='down-out'):
+        """
+        Controlled simulation for Neural Path Integral and Barrier Options.
+        Uses list accumulation to avoid in-place operations (autograd compatible).
+        """
+        mu = self.mu
+        kappa = self.kappa
+        theta = self.theta
+        xi = self.xi
+        rho = self.rho
+        device = self.device
+        
+        n_steps = max(1, int(T / dt))
+        
+        # Use lists to avoid in-place ops
+        S_list = []
+        v_list = []
+        
+        # Initial values
+        curr_S = torch.ones(num_paths, device=device) * S0
+        curr_v = torch.ones(num_paths, device=device) * v0
+        
+        S_list.append(curr_S)
+        v_list.append(curr_v)
+        
+        # Girsanov Integrals (accumulated scalars, no in-place issue)
+        int_u_dW = torch.zeros(num_paths, device=device)
+        int_u_sq_dt = torch.zeros(num_paths, device=device)
+        
+        # Barrier Monitoring
+        barrier_hit = torch.zeros(num_paths, dtype=torch.bool, device=device)
+        
+        dt_tensor = torch.tensor(dt, device=device)
+        sqrt_dt = torch.sqrt(dt_tensor)
+        rho_tensor = torch.tensor(rho, device=device)
+        sqrt_one_minus_rho2 = torch.sqrt(1 - rho_tensor**2)
+        
+        for t_idx in range(1, n_steps + 1):
+            t_curr = (t_idx - 1) * dt
+            
+            z1 = torch.randn(num_paths, device=device)
+            z2 = torch.randn(num_paths, device=device)
+            
+            dw_s = z1
+            dw_v = rho_tensor * z1 + sqrt_one_minus_rho2 * z2
+            
+            # 1. Variance Process (Heston)
+            v_val_relu = torch.clamp(curr_v, min=1e-8)
+            dv = kappa * (theta - curr_v) * dt + xi * torch.sqrt(v_val_relu) * sqrt_dt * dw_v
+            next_v = torch.clamp(curr_v + dv, min=1e-8)
+            
+            # 2. Control Force
+            if control_fn is not None:
+                u_t = control_fn(t_curr, curr_S, curr_v)
+            else:
+                u_t = torch.zeros(num_paths, device=device)
+                
+            # 3. Asset Process with Control
+            sigma_s = torch.sqrt(v_val_relu)
+            drift_term = (mu + sigma_s * u_t) * curr_S * dt
+            diffusion_term = sigma_s * curr_S * sqrt_dt * dw_s
+            dS = drift_term + diffusion_term
+            next_S = torch.clamp(curr_S + dS, min=1e-8)
+            
+            # Append to lists (NO in-place ops)
+            S_list.append(next_S)
+            v_list.append(next_v)
+            
+            # 4. Girsanov Update (use += on fresh tensors is OK for leaf nodes)
+            # Actually += is in-place! Let's create new tensors.
+            int_u_dW = int_u_dW + u_t * z1 * sqrt_dt
+            int_u_sq_dt = int_u_sq_dt + (u_t ** 2) * dt
+            
+            # 5. Barrier Check
+            if barrier_level is not None:
+                if barrier_type == 'down-out':
+                    hit_mask = next_S <= barrier_level
+                    barrier_hit = barrier_hit | hit_mask
+                elif barrier_type == 'up-out':
+                    hit_mask = next_S >= barrier_level
+                    barrier_hit = barrier_hit | hit_mask
+            
+            # Update current state for next iteration
+            curr_S = next_S
+            curr_v = next_v
 
-# =============================================================================
+        # Stack lists into tensors
+        S = torch.stack(S_list, dim=1)  # (num_paths, n_steps+1)
+        v = torch.stack(v_list, dim=1)
+        
+        # Compute Log Weights
+        # log(dP/dQ) = - int u dW - 0.5 int u^2 dt
+        log_weights = -int_u_dW - 0.5 * int_u_sq_dt
+        
+        return S, v, log_weights, barrier_hit
 # Rough Volatility (rBergomi) Model / 거친 변동성 (rBergomi) 모델
 # =============================================================================
 # Reference: Bayer, Friz, Gatheral (2016) "Pricing under rough volatility"

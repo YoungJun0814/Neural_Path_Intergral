@@ -108,3 +108,40 @@ class PathIntegralSolver:
         price = discount * torch.sum(weights * payoffs)
         
         return price.cpu().item()
+
+    def price_barrier_option_neural(self, S0, K, T, r, num_paths=5000, dt=0.01, 
+                                  control_fn=None, barrier_level=None, barrier_type='down-out'):
+        """
+        Neural Path Integral Pricing for Barrier Options with Importance Sampling.
+        
+        Price = E_u [ Payoff(S_u) * exp(-Action_u) ]
+        """
+        # 1. Controlled Simulation
+        S_paths, v_paths, log_weights, barrier_hit = self.sim.simulate_controlled(
+            S0=S0, v0=self.sim.theta, T=T, dt=dt, num_paths=num_paths,
+            control_fn=control_fn, barrier_level=barrier_level, barrier_type=barrier_type
+        )
+        
+        # 2. Barrier Payoff Logic
+        S_final = S_paths[:, -1]
+        
+        # Standard Put Payoff: max(K - S, 0)
+        payoffs = torch.maximum(torch.tensor(K, device=self.device) - S_final, 
+                              torch.tensor(0.0, device=self.device))
+        
+        # Knock-out logic: Payoff is 0 if barrier hit
+        if barrier_hit is not None:
+             payoffs = payoffs * (~barrier_hit).float()
+            
+        # 3. Reweighting (Girsanov)
+        # Price = exp(-rT) * mean( Payoff * LikelihoodRatio )
+        # LikelihoodRatio = exp(log_weights)
+        weights = torch.exp(log_weights)
+        
+        discount = torch.exp(torch.tensor(-r * T, device=self.device))
+        
+        # Importance Sampling Estimator
+        weighted_payoffs = payoffs * weights
+        price = discount * torch.mean(weighted_payoffs)
+        
+        return price.cpu().item()

@@ -76,7 +76,11 @@ class DriftNet(nn.Module):
         t_norm = t * torch.ones_like(S)  # 시간 브로드캐스트 / Broadcast time
         
         x = torch.stack([S_norm, v_norm, t_norm], dim=-1)  # (batch, 3)
-        return self.net(x).squeeze(-1)  # (batch,)
+        raw_output = self.net(x).squeeze(-1)  # (batch,)
+        
+        # Bound the control to avoid exploding gradients and model collapse
+        # Range: [-0.2, 0.2] - "Gentle Nudge" strategy to avoid barrier interaction issues
+        return 0.2 * torch.tanh(raw_output)
 
 
 class DiffNet(nn.Module):
@@ -299,11 +303,102 @@ class NeuralSDESimulator:
             'v0': self.v0
         }, path)
     
-    def load(self, path):
-        """
-        모델 로드 / Load model.
-        """
         checkpoint = torch.load(path, map_location=self.device)
         self.drift_net.load_state_dict(checkpoint['drift_net'])
         self.diff_net.load_state_dict(checkpoint['diff_net'])
         self.v0 = checkpoint.get('v0', 0.04)
+
+
+class NeuralImportanceSampler:
+    """
+    Neural Importance Sampling for Efficient Option Pricing.
+    
+    Learns the optimal drift (control force) to minimize the variance
+    of the Payoff Estimator.
+    """
+    def __init__(self, simulator, hidden_dim=64, n_layers=3):
+        """
+        Args:
+            simulator: src.physics_engine.MarketSimulator
+        """
+        self.sim = simulator
+        self.device = simulator.device
+        
+        # Policy Network (Drift Control)
+        # Input: (S, v, t) -> Output: u (control force, scalar or vector)
+        # Reusing DriftNet architecture
+        self.control_net = DriftNet(hidden_dim, n_layers).to(self.device)
+        
+        # Initialize weights to near-zero to start with uniform (Standard MC) behavior
+        for p in self.control_net.parameters():
+            torch.nn.init.normal_(p, mean=0.0, std=0.001)
+        
+    def get_control_fn(self):
+        """
+        Returns a callable function appropriate for simulate_controlled.
+        control_fn(t, S, v) -> u
+        """
+        def control_fn(t, S, v):
+            # DriftNet expects (S, v, t)
+            # t is scalar, S and v are tensors
+            return self.control_net(S, v, t)
+        return control_fn
+
+    def train_step(self, S0, K, T, r, barrier_level, barrier_type, optimizer, num_paths=1000):
+        """
+        Train the control network to minimize variance of the price estimator.
+        Loss = E[ (Payoff * LikelihoodRatio)^2 ] (Second Moment)
+        """
+        self.control_net.train()
+        optimizer.zero_grad()
+        
+        # 1. Controlled Simulation
+        dt = min(0.01, T / 100.0)
+        control_fn = self.get_control_fn()
+        
+        # We need gradients to flow through 'simulate_controlled' back to 'control_net'
+        # The variables S, v depend on u.
+        # But wait, simulate_controlled implementation iterates in Python loop.
+        # PyTorch autograd handles unrolling, so gradients should flow.
+        
+        S_paths, _, log_weights, barrier_hit = self.sim.simulate_controlled(
+            S0=S0, v0=self.sim.theta, T=T, dt=dt, num_paths=num_paths,
+            control_fn=control_fn, barrier_level=barrier_level, barrier_type=barrier_type
+        )
+        
+        # 2. Payoff Calculation
+        S_final = S_paths[:, -1]
+        
+        # Put Option Payoff
+        payoffs = torch.maximum(torch.tensor(K, device=self.device) - S_final, 
+                              torch.tensor(0.0, device=self.device))
+        
+        if barrier_hit is not None:
+             payoffs = payoffs * (~barrier_hit).float()
+             
+        # 3. Reweighted Payoff
+        # Z = Payoff * exp(log_weight)
+        # We want to minimize Var[Z] ~ E[Z^2]
+        
+        # Note regarding gradient detachment:
+        # We want to optimize theta (params of u).
+        # u affects both 'payoffs' (via S_final) and 'log_weights'.
+        # Standard REINFORCE or Pathwise Derivative?
+        # Here we are using Pathwise Derivative (reparameterization trick is implicit in simulate).
+        # Everything is differentiable.
+        
+        weighted_payoffs = payoffs * torch.exp(log_weights)
+        
+        # Loss: Second Moment (minimizing this minimizes variance)
+        loss = torch.mean(weighted_payoffs ** 2)
+        
+        loss.backward()
+        optimizer.step()
+        
+        return loss.item(), torch.mean(weighted_payoffs).item()
+        
+    def save(self, path):
+        torch.save(self.control_net.state_dict(), path)
+        
+    def load(self, path):
+        self.control_net.load_state_dict(torch.load(path, map_location=self.device))
