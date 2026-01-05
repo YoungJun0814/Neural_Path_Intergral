@@ -31,8 +31,8 @@ graph LR
     C -->|Next State| E[New Market State]
     E -->|Feedback| A
     E -->|Target| F{Crash?}
-    style B fill:#f9f,stroke:#333,stroke-width:2px
-    style F fill:#bbf,stroke:#333,stroke-width:2px
+    style B fill:#c44569,stroke:#333,stroke-width:2px,color:#fff
+    style F fill:#546de5,stroke:#333,stroke-width:2px,color:#fff
 ```
 
 *   **`DriftNet` ($u_\theta$)**: A neural controller that observes the market state $(S_t, v_t, t)$ and applies a "nudge" to the drift term to steer the path toward a crash target.
