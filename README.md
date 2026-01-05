@@ -9,6 +9,8 @@
 ## 📉 Project Overview
 **DriftNet** is a deep learning framework designed to solve the *Rare Event Simulation* problem in quantitative finance. While standard Monte Carlo simulations fail to capture extreme market crashes (Black Swans) due to their rarity, DriftNet learns to steer market dynamics into these critical regions efficiently.
 
+![DriftNet Concept](img/concept_crash.png)
+
 By combining **Stochastic Differential Equations (SDEs)** with **Neural Network Control**, this model achieves a **126x efficiency boost** in generating crash paths compared to baseline methods, allowing for precise risk assessment and stress testing.
 
 ## 🚀 Key Features & Achievements
@@ -23,6 +25,18 @@ By combining **Stochastic Differential Equations (SDEs)** with **Neural Network 
 The core system is built on a **Neural SDE (Stochastic Differential Equation)** formulation:
 
 $$ dS_t = \mu(S_t, v_t) dt + \sigma(S_t, v_t) dW_t + \mathbf{u_{\theta}(S_t)} dt $$
+
+```mermaid
+graph LR
+    A[Market State (S, v, t)] -->|Input| B(DriftNet Controller)
+    B -->|Control u| C[SDE Solver]
+    D[Brownian Motion dW] --> C
+    C -->|Next State| E[New Market State]
+    E -->|Feedback| A
+    E -->|Target| F{Crash?}
+    style B fill:#f9f,stroke:#333,stroke-width:2px
+    style F fill:#bbf,stroke:#333,stroke-width:2px
+```
 
 *   **`DriftNet` ($u_\theta$)**: A neural controller that observes the market state $(S_t, v_t, t)$ and applies a "nudge" to the drift term to steer the path toward a crash target.
 *   **`VolNet`**: Models the stochastic volatility surface to ensure realistic market texture even under stress.
@@ -57,6 +71,8 @@ $$ dS_t = \mu(S_t, v_t) dt + \sigma(S_t, v_t) dW_t + \mathbf{u_{\theta}(S_t)} dt
 *   **Baseline Crash Rate:** 0.79% (Rare)
 *   **DriftNet Crash Rate:** 99.35% (On-Demand)
 *   **Key Insight:** Volatility spikes are identified as the earliest warning signal for impending crashes, validated by XAI analysis.
+
+![Benchmark Results](img/benchmark.png)
 
 ---
 *Created for the research on Physics-Informed Deep Learning in Quantitative Finance.*
