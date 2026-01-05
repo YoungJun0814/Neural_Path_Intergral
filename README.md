@@ -4,7 +4,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 
 ## 📉 Project Overview
 **DriftNet** is a deep learning framework designed to solve the *Rare Event Simulation* problem in quantitative finance. While standard Monte Carlo simulations fail to capture extreme market crashes (Black Swans) due to their rarity, DriftNet learns to steer market dynamics into these critical regions efficiently.
