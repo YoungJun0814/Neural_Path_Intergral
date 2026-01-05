@@ -5,11 +5,8 @@
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
 
-
 ## 📉 Project Overview
 **DriftNet** is a deep learning framework designed to solve the *Rare Event Simulation* problem in quantitative finance. While standard Monte Carlo simulations fail to capture extreme market crashes (Black Swans) due to their rarity, DriftNet learns to steer market dynamics into these critical regions efficiently.
-
-![DriftNet Concept](img/concept_crash.png)
 
 By combining **Stochastic Differential Equations (SDEs)** with **Neural Network Control**, this model achieves a **126x efficiency boost** in generating crash paths compared to baseline methods, allowing for precise risk assessment and stress testing.
 
@@ -28,7 +25,7 @@ $$ dS_t = \mu(S_t, v_t) dt + \sigma(S_t, v_t) dW_t + \mathbf{u_{\theta}(S_t)} dt
 
 ```mermaid
 graph LR
-    A[Market State (S, v, t)] -->|Input| B(DriftNet Controller)
+    A[Market State S, v, t] -->|Input| B(DriftNet Controller)
     B -->|Control u| C[SDE Solver]
     D[Brownian Motion dW] --> C
     C -->|Next State| E[New Market State]
@@ -41,6 +38,25 @@ graph LR
 *   **`DriftNet` ($u_\theta$)**: A neural controller that observes the market state $(S_t, v_t, t)$ and applies a "nudge" to the drift term to steer the path toward a crash target.
 *   **`VolNet`**: Models the stochastic volatility surface to ensure realistic market texture even under stress.
 *   **`NeuralSDESimulator`**: A differentiable simulator compatible with PyTorch's autograd for training via feedback control.
+
+## 📊 Results
+
+### Training Progress
+Neural SDE training on S&P 500 historical data:
+
+![Training Progress](img/training_progress.png)
+
+### AI Crash Generation
+Generated crash paths vs. baseline market simulation:
+
+![Crash Paths](img/crash_paths.png)
+
+### XAI: Feature Attribution
+Integrated Gradients analysis revealing crash drivers:
+
+![XAI Attribution](img/xai_attribution.png)
+
+**Key Insight:** Volatility spikes are identified as the earliest warning signal for impending crashes.
 
 ## 📂 Repository Structure
 ```
@@ -66,13 +82,6 @@ graph LR
     Run `02_Neural_SDE_Training.ipynb` to train DriftNet on historical S&P 500 data.
 3.  **Generate Crashes:**
     Run `03_AI_Crash_Generator.ipynb` to produce thousands of synthetic crash scenarios.
-
-## 📊 Results Summary
-*   **Baseline Crash Rate:** 0.79% (Rare)
-*   **DriftNet Crash Rate:** 99.35% (On-Demand)
-*   **Key Insight:** Volatility spikes are identified as the earliest warning signal for impending crashes, validated by XAI analysis.
-
-![Benchmark Results](img/benchmark.png)
 
 ---
 *Created for the research on Physics-Informed Deep Learning in Quantitative Finance.*
