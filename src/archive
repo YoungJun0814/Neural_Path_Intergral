@@ -1,47 +1,63 @@
 import torch
 
 class PathIntegralSolver:
+    """
+    Path Integral Option Pricing Solver / 경로 적분 옵션 가격 결정 솔버.
+    
+    Uses Onsager-Machlup functional to calculate path probabilities and
+    prices options using reweighted path sampling.
+    Onsager-Machlup 범함수를 사용하여 경로 확률을 계산하고, 
+    재가중 경로 샘플링을 통해 옵션 가격을 결정합니다.
+    """
     def __init__(self, simulator):
         """
-        simulator: src.physics_engine.HestonSimulator 인스턴스
+        Args:
+            simulator: Instance of src.physics_engine.MarketSimulator / MarketSimulator 인스턴스
         """
         self.sim = simulator
         self.device = simulator.device
 
     def compute_action(self, S, v, dt):
         """
+        Calculate Action for each path.
         각 경로(Path)의 작용(Action)을 계산합니다.
+        
+        Smaller action implies higher physical probability.
         Action이 작을수록 물리적으로 발생 확률이 높은 경로입니다.
         
+        Calculated by discretizing the Onsager-Machlup Functional.
         Onsager-Machlup Functional을 이산화하여 계산합니다.
         """
-        # 1. 미분값 근사 (Gradients)
+        # 1. Approximate derivatives (Gradients) / 미분값 근사
         dS = S[:, 1:] - S[:, :-1]
         dv = v[:, 1:] - v[:, :-1]
         
         S_t = S[:, :-1]
         v_t = v[:, :-1]
         
-        # 2. 드리프트(Drift) 제거 (순수 변동분 추출)
-        # 주가 드리프트 제거
+        # 2. Remove Drift (Extract pure volatility term) / 드리프트(Drift) 제거 (순수 변동분 추출)
+        # Price drift removal / 주가 드리프트 제거
         drift_S = self.sim.mu * S_t * dt
         residual_S = dS - drift_S
         
-        # 변동성 드리프트 제거
+        # Volatility drift removal / 변동성 드리프트 제거
         drift_v = self.sim.kappa * (self.sim.theta - v_t) * dt
         residual_v = dv - drift_v
         
+        # 3. Compute Precision Matrix (Inverse of Diffusion Matrix)
         # 3. 확산 행렬(Diffusion Matrix)의 역행렬 계산 (Precision Matrix)
+        # Heston model noise is correlated (rho), so we need to decouple it.
         # Heston 모델의 노이즈는 상관관계(rho)가 있으므로 이를 분리해야 합니다.
         rho = self.sim.rho
         xi = self.sim.xi
         one_minus_rho2 = 1 - rho**2
         
-        # 주가의 변동성 항 (sigma_S)
+        # Price volatility term (sigma_S) / 주가의 변동성 항
         sigma_S = torch.sqrt(v_t) * S_t
-        # 변동성의 변동성 항 (sigma_v)
+        # Volatility of volatility term (sigma_v) / 변동성의 변동성 항
         sigma_v = xi * torch.sqrt(v_t)
         
+        # 4. Action Formula (Discretized Lagrangian)
         # 4. 액션(Action) 수식 (이산화된 라그랑지안)
         # L = 0.5 * (res_S^2/sig_S^2 - 2*rho*res_S*res_v/(sig_S*sig_v) + res_v^2/sig_v^2) / (1-rho^2) * dt
         
@@ -51,6 +67,7 @@ class PathIntegralSolver:
         
         lagrangian = 0.5 * (term1 + term2 + term3) / (one_minus_rho2 * dt)
         
+        # Integrate (Sum) over the entire path -> Action
         # 전체 경로에 대해 적분(합산) -> Action
         action = torch.sum(lagrangian, dim=1)
         
@@ -58,51 +75,56 @@ class PathIntegralSolver:
 
     def reweight_paths(self, action):
         """
+        Calculate probability weights based on Action.
         Action을 기반으로 각 경로의 확률 가중치를 계산합니다.
+        
         Probability ~ exp(-Action)
         """
+        # Subtract min Action for numerical stability (Log-Sum-Exp Trick)
         # 수치 안정성을 위해 최소 Action을 뺍니다 (Log-Sum-Exp Trick)
         min_action = torch.min(action)
         weights = torch.exp(-(action - min_action))
         
-        # 정규화 (모든 가중치의 합이 1이 되도록)
+        # Normalize (Sum of weights = 1) / 정규화 (모든 가중치의 합이 1이 되도록)
         normalized_weights = weights / torch.sum(weights)
         return normalized_weights
     
     def price_option(self, S0, K, T, r, num_paths=5000, dt=0.01):
         """
-        경로 적분을 활용한 옵션 가격 결정 / Option pricing using Path Integral.
+        Option pricing using Path Integral.
+        경로 적분을 활용한 옵션 가격 결정.
         
-        Path Integral 공식: Price = E[e^{-rT} * Payoff * Weight(Action)]
+        Path Integral Formula: Price = E[e^{-rT} * Payoff * Weight(Action)]
+        경로 적분 공식: Price = E[e^{-rT} * Payoff * Weight(Action)]
         
         Args:
-            S0: 초기 주가 / Initial price
-            K: 행사가 / Strike price
-            T: 만기 / Time to maturity
-            r: 무위험 이자율 / Risk-free rate
-            num_paths: 시뮬레이션 경로 수 / Number of paths
-            dt: 시간 간격 / Time step
+            S0: Initial price / 초기 주가
+            K: Strike price / 행사가
+            T: Time to maturity / 만기
+            r: Risk-free rate / 무위험 이자율
+            num_paths: Number of simulation paths / 시뮬레이션 경로 수
+            dt: Time step / 시간 간격
         
         Returns:
-            price: 경로적분 기반 옵션 가격 / Path integral option price
+            price: Path integral option price / 경로적분 기반 옵션 가격
         """
-        # 1. 경로 생성 / Generate paths
+        # 1. Generate paths / 경로 생성
         S_paths, v_paths = self.sim.simulate(
             S0=S0, v0=self.sim.theta, T=T, dt=dt, num_paths=num_paths,
             model_type='heston'
         )
         
-        # 2. 각 경로의 Action 계산 / Compute action for each path
+        # 2. Compute action for each path / 각 경로의 Action 계산
         action = self.compute_action(S_paths, v_paths, dt)
         
-        # 3. 경로 가중치 계산 / Compute path weights
+        # 3. Compute path weights / 경로 가중치 계산
         weights = self.reweight_paths(action)
         
-        # 4. 페이오프 계산 / Compute payoffs
+        # 4. Compute payoffs / 페이오프 계산
         S_final = S_paths[:, -1]
         payoffs = torch.maximum(S_final - K, torch.tensor(0.0, device=self.device))
         
-        # 5. 가중 평균 가격 (경로 적분) / Weighted average (Path Integral)
+        # 5. Weighted average price (Path Integral) / 가중 평균 가격 (경로 적분)
         # Price = exp(-rT) * sum(Weight * Payoff)
         discount = torch.exp(torch.tensor(-r * T, device=self.device))
         price = discount * torch.sum(weights * payoffs)
@@ -113,16 +135,17 @@ class PathIntegralSolver:
                                   control_fn=None, barrier_level=None, barrier_type='down-out'):
         """
         Neural Path Integral Pricing for Barrier Options with Importance Sampling.
+        중요도 샘플링을 활용한 배리어 옵션을 위한 신경망 경로 적분 가격 결정.
         
         Price = E_u [ Payoff(S_u) * exp(-Action_u) ]
         """
-        # 1. Controlled Simulation
+        # 1. Controlled Simulation / 제어된 시뮬레이션
         S_paths, v_paths, log_weights, barrier_hit, _ = self.sim.simulate_controlled(
             S0=S0, v0=self.sim.theta, T=T, dt=dt, num_paths=num_paths,
             control_fn=control_fn, barrier_level=barrier_level, barrier_type=barrier_type
         )
         
-        # 2. Barrier Payoff Logic
+        # 2. Barrier Payoff Logic / 배리어 페이오프 로직
         S_final = S_paths[:, -1]
         
         # Standard Put Payoff: max(K - S, 0)
@@ -130,17 +153,18 @@ class PathIntegralSolver:
                               torch.tensor(0.0, device=self.device))
         
         # Knock-out logic: Payoff is 0 if barrier hit
+        # 녹아웃 로직: 배리어 도달 시 페이오프는 0
         if barrier_hit is not None:
              payoffs = payoffs * (~barrier_hit).float()
             
-        # 3. Reweighting (Girsanov)
+        # 3. Reweighting (Girsanov) / 재가중 (Girsanov)
         # Price = exp(-rT) * mean( Payoff * LikelihoodRatio )
         # LikelihoodRatio = exp(log_weights)
         weights = torch.exp(log_weights)
         
         discount = torch.exp(torch.tensor(-r * T, device=self.device))
         
-        # Importance Sampling Estimator
+        # Importance Sampling Estimator / 중요도 샘플링 추정량
         weighted_payoffs = payoffs * weights
         price = discount * torch.mean(weighted_payoffs)
         

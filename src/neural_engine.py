@@ -138,41 +138,171 @@ class DiffNet(nn.Module):
         return self.net(x).squeeze(-1)
 
 
+class VolNet(nn.Module):
+    """
+    Volatility Dynamics Neural Network / 변동성 동역학 신경망.
+    
+    SDE의 분산 과정 dv = a(S, v, t) dt + b(S, v, t) dW_v를 근사합니다.
+    Approximates the variance process: dv = a(S, v, t) dt + b(S, v, t) dW_v.
+    
+    핵심: Heston 모델의 mean-reversion 특성을 학습하면서도
+    실제 데이터에서 나타나는 비선형적인 Vol dynamics를 포착합니다.
+    
+    Key: Learns mean-reversion like Heston while capturing
+    nonlinear vol dynamics from real data.
+    """
+    
+    def __init__(self, hidden_dim=64, n_layers=3):
+        """
+        Args:
+            hidden_dim: 은닉층 차원 / Hidden layer dimension
+            n_layers: 은닉층 수 / Number of hidden layers
+        """
+        super().__init__()
+        
+        # Drift Network for Volatility (a in dv = a*dt + b*dW)
+        # 변동성 Drift 네트워크
+        drift_layers = []
+        drift_layers.append(nn.Linear(3, hidden_dim))  # Input: (S, v, t)
+        drift_layers.append(nn.SiLU())
+        
+        for _ in range(n_layers - 1):
+            drift_layers.append(nn.Linear(hidden_dim, hidden_dim))
+            drift_layers.append(nn.SiLU())
+        
+        drift_layers.append(nn.Linear(hidden_dim, 1))
+        self.drift_net = nn.Sequential(*drift_layers)
+        
+        # Diffusion Network for Volatility (b in dv = a*dt + b*dW)
+        # 변동성 Diffusion 네트워크 (항상 양수)
+        diff_layers = []
+        diff_layers.append(nn.Linear(3, hidden_dim))
+        diff_layers.append(nn.SiLU())
+        
+        for _ in range(n_layers - 1):
+            diff_layers.append(nn.Linear(hidden_dim, hidden_dim))
+            diff_layers.append(nn.SiLU())
+        
+        diff_layers.append(nn.Linear(hidden_dim, 1))
+        diff_layers.append(nn.Softplus())  # 양수 보장 / Ensure positivity
+        self.diff_net = nn.Sequential(*diff_layers)
+        
+        # Learnable mean-reversion parameters (prior from Heston)
+        # 학습 가능한 평균 회귀 파라미터 (Heston 사전 분포)
+        self.kappa = nn.Parameter(torch.tensor(2.0))  # Mean reversion speed
+        self.theta = nn.Parameter(torch.tensor(0.04))  # Long-term variance
+    
+    def forward(self, S, v, t):
+        """
+        Returns both drift and diffusion for volatility process.
+        변동성 과정의 drift와 diffusion을 모두 반환합니다.
+        
+        Args:
+            S: 주가 텐서 (batch,) / Price tensor
+            v: 변동성 텐서 (batch,) / Volatility tensor
+            t: 시간 스칼라 / Time scalar
+        
+        Returns:
+            a: 변동성 drift (batch,) / Volatility drift
+            b: 변동성 diffusion (batch,) / Volatility diffusion
+        """
+        # 입력 정규화 / Normalize inputs
+        S_norm = torch.log(S + 1e-8)
+        v_norm = torch.log(v + 1e-8)
+        t_norm = t * torch.ones_like(S)
+        
+        x = torch.stack([S_norm, v_norm, t_norm], dim=-1)
+        
+        # Neural correction to Heston mean-reversion
+        # Heston 평균 회귀에 대한 신경망 보정
+        # a = kappa * (theta - v) + neural_correction
+        heston_drift = self.kappa * (torch.clamp(self.theta, min=1e-4) - v)
+        neural_correction = self.drift_net(x).squeeze(-1) * 0.1  # Scale down correction
+        a = heston_drift + neural_correction
+        
+        # b = neural_diffusion (replaces xi * sqrt(v) in Heston)
+        # Heston의 xi * sqrt(v)를 대체
+        b = self.diff_net(x).squeeze(-1) * torch.sqrt(torch.clamp(v, min=1e-8))
+        
+        return a, b
+
+
 class NeuralSDESimulator:
     """
-    Neural SDE 시뮬레이터 / Neural SDE Simulator.
+    Neural SDE 시뮬레이터 (Stochastic Volatility 버전) / Neural SDE Simulator (Stochastic Vol).
     
-    Drift와 Diffusion 함수를 신경망으로 대체한 확률 미분 방정식 시뮬레이터입니다.
-    A stochastic differential equation simulator where Drift and Diffusion
-    functions are replaced by neural networks.
+    이 시뮬레이터는 가격(S)과 변동성(v) 모두를 확률적으로 진화시킵니다.
+    This simulator evolves BOTH price (S) and volatility (v) stochastically.
     
     동역학 / Dynamics:
-        dS_t = DriftNet(S, v, t) * S_t * dt + DiffNet(S, v, t) * S_t * dW_t
+        dS_t = mu(S, v, t) * S_t * dt + sigma(S, v, t) * S_t * dW_S
+        dv_t = a(S, v, t) * dt + b(S, v, t) * dW_v
+        
+        with Corr(dW_S, dW_v) = rho (학습 가능 / Learnable)
     
-    주의: 이 시뮬레이터는 학습(train) 후 사용해야 합니다.
-    Note: This simulator must be trained before use.
+    핵심 개선사항 / Key Improvements:
+        - 변동성이 더 이상 상수가 아닙니다 / Volatility is no longer constant
+        - S-v 상관관계를 학습합니다 / Learns S-v correlation (leverage effect)
+        - Heston 사전 분포 + 신경망 보정 / Heston prior + Neural corrections
     """
     
-    def __init__(self, hidden_dim=64, n_layers=3, device='cuda'):
+    def __init__(self, hidden_dim=64, n_layers=3, device='cuda', rho_init=-0.7):
         """
         Args:
             hidden_dim: 신경망 은닉층 차원 / Neural network hidden dimension
             n_layers: 신경망 층 수 / Number of layers
             device: 연산 장치 / Computation device
+            rho_init: 초기 상관계수 / Initial S-v correlation (typically negative)
         """
         self.device = device
         
-        # 신경망 초기화 / Initialize neural networks
+        # =====================================================================
+        # Neural Networks for Price Dynamics / 가격 동역학 신경망
+        # =====================================================================
         self.drift_net = DriftNet(hidden_dim, n_layers).to(device)
         self.diff_net = DiffNet(hidden_dim, n_layers).to(device)
         
-        # 변동성 초기값 (학습 시 고정 또는 학습 가능) / Initial vol (can be fixed or learned)
-        self.v0 = 0.04  # 기본값 / Default value
+        # =====================================================================
+        # Neural Network for Volatility Dynamics / 변동성 동역학 신경망 [NEW]
+        # =====================================================================
+        self.vol_net = VolNet(hidden_dim, n_layers).to(device)
+        
+        # =====================================================================
+        # Learnable Correlation Parameter / 학습 가능한 상관계수 [NEW]
+        # =====================================================================
+        # Rho는 보통 음수 (leverage effect: 가격 하락 시 변동성 상승)
+        # Rho is typically negative (leverage effect: price drops -> vol rises)
+        rho_raw_init = self._inverse_tanh(rho_init)
+        self._rho_raw = torch.nn.Parameter(
+            torch.tensor(rho_raw_init, device=device, dtype=torch.float32)
+        )
+        
+        # 변동성 초기값 / Initial volatility
+        self.v0 = 0.04
+    
+    @staticmethod
+    def _inverse_tanh(y):
+        """Inverse of tanh for parameter initialization."""
+        y = max(-0.999, min(0.999, y))  # Clamp to valid range
+        return 0.5 * torch.log(torch.tensor((1 + y) / (1 - y)))
+    
+    @property
+    def rho(self):
+        """Get rho in [-1, 1] range via tanh transformation."""
+        return torch.tanh(self._rho_raw)
+    
+    def parameters(self):
+        """Return all trainable parameters."""
+        params = list(self.drift_net.parameters())
+        params += list(self.diff_net.parameters())
+        params += list(self.vol_net.parameters())
+        params += [self._rho_raw]
+        return params
     
     def simulate(self, S0, T, dt, num_paths, v0=None, training=False):
         """
-        Neural SDE 모델로 가격 경로 시뮬레이션.
-        Simulate price paths using Neural SDE model.
+        Stochastic Volatility Neural SDE 시뮬레이션.
+        Simulate paths with STOCHASTIC volatility.
         
         Args:
             S0: 초기 주가 / Initial asset price
@@ -184,68 +314,176 @@ class NeuralSDESimulator:
         
         Returns:
             S: 가격 경로 (num_paths, n_steps+1) / Price paths
-            v: 변동성 경로 (num_paths, n_steps+1) / Volatility paths (constant for now)
+            v: 변동성 경로 (num_paths, n_steps+1) / Volatility paths (NOW STOCHASTIC!)
         """
         if v0 is None:
             v0 = self.v0
         
-        n_steps = int(T / dt)
+        n_steps = max(1, int(T / dt))
         
-        # GPU 메모리 문제 방지 및 학습 안정성을 위해 training 모드에서는 inplace 연산 주의
-        # For training stability, avoid inplace operations
-        
-        # 경로 초기화 (리스트 사용) / Initialize paths (use list)
+        # 경로 초기화 / Initialize paths
         curr_S = torch.ones(num_paths, device=self.device) * S0
         curr_v = torch.ones(num_paths, device=self.device) * v0
         
         S_list = [curr_S]
         v_list = [curr_v]
         
-        # 네트워크 모드 설정
+        # 네트워크 모드 설정 / Set network mode
         if training:
             self.drift_net.train()
             self.diff_net.train()
+            self.vol_net.train()
             context = torch.enable_grad()
         else:
             self.drift_net.eval()
             self.diff_net.eval()
+            self.vol_net.eval()
             context = torch.no_grad()
-            
+        
         with context:
             sqrt_dt = torch.sqrt(torch.tensor(dt, device=self.device))
+            rho = self.rho  # Get current rho value
+            sqrt_one_minus_rho2 = torch.sqrt(1 - rho ** 2 + 1e-8)
             
             for t_idx in range(1, n_steps + 1):
                 t = (t_idx - 1) * dt
                 
-                # 브라운 운동 증분 / Brownian motion increment
-                dW = torch.randn(num_paths, device=self.device) * sqrt_dt
+                # =============================================================
+                # Correlated Brownian Motions / 상관된 브라운 운동 [NEW]
+                # =============================================================
+                z1 = torch.randn(num_paths, device=self.device)  # For S
+                z2 = torch.randn(num_paths, device=self.device)  # For v (independent)
                 
-                # Neural Drift & Diffusion
+                dW_S = z1 * sqrt_dt
+                dW_v = (rho * z1 + sqrt_one_minus_rho2 * z2) * sqrt_dt  # Correlated
+                
+                # =============================================================
+                # Price Dynamics / 가격 동역학
+                # =============================================================
                 mu = self.drift_net(curr_S, curr_v, t)
                 sigma = self.diff_net(curr_S, curr_v, t)
                 
-                # Euler-Maruyama 이산화 (In-place 연산 피하기)
-                # Euler-Maruyama discretization (Avoid in-place ops)
-                # dS = mu * S * dt + sigma * S * dW
-                dS = mu * curr_S * dt + sigma * curr_S * dW
+                dS = mu * curr_S * dt + sigma * curr_S * dW_S
+                next_S = torch.clamp(curr_S + dS, min=1e-8)
+                
+                # =============================================================
+                # Volatility Dynamics / 변동성 동역학 [NEW - Key Fix!]
+                # =============================================================
+                a, b = self.vol_net(curr_S, curr_v, t)  # Get vol drift and diffusion
+                
+                dv = a * dt + b * dW_v
+                next_v = torch.clamp(curr_v + dv, min=1e-8)  # Ensure v > 0
+                
+                # Append to lists
+                S_list.append(next_S)
+                v_list.append(next_v)  # NOW EVOLVING! / 이제 진화합니다!
                 
                 # Update state
-                next_S = curr_S + dS
-                
-                # 주가 0 이하 방지 (ReLU or Softplus)
-                next_S = torch.nn.functional.relu(next_S) + 1e-8
-                
-                S_list.append(next_S)
-                v_list.append(curr_v) 
-                
                 curr_S = next_S
+                curr_v = next_v  # [CRITICAL FIX] / 핵심 수정!
         
         # Stack results
         S = torch.stack(S_list, dim=1)
         v = torch.stack(v_list, dim=1)
         
         return S, v
-    
+
+    def simulate_controlled(self, S0, T, dt, num_paths, control_net, v0=None):
+        """
+        NPI를 위한 제어된 시뮬레이션 (Controlled Simulation).
+        Simulates controlled paths for Neural Path Integral.
+        
+        Dynamics under Control:
+            dS = (mu + sigma * u) * S * dt + sigma * S * dW_S
+            
+        Args:
+            control_net: ControlForce Network (Input: S, v, t -> Output: u)
+            
+        Returns:
+            S: Controlled Price paths
+            log_weights: Girsanov log-weights (log dP/dQ)
+        """
+        if v0 is None:
+            v0 = self.v0
+        
+        n_steps = max(1, int(T / dt))
+        sqrt_dt = torch.sqrt(torch.tensor(dt, device=self.device))
+        rho = self.rho
+        sqrt_one_minus_rho2 = torch.sqrt(1 - rho ** 2 + 1e-8)
+        
+        # Paths
+        curr_S = torch.ones(num_paths, device=self.device) * S0
+        curr_v = torch.ones(num_paths, device=self.device) * v0
+        
+        S_list = [curr_S]
+        
+        # Girsanov Accumulators
+        log_weight = torch.zeros(num_paths, device=self.device)
+        
+        # Eval mode for all networks
+        self.drift_net.eval()
+        self.diff_net.eval()
+        self.vol_net.eval()
+        if hasattr(control_net, 'eval'):
+            control_net.eval()
+            
+        with torch.no_grad():
+            for t_idx in range(1, n_steps + 1):
+                t = (t_idx - 1) * dt
+                
+                # 1. Noise Generation
+                z1 = torch.randn(num_paths, device=self.device)
+                z2 = torch.randn(num_paths, device=self.device)
+                
+                dW_S = z1 * sqrt_dt
+                dW_v = (rho * z1 + sqrt_one_minus_rho2 * z2) * sqrt_dt
+                
+                # 2. Get Model Parameters
+                mu = self.drift_net(curr_S, curr_v, t)
+                sigma = self.diff_net(curr_S, curr_v, t)
+                a, b = self.vol_net(curr_S, curr_v, t)
+                
+                # 3. Get Control Force u(S, v, t)
+                # Note: control_net might expect (S, v, t) or (S, v, t, avg_S)
+                # Assuming standard DriftNet signature (S, v, t, avg_S=None)
+                u = control_net(curr_S, curr_v, t)
+                
+                # 4. Evolve S (Controlled)
+                # dS = (mu + sigma*u)dt + sigma*dW
+                # Here we apply u to the drift part.
+                # Effective drift = mu + sigma * u
+                drift_S = (mu + sigma * u) * curr_S * dt
+                diff_S = sigma * curr_S * dW_S
+                
+                dS = drift_S + diff_S
+                next_S = torch.clamp(curr_S + dS, min=1e-8)
+                
+                # 5. Evolve v (Standard)
+                # Note: If we interpret control as changing Measure, v drift might change too
+                # For simplicity in NPI v1, we assume control only affects Price Drift formulation directly
+                # or that u is orthogonal to v noise. But here they are correlated.
+                # Proper Girsanov would imply: z1 -> z1 + u*sqrt(dt)
+                # Then dW_v depends on z1, so dW_v also has a drift shift of rho*u*dt.
+                # Let's implement FULL Girsanov consistency:
+                # The simulation above uses z1. If z1 is "shifted noise", then
+                # dW_v includes rho * (z1) * sqrt(dt). 
+                # Meaning v is also affected by the control u via correlation.
+                
+                dv = a * dt + b * dW_v
+                next_v = torch.clamp(curr_v + dv, min=1e-8)
+                
+                # 6. Accumulate Girsanov Weight
+                # log L = - int u * dW - 0.5 int u^2 dt
+                # Here dW is the Brownian driver of S (z1).
+                log_weight = log_weight - u * z1 * sqrt_dt - 0.5 * (u**2) * dt
+                
+                curr_S = next_S
+                curr_v = next_v
+                S_list.append(curr_S)
+                
+        S = torch.stack(S_list, dim=1)
+        return S, log_weight
+
     def train_step(self, target_prices, strikes, T, S0, r, optimizer):
         """
         단일 학습 스텝 (옵션 가격 매칭).
@@ -265,8 +503,10 @@ class NeuralSDESimulator:
         Returns:
             loss: 손실값 / Loss value
         """
+        # Set all networks to training mode / 모든 네트워크를 학습 모드로 설정
         self.drift_net.train()
         self.diff_net.train()
+        self.vol_net.train()  # [NEW] 변동성 네트워크도 학습 모드로!
         
         optimizer.zero_grad()
         
@@ -277,7 +517,7 @@ class NeuralSDESimulator:
         # Use dynamic dt to ensure simulation runs even for short maturities.
         dt = min(0.01, T / 3.0) 
         
-        S, _ = self.simulate(S0, T, dt, num_paths, training=True)
+        S, v = self.simulate(S0, T, dt, num_paths, training=True)
         S_final = S[:, -1]  # 만기 시점 주가 / Price at maturity
         
         # 콜옵션 페이오프 계산 / Compute call payoffs
@@ -303,25 +543,48 @@ class NeuralSDESimulator:
     def save(self, path):
         """
         모델 저장 / Save model.
+        
+        Saves all networks, rho parameter, and v0.
+        모든 네트워크, rho 파라미터, v0를 저장합니다.
         """
         torch.save({
             'drift_net': self.drift_net.state_dict(),
             'diff_net': self.diff_net.state_dict(),
+            'vol_net': self.vol_net.state_dict(),  # [NEW]
+            '_rho_raw': self._rho_raw.data,  # [NEW]
             'v0': self.v0
         }, path)
     
+    def load(self, path):
+        """
+        모델 로드 / Load model.
+        
+        Loads all networks, rho parameter, and v0.
+        모든 네트워크, rho 파라미터, v0를 로드합니다.
+        """
         checkpoint = torch.load(path, map_location=self.device)
         self.drift_net.load_state_dict(checkpoint['drift_net'])
         self.diff_net.load_state_dict(checkpoint['diff_net'])
+        
+        # Load vol_net if present (backward compatibility)
+        if 'vol_net' in checkpoint:
+            self.vol_net.load_state_dict(checkpoint['vol_net'])
+        
+        # Load rho if present (backward compatibility)
+        if '_rho_raw' in checkpoint:
+            self._rho_raw.data = checkpoint['_rho_raw']
+        
         self.v0 = checkpoint.get('v0', 0.04)
 
 
 class NeuralImportanceSampler:
     """
     Neural Importance Sampling for Efficient Option Pricing.
+    효율적인 옵션 가격 결정을 위한 신경망 중요도 샘플링.
     
     Learns the optimal drift (control force) to minimize the variance
     of the Payoff Estimator.
+    페이오프 추정량의 분산을 최소화하기 위해 최적의 드리프트(제어력)를 학습합니다.
     """
     def __init__(self, simulator, hidden_dim=64, n_layers=3):
         """
@@ -353,7 +616,9 @@ class NeuralImportanceSampler:
     def train_step(self, S0, K, T, r, barrier_level, barrier_type, optimizer, num_paths=1000):
         """
         Train the control network to minimize variance of the price estimator.
-        Loss = E[ (Payoff * LikelihoodRatio)^2 ] (Second Moment)
+        가격 추정량의 분산을 최소화하도록 제어 네트워크를 학습합니다.
+        
+        Loss = E[ (Payoff * LikelihoodRatio)^2 ] (Second Moment / 2차 모멘트)
         """
         self.control_net.train()
         optimizer.zero_grad()

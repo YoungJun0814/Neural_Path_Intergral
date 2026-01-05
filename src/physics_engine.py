@@ -1,9 +1,27 @@
+"""
+Physics Engine / 물리 엔진
+=========================
+
+This module implements the core stochastic calculus simulators for financial markets.
+Includes Monte Carlo simulations for Heston, Bates, SVJJ, and Rough Bergomi models.
+
+이 모듈은 금융 시장을 위한 핵심 확률 미분 방정식 시뮬레이터를 구현합니다.
+Heston, Bates, SVJJ, 그리고 Rough Bergomi 모델에 대한 몬테카를로 시뮬레이션을 포함합니다.
+"""
+
 import torch
 
 class MarketSimulator:
+    """
+    Unified Stochastic Process Simulator.
+    통합 확률 과정 시뮬레이터.
+    
+    Supports Heston (Stochastic Vol), Bates (Jump-Diffusion), and SVJJ (Double Jump) models.
+    Heston (확률적 변동성), Bates (점프 확산), SVJJ (이중 점프) 모델을 지원합니다.
+    """
     def __init__(self, mu, kappa, theta, xi, rho, 
                  jump_lambda=0.0, jump_mean=0.0, jump_std=0.0, 
-                 vol_jump_mean=0.0, # SVJJ 추가 파라미터 (변동성 점프 평균)
+                 vol_jump_mean=0.0, # SVJJ parameter (Mean of vol jump) / SVJJ 파라미터 (변동성 점프 평균)
                  device='cuda'):
         self.mu = mu
         self.kappa = kappa
@@ -11,16 +29,34 @@ class MarketSimulator:
         self.xi = xi
         self.rho = rho
         
-        # Bates & SVJJ Model Parameters
+        # Bates & SVJJ Model Parameters / Bates 및 SVJJ 모델 파라미터
         self.jump_lambda = jump_lambda
         self.jump_mean = jump_mean
         self.jump_std = jump_std
-        self.vol_jump_mean = vol_jump_mean # Exponential dist param for vol jump
+        self.vol_jump_mean = vol_jump_mean # Exponential dist param for vol jump / 변동성 점프를 위한 지수 분포 파라미터
         self.device = device
 
     def simulate(self, S0, v0, T, dt, num_paths, model_type='heston', override_params=None):
+
+        """
+        Simulate asset price paths.
+        자산 가격 경로를 시뮬레이션합니다.
+
+        Args:
+            S0: Initial price / 초기 주가
+            v0: Initial volatility / 초기 변동성
+            T: Time to maturity / 만기
+            dt: Time step / 시간 간격
+            num_paths: Number of simulation paths / 시뮬레이션 경로 수
+            model_type: 'heston', 'bates', or 'svjj' / 모델 타입
+            override_params: Dictionary to override params (for calibration) / 파라미터 오버라이드 (캘리브레이션 용)
+        
+        Returns:
+            S, v: Simulated Price and Volatility matrices / 시뮬레이션된 가격 및 변동성 행렬
+        """
         # -------------------------------------------------------------------------
         # 0. Parameter Setup (Allow overrides for calibration)
+        # 0. 파라미터 설정 (캘리브레이션을 위한 오버라이드 허용)
         # -------------------------------------------------------------------------
         mu = self.mu
         kappa = self.kappa
@@ -45,6 +81,7 @@ class MarketSimulator:
 
         # -------------------------------------------------------------------------
         # 1. Initialization
+        # 1. 초기화
         # -------------------------------------------------------------------------
         n_steps = int(T / dt)
         S = torch.zeros((num_paths, n_steps + 1), device=self.device)
@@ -57,6 +94,7 @@ class MarketSimulator:
         sqrt_dt = torch.sqrt(dt_tensor)
 
         # Drift Correction (compensator for jumps)
+        # 드리프트 보정 (점프에 대한 보상항)
         drift_correction = 0.0
         if model_type in ['bates', 'svjj']:
             # k = E[e^J - 1]
@@ -64,11 +102,13 @@ class MarketSimulator:
             drift_correction = jump_lambda * k * dt
 
         # Pre-compute Rho correlations
+        # Rho 상관계수 미리 계산
         rho_tensor = torch.tensor(rho, device=self.device)
         sqrt_one_minus_rho2 = torch.sqrt(1 - rho_tensor**2)
 
         # -------------------------------------------------------------------------
         # 2. Time Stepping
+        # 2. 시간 스텝 진행
         # -------------------------------------------------------------------------
         for t in range(1, n_steps + 1):
             z1 = torch.randn(num_paths, device=self.device)
@@ -81,34 +121,38 @@ class MarketSimulator:
             S_prev = S[:, t-1]
 
             # --- Correlation & Variance Process ---
+            # --- 상관관계 및 분산 과정 ---
             # Heston Variance: dv = kappa(theta - v)dt + xi*sqrt(v)*dW_v
-            v_val_relu = torch.clamp(v_prev, min=1e-8) # Ensure positive for sqrt
+            v_val_relu = torch.clamp(v_prev, min=1e-8) # Ensure positive for sqrt / 제곱근을 위해 양수 보장
             dv_diff = kappa * (theta - v_prev) * dt + \
                       xi * torch.sqrt(v_val_relu) * sqrt_dt * dw_v
             
             # --- Asset Process ---
+            # --- 자산 과정 ---
             # dS = (mu - drift_corr)S dt + sqrt(v)S dW_s
             dS_diffusion = (mu * dt - drift_correction) * S_prev + \
                            torch.sqrt(v_val_relu) * S_prev * sqrt_dt * dw_s
             
             # --- Jump Process ---
+            # --- 점프 과정 ---
             jump_S = 0.0
             jump_v = 0.0
             
             if model_type in ['bates', 'svjj']:
                 # Possibility of jump in this time step
+                # 이 시간 스텝에서 점프 발생 가능성
                 # Approximation: Bernoulli(lambda * dt)
                 prob_jump = jump_lambda * dt
                 is_jump = torch.rand(num_paths, device=self.device) < prob_jump
                 
                 if is_jump.any():
-                    # 1. Price Jump
+                    # 1. Price Jump / 가격 점프
                     log_jump_size = torch.normal(jump_mean, jump_std, size=(num_paths,), device=self.device)
                     # Yields factor (e^J - 1)
                     jump_factor = (torch.exp(log_jump_size) - 1)
                     jump_S = jump_factor * S_prev * is_jump
                     
-                    # 2. Volatility Jump (SVJJ only)
+                    # 2. Volatility Jump (SVJJ only) / 변동성 점프 (SVJJ 전용)
                     if model_type == 'svjj':
                         # Exponential distribution with mean = vol_jump_mean
                         # Rate = 1 / mean
@@ -116,20 +160,23 @@ class MarketSimulator:
                         vol_jump_size = torch.distributions.Exponential(rate).sample((num_paths,)).to(self.device)
                         jump_v = vol_jump_size * is_jump
 
-            # Update & Clamp
+            # Update & Clamp / 업데이트 및 클램핑
             v_new = v_prev + dv_diff + jump_v
-            v[:, t] = torch.clamp(v_new, min=1e-8) # Physics constraint: vol > 0
+            v[:, t] = torch.clamp(v_new, min=1e-8) # Physics constraint: vol > 0 / 물리적 제약: 변동성 > 0
             
             S_new = S_prev + dS_diffusion + jump_S
-            S[:, t] = torch.clamp(S_new, min=1e-8) # Physics constraint: price > 0
-
+            S[:, t] = torch.clamp(S_new, min=1e-8) # Physics constraint: price > 0 / 물리적 제약: 가격 > 0
+        
         return S, v
 
     def simulate_controlled(self, S0, v0, T, dt, num_paths, model_type='heston', 
                           control_fn=None, barrier_level=None, barrier_type='down-out'):
         """
         Controlled simulation for Neural Path Integral and Barrier Options.
+        신경망 경로 적분 및 배리어 옵션을 위한 제어된 시뮬레이션입니다.
+        
         Uses list accumulation to avoid in-place operations (autograd compatible).
+        In-place 연산을 피하기 위해 리스트 누적 방식을 사용합니다 (autograd 호환).
         """
         mu = self.mu
         kappa = self.kappa
@@ -140,11 +187,11 @@ class MarketSimulator:
         
         n_steps = max(1, int(T / dt))
         
-        # Use lists to avoid in-place ops
+        # Use lists to avoid in-place ops / In-place 연산을 피하기 위해 리스트 사용
         S_list = []
         v_list = []
         
-        # Initial values
+        # Initial values / 초기값
         curr_S = torch.ones(num_paths, device=device) * S0
         curr_v = torch.ones(num_paths, device=device) * v0
         
@@ -152,16 +199,17 @@ class MarketSimulator:
         v_list.append(curr_v)
         
         # Girsanov Integrals (accumulated scalars)
+        # Girsanov 적분 (누적 스칼라)
         int_u_dW = torch.zeros(num_paths, device=device)
         int_u_sq_dt = torch.zeros(num_paths, device=device)
         
-        # Barrier Monitoring
+        # Barrier Monitoring / 배리어 모니터링
         barrier_hit = torch.zeros(num_paths, dtype=torch.bool, device=device)
         
-        # Running Integral for Asian Option
+        # Running Integral for Asian Option / 아시안 옵션을 위한 누적 적분
         running_int_S = torch.zeros(num_paths, device=device)
         
-        # Pre-compute constants
+        # Pre-compute constants / 상수 미리 계산
         dt_tensor = torch.tensor(dt, device=device)
         sqrt_dt = torch.sqrt(dt_tensor)
         rho_tensor = torch.tensor(rho, device=device)
@@ -177,12 +225,13 @@ class MarketSimulator:
             dw_s = z1
             dw_v = rho_tensor * z1 + sqrt_one_minus_rho2 * z2
             
-            # 1. Variance Process
+            # 1. Variance Process / 변동성 과정
             v_val_relu = torch.clamp(curr_v, min=1e-8)
             dv = kappa * (theta - curr_v) * dt + xi * torch.sqrt(v_val_relu) * sqrt_dt * dw_v
             next_v = torch.clamp(curr_v + dv, min=1e-8)
             
             # 2. Control Force (with Running Average)
+            # 2. 제어력 (이동 평균 포함)
             if control_fn is not None:
                 # Calculate current running average A_t = (1/t) * int_S
                 # For stability, if t=0, use curr_S
@@ -191,12 +240,12 @@ class MarketSimulator:
                 else:
                     curr_avg = curr_S
                 
-                # Input to control_fn: (t, S, v, A)
+                # Input to control_fn: (t, S, v, A) / 제어 함수 입력
                 u_t = control_fn(t_curr, curr_S, curr_v, curr_avg)
             else:
                 u_t = torch.zeros(num_paths, device=device)
                 
-            # 3. Asset Process
+            # 3. Asset Process / 자산 과정
             sigma_s = torch.sqrt(v_val_relu)
             drift_term = (mu + sigma_s * u_t) * curr_S * dt
             diffusion_term = sigma_s * curr_S * sqrt_dt * dw_s
@@ -207,15 +256,15 @@ class MarketSimulator:
             # Using left-point for simplicity: int += S_t * dt
             running_int_S = running_int_S + curr_S * dt
             
-            # Append to lists
+            # Append to lists / 리스트에 추가
             S_list.append(next_S)
             v_list.append(next_v)
             
-            # 4. Girsanov Update
+            # 4. Girsanov Update / Girsanov 업데이트
             int_u_dW = int_u_dW + u_t * z1 * sqrt_dt
             int_u_sq_dt = int_u_sq_dt + (u_t ** 2) * dt
             
-            # 5. Barrier Check
+            # 5. Barrier Check / 배리어 확인
             if barrier_level is not None:
                 if barrier_type == 'down-out':
                     hit_mask = next_S <= barrier_level
@@ -224,18 +273,19 @@ class MarketSimulator:
                     hit_mask = next_S >= barrier_level
                     barrier_hit = barrier_hit | hit_mask
             
-            # Update state
+            # Update state / 상태 업데이트
             curr_S = next_S
             curr_v = next_v
 
-        # Stack lists
+        # Stack lists / 리스트 스택
         S = torch.stack(S_list, dim=1)  # (num_paths, n_steps+1)
         v = torch.stack(v_list, dim=1)
         
-        # Log Weights
+        # Log Weights / 로그 가중치
         log_weights = -int_u_dW - 0.5 * int_u_sq_dt
         
         # Return running_int_S for Asian Payoff calculation
+        # 아시안 페이오프 계산을 위해 running_int_S 반환
         return S, v, log_weights, barrier_hit, running_int_S
 # Rough Volatility (rBergomi) Model / 거친 변동성 (rBergomi) 모델
 # =============================================================================

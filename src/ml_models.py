@@ -22,31 +22,32 @@ from scipy.stats import norm
 # =============================================================================
 class BlackScholesModel:
     """
-    Black-Scholes 옵션 가격 결정 모델 / Black-Scholes Option Pricing Model.
+    Black-Scholes Option Pricing Model / 블랙-숄즈 옵션 가격 결정 모델.
     
-    가장 단순한 기준선(Baseline) 모델입니다.
     The simplest benchmark model for option pricing.
+    옵션 가격 결정을 위한 가장 단순한 기준선(Baseline) 모델입니다.
     """
     
     def __init__(self, sigma=0.2):
         """
         Args:
-            sigma: 상수 변동성 / Constant volatility (to be calibrated)
+            sigma: Constant volatility (to be calibrated) / 상수 변동성 (캘리브레이션 대상)
         """
         self.sigma = sigma
     
     def price(self, S0, K, T, r):
         """
-        콜옵션 가격 계산 / Calculate call option price.
+        Calculate call option price.
+        콜옵션 가격을 계산합니다.
         
         Args:
-            S0: 현재 주가 / Current price
-            K: 행사가 / Strike price
-            T: 만기 / Time to maturity
-            r: 무위험 이자율 / Risk-free rate
+            S0: Current price / 현재 주가
+            K: Strike price / 행사가
+            T: Time to maturity / 만기
+            r: Risk-free rate / 무위험 이자율
         
         Returns:
-            call_price: 콜옵션 가격 / Call option price
+            call_price: Call option price / 콜옵션 가격
         """
         if T <= 0:
             return max(S0 - K, 0)
@@ -80,10 +81,10 @@ class BlackScholesModel:
 # =============================================================================
 class XGBoostOptionModel:
     """
-    XGBoost 기반 옵션 가격 예측 모델 / XGBoost-based Option Pricing Model.
+    XGBoost-based Option Pricing Model / XGBoost 기반 옵션 가격 예측 모델.
     
-    입력: (Moneyness, Time-to-Maturity, Risk-free Rate)
-    출력: Option Price
+    Input: (Moneyness, Time-to-Maturity, Risk-free Rate)
+    Output: Option Price
     """
     
     def __init__(self):
@@ -91,11 +92,12 @@ class XGBoostOptionModel:
     
     def train(self, X, y):
         """
-        모델 학습 / Train model.
+        Train model.
+        모델을 학습합니다.
         
         Args:
-            X: 특성 배열 (moneyness, T, r) / Feature array
-            y: 옵션 가격 배열 / Option prices
+            X: Feature array (moneyness, T, r) / 특성 배열
+            y: Option prices / 옵션 가격
         """
         try:
             import xgboost as xgb
@@ -132,19 +134,19 @@ class XGBoostOptionModel:
 # =============================================================================
 class LSTMOptionModel(nn.Module):
     """
-    LSTM 기반 옵션 가격 예측 모델 / LSTM-based Option Pricing Model.
+    LSTM-based Option Pricing Model / LSTM 기반 옵션 가격 예측 모델.
     
-    시계열 관점에서 옵션 가격 구조를 학습합니다.
     Learns option price structure from a time-series perspective.
+    시계열 관점에서 옵션 가격 구조를 학습합니다.
     """
     
     def __init__(self, input_dim=3, hidden_dim=64, num_layers=2, device='cuda'):
         """
         Args:
-            input_dim: 입력 차원 (moneyness, T, r) / Input dimension
-            hidden_dim: LSTM 은닉 차원 / LSTM hidden dimension
-            num_layers: LSTM 층 수 / Number of LSTM layers
-            device: 연산 장치 / Computation device
+            input_dim: Input dimension (moneyness, T, r) / 입력 차원
+            hidden_dim: LSTM hidden dimension / LSTM 은닉 차원
+            num_layers: Number of LSTM layers / LSTM 층 수
+            device: Computation device / 연산 장치
         """
         super().__init__()
         self.device = device
