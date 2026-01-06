@@ -46,17 +46,21 @@ Neural SDE training on S&P 500 historical data:
 
 ![Training Progress](img/training_progress.png)
 
+> **Figure 1:** The loss curve shows the convergence of the Neural SDE controller. As training progresses, the model optimizes the drift term to minimize the energetic cost of control while ensuring the terminal state reaches the crash condition.
+
 ### AI Crash Generation
 Generated crash paths vs. baseline market simulation:
 
 ![Crash Paths](img/crash_paths.png)
+
+> **Figure 2:** Comparison of standard Monte Carlo paths (Blue) vs. DriftNet controlled paths (Orange). The AI successfully steers the market trajectories into the extreme crash region ($S_T < 80$) which are statistically impossible to observe in standard simulations.
 
 ### XAI: Feature Attribution
 Integrated Gradients analysis revealing crash drivers:
 
 ![XAI Attribution](img/xai_attribution.png)
 
-**Key Insight:** Volatility spikes are identified as the earliest warning signal for impending crashes.
+> **Figure 3:** Feature importance analysis using Integrated Gradients. The chart reveals that **Volatility** (Green) is the dominant predictor for crash formation, confirming the financial theory that volatility clustering precedes market downturns.
 
 ## 📂 Repository Structure
 ```
