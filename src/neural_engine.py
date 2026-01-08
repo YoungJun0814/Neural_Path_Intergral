@@ -484,13 +484,15 @@ class NeuralSDESimulator:
         S = torch.stack(S_list, dim=1)
         return S, log_weight
 
-    def train_step(self, target_prices, strikes, T, S0, r, optimizer):
+    def train_step(self, target_prices, strikes, T, S0, r, optimizer, 
+                    target_kurtosis=6.0, kurtosis_weight=0.1):
         """
-        단일 학습 스텝 (옵션 가격 매칭).
-        Single training step (option price matching).
+        단일 학습 스텝 (옵션 가격 매칭 + 첨도 제약).
+        Single training step (option price matching + kurtosis penalty).
         
         Monte Carlo 시뮬레이션으로 옵션 가격을 생성하고,
         시장 가격과의 차이(MSE)를 최소화합니다.
+        추가로, 수익률 분포의 첨도(Kurtosis)가 실제 시장과 유사하도록 학습합니다.
         
         Args:
             target_prices: 시장 옵션 가격 (타겟) / Market option prices (target)
@@ -499,6 +501,8 @@ class NeuralSDESimulator:
             S0: 초기 주가 / Initial price
             r: 무위험 이자율 / Risk-free rate
             optimizer: PyTorch 옵티마이저 / PyTorch optimizer
+            target_kurtosis: 목표 첨도 (S&P 500 일간 수익률 ~6.0) / Target kurtosis
+            kurtosis_weight: 첨도 손실 가중치 (λ) / Kurtosis loss weight
         
         Returns:
             loss: 손실값 / Loss value
@@ -530,9 +534,30 @@ class NeuralSDESimulator:
         # 할인된 평균 가격 / Discounted average price
         model_prices = torch.mean(payoffs, dim=0) * torch.exp(torch.tensor(-r * T, device=self.device))
         
-        # MSE 손실 / MSE loss
+        # =====================================================================
+        # [NEW] 첨도 손실 (Kurtosis Penalty) / Kurtosis Loss
+        # =====================================================================
+        # 일간 수익률 계산 / Calculate daily returns
+        # S shape: (num_paths, n_steps+1)
+        log_returns = torch.log(S[:, 1:] / S[:, :-1])  # (num_paths, n_steps)
+        returns_flat = log_returns.flatten()  # Flatten for kurtosis calculation
+        
+        # 첨도 계산 (Fisher's definition: Normal = 3) / Compute kurtosis
+        mean_r = torch.mean(returns_flat)
+        std_r = torch.std(returns_flat) + 1e-8  # Avoid division by zero
+        z = (returns_flat - mean_r) / std_r
+        model_kurtosis = torch.mean(z ** 4)  # Raw kurtosis (Normal = 3)
+        
+        # 첨도 손실: 목표 첨도와의 차이 / Kurtosis penalty
+        kurtosis_loss = (model_kurtosis - target_kurtosis) ** 2
+        
+        # =====================================================================
+        # 총 손실 = 가격 MSE + λ * 첨도 손실 / Total Loss
+        # =====================================================================
         target_gpu = torch.tensor(target_prices, device=self.device, dtype=torch.float32)
-        loss = torch.mean((model_prices - target_gpu) ** 2)
+        price_loss = torch.mean((model_prices - target_gpu) ** 2)
+        
+        loss = price_loss + kurtosis_weight * kurtosis_loss
         
         # 역전파 / Backpropagation
         loss.backward()
