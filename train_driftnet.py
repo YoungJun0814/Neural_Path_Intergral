@@ -29,13 +29,13 @@ IMG_SAVE_PATH = 'img/distribution_check.png'
 HIDDEN_DIM = 64
 N_LAYERS = 3
 LEARNING_RATE = 0.0001  # Further reduced for stability
-EPOCHS = 200        # Reduced for faster iteration
+EPOCHS = 200        
 BATCH_SIZE_PATHS = 1000 # Reduced for speed
 DT = 1/252.0
 T_HORIZON = 1.0 
 
 # Target Moments weights
-W_MEAN = 50.0   # Balanced adjustment for centering (Perfect Shape + Position Fix)
+W_MEAN = 50.0   # Balanced adjustment for centering
 W_STD = 100.0   # Aggressive penalty to force Vol down to 19%
 W_SKEW = 0.5
 W_KURT = 0.01   # Stable kurtosis weight
