@@ -4,9 +4,19 @@ from __future__ import annotations
 import torch
 
 from src.ai_calibrator import NeuralCalibrator
+from src.evaluation.backtest import efficiency_metrics, kupiec_pof_test
+from src.losses.distribution_match import mmd_loss, moment_match_loss
 from src.ml_models import BlackScholesModel
-from src.neural_engine import DiffNet, DriftNet, NeuralSDESimulator, VolNet
+from src.neural_engine import (
+    DiffNet,
+    DriftNet,
+    NeuralImportanceSampler,
+    NeuralSDESimulator,
+    VolNet,
+    VolNetFree,
+)
 from src.physics_engine import FractionalBrownianMotion, MarketSimulator, RBergomiSimulator
+from src.training.objectives import variance_minimization_objective
 from src.utils import git_hash, pick_device, set_seed
 
 
@@ -21,6 +31,13 @@ def test_imports_resolve():
     assert FractionalBrownianMotion is not None
     assert NeuralCalibrator is not None
     assert BlackScholesModel is not None
+    assert VolNetFree is not None
+    assert NeuralImportanceSampler is not None
+    assert mmd_loss is not None
+    assert moment_match_loss is not None
+    assert variance_minimization_objective is not None
+    assert kupiec_pof_test is not None
+    assert efficiency_metrics is not None
 
 
 def test_pick_device_returns_torch_device():
