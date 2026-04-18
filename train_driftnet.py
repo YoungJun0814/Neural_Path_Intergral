@@ -1,198 +1,177 @@
-"""
-DriftNet Training Script (Historical Data Distribution Matching)
-DriftNet 학습 스크립트 (역사적 데이터 분포 매칭)
+"""DriftNet training — distribution matching to real daily returns.
 
-This script trains the NeuralSDE model to match the statistical properties 
-(Mean, Volatility, Skewness, Kurtosis) of real S&P 500 returns.
-"""
+This is the Phase-1 rewrite of the legacy trainer.  Key differences vs. the
+pre-Phase-1 script:
 
+1. All hyper-parameters come from ``configs/default.yaml`` (section
+   ``train_ipm``).
+2. Target kurtosis defaults to the *empirical* value of the loaded returns
+   (hard-coded 6.0 removed).  The old behaviour is preserved by setting
+   ``train_ipm.target_kurtosis: 6.0`` in the config.
+3. Optional MMD loss term (``train_ipm.mmd_weight > 0``) is added next to
+   the moment-matching term.
+4. Uses ``src.utils.set_seed`` and ``src.utils.pick_device`` so runs are
+   reproducible and device-portable (CUDA / MPS / CPU).
+
+Invocation::
+
+    python main.py train_ipm --config configs/default.yaml
+    # or directly
+    python train_driftnet.py --config configs/default.yaml
+"""
+from __future__ import annotations
+
+import argparse
+import math
 import os
 import sys
+from pathlib import Path
+from typing import Optional
+
 import numpy as np
 import pandas as pd
 import torch
-import torch.optim as optim
-import matplotlib.pyplot as plt
+import yaml
 
-# Add project root to path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Allow running as a script from project root
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from src.losses.distribution_match import mmd_loss, moment_match_loss, standardized_moments
 from src.neural_engine import NeuralSDESimulator
+from src.utils import pick_device, set_seed
 
-# ==============================================================================
-# Configuration
-# ==============================================================================
-DATA_PATH = 'data/processed/spy_returns.csv'
-MODEL_SAVE_PATH = 'checkpoints/driftnet_kurtosis_corrected.pth'
-IMG_SAVE_PATH = 'img/distribution_check.png'
 
-HIDDEN_DIM = 64
-N_LAYERS = 3
-LEARNING_RATE = 0.0001  # Further reduced for stability
-EPOCHS = 200        
-BATCH_SIZE_PATHS = 1000 # Reduced for speed
-DT = 1/252.0
-T_HORIZON = 1.0 
+# -----------------------------------------------------------------------------
+# Data loading
+# -----------------------------------------------------------------------------
 
-# Target Moments weights
-W_MEAN = 50.0   # Balanced adjustment for centering
-W_STD = 100.0   # Aggressive penalty to force Vol down to 19%
-W_SKEW = 0.5
-W_KURT = 0.01   # Stable kurtosis weight
+def load_returns(data_path: str) -> np.ndarray:
+    if os.path.exists(data_path):
+        df = pd.read_csv(data_path, index_col=0, parse_dates=True)
+        if "Returns" in df.columns:
+            return df["Returns"].dropna().values.astype(np.float32)
+        if "returns" in df.columns:
+            return df["returns"].dropna().values.astype(np.float32)
+        # fallback: first numeric column
+        col = df.select_dtypes(include=[np.number]).columns[0]
+        return df[col].dropna().values.astype(np.float32)
+    # Synthetic heavy-tailed returns
+    rng = np.random.default_rng(42)
+    return (rng.standard_t(df=5, size=5000) * 0.01 + 0.0004).astype(np.float32)
 
-def load_data():
-    """Load SPY data or generate synthetic."""
-    if os.path.exists(DATA_PATH):
-        print(f"Loading data from {DATA_PATH}...")
-        df = pd.read_csv(DATA_PATH, index_col=0, parse_dates=True)
-        returns = df['Returns'].values
-    else:
-        print("⚠️ Data file not found. Using synthetic S&P 500 style data.")
-        # Synthetic data with heavy tails
-        np.random.seed(42)
-        n_days = 5000
-        # Student-t like returns (heavy tails)
-        returns = np.random.standard_t(df=5, size=n_days) * 0.01 + 0.0004
-    return returns
 
-def compute_moments(data_tensor):
-    """Compute Mean, Std, Skewness, Kurtosis of a tensor."""
-    mean = torch.mean(data_tensor)
-    std = torch.std(data_tensor) + 1e-8
-    
-    # Standardize
-    z = (data_tensor - mean) / std
-    
-    skew = torch.mean(z**3)
-    kurt = torch.mean(z**4) # Raw kurtosis (Normal=3)
-    
-    return mean, std, skew, kurt
+# -----------------------------------------------------------------------------
+# Config helpers
+# -----------------------------------------------------------------------------
 
-def main():
-    print("="*60)
-    print("🚀 Starting DriftNet Training (Distribution Matching)")
-    print("="*60)
-    
-    # 1. Setup Device
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print(f"Device: {device}")
-    
-    # 2. Prepare Data & Target Moments
-    returns = load_data()
-    real_returns = torch.tensor(returns, dtype=torch.float32, device=device)
-    
-    # Calculate Target Moments from Real Data
-    target_mean, target_std, target_skew, _ = compute_moments(real_returns)
-    target_kurt = torch.tensor(6.0, device=device) # Perfect shape target
-    
-    print(f"\n📊 Target Market Statistics (Real SPY):")
-    print(f"  Mean:     {target_mean.item()*100:.4f}%")
-    print(f"  Vol (Yr): {target_std.item()*np.sqrt(252)*100:.2f}%")
-    print(f"  Skew:     {target_skew.item():.4f}")
-    print(f"  Kurtosis: {target_kurt.item():.4f} (Goal: Perfect Shape with Slight Left Shift)")
-    
-    # 3. Initialize Model
-    # Note: We use the src.neural_engine.NeuralSDESimulator
-    simulator = NeuralSDESimulator(hidden_dim=HIDDEN_DIM, n_layers=N_LAYERS, device=device)
-    optimizer = optim.Adam(simulator.parameters(), lr=LEARNING_RATE)
-    
-    # Create checkpoints dir
-    if not os.path.exists('checkpoints'):
-        os.makedirs('checkpoints')
-        
-    # 4. Training Loop
-    print("\nTraining started...")
-    loss_history = []
-    
-    for epoch in range(EPOCHS):
+def load_config(path: Path) -> dict:
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+
+def resolve_target_kurtosis(
+    cfg_value: Optional[float], real_returns: torch.Tensor
+) -> torch.Tensor:
+    if cfg_value is None:
+        _, _, _, kurt = standardized_moments(real_returns)
+        return kurt.detach()
+    return torch.tensor(float(cfg_value), device=real_returns.device)
+
+
+# -----------------------------------------------------------------------------
+# Main loop
+# -----------------------------------------------------------------------------
+
+def main(config_path: str | Path = "configs/default.yaml") -> None:
+    cfg = load_config(Path(config_path))
+    train_cfg = cfg.get("train_ipm", {})
+
+    seed = int(cfg.get("seed", 42))
+    set_seed(seed)
+    device = pick_device(cfg.get("device"))
+
+    data_path = train_cfg.get("data_path", "data/processed/spy_returns.csv")
+    real = torch.tensor(load_returns(data_path), dtype=torch.float32, device=device)
+
+    # Targets (all computed from data unless overridden)
+    t_mean, t_std, t_skew, t_kurt_data = standardized_moments(real)
+    t_kurt = resolve_target_kurtosis(train_cfg.get("target_kurtosis"), real)
+
+    hidden_dim = int(train_cfg.get("hidden_dim", 64))
+    n_layers = int(train_cfg.get("n_layers", 3))
+    lr = float(train_cfg.get("learning_rate", 1e-4))
+    epochs = int(train_cfg.get("epochs", 200))
+    batch_paths = int(train_cfg.get("batch_size_paths", 1000))
+    dt = float(train_cfg.get("dt", 1.0 / 252.0))
+    T_horizon = float(train_cfg.get("T_horizon", 0.5))
+    S0 = float(train_cfg.get("S0", 100.0))
+
+    w_mean = float(train_cfg.get("w_mean", 50.0))
+    w_std = float(train_cfg.get("w_std", 100.0))
+    w_skew = float(train_cfg.get("w_skew", 0.5))
+    w_kurt = float(train_cfg.get("w_kurt", 0.01))
+    mmd_weight = float(train_cfg.get("mmd_weight", 0.0))
+
+    vol_head = str(train_cfg.get("vol_head", "prior"))
+
+    print("=" * 64)
+    print("DriftNet training (distribution matching)")
+    print("=" * 64)
+    print(f"device={device}  seed={seed}  vol_head={vol_head}")
+    print(
+        f"Target moments (from data): mean={t_mean.item():.6f} "
+        f"std={t_std.item():.6f} skew={t_skew.item():.4f} kurt_data={t_kurt_data.item():.3f}"
+    )
+    print(f"Effective target kurt: {t_kurt.item():.3f} (None → data)")
+
+    simulator = NeuralSDESimulator(
+        hidden_dim=hidden_dim, n_layers=n_layers, device=device, vol_head=vol_head
+    )
+    optimizer = torch.optim.Adam(simulator.parameters(), lr=lr)
+
+    save_path = Path(train_cfg.get("model_save_path", "checkpoints/driftnet_phase1.pth"))
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+
+    loss_history: list[float] = []
+    for epoch in range(1, epochs + 1):
         optimizer.zero_grad()
-        
-        # Simulate paths
-        S, v = simulator.simulate(S0=100.0, T=0.5, dt=DT, num_paths=BATCH_SIZE_PATHS, training=True)
-        
-        # Calculate Log Returns
-        # S shape: (paths, steps+1)
-        # Returns: (paths, steps)
-        model_log_returns = torch.log(S[:, 1:] / S[:, :-1])
-        model_flat_returns = model_log_returns.flatten()
-        
-        # Compute Model Moments
-        m_mean, m_std, m_skew, m_kurt = compute_moments(model_flat_returns)
-        
-        # Loss Function
-        loss_mean = (m_mean - target_mean)**2
-        loss_std  = (m_std - target_std)**2
-        loss_skew = (m_skew - target_skew)**2
-        loss_kurt = (m_kurt - target_kurt)**2
-        
-        total_loss = (W_MEAN * loss_mean + 
-                      W_STD * loss_std + 
-                      W_SKEW * loss_skew + 
-                      W_KURT * loss_kurt)
-        
-        total_loss.backward()
-        
-        # Clip gradients
-        torch.nn.utils.clip_grad_norm_(simulator.parameters(), 1.0)
-        
+        S, _v = simulator.simulate(S0=S0, T=T_horizon, dt=dt, num_paths=batch_paths, training=True)
+        log_returns = torch.log(S[:, 1:] / S[:, :-1]).flatten()
+
+        loss_mm = moment_match_loss(
+            log_returns,
+            real,
+            weights=(w_mean, w_std, w_skew, w_kurt),
+            targets=(t_mean.item(), t_std.item(), t_skew.item(), float(t_kurt.item())),
+        )
+        loss = loss_mm
+        if mmd_weight > 0.0:
+            # Sub-sample for O(n²) tractability
+            idx_m = torch.randperm(log_returns.numel(), device=device)[:512]
+            idx_r = torch.randperm(real.numel(), device=device)[:512]
+            loss = loss + mmd_weight * mmd_loss(log_returns[idx_m], real[idx_r])
+
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(list(simulator.parameters()), 1.0)
         optimizer.step()
-        
-        loss_history.append(total_loss.item())
-        
-        if (epoch+1) % 10 == 0:
-            print(f"Epoch {epoch+1:3d}/{EPOCHS} | Loss: {total_loss.item():.6f} | "
-                  f"Kurt: {m_kurt.item():.2f} | "
-                  f"Vol: {m_std.item()*np.sqrt(252)*100:.1f}%")
 
-        # Periodic Save & Plot
-        if (epoch+1) % 50 == 0:
-            # Save Checkpoint
-            simulator.save(MODEL_SAVE_PATH.replace('.pth', f'_ep{epoch+1}.pth'))
-            
-            # Generate Interim Plot
+        loss_history.append(float(loss.item()))
+        if epoch % max(1, epochs // 20) == 0 or epoch == 1:
             with torch.no_grad():
-                S_test, _ = simulator.simulate(S0=100.0, T=1.0, dt=DT, num_paths=2000, training=False)
-                test_returns = torch.log(S_test[:, 1:] / S_test[:, :-1]).flatten().cpu().numpy()
-            
-            plt.figure(figsize=(10, 6))
-            plt.hist(returns, bins=100, density=True, alpha=0.5, label='Real SPY', color='blue')
-            plt.hist(test_returns, bins=100, density=True, alpha=0.5, label=f'Model (Ep {epoch+1})', color='red')
-            plt.title(f'Return Distribution at Epoch {epoch+1}\nKurtosis: {compute_moments(torch.tensor(test_returns))[3]:.2f}')
-            plt.xlabel('Daily Return')
-            plt.ylabel('Density')
-            plt.legend()
-            plt.grid(True, alpha=0.3)
-            plt.savefig(IMG_SAVE_PATH.replace('.png', f'_ep{epoch+1}.png'))
-            plt.close()
+                m, s, sk, k = standardized_moments(log_returns.detach())
+            print(
+                f"Epoch {epoch:4d}/{epochs} | loss={loss.item():.5f} "
+                f"mean={m.item():.5f} std={s.item():.5f} "
+                f"skew={sk.item():.3f} kurt={k.item():.3f} "
+                f"vol_ann={s.item() * math.sqrt(1.0 / dt) * 100:.1f}%"
+            )
 
-    # 5. Save Model
-    simulator.save(MODEL_SAVE_PATH)
-    print(f"\n✅ Model saved to {MODEL_SAVE_PATH}")
-    
-    # 6. Final Validation & Visualization
-    print("\nGenerating Validation Plot...")
-    with torch.no_grad():
-        S_test, _ = simulator.simulate(S0=100.0, T=1.0, dt=DT, num_paths=5000, training=False)
-        test_returns = torch.log(S_test[:, 1:] / S_test[:, :-1]).flatten().cpu().numpy()
-    
-    plt.figure(figsize=(10, 6))
-    
-    # Real Data
-    plt.hist(returns, bins=100, density=True, alpha=0.5, label='Real SPY', color='blue')
-    
-    # Model Data
-    plt.hist(test_returns, bins=100, density=True, alpha=0.5, label='Neural SDE (Corrected)', color='red')
-    
-    plt.title(f'Return Distribution: Real vs Neural SDE (Kurtosis Adjusted)\nFinal Kurtosis: {compute_moments(torch.tensor(test_returns))[3]:.2f}')
-    plt.xlabel('Daily Return')
-    plt.ylabel('Density')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    
-    if not os.path.exists('img'):
-        os.makedirs('img')
-    plt.savefig(IMG_SAVE_PATH)
-    print(f"✅ Plot saved to {IMG_SAVE_PATH}")
+    simulator.save(str(save_path))
+    print(f"Saved model → {save_path}")
+
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="DriftNet distribution-matching trainer.")
+    parser.add_argument("--config", type=Path, default=Path("configs/default.yaml"))
+    args = parser.parse_args()
+    main(args.config)

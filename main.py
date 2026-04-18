@@ -16,11 +16,6 @@ import sys
 import time
 from pathlib import Path
 
-import torch
-import yaml
-
-from src.utils import set_seed, git_hash, pick_device
-
 
 # -----------------------------------------------------------------------------
 # Subcommands
@@ -28,35 +23,61 @@ from src.utils import set_seed, git_hash, pick_device
 
 def cmd_simulate(cfg: dict) -> int:
     """Run a forward simulation under the specified model."""
-    from src.physics_engine import MarketSimulator
+    from src.utils import pick_device  # local imports keep --help torch-free
 
     device = pick_device(cfg.get("device"))
-    heston_cfg = cfg["heston"]
-    sim = MarketSimulator(
-        mu=heston_cfg["mu"],
-        kappa=heston_cfg["kappa"],
-        theta=heston_cfg["theta"],
-        xi=heston_cfg["xi"],
-        rho=heston_cfg["rho"],
-        jump_lambda=heston_cfg.get("jump_lambda", 0.0),
-        jump_mean=heston_cfg.get("jump_mean", 0.0),
-        jump_std=heston_cfg.get("jump_std", 0.0),
-        device=device,
-    )
     sim_cfg = cfg["simulate"]
+    model_type = sim_cfg.get("model_type", "heston")
     t0 = time.perf_counter()
-    S, v = sim.simulate(
-        S0=sim_cfg["S0"],
-        v0=sim_cfg["v0"],
-        T=sim_cfg["T"],
-        dt=sim_cfg["dt"],
-        num_paths=sim_cfg["num_paths"],
-        model_type=sim_cfg.get("model_type", "heston"),
-    )
+
+    if model_type == "rbergomi":
+        from src.physics_engine import RBergomiSimulator
+
+        rb = cfg.get("rbergomi", {})
+        sim = RBergomiSimulator(
+            H=rb.get("H", 0.07),
+            eta=rb.get("eta", 1.9),
+            xi=rb.get("xi", 0.235),
+            rho=rb.get("rho", -0.9),
+            kappa_hybrid=rb.get("kappa_hybrid", 1),
+            device=device,
+        )
+        S, v = sim.simulate(
+            S0=sim_cfg["S0"],
+            T=sim_cfg["T"],
+            dt=sim_cfg["dt"],
+            num_paths=sim_cfg["num_paths"],
+            mu=cfg.get("heston", {}).get("mu", 0.0),
+        )
+    else:
+        from src.physics_engine import MarketSimulator
+
+        heston_cfg = cfg["heston"]
+        sim = MarketSimulator(
+            mu=heston_cfg["mu"],
+            kappa=heston_cfg["kappa"],
+            theta=heston_cfg["theta"],
+            xi=heston_cfg["xi"],
+            rho=heston_cfg["rho"],
+            jump_lambda=heston_cfg.get("jump_lambda", 0.0),
+            jump_mean=heston_cfg.get("jump_mean", 0.0),
+            jump_std=heston_cfg.get("jump_std", 0.0),
+            vol_jump_mean=heston_cfg.get("vol_jump_mean", 0.0),
+            device=device,
+        )
+        S, v = sim.simulate(
+            S0=sim_cfg["S0"],
+            v0=sim_cfg["v0"],
+            T=sim_cfg["T"],
+            dt=sim_cfg["dt"],
+            num_paths=sim_cfg["num_paths"],
+            model_type=model_type,
+        )
+
     elapsed = time.perf_counter() - t0
     S_T = S[:, -1]
     out = {
-        "model": sim_cfg.get("model_type", "heston"),
+        "model": model_type,
         "num_paths": int(sim_cfg["num_paths"]),
         "T": sim_cfg["T"],
         "S_T_mean": float(S_T.mean().item()),
@@ -72,6 +93,7 @@ def cmd_simulate(cfg: dict) -> int:
 def cmd_calibrate(cfg: dict) -> int:
     """Train the NeuralCalibrator on synthetic Heston samples (baseline)."""
     from src.ai_calibrator import NeuralCalibrator
+    from src.utils import pick_device
 
     device = pick_device(cfg.get("device"))
     cal_cfg = cfg.get("calibrate", {})
@@ -84,13 +106,13 @@ def cmd_calibrate(cfg: dict) -> int:
     return 0
 
 
-def cmd_train_ipm(cfg: dict) -> int:
+def cmd_train_ipm(cfg: dict, config_path: Path) -> int:
     """Train the NeuralSDESimulator on real return data (distribution matching)."""
     # Late import so `python main.py --help` stays fast.
     from train_driftnet import main as train_main
 
     print("Delegating to train_driftnet.main() ...")
-    train_main()
+    train_main(config_path)
     return 0
 
 
@@ -132,6 +154,13 @@ def main(argv: list[str] | None = None) -> int:
     if not args.config.exists():
         print(f"Config not found: {args.config}", file=sys.stderr)
         return 2
+
+    # Late imports so `python main.py --help` does not require torch/yaml.
+    import yaml  # noqa: WPS433
+    import torch  # noqa: WPS433
+
+    from src.utils import git_hash, set_seed
+
     cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
     seed = args.seed if args.seed is not None else cfg.get("seed", 42)
     set_seed(seed)
@@ -139,7 +168,11 @@ def main(argv: list[str] | None = None) -> int:
         f"[driftnet] mode={args.mode} seed={seed} "
         f"git={git_hash()} torch={torch.__version__}"
     )
-    return SUBCMDS[args.mode](cfg)
+    handler = SUBCMDS[args.mode]
+    # train_ipm needs the config path so train_driftnet can pick up config overrides
+    if args.mode == "train_ipm":
+        return handler(cfg, args.config)
+    return handler(cfg)
 
 
 if __name__ == "__main__":

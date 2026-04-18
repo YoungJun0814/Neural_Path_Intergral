@@ -1,38 +1,77 @@
-# Default config for driftnet CLI
+# Default config for driftnet CLI.
+# See docs/formulation.md for symbol meanings.
+
 seed: 42
-device: null   # null → auto (cuda > mps > cpu); override with "cpu" or "cuda:0"
+device: null          # null → auto (cuda > mps > cpu); override with "cpu" or "cuda:0"
 
+# -----------------------------------------------------------------------------
+# Heston / Bates / SVJJ
+# -----------------------------------------------------------------------------
 heston:
-  mu: 0.05          # risk-free rate under Q-measure
-  kappa: 2.0        # mean reversion speed
-  theta: 0.04       # long-term variance
-  xi: 0.5           # vol-of-vol
-  rho: -0.7         # leverage correlation
-  jump_lambda: 0.0
-  jump_mean: 0.0
-  jump_std: 0.0
+  mu: 0.05            # drift under simulation measure
+  kappa: 2.0          # variance mean-reversion speed
+  theta: 0.04         # long-term variance
+  xi: 0.5             # vol-of-vol
+  rho: -0.7           # leverage correlation
+  jump_lambda: 0.0    # Poisson intensity for Bates/SVJJ
+  jump_mean: 0.0      # log-jump mean
+  jump_std: 0.0       # log-jump std
+  vol_jump_mean: 0.0  # exponential mean for SVJJ vol jumps
 
+# -----------------------------------------------------------------------------
+# Rough Bergomi (rBergomi) — hybrid scheme (BLP 2017)
+# -----------------------------------------------------------------------------
+rbergomi:
+  H: 0.07             # Hurst exponent (typ. 0.05–0.15)
+  eta: 1.9            # vol-of-vol
+  xi: 0.235           # forward-variance level
+  rho: -0.9           # price–vol correlation
+  kappa_hybrid: 1     # exact sub-interval count
+
+# -----------------------------------------------------------------------------
+# Girsanov / Neural Importance Sampling
+# -----------------------------------------------------------------------------
+girsanov:
+  u_bound: 1.0        # tanh clamp on control output
+  kl_weight: 0.0      # λ in KL-regularized loss (0 = pure VM)
+  apply_v_drift_correction: true
+
+# -----------------------------------------------------------------------------
+# Forward simulation (main.py simulate)
+# -----------------------------------------------------------------------------
 simulate:
-  model_type: heston  # one of: heston, bates, svjj
+  model_type: heston  # heston | bates | svjj | rbergomi
   S0: 100.0
   v0: 0.04
   T: 0.5
-  dt: 0.00396825     # 1/252
+  dt: 0.00396825      # 1/252
   num_paths: 20000
 
+# -----------------------------------------------------------------------------
+# Heston → neural calibration (Phase 3 placeholder)
+# -----------------------------------------------------------------------------
 calibrate:
   input_dim: 5
   hidden_dim: 64
 
+# -----------------------------------------------------------------------------
+# NeuralSDE / DriftNet training
+# -----------------------------------------------------------------------------
 train_ipm:
+  vol_head: prior     # "prior" (Heston-anchored) or "free" (unconstrained)
   hidden_dim: 64
   n_layers: 3
   learning_rate: 1.0e-4
   epochs: 200
   batch_size_paths: 1000
-  dt: 0.00396825     # 1/252
-  target_kurtosis: null  # null → compute from data
+  dt: 0.00396825
+  T_horizon: 0.5
+  S0: 100.0
+  target_kurtosis: null   # null → compute from data
   w_mean: 50.0
   w_std: 100.0
   w_skew: 0.5
   w_kurt: 0.01
+  mmd_weight: 0.0
+  data_path: data/processed/spy_returns.csv
+  model_save_path: checkpoints/driftnet_phase1.pth
