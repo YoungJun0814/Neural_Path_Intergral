@@ -1,0 +1,32 @@
+# Normalize line endings to LF for all text files
+* text=auto eol=lf
+
+# Python
+*.py text eol=lf
+*.pyi text eol=lf
+
+# Notebooks (JSON, should be LF)
+*.ipynb text eol=lf
+
+# Config / docs
+*.md text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.txt text eol=lf
+*.cfg text eol=lf
+*.ini text eol=lf
+
+# Shell
+*.sh text eol=lf
+
+# Binary
+*.pth binary
+*.pkl binary
+*.npy binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+*.csv binary

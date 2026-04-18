@@ -1,0 +1,71 @@
+# Byte-compiled
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+wheels/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environments
+.env
+.envrc
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Testing / Coverage
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+
+# Model checkpoints — keep directory via .gitkeep but ignore weights
+checkpoints/*.pth
+checkpoints/*.pt
+checkpoints/*.ckpt
+!checkpoints/.gitkeep
+
+# Raw data
+data/raw/*
+!data/raw/.gitkeep
+
+# Processed data (allow small CSVs; ignore large)
+data/processed/*.parquet
+data/processed/*.h5
+
+# Experiments / MLflow / Wandb
+mlruns/
+wandb/
+experiments/*/checkpoints/
+experiments/*/runs/
+
+# Misc
+*.log
+*.tmp
+*.bak

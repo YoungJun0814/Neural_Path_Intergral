@@ -1,0 +1,15 @@
+-r requirements.txt
+
+# Testing
+pytest>=7.4
+pytest-cov>=4.1
+pytest-xdist>=3.3
+hypothesis>=6.80
+
+# Linting / Formatting
+ruff>=0.1
+mypy>=1.5
+
+# Notebook utilities
+jupyter>=1.0
+nbformat>=5.9
