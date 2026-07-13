@@ -1711,6 +1711,12 @@ test와 Ruff/Mypy를 통과했다. 이 gate는 rough-volatility 성능 주장의
 
 ### Phase PI2 — Heston full two-driver oracle (4–7주)
 
+상태 (2026-07-13): **진행 중**. independent-basis two-driver simulator,
+float64 2D likelihood/energy, optional proposal/target Brownian 기록, one-driver
+compatibility, pathwise reconstruction 및 fixed-control unbiasedness gate까지
+완료했다. Soft conditional \(h\), oracle gradient와 objective benchmark는 남아
+있으므로 G-PI2는 아직 통과하지 않았다.
+
 작업:
 
 - two-driver Heston simulator
@@ -2135,10 +2141,10 @@ Figures:
 
 ### Week 3
 
-- [ ] Heston two-driver simulator API
-- [ ] 2D likelihood
-- [ ] one-driver backward compatibility
-- [ ] path reconstruction tests
+- [x] Heston two-driver simulator API
+- [x] 2D likelihood
+- [x] one-driver backward compatibility
+- [x] path reconstruction tests
 
 ### Week 4
 

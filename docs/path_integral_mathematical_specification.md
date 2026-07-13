@@ -294,6 +294,45 @@ The following claims are prohibited without a separate proof:
 
 ## 10. Code-to-mathematics map
 
+### 10.1 Independent-basis two-driver Heston implementation
+
+The PI2 simulator uses
+
+$$
+\begin{aligned}
+d\log S_t
+&=\left(\mu-\frac12v_t\right)dt
+  +\sqrt{v_t}\,dB_t^{1,\mathbb M},\\
+dv_t
+&=\kappa(\theta-v_t)dt
+  +\xi\sqrt{v_t}\left(
+    \rho\,dB_t^{1,\mathbb M}
+    +\sqrt{1-\rho^2}\,dB_t^{2,\mathbb M}
+  \right).
+\end{aligned}
+$$
+
+Under a two-coordinate proposal, the discrete drifts added to log spot and
+variance are respectively
+
+$$
+\sqrt{v_k}u_k^1,
+\qquad
+\xi\sqrt{v_k}\left(\rho u_k^1+\sqrt{1-\rho^2}u_k^2\right).
+$$
+
+The simulator returns the two-dimensional likelihood from Section 5 and,
+optionally, proposal increments, applied controls, and reconstructed target
+increments. Brownian histories are disabled for large evaluation batches to
+avoid retaining three `(paths, steps, 2)` tensors. Log likelihood and control
+energy are accumulated in float64 even when state paths use float32.
+
+Controls are evaluated from `(time, current spot, current variance, running
+average)` before the corresponding increments are sampled. Setting \(u^2=0\)
+is a tested compatibility restriction that recovers the existing one-driver
+Heston simulator; it is not a claim that one driver spans the full optimal
+control.
+
 | Mathematical object | Code |
 |---|---|
 | \(\Phi_{\tau,K}\) | `src.path_integral.terminal_left_tail_potential` |
@@ -304,6 +343,8 @@ The following claims are prohibited without a separate proof:
 | Gaussian analytic gate | `src.path_integral.gaussian_oracles` |
 | constant PICE projection | `src.path_integral.fit_constant_pice` |
 | candidate Brownian residual | `src.path_integral.reconstruct_candidate_increments` |
+| two-driver controlled Heston | `MarketSimulator.simulate_controlled_two_driver` |
+| Heston path/coordinate output | `TwoDriverHestonPaths` |
 
 ## 11. PI0–PI1 verification gates
 

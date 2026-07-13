@@ -15,12 +15,34 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable
+from dataclasses import dataclass
 
 import torch
 
 # -----------------------------------------------------------------------------
 # 1. Heston / Bates / SVJJ
 # -----------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class TwoDriverHestonPaths:
+    """Output of the independent-basis two-driver Heston simulator.
+
+    Brownian histories are optional because retaining three
+    ``(paths, steps, 2)`` tensors is useful for training and reconstruction but
+    too expensive for large frozen-control evaluations.
+    """
+
+    spot: torch.Tensor
+    variance: torch.Tensor
+    log_likelihood: torch.Tensor
+    control_energy: torch.Tensor
+    running_spot_integral: torch.Tensor
+    barrier_hit: torch.Tensor | None
+    step_dt: float
+    proposal_brownian_increments: torch.Tensor | None
+    target_brownian_increments: torch.Tensor | None
+    controls: torch.Tensor | None
 
 
 class MarketSimulator:
@@ -335,6 +357,208 @@ class MarketSimulator:
         v = torch.stack(v_list, dim=1)
         log_weights = -int_u_dW - 0.5 * int_u_sq_dt
         return S, v, log_weights, barrier_hit, running_int_S
+
+    def simulate_controlled_two_driver(
+        self,
+        S0: float,
+        v0: float,
+        T: float,
+        dt: float,
+        num_paths: int,
+        control_fn: Callable[
+            [float, torch.Tensor, torch.Tensor, torch.Tensor], torch.Tensor
+        ]
+        | None = None,
+        barrier_level: float | None = None,
+        barrier_type: str = "down-out",
+        record_brownian: bool = False,
+        dtype: torch.dtype | None = None,
+    ) -> TwoDriverHestonPaths:
+        r"""Simulate controlled Heston paths in an independent Brownian basis.
+
+        The target and proposal coordinates satisfy
+
+        ``dB^M_i = dB^Q_i + u_i dt``, for ``i=1,2``.
+
+        ``control_fn`` must return shape ``(num_paths, 2)``.  The first control
+        shifts the spot Brownian coordinate; both coordinates shift variance
+        through ``rho*u_1 + sqrt(1-rho^2)*u_2``.  The returned likelihood is
+        always ``log(dM/dQ)`` and is accumulated in float64.
+
+        Set ``record_brownian=True`` only for training or verification batches.
+        Controls are evaluated from the current state before the matching
+        Brownian increments are sampled, enforcing the simulator-side causal
+        ordering required by path-integral feedback control.
+        """
+        if not math.isfinite(S0) or S0 <= 0.0:
+            raise ValueError(f"S0 must be finite and positive; got {S0}")
+        if not math.isfinite(T) or not math.isfinite(dt) or T <= 0.0 or dt <= 0.0:
+            raise ValueError(f"T and dt must be finite and positive; got T={T}, dt={dt}")
+        if num_paths <= 0:
+            raise ValueError(f"num_paths must be positive; got {num_paths}")
+        if not math.isfinite(v0) or v0 < 0.0:
+            raise ValueError(f"v0 must be finite and nonnegative; got {v0}")
+        if barrier_level is not None and not math.isfinite(barrier_level):
+            raise ValueError("barrier_level must be finite when provided")
+        if barrier_type not in ("down-out", "up-out"):
+            raise ValueError(f"unknown barrier_type: {barrier_type}")
+
+        params = self._resolved_params(None)
+        rho = float(params["rho"])
+        if not math.isfinite(rho) or not -1.0 <= rho <= 1.0:
+            raise ValueError(f"rho must lie in [-1, 1]; got {rho}")
+        sqrt_one_minus_rho2 = math.sqrt(max(1.0 - rho * rho, 0.0))
+        simulation_dtype = dtype if dtype is not None else torch.get_default_dtype()
+        if not torch.empty((), dtype=simulation_dtype).is_floating_point():
+            raise TypeError("dtype must be a floating-point torch dtype")
+
+        n_steps = max(1, int(math.ceil(T / dt)))
+        step_dt = T / n_steps
+        sqrt_dt = math.sqrt(step_dt)
+
+        current_spot = torch.full(
+            (num_paths,), float(S0), device=self.device, dtype=simulation_dtype
+        )
+        current_variance_state = torch.full(
+            (num_paths,), float(v0), device=self.device, dtype=simulation_dtype
+        )
+        current_variance = torch.clamp(current_variance_state, min=0.0)
+        spot_history = [current_spot]
+        variance_history = [current_variance]
+
+        stochastic_log_term = torch.zeros(num_paths, device=self.device, dtype=torch.float64)
+        control_energy = torch.zeros(num_paths, device=self.device, dtype=torch.float64)
+        running_spot_integral = torch.zeros(
+            num_paths, device=self.device, dtype=simulation_dtype
+        )
+        barrier_hit = (
+            torch.zeros(num_paths, dtype=torch.bool, device=self.device)
+            if barrier_level is not None
+            else None
+        )
+
+        proposal_history: list[torch.Tensor] | None = [] if record_brownian else None
+        target_history: list[torch.Tensor] | None = [] if record_brownian else None
+        control_history: list[torch.Tensor] | None = [] if record_brownian else None
+
+        for step in range(n_steps):
+            time = step * step_dt
+            if time > 1e-9:
+                running_average = running_spot_integral / time
+            else:
+                running_average = current_spot
+
+            if control_fn is None:
+                applied_control = torch.zeros(
+                    (num_paths, 2), device=self.device, dtype=simulation_dtype
+                )
+            else:
+                applied_control = control_fn(
+                    time, current_spot, current_variance, running_average
+                )
+                if not isinstance(applied_control, torch.Tensor):
+                    raise TypeError("two-driver control_fn must return a torch.Tensor")
+                if applied_control.shape != (num_paths, 2):
+                    raise ValueError(
+                        "two-driver control_fn must return shape (num_paths, 2); "
+                        f"got {tuple(applied_control.shape)}"
+                    )
+                if applied_control.device != self.device:
+                    raise ValueError("two-driver control output must be on the simulator device")
+                if applied_control.dtype != simulation_dtype:
+                    raise ValueError("two-driver control output must match the simulation dtype")
+                if not torch.isfinite(applied_control).all():
+                    raise ValueError("two-driver control output must be finite")
+
+            # Causal ordering: sample increments only after evaluating u(t, X_t).
+            proposal_brownian_1 = (
+                torch.randn(num_paths, device=self.device, dtype=simulation_dtype) * sqrt_dt
+            )
+            proposal_brownian_2 = (
+                torch.randn(num_paths, device=self.device, dtype=simulation_dtype) * sqrt_dt
+            )
+            proposal_increment = torch.stack(
+                (proposal_brownian_1, proposal_brownian_2), dim=-1
+            )
+            control_1 = applied_control[:, 0]
+            control_2 = applied_control[:, 1]
+
+            variance_plus = torch.clamp(current_variance, min=0.0)
+            sqrt_variance = torch.sqrt(variance_plus)
+            next_spot = current_spot * torch.exp(
+                (
+                    params["mu"]
+                    + sqrt_variance * control_1
+                    - 0.5 * variance_plus
+                )
+                * step_dt
+                + sqrt_variance * proposal_brownian_1
+            )
+
+            variance_control = rho * control_1 + sqrt_one_minus_rho2 * control_2
+            variance_brownian = (
+                rho * proposal_brownian_1
+                + sqrt_one_minus_rho2 * proposal_brownian_2
+            )
+            variance_drift = params["kappa"] * (params["theta"] - variance_plus)
+            variance_drift = variance_drift + params["xi"] * sqrt_variance * variance_control
+            next_variance_state = (
+                current_variance_state
+                + variance_drift * step_dt
+                + params["xi"] * sqrt_variance * variance_brownian
+            )
+            next_variance = torch.clamp(next_variance_state, min=0.0)
+
+            applied_control_64 = applied_control.to(torch.float64)
+            proposal_increment_64 = proposal_increment.to(torch.float64)
+            stochastic_log_term = stochastic_log_term + torch.sum(
+                applied_control_64 * proposal_increment_64, dim=-1
+            )
+            control_energy = control_energy + step_dt * torch.sum(
+                applied_control_64.square(), dim=-1
+            )
+
+            if proposal_history is not None:
+                assert target_history is not None and control_history is not None
+                proposal_history.append(proposal_increment)
+                target_history.append(proposal_increment + applied_control * step_dt)
+                control_history.append(applied_control)
+
+            running_spot_integral = running_spot_integral + current_spot * step_dt
+            if barrier_hit is not None:
+                assert barrier_level is not None
+                if barrier_type == "down-out":
+                    barrier_hit = barrier_hit | (next_spot <= barrier_level)
+                else:
+                    barrier_hit = barrier_hit | (next_spot >= barrier_level)
+
+            spot_history.append(next_spot)
+            variance_history.append(next_variance)
+            current_spot = next_spot
+            current_variance_state = next_variance_state
+            current_variance = next_variance
+
+        proposal_increments = (
+            torch.stack(proposal_history, dim=1) if proposal_history is not None else None
+        )
+        target_increments = (
+            torch.stack(target_history, dim=1) if target_history is not None else None
+        )
+        recorded_controls = (
+            torch.stack(control_history, dim=1) if control_history is not None else None
+        )
+        return TwoDriverHestonPaths(
+            spot=torch.stack(spot_history, dim=1),
+            variance=torch.stack(variance_history, dim=1),
+            log_likelihood=-stochastic_log_term - 0.5 * control_energy,
+            control_energy=control_energy,
+            running_spot_integral=running_spot_integral,
+            barrier_hit=barrier_hit,
+            step_dt=step_dt,
+            proposal_brownian_increments=proposal_increments,
+            target_brownian_increments=target_increments,
+            controls=recorded_controls,
+        )
 
     # ------------------------------------------------------------------
     # 1.3 Helpers
