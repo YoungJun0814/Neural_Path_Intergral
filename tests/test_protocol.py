@@ -15,6 +15,15 @@ def test_repository_g2_protocol_is_frozen_and_disjoint() -> None:
     assert len(protocol.seeds.evaluation) == 20
     assert len(protocol.sha256) == 64
 
+    sealed = load_frozen_protocol(root / "configs" / "g2_heston_benchmark_v2.yaml")
+    assert sealed.payload["evaluation"]["sealed"] is True
+    assert not (set(protocol.seeds.evaluation) & set(sealed.seeds.evaluation))
+
+    confirmatory = load_frozen_protocol(root / "configs" / "g2_heston_confirmatory_v3.yaml")
+    assert confirmatory.payload["selection"]["architectures"] == ["affine"]
+    assert not (set(sealed.seeds.validation) & set(confirmatory.seeds.validation))
+    assert not (set(sealed.seeds.evaluation) & set(confirmatory.seeds.evaluation))
+
 
 def test_overlapping_seed_groups_are_rejected() -> None:
     split = FrozenSeedSplit(train=(1, 2), validation=(3, 4), evaluation=(2, 5))

@@ -48,6 +48,71 @@ def test_control_warm_start_is_exactly_constant() -> None:
     assert torch.allclose(output, torch.full_like(output, -2.25), atol=1e-6)
 
 
+def test_affine_control_is_exact_at_warm_start_and_state_dependent_after_update() -> None:
+    control = MarkovianHestonControl(
+        initial_spot=100.0,
+        barrier=75.0,
+        maturity=0.5,
+        variance_scale=0.04,
+        architecture="affine",
+        feature_map="linear",
+        control_bound=8.0,
+        initial_constant=-2.0,
+    )
+    spot = torch.tensor([80.0, 120.0])
+    variance = torch.tensor([0.02, 0.08])
+    initial = control(0.2, spot, variance, None)
+    assert torch.allclose(initial, torch.full_like(initial, -2.0), atol=1e-6)
+
+    with torch.no_grad():
+        control.output.weight[0, 0] = 0.2
+    assert control.output.in_features == 3
+    updated = control(0.2, spot, variance, None)
+    assert updated[0] != updated[1]
+
+
+def test_linear_and_log_features_share_exact_constant_warm_start() -> None:
+    outputs = []
+    for feature_map in ("linear", "log"):
+        control = MarkovianHestonControl(
+            initial_spot=100.0,
+            barrier=75.0,
+            maturity=0.5,
+            variance_scale=0.04,
+            architecture="affine",
+            feature_map=feature_map,
+            initial_constant=-1.5,
+        )
+        outputs.append(
+            control(
+                0.1,
+                torch.tensor([60.0, 140.0]),
+                torch.tensor([0.01, 0.1]),
+                None,
+            )
+        )
+    assert torch.allclose(outputs[0], outputs[1], atol=1e-6)
+
+
+def test_frozen_affine_inference_callable_matches_module() -> None:
+    control = MarkovianHestonControl(
+        initial_spot=100.0,
+        barrier=75.0,
+        maturity=0.5,
+        variance_scale=0.04,
+        architecture="affine",
+        feature_map="linear",
+        initial_constant=-2.0,
+    )
+    with torch.no_grad():
+        control.output.weight.copy_(torch.tensor([[0.2, -0.1, 0.05]]))
+    spot = torch.tensor([80.0, 120.0])
+    variance = torch.tensor([0.02, 0.08])
+    expected = control(0.2, spot, variance, None)
+    actual = control.inference_control_fn()(0.2, spot, variance, None)
+    assert torch.allclose(actual, expected, atol=2e-7, rtol=2e-7)
+
+
 @pytest.mark.parametrize(
     "objective", ["scaled_second_moment", "log_second_moment", "entropy_stress"]
 )
@@ -88,12 +153,13 @@ def test_trainer_uses_disjoint_validation_and_restores_best_checkpoint() -> None
         objective="log_second_moment",
         train_seeds=(11, 12),
         validation_seeds=(21, 22),
-        epochs=2,
+        epochs=4,
         paths_per_batch=1_000,
         validation_paths=1_000,
         validate_every=1,
     )
-    assert len(result.history) == 2
+    assert len(result.history) == 4
+    assert len({item.train_seed for item in result.history}) == 4
     assert math.isfinite(result.best_validation_log_second_moment)
 
     with pytest.raises(ValueError, match="disjoint"):

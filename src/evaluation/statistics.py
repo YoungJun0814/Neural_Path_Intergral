@@ -16,6 +16,7 @@ class RepeatedEstimateReport:
     mean_estimate: float
     bias: float
     bias_z_score: float
+    reported_bias_z_score: float
     empirical_standard_deviation: float
     mean_reported_standard_error: float
     relative_bias: float
@@ -55,6 +56,11 @@ def repeated_estimate_report(
         bias_z = bias / standard_error_of_mean
     else:
         bias_z = 0.0 if bias == 0.0 else math.copysign(math.inf, bias)
+    reported_standard_error_of_mean = float(math.sqrt(np.sum(errors**2)) / runs)
+    if reported_standard_error_of_mean > 0.0:
+        reported_bias_z = bias / reported_standard_error_of_mean
+    else:
+        reported_bias_z = 0.0 if bias == 0.0 else math.copysign(math.inf, bias)
 
     critical = float(norm.ppf(0.5 + confidence_level / 2.0))
     covered = (values - critical * errors <= truth) & (truth <= values + critical * errors)
@@ -65,6 +71,7 @@ def repeated_estimate_report(
         mean_estimate=mean,
         bias=bias,
         bias_z_score=float(bias_z),
+        reported_bias_z_score=float(reported_bias_z),
         empirical_standard_deviation=empirical_std,
         mean_reported_standard_error=mean_se,
         relative_bias=bias / truth,

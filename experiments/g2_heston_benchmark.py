@@ -120,15 +120,16 @@ def _sample_feedback_is(
 ) -> dict[str, Any]:
     torch.manual_seed(seed)
     control.eval()
+    inference_control = control.inference_control_fn()
     start = time.perf_counter()
-    with torch.no_grad():
+    with torch.inference_mode():
         paths, _variance, log_weight, _barrier, _average = simulator.simulate_controlled(
             S0=float(model["spot"]),
             v0=float(model["variance"]),
             T=float(model["maturity"]),
             dt=float(model["dt"]),
             num_paths=num_paths,
-            control_fn=control,
+            control_fn=inference_control,
         )
     elapsed = time.perf_counter() - start
     event = (paths[:, -1] <= threshold).to(log_weight.dtype)

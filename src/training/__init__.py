@@ -11,6 +11,8 @@ from .cem import (
     fit_constant_control_cem,
 )
 from .markov_control import (
+    ArchitectureName,
+    FeatureMapName,
     MarkovianHestonControl,
     MarkovObjectiveDiagnostics,
     MarkovTrainingEpoch,
@@ -33,6 +35,8 @@ __all__ = [
     "HestonTerminalLossSampler",
     "fit_constant_control_cem",
     "MarkovianHestonControl",
+    "ArchitectureName",
+    "FeatureMapName",
     "MarkovObjectiveDiagnostics",
     "MarkovTrainingEpoch",
     "MarkovTrainingResult",

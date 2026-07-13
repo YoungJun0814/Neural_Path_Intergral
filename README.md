@@ -23,6 +23,11 @@ The implementation-aligned equations are in
 The current G2 gate decision is recorded in
 [`docs/phase_reviews/G2_SMOKE_EXECUTION_2026-07-13.md`](docs/phase_reviews/G2_SMOKE_EXECUTION_2026-07-13.md).
 
+For a Korean explanation of the current architecture and completed work, see
+[`docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md`](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md).
+The latest sealed confirmatory review is
+[`docs/phase_reviews/G2_V3_CONFIRMATORY_REVIEW_2026-07-13.md`](docs/phase_reviews/G2_V3_CONFIRMATORY_REVIEW_2026-07-13.md).
+
 Run the non-publication G2 smoke pipeline with:
 
 ```bash

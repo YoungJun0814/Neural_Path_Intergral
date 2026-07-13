@@ -1,0 +1,61 @@
+schema_version: 3
+protocol_id: g2-heston-affine-confirmatory-v3-sealed
+frozen: true
+
+# v3 was created after v2 audit exposed fixed-batch overfitting. All validation,
+# audit, and evaluation roots are new. The evaluation group stays sealed until
+# every rarity level passes its independent audit gate.
+seeds:
+  train: [6101, 6102, 6103, 6104, 6105]
+  validation: [7101, 7102, 7103, 7104, 7105, 7106]
+  evaluation: [11101, 11102, 11103, 11104, 11105, 11106, 11107, 11108, 11109, 11110,
+               11111, 11112, 11113, 11114, 11115, 11116, 11117, 11118, 11119, 11120]
+
+model:
+  spot: 100.0
+  variance: 0.04
+  maturity: 1.0
+  rate: 0.0
+  dividend_yield: 0.0
+  kappa: 1.5
+  theta: 0.04
+  xi: 0.30
+  rho: -0.70
+  dt: 0.00390625
+
+events:
+  target_probabilities: [1.0e-4, 1.0e-5, 1.0e-6]
+  definition: terminal_spot_at_or_below_reference_quantile
+
+cem:
+  paths_per_iteration: 30000
+  max_iterations: 8
+  elite_quantile: 0.90
+  smoothing: 0.70
+  initial_control: -1.0
+
+selection:
+  architectures: [affine]
+  objectives: [log_second_moment]
+  learning_rates: [1.0e-3]
+  affine_feature_map: linear
+  mlp_feature_map: log
+  hidden_dim: 32
+  n_layers: 2
+  control_bound: 8.0
+  epochs: 50
+  paths_per_batch: 5000
+  validation_paths: 10000
+  validate_every: 5
+  gradient_clip: 5.0
+  minimum_online_vrf_vs_cem: 1.0
+  maximum_absolute_bias_z: 2.58
+  minimum_validation_ci_coverage: 0.80
+  validation_selection_seed_count: 4
+  audit_paths_per_seed: 50000
+
+evaluation:
+  paths_per_seed: 50000
+  confidence_level: 0.95
+  include_training_cost: true
+  sealed: true

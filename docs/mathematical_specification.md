@@ -26,6 +26,10 @@ $$
 All reported estimates use frozen controls. Training paths are not evaluation
 paths.
 
+Train roots define reproducible random streams, not batches to replay. Epoch
+\(e\) receives a deterministic sub-seed derived from its root and stream index;
+this prevents repeated fitting of the same Brownian trajectories.
+
 ## 2. Heston target dynamics and analytic reference
 
 Under \(\mathbb M\),
@@ -134,13 +138,20 @@ $$
 u_\phi(t,S,v)=u_{\max}\tanh f_\phi(z_t),
 $$
 
-where
+where the log feature map is
 
 $$
 z_t=\left(
 \log(S/S_0),\ \log(S/K),\ \log(v/\theta),\ t/T
 \right).
 $$
+
+The low-cost affine ablation may instead use the linear map
+\((S/K-1,\ v/\theta-1,\ t/T)\). Including both \(S/S_0\) and \(S/K\) in an
+affine model is redundant, so the compact implementation removes the
+non-identifiable duplicate coefficient. The selected feature map is stored
+in every checkpoint; changing it changes the controller and is not a
+serialization-compatible implementation detail.
 
 It is initialized exactly at the validation-selected CEM constant. The output
 bound is a numerical safeguard and an integrability restriction. Running
@@ -228,7 +239,11 @@ $$
 $$
 
 Repeated reports include mean, empirical standard deviation, mean reported
-standard error, relative bias, relative RMSE, bias z-score, and CI coverage.
+standard error, relative bias, relative RMSE, two bias z-scores, and CI
+coverage. The empirical bias z-score divides by dispersion across independent
+run means. The reported bias z-score instead combines each run's internal
+estimator standard error and is the relevant audit statistic when only a small
+number of high-accuracy runs is available.
 
 With measured cost per path \(c\), online work-normalized VRF is
 

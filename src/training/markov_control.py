@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
@@ -16,6 +17,8 @@ import torch.nn.functional as F
 from src.physics_engine import MarketSimulator
 
 ObjectiveName = Literal["scaled_second_moment", "log_second_moment", "entropy_stress"]
+ArchitectureName = Literal["affine", "mlp"]
+FeatureMapName = Literal["linear", "log"]
 
 
 class MarkovianHestonControl(nn.Module):
@@ -36,6 +39,8 @@ class MarkovianHestonControl(nn.Module):
         variance_scale: float,
         hidden_dim: int = 32,
         n_layers: int = 2,
+        architecture: ArchitectureName = "mlp",
+        feature_map: FeatureMapName = "log",
         control_bound: float = 8.0,
         initial_constant: float = 0.0,
     ) -> None:
@@ -44,6 +49,10 @@ class MarkovianHestonControl(nn.Module):
             raise ValueError("initial_spot, barrier, and maturity must be positive")
         if variance_scale <= 0.0 or control_bound <= 0.0:
             raise ValueError("variance_scale and control_bound must be positive")
+        if architecture not in ("affine", "mlp"):
+            raise ValueError("architecture must be 'affine' or 'mlp'")
+        if feature_map not in ("linear", "log"):
+            raise ValueError("feature_map must be 'linear' or 'log'")
         if n_layers <= 0 or hidden_dim <= 0:
             raise ValueError("hidden_dim and n_layers must be positive")
         self.initial_spot = float(initial_spot)
@@ -53,14 +62,24 @@ class MarkovianHestonControl(nn.Module):
         self.control_bound = float(control_bound)
         self.hidden_dim = int(hidden_dim)
         self.n_layers = int(n_layers)
+        self.architecture = architecture
+        self.feature_map = feature_map
 
-        layers: list[nn.Module] = []
-        input_dim = 4
-        for layer_index in range(n_layers):
-            layers.append(nn.Linear(input_dim if layer_index == 0 else hidden_dim, hidden_dim))
-            layers.append(nn.SiLU())
-        self.features = nn.Sequential(*layers)
-        self.output = nn.Linear(hidden_dim, 1)
+        # In an affine model S/S0 and S/K are collinear functions of S. Keep
+        # only S/K to avoid a non-identifiable redundant coefficient. The MLP
+        # retains both nonlinear coordinates.
+        input_dim = 3 if architecture == "affine" else 4
+        self.features: nn.Module
+        if architecture == "affine":
+            self.features = nn.Identity()
+            self.output = nn.Linear(input_dim, 1)
+        else:
+            layers: list[nn.Module] = []
+            for layer_index in range(n_layers):
+                layers.append(nn.Linear(input_dim if layer_index == 0 else hidden_dim, hidden_dim))
+                layers.append(nn.SiLU())
+            self.features = nn.Sequential(*layers)
+            self.output = nn.Linear(hidden_dim, 1)
         self.initialize_constant(initial_constant)
 
     def initialize_constant(self, constant: float) -> None:
@@ -79,6 +98,22 @@ class MarkovianHestonControl(nn.Module):
         variance: torch.Tensor,
         _average_spot: torch.Tensor | None = None,
     ) -> torch.Tensor:
+        if self.architecture == "affine" and self.feature_map == "linear":
+            weights = self.output.weight[0]
+            time_feature = (
+                time.to(device=spot.device, dtype=spot.dtype) / self.maturity
+                if torch.is_tensor(time)
+                else float(time) / self.maturity
+            )
+            raw = (
+                (weights[0] / self.barrier) * spot
+                + (weights[1] / self.variance_scale) * variance
+                + weights[2] * time_feature
+                + self.output.bias[0]
+                - weights[0]
+                - weights[1]
+            )
+            return self.control_bound * torch.tanh(raw)
         time_tensor = (
             time.to(device=spot.device, dtype=spot.dtype)
             if torch.is_tensor(time)
@@ -86,19 +121,71 @@ class MarkovianHestonControl(nn.Module):
         ).expand_as(spot)
         safe_spot = torch.clamp(spot, min=1e-12)
         safe_variance = torch.clamp(variance, min=1e-10)
-        inputs = torch.stack(
-            [
-                torch.log(safe_spot / self.initial_spot),
-                torch.log(safe_spot / self.barrier),
-                torch.log(safe_variance / self.variance_scale),
-                time_tensor / self.maturity,
-            ],
-            dim=-1,
-        )
+        if self.architecture == "affine":
+            price_feature = torch.log(safe_spot / self.barrier)
+            variance_feature = torch.log(safe_variance / self.variance_scale)
+            weights = self.output.weight[0]
+            raw = (
+                weights[0] * price_feature
+                + weights[1] * variance_feature
+                + weights[2] * (time_tensor / self.maturity)
+                + self.output.bias[0]
+            )
+            return self.control_bound * torch.tanh(raw)
+        if self.feature_map == "linear":
+            inputs = torch.stack(
+                [
+                    safe_spot / self.initial_spot - 1.0,
+                    safe_spot / self.barrier - 1.0,
+                    safe_variance / self.variance_scale - 1.0,
+                    time_tensor / self.maturity,
+                ],
+                dim=-1,
+            )
+        else:
+            inputs = torch.stack(
+                [
+                    torch.log(safe_spot / self.initial_spot),
+                    torch.log(safe_spot / self.barrier),
+                    torch.log(safe_variance / self.variance_scale),
+                    time_tensor / self.maturity,
+                ],
+                dim=-1,
+            )
         raw = self.output(self.features(inputs)).squeeze(-1)
         return self.control_bound * torch.tanh(raw)
 
-    def configuration(self) -> dict[str, float | int]:
+    def inference_control_fn(
+        self,
+    ) -> Callable[[float, torch.Tensor, torch.Tensor, torch.Tensor | None], torch.Tensor]:
+        """Return a numerically equivalent low-overhead frozen callable."""
+        if self.architecture != "affine" or self.feature_map != "linear":
+            return self.forward
+        with torch.no_grad():
+            weights = self.output.weight[0]
+            spot_coefficient = float(weights[0] / self.barrier)
+            variance_coefficient = float(weights[1] / self.variance_scale)
+            time_coefficient = float(weights[2] / self.maturity)
+            intercept = float(self.output.bias[0] - weights[0] - weights[1])
+            bound = self.control_bound
+
+        def frozen_control(
+            time: float,
+            spot: torch.Tensor,
+            variance: torch.Tensor,
+            _average_spot: torch.Tensor | None = None,
+        ) -> torch.Tensor:
+            raw = (
+                spot_coefficient * spot
+                + variance_coefficient * variance
+                + time_coefficient * time
+                + intercept
+            )
+            return bound * torch.tanh(raw)
+
+        return frozen_control
+
+    def configuration(self) -> dict[str, float | int | str]:
         return {
             "initial_spot": self.initial_spot,
             "barrier": self.barrier,
@@ -106,6 +193,8 @@ class MarkovianHestonControl(nn.Module):
             "variance_scale": self.variance_scale,
             "hidden_dim": self.hidden_dim,
             "n_layers": self.n_layers,
+            "architecture": self.architecture,
+            "feature_map": self.feature_map,
             "control_bound": self.control_bound,
         }
 
@@ -324,7 +413,12 @@ def train_markovian_control(
     history: list[MarkovTrainingEpoch] = []
 
     for epoch in range(1, epochs + 1):
-        train_seed = train_seeds[(epoch - 1) % len(train_seeds)]
+        root_index = (epoch - 1) % len(train_seeds)
+        stream_index = (epoch - 1) // len(train_seeds)
+        # Root seeds define the training split, while every epoch receives a
+        # distinct deterministic substream. Resetting the exact same root each
+        # cycle would repeatedly fit the same Brownian trajectories.
+        train_seed = int((train_seeds[root_index] + 1_000_003 * stream_index) % (2**63 - 1))
         torch.manual_seed(train_seed)
         control.train()
         optimizer.zero_grad()
