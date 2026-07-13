@@ -1,4 +1,5 @@
 """Smoke tests: imports resolve and simulators run end-to-end."""
+
 from __future__ import annotations
 
 import torch

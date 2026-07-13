@@ -14,24 +14,27 @@ We expose three losses, from cheapest/least-informative to most-informative:
 
 All functions take ``torch.Tensor`` inputs and are fully differentiable.
 """
+
 from __future__ import annotations
 
-from typing import Sequence
+from collections.abc import Sequence
 
 import torch
-
 
 # -----------------------------------------------------------------------------
 # 1.  Moment matching
 # -----------------------------------------------------------------------------
 
-def standardized_moments(x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+
+def standardized_moments(
+    x: torch.Tensor,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     """Return (mean, std, skew, kurt) where kurt is raw (Normal = 3)."""
     mu = x.mean()
     std = x.std(unbiased=False) + 1e-8
     z = (x - mu) / std
-    skew = (z ** 3).mean()
-    kurt = (z ** 4).mean()
+    skew = (z**3).mean()
+    kurt = (z**4).mean()
     return mu, std, skew, kurt
 
 
@@ -39,7 +42,12 @@ def moment_match_loss(
     x_model: torch.Tensor,
     x_data: torch.Tensor,
     weights: Sequence[float] = (50.0, 100.0, 0.5, 0.01),
-    targets: tuple[float | None, float | None, float | None, float | None] = (None, None, None, None),
+    targets: tuple[float | None, float | None, float | None, float | None] = (
+        None,
+        None,
+        None,
+        None,
+    ),
 ) -> torch.Tensor:
     """Weighted squared error on (mean, std, skew, kurt).
 
@@ -65,6 +73,7 @@ def moment_match_loss(
 # -----------------------------------------------------------------------------
 # 2.  Sliced / 1-D Wasserstein
 # -----------------------------------------------------------------------------
+
 
 def _sorted_wasserstein_1d(x: torch.Tensor, y: torch.Tensor, p: int = 2) -> torch.Tensor:
     """W_p between 1-D empirical distributions (equal sample sizes OK; else
@@ -108,13 +117,14 @@ def sliced_wasserstein_distance(
 # 3.  Maximum Mean Discrepancy
 # -----------------------------------------------------------------------------
 
+
 def _gaussian_kernel_matrix(a: torch.Tensor, b: torch.Tensor, sigma: float) -> torch.Tensor:
     if a.dim() == 1:
         a = a.unsqueeze(-1)
     if b.dim() == 1:
         b = b.unsqueeze(-1)
     d2 = (a.unsqueeze(1) - b.unsqueeze(0)).pow(2).sum(-1)
-    return torch.exp(-d2 / (2.0 * sigma ** 2))
+    return torch.exp(-d2 / (2.0 * sigma**2))
 
 
 def mmd_loss(

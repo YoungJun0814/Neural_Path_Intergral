@@ -44,7 +44,8 @@ which is the standard admissible Euler scheme for Heston:
 $$
 \begin{aligned}
 v_{t+\Delta t} &= v_t + \kappa\!\left(\theta - v_t^+\right)\Delta t + \xi\sqrt{v_t^+}\,\Delta W_t^v,\\
-S_{t+\Delta t} &= S_t + \mu\,S_t\,\Delta t + \sqrt{v_t^+}\,S_t\,\Delta W_t^S,
+S_{t+\Delta t} &= S_t\exp\!\left[\left(\mu-\tfrac12v_t^+\right)\Delta t
+ + \sqrt{v_t^+}\,\Delta W_t^S\right],
 \end{aligned}
 \qquad v_t^+:=\max(v_t,0).
 $$
@@ -52,6 +53,13 @@ $$
 Both drift and diffusion coefficients use $v_t^+$ consistently (this was not the
 case prior to Phase 1). For rBergomi we use the **hybrid scheme** of
 Bennedsen–Lunde–Pakkanen (2017); see `src/physics_engine.py::RBergomiSimulator`.
+
+The simulator keeps the raw Euler variance state internally, as required by
+the full-truncation recursion, and returns its nonnegative effective value
+(v_t^+) to callers. Spot uses conditional log-Euler, so positivity is
+structural rather than produced by an artificial post-step floor. When (T/dt) is not an integer, it uses
+(lceil T/dt\rceil) equal steps of size (T/lceil T/dt\rceil), so the final
+state is evaluated exactly at (T).
 
 ### Jumps
 
@@ -136,24 +144,35 @@ This is the classical IS objective (Asmussen & Glynn 2007). Minimizing
 $\mathcal L_{\text{VM}}$ also minimizes $\mathrm{Var}^{\mathbb Q}[g\mathcal E_T]$
 because the mean is $\mathbb E^{\mathbb P}[g]$ which is independent of $u$.
 
-### 3.2 KL-regularized crash generation
+### 3.2 Entropy-regularized stress generation
 
 $$
-\mathcal L_{\text{KL}}(u)
-= -\mathbb E^{\mathbb Q}[\,\log\mathbf 1_{S_T<K}\,]
+\mathcal L_{\text{stress}}(u)
+= \mathbb E^{\mathbb Q}[\ell_\tau(S_T;K)]
 + \lambda\cdot\mathrm{KL}(\mathbb Q\,\|\,\mathbb P),
 \qquad
 \mathrm{KL}(\mathbb Q\|\mathbb P)=\mathbb E^{\mathbb Q}\!\left[\tfrac12\!\int u^2\,dt\right].
 $$
 
-The indicator is replaced by a smooth surrogate (softplus hinge) for
-gradients. $\lambda$ trades off between "more crashes" and "less deviation from
-$\mathbb P$".
+The current exploratory terminal cost is
+
+$$
+\ell_\tau(S_T;K)=-\operatorname{softplus}\!\left(\tau\frac{K-S_T}{K}\right).
+$$
+
+This is a smooth stress-generation reward, not a smooth representation of
+$-\log\mathbf 1_{S_T<K}$ and not a variance-minimization objective. It keeps
+rewarding paths below the barrier, so results trained with it may be used to
+study proposal initialization but are not advertised as efficient rare-event
+estimators without an independent likelihood-weighted evaluation. $\lambda$
+trades off stress severity against path-space deviation from the base measure.
 
 ### 3.3 Cross-entropy method (CEM)
 
-Pilot sampling + IS weight update per Rubinstein–Kroese (2004). Included as
-benchmark only.
+A trajectory-likelihood CEM baseline is planned for Phase 2. The earlier
+elite-regression helper was removed because it paired labels and states from
+independent batches and therefore did not implement a valid CEM update. No CEM
+result is currently advertised.
 
 ### 3.4 Distribution matching for the base NeuralSDE
 
@@ -189,12 +208,20 @@ exactly this check and must pass before any efficiency claim is advertised.
 
 ## 5. Variance Reduction Factor (VRF)
 
-The published efficiency gain is the **work-normalized variance reduction**:
+For positive per-path costs (c_{\mathbb P}) and (c_{\mathbb Q}), the
+published efficiency gain is the **work-normalized variance reduction**. At a
+fixed compute budget, estimator variance is proportional to
+(\mathrm{Var}[Y]c), so
 
 $$
-\mathrm{VRF} := \frac{\mathrm{Var}_{\mathbb P}[F]/\mathrm{cost}_{\mathbb P}}
-                    {\mathrm{Var}_{\mathbb Q}[F\mathcal E_T]/\mathrm{cost}_{\mathbb Q}}.
+\mathrm{VRF}_{\mathrm{work}}
+:= \frac{\mathrm{Var}_{\mathbb P}[F]c_{\mathbb P}}
+         {\mathrm{Var}_{\mathbb Q}[F\mathcal E_T]c_{\mathbb Q}}.
 $$
+
+For learned proposals, online evaluation cost and end-to-end cost including
+training are reported separately. A proposal is not rewarded merely for being
+slower.
 
 Effective sample size is reported alongside:
 

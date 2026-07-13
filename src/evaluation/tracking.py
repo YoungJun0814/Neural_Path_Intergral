@@ -4,17 +4,19 @@ MLflow is an optional dependency: if it is not installed, these helpers
 no-op and still return a usable object.  This keeps the core codebase
 portable while letting users opt in to experiment tracking.
 """
+
 from __future__ import annotations
 
 import contextlib
 import json
-import os
 import time
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Any, Dict, Iterator, Optional
+from typing import Any
 
 try:  # optional
     import mlflow  # type: ignore
+
     _HAS_MLFLOW = True
 except ImportError:  # pragma: no cover
     mlflow = None
@@ -41,7 +43,7 @@ class RunLogger:
             mlflow.set_experiment(experiment)
 
     @contextlib.contextmanager
-    def run(self, name: str) -> Iterator["RunHandle"]:
+    def run(self, name: str) -> Iterator[RunHandle]:
         if _HAS_MLFLOW:
             with mlflow.start_run(run_name=name):
                 yield MLflowHandle()
@@ -52,17 +54,17 @@ class RunLogger:
 
 
 class RunHandle:
-    def log_params(self, params: Dict[str, Any]) -> None: ...
-    def log_metric(self, key: str, value: float, step: Optional[int] = None) -> None: ...
+    def log_params(self, params: dict[str, Any]) -> None: ...
+    def log_metric(self, key: str, value: float, step: int | None = None) -> None: ...
     def log_artifact_text(self, filename: str, content: str) -> None: ...
 
 
 class MLflowHandle(RunHandle):
-    def log_params(self, params: Dict[str, Any]) -> None:
+    def log_params(self, params: dict[str, Any]) -> None:
         for k, v in params.items():
             mlflow.log_param(k, v)
 
-    def log_metric(self, key: str, value: float, step: Optional[int] = None) -> None:
+    def log_metric(self, key: str, value: float, step: int | None = None) -> None:
         mlflow.log_metric(key, float(value), step=step)
 
     def log_artifact_text(self, filename: str, content: str) -> None:
@@ -77,12 +79,15 @@ class FileHandle(RunHandle):
         self.metrics_path = run_dir / "metrics.jsonl"
         self.params_path = run_dir / "params.json"
 
-    def log_params(self, params: Dict[str, Any]) -> None:
+    def log_params(self, params: dict[str, Any]) -> None:
         self.params_path.write_text(json.dumps(params, indent=2), encoding="utf-8")
 
-    def log_metric(self, key: str, value: float, step: Optional[int] = None) -> None:
+    def log_metric(self, key: str, value: float, step: int | None = None) -> None:
         with self.metrics_path.open("a", encoding="utf-8") as f:
-            f.write(json.dumps({"key": key, "value": float(value), "step": step, "t": time.time()}) + "\n")
+            f.write(
+                json.dumps({"key": key, "value": float(value), "step": step, "t": time.time()})
+                + "\n"
+            )
 
     def log_artifact_text(self, filename: str, content: str) -> None:
         (self.run_dir / filename).write_text(content, encoding="utf-8")

@@ -1,4 +1,5 @@
 """Analytic checks against Black–Scholes closed form."""
+
 from __future__ import annotations
 
 import math
@@ -41,7 +42,7 @@ def test_bs_put_call_parity():
     # Put via parity
     P = C - S0 + K * math.exp(-r * T)
     # P should equal BS put closed form
-    d1 = (math.log(S0 / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * math.sqrt(T))
+    d1 = (math.log(S0 / K) + (r + 0.5 * sigma**2) * T) / (sigma * math.sqrt(T))
     d2 = d1 - sigma * math.sqrt(T)
     P_bs = K * math.exp(-r * T) * norm.cdf(-d2) - S0 * norm.cdf(-d1)
     assert math.isclose(P, P_bs, rel_tol=1e-6, abs_tol=1e-6)

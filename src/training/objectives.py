@@ -6,38 +6,45 @@ Notation follows ``docs/formulation.md``:
 * ``E_T``         — Radon–Nikodym density  dP/dQ  accumulated along a path.
 * ``u``           — control; we simulate under Q and compute log E_T on the fly.
 
-Three objectives are exposed:
+Two publication-path objectives are exposed:
 
 ``variance_minimization_objective``
     ``L_VM(u) = E^Q[(g·E_T)^2]``  (Asmussen & Glynn 2007).
 
 ``kl_regularized_objective``
-    ``L_KL(u) = −E^Q[log σ(g − τ)] + λ·KL(Q||P)``  with a softplus-hinge
-    surrogate for crash generation (``g = 1{S_T<K}``).
+    Entropy-regularized stress generation with a smooth terminal reward. This
+    is not a variance-minimization objective and must be evaluated separately
+    with the hard event and likelihood weights.
 
-``cem_step``
-    One step of the cross-entropy method: simulate a pilot batch under
-    current Q, reweight, fit control to weighted samples.  Included as a
-    baseline (Rubinstein & Kroese 2004).
+The previous helper named ``cem_step`` paired elite labels from one pilot
+batch with independent states from a second batch. That invalid helper remains
+removed; the validated trajectory-likelihood implementation lives in
+``src.training.cem``.
 """
+
 from __future__ import annotations
 
 import math
-from typing import Callable, Optional
+from collections.abc import Callable
+from typing import Any, Protocol
 
 import torch
 import torch.nn.functional as F
 
 
-Simulator = object  # anything with .simulate_controlled(...) -> (S, v, log_w, …)
+class ControlledSimulator(Protocol):
+    """Structural type shared by analytic and neural controlled simulators."""
+
+    def simulate_controlled(self, **kwargs: Any) -> tuple[Any, ...]: ...
 
 
 # -----------------------------------------------------------------------------
 # 1.  Variance-minimization objective
 # -----------------------------------------------------------------------------
 
+
 def variance_minimization_objective(
-    simulator: Simulator,
+    simulator: ControlledSimulator,
     control_fn: Callable,
     *,
     S0: float,
@@ -45,7 +52,7 @@ def variance_minimization_objective(
     dt: float,
     num_paths: int,
     payoff_fn: Callable[[torch.Tensor], torch.Tensor],
-    v0: Optional[float] = None,
+    v0: float | None = None,
     discount: float = 0.0,
 ) -> dict:
     """Compute L_VM and diagnostics for the current control.
@@ -66,11 +73,11 @@ def variance_minimization_objective(
     weight = torch.exp(log_w)
     reweighted = payoff * weight * math.exp(discount)
 
-    loss = (reweighted ** 2).mean()
+    loss = (reweighted**2).mean()
 
     with torch.no_grad():
         mean_est = reweighted.mean()
-        ess = (weight.sum() ** 2) / (weight ** 2).sum().clamp_min(1e-12)
+        ess = (weight.sum() ** 2) / (weight**2).sum().clamp_min(1e-12)
 
     return {
         "loss": loss,
@@ -84,8 +91,9 @@ def variance_minimization_objective(
 # 2.  KL-regularized crash generation
 # -----------------------------------------------------------------------------
 
+
 def kl_regularized_objective(
-    simulator: Simulator,
+    simulator: ControlledSimulator,
     control_fn: Callable,
     *,
     S0: float,
@@ -93,19 +101,20 @@ def kl_regularized_objective(
     dt: float,
     num_paths: int,
     barrier_K: float,
-    v0: Optional[float] = None,
+    v0: float | None = None,
     kl_weight: float = 1e-2,
     hinge_scale: float = 25.0,
 ) -> dict:
-    """Soft-hinge crash-probability objective with KL(Q||P) regularizer.
+    """Smooth stress-generation objective with a KL(Q||P) regularizer.
 
     Surrogate for 1{S_T < K}:
 
         σ_soft(S_T) = softplus( scale · (K − S_T) / K )
 
-    which is differentiable and pushes paths toward the barrier without
-    committing to a hard indicator.  ``kl_weight`` balances aggressiveness
-    against deviation from the base measure.
+    which is differentiable and continues to reward paths below the barrier.
+    It is a proposal-shaping reward, not a smooth log-indicator or an estimator
+    of crash probability. ``kl_weight`` balances aggressiveness against
+    deviation from the base measure.
 
     ``KL(Q||P)`` is computed as ``½ E^Q[∫ u² dt]`` (docs/formulation.md §3.2);
     the log_w returned by ``simulate_controlled`` is ``−∫u dW^Q − ½∫u² dt``
@@ -137,67 +146,3 @@ def kl_regularized_objective(
         "kl": kl_est.detach(),
         "ess": ess,
     }
-
-
-# -----------------------------------------------------------------------------
-# 3.  Cross-entropy method (CEM) baseline
-# -----------------------------------------------------------------------------
-
-def cem_step(
-    simulator: Simulator,
-    control_net: torch.nn.Module,
-    optimizer: torch.optim.Optimizer,
-    *,
-    S0: float,
-    T: float,
-    dt: float,
-    num_paths: int,
-    target_event: Callable[[torch.Tensor], torch.Tensor],
-    v0: Optional[float] = None,
-    quantile: float = 0.9,
-    pilot_passes: int = 1,
-) -> dict:
-    """One CEM iteration.
-
-    * Pilot: simulate ``num_paths`` under current control; identify the
-      upper-``quantile`` of ``target_event(S_T)`` values.
-    * Update: regress control toward the elite paths' drift using MSE on
-      the path-level ``u_t`` predicted values vs. a data-driven target.
-
-    This is a minimal CEM implementation and is provided purely as a
-    benchmark; production IS uses ``variance_minimization_objective``.
-    """
-    control_fn_builder = (lambda net: (lambda t, S, v, A: net(S, v, t, A)))
-    control_fn = control_fn_builder(control_net)
-
-    elite_losses = []
-    for _ in range(pilot_passes):
-        with torch.no_grad():
-            kwargs = {"S0": S0, "T": T, "dt": dt, "num_paths": num_paths, "control_fn": control_fn}
-            if v0 is not None:
-                kwargs["v0"] = v0
-            out = simulator.simulate_controlled(**kwargs)
-            S = out[0]
-            S_T = S[:, -1]
-            score = target_event(S_T)
-            threshold = torch.quantile(score, quantile)
-            elite_mask = score >= threshold
-
-        # Regress control toward an "elite" drift signal:
-        # u_t target ≡ +1 for elite paths, 0 otherwise (simple classifier surrogate)
-        optimizer.zero_grad()
-        kwargs2 = dict(kwargs)
-        out2 = simulator.simulate_controlled(**kwargs2)
-        S2 = out2[0]
-        # Use mid-trajectory state as features
-        mid_idx = S2.shape[1] // 2
-        S_mid = S2[:, mid_idx]
-        v_dummy = torch.full_like(S_mid, float(v0) if v0 is not None else 0.04)
-        u_pred = control_net(S_mid, v_dummy, T * 0.5)
-        target_u = elite_mask.float()
-        loss = F.mse_loss(u_pred, target_u - 0.5)  # center around 0
-        loss.backward()
-        optimizer.step()
-        elite_losses.append(float(loss.item()))
-
-    return {"loss": sum(elite_losses) / max(len(elite_losses), 1), "elite_frac": float((1.0 - quantile))}

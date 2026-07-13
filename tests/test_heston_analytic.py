@@ -11,6 +11,7 @@ characteristic-function machinery:
 
 All tests use 10k paths and fixed seeds.
 """
+
 from __future__ import annotations
 
 import math
@@ -103,6 +104,6 @@ def test_bates_jump_increases_kurtosis():
     ret_b = torch.log(S_b[:, 1:] / S_b[:, :-1]).flatten()
     z_h = (ret_h - ret_h.mean()) / (ret_h.std() + 1e-8)
     z_b = (ret_b - ret_b.mean()) / (ret_b.std() + 1e-8)
-    kurt_h = float((z_h ** 4).mean())
-    kurt_b = float((z_b ** 4).mean())
+    kurt_h = float((z_h**4).mean())
+    kurt_b = float((z_b**4).mean())
     assert kurt_b > kurt_h + 0.5, f"jump model should be more leptokurtic: h={kurt_h}, b={kurt_b}"

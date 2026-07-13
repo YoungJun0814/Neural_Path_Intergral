@@ -1,10 +1,10 @@
 """Fractional Brownian motion — empirical covariance matches analytic kernel."""
+
 from __future__ import annotations
 
 import math
 
 import pytest
-import torch
 
 from src.physics_engine import FractionalBrownianMotion
 from src.utils import set_seed

@@ -23,55 +23,55 @@ from scipy.stats import norm
 class BlackScholesModel:
     """
     Black-Scholes Option Pricing Model / 블랙-숄즈 옵션 가격 결정 모델.
-    
+
     The simplest benchmark model for option pricing.
     옵션 가격 결정을 위한 가장 단순한 기준선(Baseline) 모델입니다.
     """
-    
+
     def __init__(self, sigma=0.2):
         """
         Args:
             sigma: Constant volatility (to be calibrated) / 상수 변동성 (캘리브레이션 대상)
         """
         self.sigma = sigma
-    
+
     def price(self, S0, K, T, r):
         """
         Calculate call option price.
         콜옵션 가격을 계산합니다.
-        
+
         Args:
             S0: Current price / 현재 주가
             K: Strike price / 행사가
             T: Time to maturity / 만기
             r: Risk-free rate / 무위험 이자율
-        
+
         Returns:
             call_price: Call option price / 콜옵션 가격
         """
         if T <= 0:
             return max(S0 - K, 0)
-        
+
         sigma = self.sigma
         d1 = (np.log(S0 / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
         d2 = d1 - sigma * np.sqrt(T)
-        
+
         call_price = S0 * norm.cdf(d1) - K * np.exp(-r * T) * norm.cdf(d2)
         return call_price
-    
+
     def calibrate(self, market_prices, S0, strikes, T, r):
         """
         시장 데이터에 맞춰 변동성(sigma) 캘리브레이션.
         Calibrate sigma to market data.
         """
         from scipy.optimize import minimize_scalar
-        
+
         def loss(sigma):
             self.sigma = sigma
             model_prices = np.array([self.price(S0, K, T, r) for K in strikes])
             return np.mean((model_prices - market_prices) ** 2)
-        
-        result = minimize_scalar(loss, bounds=(0.01, 1.0), method='bounded')
+
+        result = minimize_scalar(loss, bounds=(0.01, 1.0), method="bounded")
         self.sigma = result.x
         return result.x
 
@@ -82,44 +82,40 @@ class BlackScholesModel:
 class XGBoostOptionModel:
     """
     XGBoost-based Option Pricing Model / XGBoost 기반 옵션 가격 예측 모델.
-    
+
     Input: (Moneyness, Time-to-Maturity, Risk-free Rate)
     Output: Option Price
     """
-    
+
     def __init__(self):
         self.model = None
-    
+
     def train(self, X, y):
         """
         Train model.
         모델을 학습합니다.
-        
+
         Args:
             X: Feature array (moneyness, T, r) / 특성 배열
             y: Option prices / 옵션 가격
         """
         try:
             import xgboost as xgb
+
             self.model = xgb.XGBRegressor(
-                n_estimators=100,
-                max_depth=5,
-                learning_rate=0.1,
-                random_state=42
+                n_estimators=100, max_depth=5, learning_rate=0.1, random_state=42
             )
             self.model.fit(X, y)
         except ImportError:
             # XGBoost가 없으면 sklearn의 GradientBoosting 사용
             # Fallback to sklearn if xgboost not installed
             from sklearn.ensemble import GradientBoostingRegressor
+
             self.model = GradientBoostingRegressor(
-                n_estimators=100,
-                max_depth=5,
-                learning_rate=0.1,
-                random_state=42
+                n_estimators=100, max_depth=5, learning_rate=0.1, random_state=42
             )
             self.model.fit(X, y)
-    
+
     def predict(self, X):
         """
         옵션 가격 예측 / Predict option prices.
@@ -135,12 +131,12 @@ class XGBoostOptionModel:
 class LSTMOptionModel(nn.Module):
     """
     LSTM-based Option Pricing Model / LSTM 기반 옵션 가격 예측 모델.
-    
+
     Learns option price structure from a time-series perspective.
     시계열 관점에서 옵션 가격 구조를 학습합니다.
     """
-    
-    def __init__(self, input_dim=3, hidden_dim=64, num_layers=2, device='cuda'):
+
+    def __init__(self, input_dim=3, hidden_dim=64, num_layers=2, device="cuda"):
         """
         Args:
             input_dim: Input dimension (moneyness, T, r) / 입력 차원
@@ -152,49 +148,45 @@ class LSTMOptionModel(nn.Module):
         self.device = device
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
-        
+
         # LSTM 레이어 / LSTM layers
         self.lstm = nn.LSTM(
             input_size=input_dim,
             hidden_size=hidden_dim,
             num_layers=num_layers,
             batch_first=True,
-            dropout=0.2
+            dropout=0.2,
         )
-        
+
         # 출력 레이어 / Output layer
-        self.fc = nn.Sequential(
-            nn.Linear(hidden_dim, 32),
-            nn.ReLU(),
-            nn.Linear(32, 1)
-        )
-        
+        self.fc = nn.Sequential(nn.Linear(hidden_dim, 32), nn.ReLU(), nn.Linear(32, 1))
+
         self.to(device)
-    
+
     def forward(self, x):
         """
         순전파 / Forward pass.
-        
+
         Args:
             x: 입력 텐서 (batch, seq_len, input_dim) / Input tensor
-        
+
         Returns:
             output: 옵션 가격 예측 (batch,) / Option price predictions
         """
         # LSTM 순전파 / LSTM forward
         lstm_out, _ = self.lstm(x)
-        
+
         # 마지막 타임스텝의 출력 사용 / Use last timestep output
         last_hidden = lstm_out[:, -1, :]
-        
+
         # 가격 예측 / Price prediction
         output = self.fc(last_hidden)
         return output.squeeze(-1)
-    
+
     def train_model(self, X, y, epochs=50, lr=0.001):
         """
         모델 학습 / Train model.
-        
+
         Args:
             X: 특성 배열 (N, 3) / Feature array
             y: 타겟 배열 (N,) / Target array
@@ -204,21 +196,21 @@ class LSTMOptionModel(nn.Module):
         self.train()
         optimizer = torch.optim.Adam(self.parameters(), lr=lr)
         criterion = nn.MSELoss()
-        
+
         # 데이터를 시퀀스로 변환 (seq_len=1) / Convert to sequence
         X_tensor = torch.tensor(X, dtype=torch.float32, device=self.device).unsqueeze(1)
         y_tensor = torch.tensor(y, dtype=torch.float32, device=self.device)
-        
+
         for epoch in range(epochs):
             optimizer.zero_grad()
             predictions = self.forward(X_tensor)
             loss = criterion(predictions, y_tensor)
             loss.backward()
             optimizer.step()
-            
+
             if (epoch + 1) % 10 == 0:
-                print(f'LSTM Epoch {epoch+1}/{epochs}, Loss: {loss.item():.6f}')
-    
+                print(f"LSTM Epoch {epoch + 1}/{epochs}, Loss: {loss.item():.6f}")
+
     def predict(self, X):
         """
         옵션 가격 예측 / Predict option prices.

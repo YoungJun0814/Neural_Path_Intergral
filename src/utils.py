@@ -1,27 +1,29 @@
 """
 Utility helpers: reproducibility, device selection, git hashing, and visualization.
 """
+
 from __future__ import annotations
 
 import os
 import random
 import subprocess
-from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from torch.utils.data import Dataset
 
-
 # -----------------------------------------------------------------------------
 # 1. Reproducibility
 # -----------------------------------------------------------------------------
 
+
 def set_seed(seed: int = 42) -> None:
     """Fix all random seeds for reproducibility."""
     random.seed(seed)
-    np.random.seed(seed)
+    # Some legacy experiments still call the module-level NumPy RNG. Keep it
+    # synchronized until those call sites are migrated to explicit Generators.
+    np.random.seed(seed)  # noqa: NPY002
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
@@ -35,7 +37,8 @@ def set_seed(seed: int = 42) -> None:
 # 2. Device & Environment
 # -----------------------------------------------------------------------------
 
-def pick_device(override: Optional[str] = None) -> torch.device:
+
+def pick_device(override: str | None = None) -> torch.device:
     """Return an appropriate torch.device, honoring an optional override."""
     if override:
         return torch.device(override)
@@ -61,6 +64,7 @@ def git_hash(short: bool = True) -> str:
 # 3. Tensor utilities
 # -----------------------------------------------------------------------------
 
+
 def to_numpy(tensor):
     """Safely convert a PyTorch Tensor to a NumPy array (CPU copy)."""
     if torch.is_tensor(tensor):
@@ -72,10 +76,13 @@ def to_numpy(tensor):
 # 4. Dataset
 # -----------------------------------------------------------------------------
 
+
 class HestonDataset(Dataset):
     """Random Heston parameter combinations for synthetic training data."""
 
-    def __init__(self, num_samples: int = 1000, T: float = 1.0, dt: float = 1 / 252, device: str = "cuda"):
+    def __init__(
+        self, num_samples: int = 1000, T: float = 1.0, dt: float = 1 / 252, device: str = "cuda"
+    ):
         self.num_samples = num_samples
         self.T = T
         self.dt = dt
@@ -100,6 +107,7 @@ class HestonDataset(Dataset):
 # -----------------------------------------------------------------------------
 # 5. Visualization
 # -----------------------------------------------------------------------------
+
 
 def plot_weighted_paths(S_paths, weights, num_to_plot: int = 30, title: str = "Weighted Paths"):
     """Visualize top 'classical paths' with highest importance weights."""

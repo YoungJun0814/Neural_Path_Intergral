@@ -1,10 +1,10 @@
 """configs/default.yaml must parse and contain all keys required by the CLI."""
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import yaml
-
 
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "configs" / "default.yaml"
 

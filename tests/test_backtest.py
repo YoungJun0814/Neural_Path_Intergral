@@ -1,9 +1,9 @@
 """Tests for src.evaluation.backtest (Kupiec POF, Christoffersen independence, VRF)."""
+
 from __future__ import annotations
 
-import math
-
 import numpy as np
+import pytest
 
 from src.evaluation.backtest import (
     christoffersen_independence,
@@ -76,3 +76,40 @@ def test_efficiency_metrics_basic():
     assert eff.var_mc > eff.var_is
     assert eff.vrf > 1.0
     assert 0 < eff.ess_is <= 1000
+
+
+def test_efficiency_metrics_penalizes_more_expensive_sampler():
+    rng = np.random.default_rng(19)
+    est_mc = rng.normal(scale=2.0, size=20_000)
+    est_is = rng.normal(scale=1.0, size=20_000)
+    weights = np.ones_like(est_is)
+
+    equal_cost = efficiency_metrics(
+        estimates_mc=est_mc,
+        estimates_is=est_is,
+        weights_is=weights,
+        cost_mc=1.0,
+        cost_is=1.0,
+    )
+    expensive_is = efficiency_metrics(
+        estimates_mc=est_mc,
+        estimates_is=est_is,
+        weights_is=weights,
+        cost_mc=1.0,
+        cost_is=2.0,
+    )
+
+    assert expensive_is.vrf == pytest.approx(equal_cost.vrf / 2.0)
+
+
+@pytest.mark.parametrize("cost_mc,cost_is", [(0.0, 1.0), (1.0, 0.0), (-1.0, 1.0)])
+def test_efficiency_metrics_rejects_nonpositive_cost(cost_mc, cost_is):
+    values = np.arange(3.0)
+    with pytest.raises(ValueError, match="must be positive"):
+        efficiency_metrics(
+            estimates_mc=values,
+            estimates_is=values,
+            weights_is=np.ones_like(values),
+            cost_mc=cost_mc,
+            cost_is=cost_is,
+        )

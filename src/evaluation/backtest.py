@@ -8,19 +8,19 @@ References:
 All functions are pure-numpy so they can be imported without a torch
 dependency.
 """
+
 from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Callable, Optional
 
 import numpy as np
 from scipy.stats import chi2
 
-
 # -----------------------------------------------------------------------------
 # 1.  VaR computation
 # -----------------------------------------------------------------------------
+
 
 def compute_var_series(
     returns_matrix: np.ndarray,
@@ -45,6 +45,7 @@ def var_exceptions(realized: np.ndarray, var_series: np.ndarray) -> np.ndarray:
 # -----------------------------------------------------------------------------
 # 2.  Coverage tests (Kupiec)
 # -----------------------------------------------------------------------------
+
 
 @dataclass
 class CoverageTestResult:
@@ -72,13 +73,19 @@ def kupiec_pof_test(exceptions: np.ndarray, alpha: float = 0.01) -> CoverageTest
     lr = -2.0 * (log_lik_h0 - log_lik_h1)
     p_value = float(1.0 - chi2.cdf(lr, df=1))
     return CoverageTestResult(
-        lr=lr, p_value=p_value, x=x, T=T, observed_rate=p_obs, expected_rate=float(alpha),
+        lr=lr,
+        p_value=p_value,
+        x=x,
+        T=T,
+        observed_rate=p_obs,
+        expected_rate=float(alpha),
     )
 
 
 # -----------------------------------------------------------------------------
 # 3.  Independence test (Christoffersen)
 # -----------------------------------------------------------------------------
+
 
 @dataclass
 class IndependenceTestResult:
@@ -112,9 +119,8 @@ def christoffersen_independence(exceptions: np.ndarray) -> IndependenceTestResul
         + n10 * math.log(max(1 - p11, eps))
         + n11 * math.log(max(p11, eps))
     )
-    log_lik_h0 = (
-        (n00 + n10) * math.log(max(1 - p_star, eps))
-        + (n01 + n11) * math.log(max(p_star, eps))
+    log_lik_h0 = (n00 + n10) * math.log(max(1 - p_star, eps)) + (n01 + n11) * math.log(
+        max(p_star, eps)
     )
     lr = -2.0 * (log_lik_h0 - log_lik_h1)
     p_value = float(1.0 - chi2.cdf(lr, df=1))
@@ -124,6 +130,7 @@ def christoffersen_independence(exceptions: np.ndarray) -> IndependenceTestResul
 # -----------------------------------------------------------------------------
 # 4.  Efficiency metrics: VRF + ESS
 # -----------------------------------------------------------------------------
+
 
 @dataclass
 class EfficiencyReport:
@@ -149,12 +156,23 @@ def efficiency_metrics(
     ``estimates_mc`` : shape (N_mc,) sample of the raw MC estimator.
     ``estimates_is`` : shape (N_is,) sample of the IS re-weighted estimator.
     ``weights_is``  : shape (N_is,) the likelihood ratios E_T^{(i)}.
+    ``cost_mc`` / ``cost_is`` : positive cost per independent path (or per
+        identically sized batch). At fixed compute budget B, estimator
+        variance scales as ``single_path_variance * cost / B``. Training cost
+        is not included and must be reported separately for learned proposals.
     """
+    if cost_mc <= 0.0 or cost_is <= 0.0:
+        raise ValueError("cost_mc and cost_is must be positive")
     var_mc = float(np.var(estimates_mc, ddof=1))
     var_is = float(np.var(estimates_is, ddof=1))
-    vrf = (var_mc / max(cost_mc, 1e-12)) / max(var_is / max(cost_is, 1e-12), 1e-12)
-    ess = float(weights_is.sum() ** 2 / max((weights_is ** 2).sum(), 1e-12))
+    vrf = (var_mc * cost_mc) / max(var_is * cost_is, 1e-12)
+    ess = float(weights_is.sum() ** 2 / max((weights_is**2).sum(), 1e-12))
     return EfficiencyReport(
-        var_mc=var_mc, var_is=var_is, cost_mc=cost_mc, cost_is=cost_is,
-        vrf=vrf, ess_is=ess, paths_is=int(weights_is.size),
+        var_mc=var_mc,
+        var_is=var_is,
+        cost_mc=cost_mc,
+        cost_is=cost_is,
+        vrf=vrf,
+        ess_is=ess,
+        paths_is=int(weights_is.size),
     )

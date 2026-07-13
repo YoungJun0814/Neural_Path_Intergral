@@ -1,8 +1,10 @@
 """Verify Bates/SVJJ jump statistics — Poisson counts, mean shift, variance."""
+
 from __future__ import annotations
 
 import math
 
+import pytest
 import torch
 
 from src.physics_engine import MarketSimulator
@@ -14,13 +16,24 @@ def test_no_jumps_when_lambda_zero():
     to model_type='heston' (same shock realisations under fixed seed)."""
     set_seed(0)
     sim = MarketSimulator(
-        mu=0.05, kappa=2.0, theta=0.04, xi=0.5, rho=-0.7,
-        jump_lambda=0.0, jump_mean=0.0, jump_std=0.0, device="cpu",
+        mu=0.05,
+        kappa=2.0,
+        theta=0.04,
+        xi=0.5,
+        rho=-0.7,
+        jump_lambda=0.0,
+        jump_mean=0.0,
+        jump_std=0.0,
+        device="cpu",
     )
     set_seed(7)
-    S_h, v_h = sim.simulate(S0=100.0, v0=0.04, T=0.5, dt=1/252.0, num_paths=200, model_type="heston")
+    S_h, v_h = sim.simulate(
+        S0=100.0, v0=0.04, T=0.5, dt=1 / 252.0, num_paths=200, model_type="heston"
+    )
     set_seed(7)
-    S_b, v_b = sim.simulate(S0=100.0, v0=0.04, T=0.5, dt=1/252.0, num_paths=200, model_type="bates")
+    S_b, v_b = sim.simulate(
+        S0=100.0, v0=0.04, T=0.5, dt=1 / 252.0, num_paths=200, model_type="bates"
+    )
     assert torch.allclose(S_h, S_b, atol=1e-6)
     assert torch.allclose(v_h, v_b, atol=1e-6)
 
@@ -42,21 +55,39 @@ def test_bates_increases_left_tail():
     """Negative-mean jumps should make the return distribution left-skewed."""
     set_seed(2)
     sim_pure = MarketSimulator(
-        mu=0.05, kappa=2.0, theta=0.04, xi=0.5, rho=0.0,
-        jump_lambda=0.0, jump_mean=0.0, jump_std=0.0, device="cpu",
+        mu=0.05,
+        kappa=2.0,
+        theta=0.04,
+        xi=0.5,
+        rho=0.0,
+        jump_lambda=0.0,
+        jump_mean=0.0,
+        jump_std=0.0,
+        device="cpu",
     )
     sim_jump = MarketSimulator(
-        mu=0.05, kappa=2.0, theta=0.04, xi=0.5, rho=0.0,
-        jump_lambda=30.0, jump_mean=-0.05, jump_std=0.1, device="cpu",
+        mu=0.05,
+        kappa=2.0,
+        theta=0.04,
+        xi=0.5,
+        rho=0.0,
+        jump_lambda=30.0,
+        jump_mean=-0.05,
+        jump_std=0.1,
+        device="cpu",
     )
-    S_p, _ = sim_pure.simulate(S0=100.0, v0=0.04, T=1.0, dt=1/252.0, num_paths=4000, model_type="heston")
-    S_j, _ = sim_jump.simulate(S0=100.0, v0=0.04, T=1.0, dt=1/252.0, num_paths=4000, model_type="bates")
+    S_p, _ = sim_pure.simulate(
+        S0=100.0, v0=0.04, T=1.0, dt=1 / 252.0, num_paths=4000, model_type="heston"
+    )
+    S_j, _ = sim_jump.simulate(
+        S0=100.0, v0=0.04, T=1.0, dt=1 / 252.0, num_paths=4000, model_type="bates"
+    )
     log_ret_p = torch.log(S_p[:, -1] / S_p[:, 0])
     log_ret_j = torch.log(S_j[:, -1] / S_j[:, 0])
     z_p = (log_ret_p - log_ret_p.mean()) / (log_ret_p.std() + 1e-8)
     z_j = (log_ret_j - log_ret_j.mean()) / (log_ret_j.std() + 1e-8)
-    skew_p = float((z_p ** 3).mean())
-    skew_j = float((z_j ** 3).mean())
+    skew_p = float((z_p**3).mean())
+    skew_j = float((z_j**3).mean())
     assert skew_j < skew_p, f"jumps should add left-skew: pure={skew_p:.3f}, jump={skew_j:.3f}"
 
 
@@ -64,15 +95,81 @@ def test_svjj_volatility_jump_increases_terminal_v():
     """SVJJ adds upward variance jumps — terminal v should be higher than Bates with same params."""
     set_seed(3)
     sim_b = MarketSimulator(
-        mu=0.05, kappa=2.0, theta=0.04, xi=0.5, rho=-0.7,
-        jump_lambda=20.0, jump_mean=-0.05, jump_std=0.05, vol_jump_mean=0.0, device="cpu",
+        mu=0.05,
+        kappa=2.0,
+        theta=0.04,
+        xi=0.5,
+        rho=-0.7,
+        jump_lambda=20.0,
+        jump_mean=-0.05,
+        jump_std=0.05,
+        vol_jump_mean=0.0,
+        device="cpu",
     )
     sim_s = MarketSimulator(
-        mu=0.05, kappa=2.0, theta=0.04, xi=0.5, rho=-0.7,
-        jump_lambda=20.0, jump_mean=-0.05, jump_std=0.05, vol_jump_mean=0.05, device="cpu",
+        mu=0.05,
+        kappa=2.0,
+        theta=0.04,
+        xi=0.5,
+        rho=-0.7,
+        jump_lambda=20.0,
+        jump_mean=-0.05,
+        jump_std=0.05,
+        vol_jump_mean=0.05,
+        device="cpu",
     )
-    _, v_b = sim_b.simulate(S0=100.0, v0=0.04, T=1.0, dt=1/252.0, num_paths=3000, model_type="bates")
-    _, v_s = sim_s.simulate(S0=100.0, v0=0.04, T=1.0, dt=1/252.0, num_paths=3000, model_type="svjj")
+    _, v_b = sim_b.simulate(
+        S0=100.0, v0=0.04, T=1.0, dt=1 / 252.0, num_paths=3000, model_type="bates"
+    )
+    _, v_s = sim_s.simulate(
+        S0=100.0, v0=0.04, T=1.0, dt=1 / 252.0, num_paths=3000, model_type="svjj"
+    )
     assert float(v_s.mean()) > float(v_b.mean()), (
         f"SVJJ mean v={float(v_s.mean()):.5f} should exceed Bates {float(v_b.mean()):.5f}"
     )
+
+
+@pytest.mark.parametrize("model_type,vol_jump_mean", [("bates", 0.0), ("svjj", 0.03)])
+def test_zero_controlled_jump_model_matches_natural(model_type, vol_jump_mean):
+    """Brownian control must not silently remove the base-model jumps."""
+    sim = MarketSimulator(
+        mu=0.05,
+        kappa=2.0,
+        theta=0.04,
+        xi=0.5,
+        rho=-0.7,
+        jump_lambda=15.0,
+        jump_mean=-0.04,
+        jump_std=0.08,
+        vol_jump_mean=vol_jump_mean,
+        device="cpu",
+    )
+
+    def zero_control(t, S, v, average):
+        return torch.zeros_like(S)
+
+    set_seed(91)
+    natural_S, natural_v = sim.simulate(
+        S0=100.0,
+        v0=0.04,
+        T=0.2,
+        dt=1.0 / 64.0,
+        num_paths=512,
+        model_type=model_type,
+    )
+    set_seed(91)
+    controlled_S, controlled_v, log_weight, _, _ = sim.simulate_controlled(
+        S0=100.0,
+        v0=0.04,
+        T=0.2,
+        dt=1.0 / 64.0,
+        num_paths=512,
+        control_fn=zero_control,
+        model_type=model_type,
+    )
+
+    # Algebraically identical drift expressions may differ by a few float32
+    # ulps because the controlled branch groups the zero control term.
+    assert torch.allclose(natural_S, controlled_S, rtol=1e-6, atol=1e-6)
+    assert torch.allclose(natural_v, controlled_v, rtol=1e-6, atol=1e-7)
+    assert torch.equal(log_weight, torch.zeros_like(log_weight))

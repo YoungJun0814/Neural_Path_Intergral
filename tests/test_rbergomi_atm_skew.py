@@ -4,9 +4,8 @@ We don't test the *magnitude* of the ATM skew (which depends on the mid-T
 asymptotics ~ T^{H-1/2}); only sign and ordering. A full BLP scheme test
 would require a 2-dim covariance check at the kernel level.
 """
-from __future__ import annotations
 
-import math
+from __future__ import annotations
 
 import pytest
 import torch
@@ -56,7 +55,7 @@ def test_rbergomi_negative_rho_atm_skew_negative():
     S, _ = sim.simulate(S0=100.0, T=0.5, dt=1 / 252.0, num_paths=5000)
     log_ret_total = torch.log(S[:, -1] / S[:, 0])
     z = (log_ret_total - log_ret_total.mean()) / (log_ret_total.std() + 1e-8)
-    skew = float((z ** 3).mean())
+    skew = float((z**3).mean())
     assert skew < 0.0, f"ρ=−0.9 should give negative terminal skew; got {skew}"
 
 

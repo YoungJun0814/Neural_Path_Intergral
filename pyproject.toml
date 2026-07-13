@@ -7,7 +7,7 @@ name = "driftnet-npi"
 version = "0.2.0"
 description = "Physics-Informed Neural Path Integral for Rare-Event Simulation in Quantitative Finance"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "YoungJun" }]
 keywords = ["neural-sde", "importance-sampling", "rare-event", "quantitative-finance"]
@@ -52,7 +52,7 @@ driftnet = "src"
 
 [tool.ruff]
 line-length = 100
-target-version = "py39"
+target-version = "py310"
 extend-exclude = ["notebooks/**", "notebooks/archive/**"]
 
 [tool.ruff.lint]
@@ -69,8 +69,9 @@ markers = [
 ]
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.10"
 warn_return_any = false
 warn_unused_configs = true
 ignore_missing_imports = true
+disable_error_code = ["import-untyped"]
 exclude = ["notebooks/", "build/"]

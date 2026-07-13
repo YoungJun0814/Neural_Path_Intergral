@@ -16,18 +16,19 @@ See ``docs/formulation.md`` for the exact math.  Key design decisions in Phase 1
   objective (``docs/formulation.md §3.1``) with proper Girsanov weights.  The
   loss is the second moment of ``g(S_T) · dP/dQ``.
 """
+
 from __future__ import annotations
 
 import math
-from typing import Callable, Optional
+from collections.abc import Callable
 
 import torch
 import torch.nn as nn
 
-
 # -----------------------------------------------------------------------------
 # 1.  Drift / diffusion networks for S
 # -----------------------------------------------------------------------------
+
 
 class DriftNet(nn.Module):
     """μ(S, v, t[, A]) — bounded by tanh to keep gradients tame.
@@ -51,7 +52,7 @@ class DriftNet(nn.Module):
         S: torch.Tensor,
         v: torch.Tensor,
         t: float | torch.Tensor,
-        avg_S: Optional[torch.Tensor] = None,
+        avg_S: torch.Tensor | None = None,
     ) -> torch.Tensor:
         if avg_S is None:
             avg_S = S
@@ -87,6 +88,7 @@ class DiffNet(nn.Module):
 # 2.  Variance networks
 # -----------------------------------------------------------------------------
 
+
 class VolNet(nn.Module):
     """Heston-prior volatility dynamics with neural correction.
 
@@ -94,7 +96,9 @@ class VolNet(nn.Module):
     b(S,v,t) = ψ_b(S,v,t) · √v
     """
 
-    def __init__(self, hidden_dim: int = 64, n_layers: int = 3, correction_scale: float = 0.1) -> None:
+    def __init__(
+        self, hidden_dim: int = 64, n_layers: int = 3, correction_scale: float = 0.1
+    ) -> None:
         super().__init__()
         self.correction_scale = float(correction_scale)
 
@@ -158,6 +162,7 @@ class VolNetFree(nn.Module):
 # 3.  Neural SDE simulator
 # -----------------------------------------------------------------------------
 
+
 class NeuralSDESimulator:
     """Stochastic-volatility Neural SDE with learnable correlation ρ.
 
@@ -189,7 +194,9 @@ class NeuralSDESimulator:
         self.vol_head = vol_head
 
         rho_raw_init = self._inverse_tanh(rho_init)
-        self._rho_raw = nn.Parameter(torch.tensor(rho_raw_init, device=self.device, dtype=torch.float32))
+        self._rho_raw = nn.Parameter(
+            torch.tensor(rho_raw_init, device=self.device, dtype=torch.float32)
+        )
         self.v0 = float(v0)
 
     @staticmethod
@@ -217,12 +224,19 @@ class NeuralSDESimulator:
         T: float,
         dt: float,
         num_paths: int,
-        v0: Optional[float] = None,
+        v0: float | None = None,
         training: bool = False,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         if v0 is None:
             v0 = self.v0
-        n_steps = max(1, int(round(T / dt)))
+        if T <= 0.0 or dt <= 0.0:
+            raise ValueError(f"T and dt must be positive; got T={T}, dt={dt}")
+        if num_paths <= 0:
+            raise ValueError(f"num_paths must be positive; got {num_paths}")
+        if v0 < 0.0:
+            raise ValueError(f"v0 must be nonnegative; got {v0}")
+        n_steps = max(1, int(math.ceil(T / dt)))
+        step_dt = T / n_steps
 
         curr_S = torch.full((num_paths,), float(S0), device=self.device)
         curr_v = torch.full((num_paths,), float(v0), device=self.device)
@@ -234,12 +248,12 @@ class NeuralSDESimulator:
         ctx = torch.enable_grad() if training else torch.no_grad()
 
         with ctx:
-            sqrt_dt = math.sqrt(dt)
+            sqrt_dt = math.sqrt(step_dt)
             rho = self.rho
-            sqrt_one_minus_rho2 = torch.sqrt(torch.clamp(1.0 - rho ** 2, min=1e-8))
+            sqrt_one_minus_rho2 = torch.sqrt(torch.clamp(1.0 - rho**2, min=1e-8))
 
             for k in range(1, n_steps + 1):
-                t_curr = (k - 1) * dt
+                t_curr = (k - 1) * step_dt
                 z1 = torch.randn(num_paths, device=self.device)
                 z2 = torch.randn(num_paths, device=self.device)
                 dW_S = z1 * sqrt_dt
@@ -249,8 +263,8 @@ class NeuralSDESimulator:
                 sigma = self.diff_net(curr_S, curr_v, t_curr)
                 a, b = self.vol_net(curr_S, curr_v, t_curr)
 
-                dS = mu * curr_S * dt + sigma * curr_S * dW_S
-                dv = a * dt + b * dW_v
+                dS = mu * curr_S * step_dt + sigma * curr_S * dW_S
+                dv = a * step_dt + b * dW_v
                 next_S = torch.clamp(curr_S + dS, min=1e-8)
                 next_v = torch.clamp(curr_v + dv, min=1e-8)
 
@@ -271,7 +285,7 @@ class NeuralSDESimulator:
         dt: float,
         num_paths: int,
         control_fn: Callable[..., torch.Tensor],
-        v0: Optional[float] = None,
+        v0: float | None = None,
         training: bool = True,
         apply_v_drift_correction: bool = True,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
@@ -289,8 +303,15 @@ class NeuralSDESimulator:
         """
         if v0 is None:
             v0 = self.v0
-        n_steps = max(1, int(round(T / dt)))
-        sqrt_dt = math.sqrt(dt)
+        if T <= 0.0 or dt <= 0.0:
+            raise ValueError(f"T and dt must be positive; got T={T}, dt={dt}")
+        if num_paths <= 0:
+            raise ValueError(f"num_paths must be positive; got {num_paths}")
+        if v0 < 0.0:
+            raise ValueError(f"v0 must be nonnegative; got {v0}")
+        n_steps = max(1, int(math.ceil(T / dt)))
+        step_dt = T / n_steps
+        sqrt_dt = math.sqrt(step_dt)
 
         curr_S = torch.full((num_paths,), float(S0), device=self.device)
         curr_v = torch.full((num_paths,), float(v0), device=self.device)
@@ -307,10 +328,10 @@ class NeuralSDESimulator:
             control_fn.train(training)  # type: ignore[attr-defined]
 
         rho = self.rho
-        sqrt_one_minus_rho2 = torch.sqrt(torch.clamp(1.0 - rho ** 2, min=1e-8))
+        sqrt_one_minus_rho2 = torch.sqrt(torch.clamp(1.0 - rho**2, min=1e-8))
 
         for k in range(1, n_steps + 1):
-            t_curr = (k - 1) * dt
+            t_curr = (k - 1) * step_dt
             z1 = torch.randn(num_paths, device=self.device)
             z2 = torch.randn(num_paths, device=self.device)
             dw_S_Q = z1 * sqrt_dt
@@ -325,7 +346,7 @@ class NeuralSDESimulator:
             u_t = control_fn(t_curr, curr_S, curr_v, avg_S)
 
             # Price dynamics under Q
-            dS = (mu + sigma * u_t) * curr_S * dt + sigma * curr_S * dw_S_Q
+            dS = (mu + sigma * u_t) * curr_S * step_dt + sigma * curr_S * dw_S_Q
             next_S = torch.clamp(curr_S + dS, min=1e-8)
 
             # Variance dynamics under Q — with correction
@@ -333,14 +354,14 @@ class NeuralSDESimulator:
             if apply_v_drift_correction:
                 v_drift = v_drift + rho * b * u_t
             dW_v_Q = rho * dw_S_Q + sqrt_one_minus_rho2 * dw_perp_Q
-            dv = v_drift * dt + b * dW_v_Q
+            dv = v_drift * step_dt + b * dW_v_Q
             next_v = torch.clamp(curr_v + dv, min=1e-8)
 
-            running_int_S = running_int_S + curr_S * dt
+            running_int_S = running_int_S + curr_S * step_dt
 
             # log dP/dQ = -∫ u dW^Q − ½ ∫ u² dt
             int_u_dW = int_u_dW + u_t * z1 * sqrt_dt
-            int_u_sq_dt = int_u_sq_dt + (u_t ** 2) * dt
+            int_u_sq_dt = int_u_sq_dt + (u_t**2) * step_dt
 
             S_list.append(next_S)
             v_list.append(next_v)
@@ -367,7 +388,7 @@ class NeuralSDESimulator:
         target_kurtosis: float = 6.0,
         kurtosis_weight: float = 0.1,
         num_paths: int = 2000,
-        dt: Optional[float] = None,
+        dt: float | None = None,
     ) -> float:
         """Single training step: MSE(option prices) + λ·(kurtosis − target)²."""
         for net in (self.drift_net, self.diff_net, self.vol_net):
@@ -384,7 +405,7 @@ class NeuralSDESimulator:
 
         log_returns = torch.log(S[:, 1:] / S[:, :-1]).flatten()
         z = (log_returns - log_returns.mean()) / (log_returns.std() + 1e-8)
-        model_kurt = (z ** 4).mean()
+        model_kurt = (z**4).mean()
         kurt_loss = (model_kurt - target_kurtosis) ** 2
 
         target_t = torch.as_tensor(target_prices, device=self.device, dtype=torch.float32)
@@ -427,6 +448,7 @@ class NeuralSDESimulator:
 # 4.  Neural Importance Sampler (variance-minimization IS)
 # -----------------------------------------------------------------------------
 
+
 class NeuralImportanceSampler:
     """Learns a control u(t, S, v, A) that minimizes Var[g(S_T)·dP/dQ].
 
@@ -441,6 +463,12 @@ class NeuralImportanceSampler:
 
     Minimizing L_VM minimizes the variance of the IS estimator, because
     E^Q[g·dP/dQ] = E^P[g] is independent of u.
+
+    ``train_step`` uses reparameterized pathwise gradients and therefore
+    requires a payoff differentiable almost everywhere (vanilla put/call
+    payoffs are admissible). A hard event indicator requires the explicit
+    score-function treatment in ``src.training.markov_control``; applying this
+    helper directly to an indicator is not theoretically justified.
     """
 
     def __init__(
@@ -478,7 +506,7 @@ class NeuralImportanceSampler:
         num_paths: int,
         optimizer: torch.optim.Optimizer,
         payoff_fn: Callable[[torch.Tensor], torch.Tensor],
-        v0: Optional[float] = None,
+        v0: float | None = None,
         discount: float = 0.0,
         kl_weight: float = 0.0,
     ) -> dict:
@@ -501,10 +529,23 @@ class NeuralImportanceSampler:
 
         control_fn = self.get_control_fn()
         # Simulator may return 3 or 5 element tuple; accept both.
-        out = self.sim.simulate_controlled(
-            S0=S0, T=T, dt=dt, num_paths=num_paths, control_fn=control_fn, v0=v0,
-        ) if self._simulator_accepts_v0() else self.sim.simulate_controlled(
-            S0=S0, T=T, dt=dt, num_paths=num_paths, control_fn=control_fn,
+        out = (
+            self.sim.simulate_controlled(
+                S0=S0,
+                T=T,
+                dt=dt,
+                num_paths=num_paths,
+                control_fn=control_fn,
+                v0=v0,
+            )
+            if self._simulator_accepts_v0()
+            else self.sim.simulate_controlled(
+                S0=S0,
+                T=T,
+                dt=dt,
+                num_paths=num_paths,
+                control_fn=control_fn,
+            )
         )
         S = out[0]
         log_weight = out[2]  # position 2 in both NeuralSDE & MarketSimulator returns
@@ -514,7 +555,7 @@ class NeuralImportanceSampler:
         weights = torch.exp(log_weight)
         reweighted = payoffs * weights * math.exp(discount)
 
-        loss = (reweighted ** 2).mean()
+        loss = (reweighted**2).mean()
         if kl_weight > 0.0:
             # E^Q[½ ∫ u² dt] is accumulated in −log_weight as −0.5·∫u² dt − ∫u dW^Q
             # but the second term has mean 0, so KL ≈ −E^Q[log_weight] + E^Q[½ ∫u² dt]
@@ -527,7 +568,7 @@ class NeuralImportanceSampler:
 
         with torch.no_grad():
             mean_estimate = reweighted.mean().item()
-            ess = (weights.sum() ** 2 / (weights ** 2).sum()).item()
+            ess = (weights.sum() ** 2 / (weights**2).sum()).item()
         return {
             "loss": float(loss.item()),
             "mean_estimate": float(mean_estimate),

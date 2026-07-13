@@ -8,6 +8,7 @@ Usage:
 
 Each subcommand reads a YAML config and logs seed, git hash, and timing.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -16,10 +17,10 @@ import sys
 import time
 from pathlib import Path
 
-
 # -----------------------------------------------------------------------------
 # Subcommands
 # -----------------------------------------------------------------------------
+
 
 def cmd_simulate(cfg: dict) -> int:
     """Run a forward simulation under the specified model."""
@@ -34,7 +35,7 @@ def cmd_simulate(cfg: dict) -> int:
         from src.physics_engine import RBergomiSimulator
 
         rb = cfg.get("rbergomi", {})
-        sim = RBergomiSimulator(
+        rb_simulator = RBergomiSimulator(
             H=rb.get("H", 0.07),
             eta=rb.get("eta", 1.9),
             xi=rb.get("xi", 0.235),
@@ -42,7 +43,7 @@ def cmd_simulate(cfg: dict) -> int:
             kappa_hybrid=rb.get("kappa_hybrid", 1),
             device=device,
         )
-        S, v = sim.simulate(
+        S, v = rb_simulator.simulate(
             S0=sim_cfg["S0"],
             T=sim_cfg["T"],
             dt=sim_cfg["dt"],
@@ -53,7 +54,7 @@ def cmd_simulate(cfg: dict) -> int:
         from src.physics_engine import MarketSimulator
 
         heston_cfg = cfg["heston"]
-        sim = MarketSimulator(
+        market_simulator = MarketSimulator(
             mu=heston_cfg["mu"],
             kappa=heston_cfg["kappa"],
             theta=heston_cfg["theta"],
@@ -65,7 +66,7 @@ def cmd_simulate(cfg: dict) -> int:
             vol_jump_mean=heston_cfg.get("vol_jump_mean", 0.0),
             device=device,
         )
-        S, v = sim.simulate(
+        S, v = market_simulator.simulate(
             S0=sim_cfg["S0"],
             v0=sim_cfg["v0"],
             T=sim_cfg["T"],
@@ -101,7 +102,9 @@ def cmd_calibrate(cfg: dict) -> int:
         input_dim=cal_cfg.get("input_dim", 5),
         hidden_dim=cal_cfg.get("hidden_dim", 64),
     ).to(device)
-    print(f"Built NeuralCalibrator with {sum(p.numel() for p in model.parameters())} params on {device}.")
+    print(
+        f"Built NeuralCalibrator with {sum(p.numel() for p in model.parameters())} params on {device}."
+    )
     print("Full training pipeline arrives in Phase 3 (see IMPROVEMENT_PLAN.md M3).")
     return 0
 
@@ -126,6 +129,7 @@ SUBCMDS = {
 # -----------------------------------------------------------------------------
 # Entrypoint
 # -----------------------------------------------------------------------------
+
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="driftnet", description="Neural Path Integral pipeline")
@@ -156,23 +160,23 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     # Late imports so `python main.py --help` does not require torch/yaml.
-    import yaml  # noqa: WPS433
     import torch  # noqa: WPS433
+    import yaml  # noqa: WPS433
 
     from src.utils import git_hash, set_seed
 
     cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
     seed = args.seed if args.seed is not None else cfg.get("seed", 42)
     set_seed(seed)
-    print(
-        f"[driftnet] mode={args.mode} seed={seed} "
-        f"git={git_hash()} torch={torch.__version__}"
-    )
-    handler = SUBCMDS[args.mode]
+    print(f"[driftnet] mode={args.mode} seed={seed} git={git_hash()} torch={torch.__version__}")
     # train_ipm needs the config path so train_driftnet can pick up config overrides
     if args.mode == "train_ipm":
-        return handler(cfg, args.config)
-    return handler(cfg)
+        return cmd_train_ipm(cfg, args.config)
+    if args.mode == "simulate":
+        return cmd_simulate(cfg)
+    if args.mode == "calibrate":
+        return cmd_calibrate(cfg)
+    raise ValueError(f"unknown mode: {args.mode}")
 
 
 if __name__ == "__main__":

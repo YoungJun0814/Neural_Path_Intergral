@@ -7,6 +7,17 @@ from .backtest import (
     kupiec_pof_test,
     var_exceptions,
 )
+from .heston_reference import (
+    HestonReferenceParams,
+    heston_call_price,
+    heston_characteristic_function,
+    heston_left_tail_quantile,
+    heston_put_price,
+    heston_terminal_cdf,
+)
+from .likelihood import LikelihoodDiagnostics, likelihood_diagnostics
+from .protocol import FrozenExperimentProtocol, FrozenSeedSplit, load_frozen_protocol
+from .statistics import RepeatedEstimateReport, repeated_estimate_report
 
 __all__ = [
     "compute_var_series",
@@ -14,4 +25,17 @@ __all__ = [
     "kupiec_pof_test",
     "christoffersen_independence",
     "efficiency_metrics",
+    "HestonReferenceParams",
+    "heston_characteristic_function",
+    "heston_call_price",
+    "heston_put_price",
+    "heston_terminal_cdf",
+    "heston_left_tail_quantile",
+    "LikelihoodDiagnostics",
+    "likelihood_diagnostics",
+    "FrozenSeedSplit",
+    "FrozenExperimentProtocol",
+    "load_frozen_protocol",
+    "RepeatedEstimateReport",
+    "repeated_estimate_report",
 ]

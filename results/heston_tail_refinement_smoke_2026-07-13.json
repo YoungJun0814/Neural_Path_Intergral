@@ -1,0 +1,378 @@
+{
+  "mode": "smoke_non_publication",
+  "protocol_id": "g2-heston-terminal-left-tail-v1",
+  "protocol_sha256": "56d90523c69bea30751ff32c13809965aaf76d5d38680376021e32ce72353d6e",
+  "reference_probability": 0.00010000000000265352,
+  "rows": [
+    {
+      "cem_converged": true,
+      "control": -3.684275185775757,
+      "dt_effective": 0.015625,
+      "dt_requested": 0.015625,
+      "report": {
+        "bias": -4.089908040609089e-06,
+        "bias_z_score": -1.7231317564415631,
+        "ci_coverage": 0.6666666666666666,
+        "confidence_level": 0.95,
+        "empirical_standard_deviation": 4.1110776921948365e-06,
+        "mean_estimate": 9.591009196204443e-05,
+        "mean_reported_standard_error": 3.1353158647107193e-06,
+        "relative_bias": -0.040899080405005624,
+        "relative_rmse": 0.052909974774763564,
+        "runs": 3,
+        "truth": 0.00010000000000265352
+      },
+      "runs": [
+        {
+          "diagnostics": {
+            "contribution_ess": 785.6766057228153,
+            "contribution_ess_fraction": 0.03928383028614077,
+            "estimate": 0.00010048997716559785,
+            "finite_fraction": 1.0,
+            "likelihood_ess": 3.3259023221887003,
+            "likelihood_ess_fraction": 0.000166295116109435,
+            "log_mean_likelihood": 0.1321999539557659,
+            "max_contribution_share": 0.013090533284198774,
+            "max_normalized_weight": 0.5431489704840918,
+            "mean_likelihood": 1.1413365112028098,
+            "normalization_z_score": 0.22585029252581554,
+            "paths": 20000,
+            "top_one_percent_contribution_share": 0.22377315506647064,
+            "top_one_percent_weight_share": 0.9288863824873591
+          },
+          "elapsed_seconds": 0.08394620002945885,
+          "estimate": 0.00010048998956335708,
+          "event_fraction_under_proposal": 0.39660000801086426,
+          "single_path_variance": 2.4697243361515575e-07,
+          "standard_error": 3.5140606087225024e-06
+        },
+        {
+          "diagnostics": {
+            "contribution_ess": 1044.6456575434174,
+            "contribution_ess_fraction": 0.05223228287717087,
+            "estimate": 9.253876659657786e-05,
+            "finite_fraction": 1.0,
+            "likelihood_ess": 31.601693557541594,
+            "likelihood_ess_fraction": 0.0015800846778770798,
+            "log_mean_likelihood": -0.36659995555177716,
+            "max_contribution_share": 0.008023664266842027,
+            "max_normalized_weight": 0.11049437233514006,
+            "mean_likelihood": 0.6930868551410501,
+            "normalization_z_score": -2.4912397827292794,
+            "paths": 20000,
+            "top_one_percent_contribution_share": 0.1881092482047313,
+            "top_one_percent_weight_share": 0.8707550248547471
+          },
+          "elapsed_seconds": 0.08433509996393695,
+          "estimate": 9.253877215087414e-05,
+          "event_fraction_under_proposal": 0.3860499858856201,
+          "single_path_variance": 1.5539320941115875e-07,
+          "standard_error": 2.787410949167679e-06
+        },
+        {
+          "diagnostics": {
+            "contribution_ess": 889.2161963306854,
+            "contribution_ess_fraction": 0.04446080981653427,
+            "estimate": 9.470150593982381e-05,
+            "finite_fraction": 1.0,
+            "likelihood_ess": 4.10775409761648,
+            "likelihood_ess_fraction": 0.000205387704880824,
+            "log_mean_likelihood": 0.73412507297469,
+            "max_contribution_share": 0.007308643647908134,
+            "max_normalized_weight": 0.4763132874833923,
+            "mean_likelihood": 2.083658145931662,
+            "normalization_z_score": 1.054148504168289,
+            "paths": 20000,
+            "top_one_percent_contribution_share": 0.21775568548715035,
+            "top_one_percent_weight_share": 0.9580356582788863
+          },
+          "elapsed_seconds": 0.09188399999402463,
+          "estimate": 9.470151417190209e-05,
+          "event_fraction_under_proposal": 0.3883500099182129,
+          "single_path_variance": 1.9275543650110194e-07,
+          "standard_error": 3.1044760362419765e-06
+        }
+      ],
+      "steps": 64,
+      "training_seconds": 0.16392540000379086
+    },
+    {
+      "cem_converged": true,
+      "control": -3.6362850014448163,
+      "dt_effective": 0.0078125,
+      "dt_requested": 0.0078125,
+      "report": {
+        "bias": 2.4825799556833794e-07,
+        "bias_z_score": 1.1461383076896288,
+        "ci_coverage": 1.0,
+        "confidence_level": 0.95,
+        "empirical_standard_deviation": 3.7516891183608543e-07,
+        "mean_estimate": 0.00010024825799822186,
+        "mean_reported_standard_error": 3.154255333962889e-06,
+        "relative_bias": 0.0024825799556175035,
+        "relative_rmse": 0.003942924134372976,
+        "runs": 3,
+        "truth": 0.00010000000000265352
+      },
+      "runs": [
+        {
+          "diagnostics": {
+            "contribution_ess": 1029.5424352944906,
+            "contribution_ess_fraction": 0.05147712176472453,
+            "estimate": 9.995464858849513e-05,
+            "finite_fraction": 1.0,
+            "likelihood_ess": 23.144552801410896,
+            "likelihood_ess_fraction": 0.0011572276400705448,
+            "log_mean_likelihood": -0.6597253719596594,
+            "max_contribution_share": 0.007575711067352426,
+            "max_normalized_weight": 0.17484562697060435,
+            "mean_likelihood": 0.5169932958532312,
+            "normalization_z_score": -4.49710700090608,
+            "paths": 20000,
+            "top_one_percent_contribution_share": 0.19373662504897593,
+            "top_one_percent_weight_share": 0.8314695701383331
+          },
+          "elapsed_seconds": 0.19864630000665784,
+          "estimate": 9.995465370593593e-05,
+          "event_fraction_under_proposal": 0.3815000057220459,
+          "single_path_variance": 1.8410317181860592e-07,
+          "standard_error": 3.0340004286699696e-06
+        },
+        {
+          "diagnostics": {
+            "contribution_ess": 869.8620454844328,
+            "contribution_ess_fraction": 0.04349310227422164,
+            "estimate": 0.00010067092049898863,
+            "finite_fraction": 1.0,
+            "likelihood_ess": 8.309807328968942,
+            "likelihood_ess_fraction": 0.0004154903664484471,
+            "log_mean_likelihood": 0.09739410232870327,
+            "max_contribution_share": 0.011871022954859449,
+            "max_normalized_weight": 0.2527587150685911,
+            "mean_likelihood": 1.1022947049400311,
+            "normalization_z_score": 0.2675656103179232,
+            "paths": 20000,
+            "top_one_percent_contribution_share": 0.20334464162501367,
+            "top_one_percent_weight_share": 0.9138562576061355
+          },
+          "elapsed_seconds": 0.18904820003081113,
+          "estimate": 0.00010067092080134898,
+          "event_fraction_under_proposal": 0.37369999289512634,
+          "single_path_variance": 2.2289356138571748e-07,
+          "standard_error": 3.3383646496076835e-06
+        },
+        {
+          "diagnostics": {
+            "contribution_ess": 997.2700372711752,
+            "contribution_ess_fraction": 0.04986350186355876,
+            "estimate": 0.00010011919931092736,
+            "finite_fraction": 1.0,
+            "likelihood_ess": 45.035801457938724,
+            "likelihood_ess_fraction": 0.0022517900728969364,
+            "log_mean_likelihood": -0.5405142900864313,
+            "max_contribution_share": 0.00920292642262054,
+            "max_normalized_weight": 0.08271475281824985,
+            "mean_likelihood": 0.5824486277784923,
+            "normalization_z_score": -4.816259742165124,
+            "paths": 20000,
+            "top_one_percent_contribution_share": 0.19331298701062344,
+            "top_one_percent_weight_share": 0.8418340423457364
+          },
+          "elapsed_seconds": 0.16346329997759312,
+          "estimate": 0.00010011919948738068,
+          "event_fraction_under_proposal": 0.3806000053882599,
+          "single_path_variance": 1.9101156567558064e-07,
+          "standard_error": 3.090400923611014e-06
+        }
+      ],
+      "steps": 128,
+      "training_seconds": 0.3269224999821745
+    },
+    {
+      "cem_converged": true,
+      "control": -3.6778099304914473,
+      "dt_effective": 0.00390625,
+      "dt_requested": 0.00390625,
+      "report": {
+        "bias": -9.95991389437137e-07,
+        "bias_z_score": -0.3742787513564568,
+        "ci_coverage": 1.0,
+        "confidence_level": 0.95,
+        "empirical_standard_deviation": 4.609152093604368e-06,
+        "mean_estimate": 9.900400861321638e-05,
+        "mean_reported_standard_error": 3.1495338438010854e-06,
+        "relative_bias": -0.009959913894107083,
+        "relative_rmse": 0.0389292360508316,
+        "runs": 3,
+        "truth": 0.00010000000000265352
+      },
+      "runs": [
+        {
+          "diagnostics": {
+            "contribution_ess": 932.7441909437927,
+            "contribution_ess_fraction": 0.04663720954718963,
+            "estimate": 0.0001041627606371021,
+            "finite_fraction": 1.0,
+            "likelihood_ess": 17.239251639529993,
+            "likelihood_ess_fraction": 0.0008619625819764996,
+            "log_mean_likelihood": -0.5480775378891227,
+            "max_contribution_share": 0.009072266632522063,
+            "max_normalized_weight": 0.18157663349033754,
+            "mean_likelihood": 0.5780600413773958,
+            "normalization_z_score": -3.0318890653010797,
+            "paths": 20000,
+            "top_one_percent_contribution_share": 0.21322742593664212,
+            "top_one_percent_weight_share": 0.8618692395208551
+          },
+          "elapsed_seconds": 0.31179720000363886,
+          "estimate": 0.00010416276199975982,
+          "event_fraction_under_proposal": 0.3950499892234802,
+          "single_path_variance": 2.2180550729444803e-07,
+          "standard_error": 3.3302064821327804e-06
+        },
+        {
+          "diagnostics": {
+            "contribution_ess": 920.6382836904155,
+            "contribution_ess_fraction": 0.046031914184520774,
+            "estimate": 9.755809721391899e-05,
+            "finite_fraction": 1.0,
+            "likelihood_ess": 28.235465487725172,
+            "likelihood_ess_fraction": 0.0014117732743862586,
+            "log_mean_likelihood": -0.5832245457074468,
+            "max_contribution_share": 0.009075536909394534,
+            "max_normalized_weight": 0.15819225677917717,
+            "mean_likelihood": 0.558095856390939,
+            "normalization_z_score": -4.210296425067226,
+            "paths": 20000,
+            "top_one_percent_contribution_share": 0.21034442521901994,
+            "top_one_percent_weight_share": 0.82765089039473
+          },
+          "elapsed_seconds": 0.30604749999474734,
+          "estimate": 9.755809151101857e-05,
+          "event_fraction_under_proposal": 0.39204999804496765,
+          "single_path_variance": 1.9725280253624078e-07,
+          "standard_error": 3.1404838409798685e-06
+        },
+        {
+          "diagnostics": {
+            "contribution_ess": 974.1325180577563,
+            "contribution_ess_fraction": 0.048706625902887817,
+            "estimate": 9.52911717644542e-05,
+            "finite_fraction": 1.0,
+            "likelihood_ess": 10.25562636528075,
+            "likelihood_ess_fraction": 0.0005127813182640374,
+            "log_mean_likelihood": -0.2140249907538756,
+            "max_contribution_share": 0.009614731887022292,
+            "max_normalized_weight": 0.25468078390457655,
+            "mean_likelihood": 0.8073282090300072,
+            "normalization_z_score": -0.7644509450571193,
+            "paths": 20000,
+            "top_one_percent_contribution_share": 0.20449932647071445,
+            "top_one_percent_weight_share": 0.886186184792493
+          },
+          "elapsed_seconds": 0.32559910003328696,
+          "estimate": 9.529117232887074e-05,
+          "event_fraction_under_proposal": 0.3937000036239624,
+          "single_path_variance": 1.7735909807470307e-07,
+          "standard_error": 2.9779112082906067e-06
+        }
+      ],
+      "steps": 256,
+      "training_seconds": 0.6576349000097252
+    },
+    {
+      "cem_converged": true,
+      "control": -3.6662546656846997,
+      "dt_effective": 0.001953125,
+      "dt_requested": 0.001953125,
+      "report": {
+        "bias": -3.2306474821257303e-07,
+        "bias_z_score": -0.10209325661035072,
+        "ci_coverage": 0.6666666666666666,
+        "confidence_level": 0.95,
+        "empirical_standard_deviation": 5.480915945058527e-06,
+        "mean_estimate": 9.967693525444095e-05,
+        "mean_reported_standard_error": 2.9544516261618505e-06,
+        "relative_bias": -0.0032306474820400044,
+        "relative_rmse": 0.04486795132571482,
+        "runs": 3,
+        "truth": 0.00010000000000265352
+      },
+      "runs": [
+        {
+          "diagnostics": {
+            "contribution_ess": 959.0655442954545,
+            "contribution_ess_fraction": 0.04795327721477272,
+            "estimate": 0.00010264934750824238,
+            "finite_fraction": 1.0,
+            "likelihood_ess": 52.281701533750145,
+            "likelihood_ess_fraction": 0.0026140850766875074,
+            "log_mean_likelihood": -0.638146745473529,
+            "max_contribution_share": 0.00972080322528086,
+            "max_normalized_weight": 0.06926893105070661,
+            "mean_likelihood": 0.528270537181032,
+            "normalization_z_score": -6.4650069445737515,
+            "paths": 20000,
+            "top_one_percent_contribution_share": 0.20384588851264313,
+            "top_one_percent_weight_share": 0.8475063975683135
+          },
+          "elapsed_seconds": 0.8145682000322267,
+          "estimate": 0.00010264935554005206,
+          "event_fraction_under_proposal": 0.392549991607666,
+          "single_path_variance": 2.0920596455198393e-07,
+          "standard_error": 3.2342384201911045e-06
+        },
+        {
+          "diagnostics": {
+            "contribution_ess": 1123.4770319018226,
+            "contribution_ess_fraction": 0.056173851595091126,
+            "estimate": 0.00010302952868903486,
+            "finite_fraction": 1.0,
+            "likelihood_ess": 6.388342182701827,
+            "likelihood_ess_fraction": 0.0003194171091350913,
+            "log_mean_likelihood": -0.03346378046978238,
+            "max_contribution_share": 0.0053799180974674786,
+            "max_normalized_weight": 0.3828154492209059,
+            "mean_likelihood": 0.9670899381403076,
+            "normalization_z_score": -0.0860229700529088,
+            "paths": 20000,
+            "top_one_percent_contribution_share": 0.1876878779754319,
+            "top_one_percent_weight_share": 0.8988001233856728
+          },
+          "elapsed_seconds": 1.0453733999747783,
+          "estimate": 0.00010302952432539314,
+          "event_fraction_under_proposal": 0.3909499943256378,
+          "single_path_variance": 1.7836224230904918e-07,
+          "standard_error": 2.98632085105055e-06
+        },
+        {
+          "diagnostics": {
+            "contribution_ess": 1174.511971599578,
+            "contribution_ess_fraction": 0.058725598579978895,
+            "estimate": 9.335192734032016e-05,
+            "finite_fraction": 1.0,
+            "likelihood_ess": 18.699192048935245,
+            "likelihood_ess_fraction": 0.0009349596024467623,
+            "log_mean_likelihood": -0.37616736066414624,
+            "max_contribution_share": 0.006582791008697175,
+            "max_normalized_weight": 0.19617031055492565,
+            "mean_likelihood": 0.6864874324350279,
+            "normalization_z_score": -1.9757229563539738,
+            "paths": 20000,
+            "top_one_percent_contribution_share": 0.18264534636765858,
+            "top_one_percent_weight_share": 0.8647249743946455
+          },
+          "elapsed_seconds": 0.8611630999948829,
+          "estimate": 9.335192589787766e-05,
+          "event_fraction_under_proposal": 0.392300009727478,
+          "single_path_variance": 1.3968735856906278e-07,
+          "standard_error": 2.6427956072438974e-06
+        }
+      ],
+      "steps": 512,
+      "training_seconds": 1.253830800007563
+    }
+  ],
+  "target_probability": 0.0001,
+  "threshold": 26.512217853939116
+}

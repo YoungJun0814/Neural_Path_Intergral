@@ -10,17 +10,18 @@ simulator with a single mathematical specification:
   variance process under Q-measure is now explicit.
 * **Hybrid scheme** for rBergomi (Bennedsen–Lunde–Pakkanen 2017).
 """
+
 from __future__ import annotations
 
 import math
-from typing import Callable, Optional
+from collections.abc import Callable
 
 import torch
-
 
 # -----------------------------------------------------------------------------
 # 1. Heston / Bates / SVJJ
 # -----------------------------------------------------------------------------
+
 
 class MarketSimulator:
     """Heston + Bates + SVJJ simulator using Full-Truncation Euler.
@@ -71,18 +72,32 @@ class MarketSimulator:
         dt: float,
         num_paths: int,
         model_type: str = "heston",
-        override_params: Optional[dict] = None,
+        override_params: dict | None = None,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         """Simulate (S, v) paths under P-measure with Full-Truncation Euler."""
+        if T <= 0.0 or dt <= 0.0:
+            raise ValueError(f"T and dt must be positive; got T={T}, dt={dt}")
+        if num_paths <= 0:
+            raise ValueError(f"num_paths must be positive; got {num_paths}")
+        if v0 < 0.0:
+            raise ValueError(f"v0 must be nonnegative; got {v0}")
+        if model_type not in ("heston", "bates", "svjj"):
+            raise ValueError(f"unknown model_type: {model_type}")
+
         params = self._resolved_params(override_params)
-        n_steps = max(1, int(round(T / dt)))
+        n_steps = max(1, int(math.ceil(T / dt)))
+        step_dt = T / n_steps
 
         S = torch.zeros((num_paths, n_steps + 1), device=self.device)
+        # Keep the raw Euler state for the actual full-truncation recursion and
+        # expose its nonnegative effective value to callers.
+        v_state = torch.zeros((num_paths, n_steps + 1), device=self.device)
         v = torch.zeros((num_paths, n_steps + 1), device=self.device)
         S[:, 0] = float(S0)
+        v_state[:, 0] = float(v0)
         v[:, 0] = float(v0)
 
-        sqrt_dt = math.sqrt(dt)
+        sqrt_dt = math.sqrt(step_dt)
         rho = params["rho"]
         sqrt_one_minus_rho2 = math.sqrt(max(1.0 - rho * rho, 0.0))
 
@@ -97,7 +112,7 @@ class MarketSimulator:
             z1 = torch.randn(num_paths, device=self.device)
             z2 = torch.randn(num_paths, device=self.device)
 
-            v_prev = v[:, t - 1]
+            v_prev = v_state[:, t - 1]
             S_prev = S[:, t - 1]
             v_plus = torch.clamp(v_prev, min=0.0)
             sqrt_v = torch.sqrt(v_plus)
@@ -106,33 +121,49 @@ class MarketSimulator:
             dw_v = (rho * z1 + sqrt_one_minus_rho2 * z2) * sqrt_dt
 
             # Full-Truncation Euler
-            dv = params["kappa"] * (params["theta"] - v_plus) * dt + params["xi"] * sqrt_v * dw_v
+            dv = (
+                params["kappa"] * (params["theta"] - v_plus) * step_dt
+                + params["xi"] * sqrt_v * dw_v
+            )
             v_new = v_prev + dv
 
-            dS = (params["mu"] - drift_comp) * S_prev * dt + sqrt_v * S_prev * dw_S
+            # Conditional log-Euler is strictly positive and avoids artificial
+            # left-tail mass from additive Euler followed by a hard floor.
+            next_S = S_prev * torch.exp(
+                (params["mu"] - drift_comp - 0.5 * v_plus) * step_dt + sqrt_v * dw_S
+            )
 
             # Jumps
             if model_type in ("bates", "svjj") and params["jump_lambda"] > 0:
                 n_jumps = torch.poisson(
-                    torch.full((num_paths,), params["jump_lambda"] * dt, device=self.device)
+                    torch.full(
+                        (num_paths,),
+                        params["jump_lambda"] * step_dt,
+                        device=self.device,
+                    )
                 )
                 has_jumps = n_jumps > 0
                 if has_jumps.any():
                     # Sum of n_jumps iid log-jumps: mean = n·m, var = n·s²
-                    log_jump = (
-                        n_jumps * params["jump_mean"]
-                        + torch.sqrt(n_jumps) * params["jump_std"] * torch.randn(num_paths, device=self.device)
-                    )
-                    jump_factor = (torch.exp(log_jump) - 1.0) * has_jumps.float()
-                    dS = dS + jump_factor * S_prev
+                    log_jump = n_jumps * params["jump_mean"] + torch.sqrt(n_jumps) * params[
+                        "jump_std"
+                    ] * torch.randn(num_paths, device=self.device)
+                    next_S = next_S * torch.exp(log_jump * has_jumps.float())
 
                     if model_type == "svjj" and params["vol_jump_mean"] > 0:
                         rate = 1.0 / (params["vol_jump_mean"] + 1e-12)
-                        exp_sample = torch.distributions.Exponential(rate).sample((num_paths,)).to(self.device)
-                        v_new = v_new + exp_sample * n_jumps * has_jumps.float()
+                        # A sum of n iid exponential jumps is Gamma(n, rate),
+                        # not n times one exponential draw.
+                        counts = n_jumps[has_jumps]
+                        variance_jump = torch.distributions.Gamma(
+                            concentration=counts, rate=rate
+                        ).sample()
+                        v_new = v_new.clone()
+                        v_new[has_jumps] = v_new[has_jumps] + variance_jump
 
-            S[:, t] = torch.clamp(S_prev + dS, min=1e-8)
-            v[:, t] = torch.clamp(v_new, min=0.0)  # full-truncation: keep sign; use v_plus downstream
+            S[:, t] = next_S
+            v_state[:, t] = v_new
+            v[:, t] = torch.clamp(v_new, min=0.0)
 
         return S, v
 
@@ -147,12 +178,13 @@ class MarketSimulator:
         T: float,
         dt: float,
         num_paths: int,
-        control_fn: Optional[Callable] = None,
+        control_fn: Callable | None = None,
         model_type: str = "heston",
-        barrier_level: Optional[float] = None,
+        barrier_level: float | None = None,
         barrier_type: str = "down-out",
         apply_v_drift_correction: bool = True,
-    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, Optional[torch.Tensor], torch.Tensor]:
+        brownian_observer: Callable[[float, torch.Tensor], None] | None = None,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor | None, torch.Tensor]:
         """Simulate paths under the controlled Q-measure.
 
         Returns
@@ -174,13 +206,23 @@ class MarketSimulator:
           only kept for regression comparison in ``tests``.
         """
         params = self._resolved_params(None)
-        n_steps = max(1, int(round(T / dt)))
-        sqrt_dt = math.sqrt(dt)
+        if T <= 0.0 or dt <= 0.0:
+            raise ValueError(f"T and dt must be positive; got T={T}, dt={dt}")
+        if num_paths <= 0:
+            raise ValueError(f"num_paths must be positive; got {num_paths}")
+        if v0 < 0.0:
+            raise ValueError(f"v0 must be nonnegative; got {v0}")
+        if model_type not in ("heston", "bates", "svjj"):
+            raise ValueError(f"unknown model_type: {model_type}")
+        n_steps = max(1, int(math.ceil(T / dt)))
+        step_dt = T / n_steps
+        sqrt_dt = math.sqrt(step_dt)
         rho = params["rho"]
         sqrt_one_minus_rho2 = math.sqrt(max(1.0 - rho * rho, 0.0))
 
         curr_S = torch.full((num_paths,), float(S0), device=self.device)
-        curr_v = torch.full((num_paths,), float(v0), device=self.device)
+        curr_v_state = torch.full((num_paths,), float(v0), device=self.device)
+        curr_v = torch.clamp(curr_v_state, min=0.0)
 
         S_list = [curr_S]
         v_list = [curr_v]
@@ -194,14 +236,22 @@ class MarketSimulator:
             else None
         )
 
+        if model_type in ("bates", "svjj"):
+            kappa_J = math.exp(params["jump_mean"] + 0.5 * params["jump_std"] ** 2) - 1.0
+            drift_comp = params["jump_lambda"] * kappa_J
+        else:
+            drift_comp = 0.0
+
         for k in range(1, n_steps + 1):
-            t_curr = (k - 1) * dt
+            t_curr = (k - 1) * step_dt
             z1 = torch.randn(num_paths, device=self.device)
             z2 = torch.randn(num_paths, device=self.device)
 
             # Q-Brownian increments
             dw_S_Q = z1 * sqrt_dt
             dw_perp_Q = z2 * sqrt_dt
+            if brownian_observer is not None:
+                brownian_observer(t_curr, dw_S_Q)
 
             v_plus = torch.clamp(curr_v, min=0.0)
             sqrt_v = torch.sqrt(v_plus)
@@ -216,26 +266,60 @@ class MarketSimulator:
             else:
                 u_t = torch.zeros(num_paths, device=self.device)
 
-            # Price dynamics (Q): drift = μ + √v · u
-            dS = (params["mu"] + sqrt_v * u_t) * curr_S * dt + sqrt_v * curr_S * dw_S_Q
-            next_S = torch.clamp(curr_S + dS, min=1e-8)
+            # Price dynamics (Q), discretized in log space. The Girsanov drift
+            # shift is √v·u and the Ito correction is −v/2.
+            next_S = curr_S * torch.exp(
+                (params["mu"] - drift_comp + sqrt_v * u_t - 0.5 * v_plus) * step_dt
+                + sqrt_v * dw_S_Q
+            )
 
             # Variance dynamics (Q): drift picks up ρ·ξ·√v · u
             v_drift_Q = params["kappa"] * (params["theta"] - v_plus)
             if apply_v_drift_correction and control_fn is not None:
                 v_drift_Q = v_drift_Q + rho * params["xi"] * sqrt_v * u_t
             dW_v_Q = rho * dw_S_Q + sqrt_one_minus_rho2 * dw_perp_Q
-            dv = v_drift_Q * dt + params["xi"] * sqrt_v * dW_v_Q
-            next_v = torch.clamp(curr_v + dv, min=0.0)
+            dv = v_drift_Q * step_dt + params["xi"] * sqrt_v * dW_v_Q
+            next_v_state = curr_v_state + dv
 
-            running_int_S = running_int_S + curr_S * dt
+            # Brownian control leaves the independent jump law unchanged, so
+            # no jump term enters the likelihood ratio. The proposal must,
+            # however, simulate the same compensated jump component as the
+            # base Bates/SVJJ model.
+            if model_type in ("bates", "svjj") and params["jump_lambda"] > 0:
+                n_jumps = torch.poisson(
+                    torch.full(
+                        (num_paths,),
+                        params["jump_lambda"] * step_dt,
+                        device=self.device,
+                    )
+                )
+                has_jumps = n_jumps > 0
+                if has_jumps.any():
+                    log_jump = n_jumps * params["jump_mean"] + torch.sqrt(n_jumps) * params[
+                        "jump_std"
+                    ] * torch.randn(num_paths, device=self.device)
+                    next_S = next_S * torch.exp(log_jump * has_jumps.float())
+
+                    if model_type == "svjj" and params["vol_jump_mean"] > 0:
+                        rate = 1.0 / (params["vol_jump_mean"] + 1e-12)
+                        counts = n_jumps[has_jumps]
+                        variance_jump = torch.distributions.Gamma(
+                            concentration=counts, rate=rate
+                        ).sample()
+                        next_v_state = next_v_state.clone()
+                        next_v_state[has_jumps] = next_v_state[has_jumps] + variance_jump
+
+            next_v = torch.clamp(next_v_state, min=0.0)
+
+            running_int_S = running_int_S + curr_S * step_dt
 
             # Girsanov accumulators: log(dP/dQ) = −∫ u dW^Q − ½ ∫ u² dt
             int_u_dW = int_u_dW + u_t * z1 * sqrt_dt
-            int_u_sq_dt = int_u_sq_dt + (u_t ** 2) * dt
+            int_u_sq_dt = int_u_sq_dt + (u_t**2) * step_dt
 
             # Barrier
             if barrier_hit is not None:
+                assert barrier_level is not None
                 if barrier_type == "down-out":
                     barrier_hit = barrier_hit | (next_S <= barrier_level)
                 elif barrier_type == "up-out":
@@ -245,7 +329,7 @@ class MarketSimulator:
 
             S_list.append(next_S)
             v_list.append(next_v)
-            curr_S, curr_v = next_S, next_v
+            curr_S, curr_v_state, curr_v = next_S, next_v_state, next_v
 
         S = torch.stack(S_list, dim=1)
         v = torch.stack(v_list, dim=1)
@@ -256,7 +340,7 @@ class MarketSimulator:
     # 1.3 Helpers
     # ------------------------------------------------------------------
 
-    def _resolved_params(self, override: Optional[dict]) -> dict:
+    def _resolved_params(self, override: dict | None) -> dict:
         base = {
             "mu": self.mu,
             "kappa": self.kappa,
@@ -277,6 +361,7 @@ class MarketSimulator:
 # 2. Rough Bergomi (hybrid scheme)
 # -----------------------------------------------------------------------------
 
+
 class FractionalBrownianMotion:
     """Fractional Brownian motion generator via Cholesky decomposition.
 
@@ -295,7 +380,9 @@ class FractionalBrownianMotion:
         times = torch.arange(1, n_steps + 1, device=self.device, dtype=torch.float64) * dt
         t_i = times.unsqueeze(1)
         t_j = times.unsqueeze(0)
-        cov = 0.5 * (torch.abs(t_i) ** (2 * H) + torch.abs(t_j) ** (2 * H) - torch.abs(t_i - t_j) ** (2 * H))
+        cov = 0.5 * (
+            torch.abs(t_i) ** (2 * H) + torch.abs(t_j) ** (2 * H) - torch.abs(t_i - t_j) ** (2 * H)
+        )
         cov = cov + 1e-10 * torch.eye(n_steps, device=self.device, dtype=torch.float64)
         return cov.to(torch.float32)
 
@@ -313,10 +400,10 @@ class RBergomiSimulator:
 
     Dynamics::
 
-        V_t = ξ · exp( η · Ỹ_t − ½ η² t^{2H} )
+        V_t = ξ · exp( η · W^H_t − ½ η² Var[W^H_t] )
         dS_t = √V_t · S_t · dW_t^{(S)}
         dW_t^{(S)} = ρ dW_t^{(1)} + √(1-ρ²) dW_t^{(2)}
-        Ỹ_t = ∫₀ᵗ (t-s)^{H-½} dW_s^{(1)}          (Volterra process)
+        W^H_t = √(2H) ∫₀ᵗ (t-s)^{H-½} dW_s^{(1)}  (Volterra process)
 
     Critically, the price driver $W^{(S)}$ is built from the **same Brownian
     motion $W^{(1)}$ that drives the Volterra process**, not from the fBm
@@ -334,6 +421,15 @@ class RBergomiSimulator:
     ) -> None:
         if not (0.0 < H < 0.5):
             raise ValueError(f"rBergomi requires H in (0, 0.5); got {H}")
+        if kappa_hybrid != 1:
+            raise ValueError(
+                "only the BLP kappa=1 hybrid scheme is implemented; "
+                f"got kappa_hybrid={kappa_hybrid}"
+            )
+        if xi <= 0.0:
+            raise ValueError(f"xi must be positive; got {xi}")
+        if not (-1.0 <= rho <= 1.0):
+            raise ValueError(f"rho must be in [-1, 1]; got {rho}")
         self.H = float(H)
         self.eta = float(eta)
         self.xi = float(xi)
@@ -341,19 +437,35 @@ class RBergomiSimulator:
         self.kappa_hybrid = int(kappa_hybrid)
         self.device = torch.device(device) if not isinstance(device, torch.device) else device
 
-    def _hybrid_scheme_volterra(self, num_paths: int, n_steps: int, dt: float) -> tuple[torch.Tensor, torch.Tensor]:
-        """Return (W1, Y) where W1 is increments of the driving BM and Y is
-        the Volterra process Ỹ_t evaluated on the time grid.
+    def _hybrid_scheme_volterra(
+        self,
+        num_paths: int,
+        n_steps: int,
+        dt: float,
+        H: float | None = None,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Return driving increments, normalized Volterra paths, and variance.
 
         Implementation follows Bennedsen–Lunde–Pakkanen (2017) Alg. BN, with
-        κ=self.kappa_hybrid (default 1 — exact on the first sub-interval,
-        Riemann approximation afterwards).
+        kappa=1: the singular kernel is integrated exactly on the most recent
+        interval and replaced by its cell-average on earlier intervals. The
+        returned process includes the ``sqrt(2H)`` normalization used by the
+        standard rBergomi convention, so ``Var(W^H_t)=t^(2H)`` in the
+        continuous-time limit.
         """
-        H = self.H
+        if num_paths <= 0 or n_steps <= 0:
+            raise ValueError("num_paths and n_steps must be positive")
+        if dt <= 0.0:
+            raise ValueError(f"dt must be positive; got {dt}")
+
+        H = self.H if H is None else float(H)
+        if not (0.0 < H < 0.5):
+            raise ValueError(f"rBergomi requires H in (0, 0.5); got {H}")
         alpha = H - 0.5  # Volterra kernel exponent
+        dtype = torch.float64
 
         # Time grid t_i = i·dt for i=0..n_steps
-        # We need, for each i: Ỹ(t_i) = ∫₀^{t_i} (t_i - s)^α dW^{(1)}_s
+        # We need W^H(t_i) = sqrt(2H) ∫₀^{t_i} (t_i - s)^α dW^{(1)}_s.
         # Discrete hybrid: split into [t_{i-1}, t_i] (exact 2D Gaussian) and earlier (Riemann sum).
 
         # Exact covariance of (ΔW, ∫ΔW) on first sub-interval where ΔW = W^{(1)}_{t_i}-W^{(1)}_{t_{i-1}}
@@ -361,36 +473,43 @@ class RBergomiSimulator:
         c11 = dt
         c12 = dt ** (alpha + 1.0) / (alpha + 1.0)
         c22 = dt ** (2 * alpha + 1.0) / (2 * alpha + 1.0)
-        cov_local = torch.tensor([[c11, c12], [c12, c22]], device=self.device, dtype=torch.float32)
-        L_local = torch.linalg.cholesky(cov_local + 1e-12 * torch.eye(2, device=self.device))
+        cov_local = torch.tensor([[c11, c12], [c12, c22]], device=self.device, dtype=dtype)
+        L_local = torch.linalg.cholesky(cov_local)
 
         # Sample n_steps independent 2-vectors per path
-        Z = torch.randn(num_paths, n_steps, 2, device=self.device)
+        Z = torch.randn(num_paths, n_steps, 2, device=self.device, dtype=dtype)
         incr = Z @ L_local.T  # shape (paths, steps, 2)
         dW1 = incr[:, :, 0]  # ΔW^(1)_i on interval (t_{i-1}, t_i]
         dI = incr[:, :, 1]  # ∫_{t_{i-1}}^{t_i} (t_i - s)^α dW_s
 
-        # Riemann-sum contribution from earlier intervals:
-        # For each t_i, sum_{j<i} b_ij * dW1_j with b_ij = ((i-j)*dt)^α * dt^{1-α} * (1 - ((i-j-1)/(i-j))^{α+1}) / (α+1)
-        # Simpler form equivalent to optimal BLP weights:
-        # b_ij = dt^{α+1} * [ (i-j)^{α+1} − (i-j-1)^{α+1} ] / (α+1)
-        i_idx = torch.arange(1, n_steps + 1, device=self.device, dtype=torch.float32).unsqueeze(1)
-        j_idx = torch.arange(0, n_steps, device=self.device, dtype=torch.float32).unsqueeze(0)
-        diff = i_idx - j_idx  # (steps, steps)
-        diff_prev = torch.clamp(diff - 1.0, min=0.0)
-        # Weight for j<i-1 (the i-1 slot is handled exactly via dI)
-        b = (diff ** (alpha + 1.0) - diff_prev ** (alpha + 1.0)) / (alpha + 1.0)
-        b = b * (dt ** (alpha + 1.0))
-        # Mask: j <= i - 2 (earlier intervals only; last interval comes from dI)
-        mask = (j_idx <= (i_idx - 2)).to(torch.float32)
-        b = b * mask  # (steps, steps)
+        # Earlier cells use the cell-average of x^alpha. Because dW1 already
+        # has scale sqrt(dt), the kernel weight has scale dt^alpha (not
+        # dt^(alpha+1)). Invalid/future lags are clamped before taking a
+        # fractional power, then set to zero with torch.where; this avoids the
+        # NaN * 0 bug in the previous implementation.
+        i_idx = torch.arange(1, n_steps + 1, device=self.device, dtype=dtype).unsqueeze(1)
+        j_idx = torch.arange(0, n_steps, device=self.device, dtype=dtype).unsqueeze(0)
+        lag = i_idx - j_idx  # lag=1 is handled exactly by dI
+        lag_safe = torch.clamp(lag, min=1.0)
+        lag_prev = lag_safe - 1.0
+        avg_kernel = (
+            (dt**alpha) * (lag_safe ** (alpha + 1.0) - lag_prev ** (alpha + 1.0)) / (alpha + 1.0)
+        )
+        weights = torch.where(lag >= 2.0, avg_kernel, torch.zeros_like(avg_kernel))
 
         # Convolve: earlier[path, i] = sum_j b[i, j] * dW1[path, j]
-        earlier = dW1 @ b.T  # (paths, steps)
+        earlier = dW1 @ weights.T  # (paths, steps)
 
-        Y = torch.zeros(num_paths, n_steps + 1, device=self.device)
-        Y[:, 1:] = earlier + dI  # Ỹ at t_i
-        return dW1, Y
+        scale = math.sqrt(2.0 * H)
+        Y = torch.zeros(num_paths, n_steps + 1, device=self.device, dtype=dtype)
+        Y[:, 1:] = scale * (earlier + dI)
+
+        # Deterministic variance of the discretized Gaussian process. Using
+        # this in the Wick exponential preserves E[V_t]=xi at finite dt and
+        # converges to t^(2H) as the hybrid grid is refined.
+        Y_var = torch.zeros(n_steps + 1, device=self.device, dtype=dtype)
+        Y_var[1:] = (scale**2) * (c22 + dt * (weights**2).sum(dim=1))
+        return dW1, Y, Y_var
 
     def simulate(
         self,
@@ -399,38 +518,52 @@ class RBergomiSimulator:
         dt: float,
         num_paths: int,
         mu: float = 0.0,
-        override_params: Optional[dict] = None,
+        override_params: dict | None = None,
     ) -> tuple[torch.Tensor, torch.Tensor]:
+        if T <= 0.0 or dt <= 0.0:
+            raise ValueError(f"T and dt must be positive; got T={T}, dt={dt}")
+        if num_paths <= 0:
+            raise ValueError(f"num_paths must be positive; got {num_paths}")
+
         params = self._resolved(override_params)
         H, eta, xi, rho = params["H"], params["eta"], params["xi"], params["rho"]
-        n_steps = int(round(T / dt))
+        n_steps = max(1, int(math.ceil(T / dt)))
+        step_dt = T / n_steps
 
-        dW1, Y = self._hybrid_scheme_volterra(num_paths, n_steps, dt)
+        dW1, Y, Y_var = self._hybrid_scheme_volterra(num_paths, n_steps, step_dt, H=H)
 
         # Independent Brownian driver for the orthogonal component of the price
-        Z2 = torch.randn(num_paths, n_steps, device=self.device) * math.sqrt(dt)
+        Z2 = torch.randn(num_paths, n_steps, device=self.device, dtype=dW1.dtype) * math.sqrt(
+            step_dt
+        )
         dW_S = rho * dW1 + math.sqrt(max(1.0 - rho * rho, 0.0)) * Z2
 
-        # Variance path V_t = ξ · exp(η Ỹ − ½ η² t^{2H})
-        times = torch.arange(n_steps + 1, device=self.device, dtype=torch.float32) * dt
-        drift = 0.5 * (eta ** 2) * (times ** (2 * H))
+        # Discrete Wick exponential with the exact variance of the hybrid
+        # Gaussian approximation.
+        drift = 0.5 * (eta**2) * Y_var
         V = xi * torch.exp(eta * Y - drift.unsqueeze(0))
         V = torch.clamp(V, min=1e-10)
 
         # Price path with explicit Euler in log-space for stability
-        logS = torch.zeros(num_paths, n_steps + 1, device=self.device)
+        logS = torch.zeros(num_paths, n_steps + 1, device=self.device, dtype=dW1.dtype)
         logS[:, 0] = math.log(S0)
         for k in range(1, n_steps + 1):
             v_k = V[:, k - 1]
-            logS[:, k] = logS[:, k - 1] + (mu - 0.5 * v_k) * dt + torch.sqrt(v_k) * dW_S[:, k - 1]
+            logS[:, k] = (
+                logS[:, k - 1] + (mu - 0.5 * v_k) * step_dt + torch.sqrt(v_k) * dW_S[:, k - 1]
+            )
         S = torch.exp(logS)
         return S, V
 
-    def _resolved(self, override: Optional[dict]) -> dict:
+    def _resolved(self, override: dict | None) -> dict:
         base = {"H": self.H, "eta": self.eta, "xi": self.xi, "rho": self.rho}
         if override:
             base.update(override)
-            if "H" in override and override["H"] != self.H:
-                # Hurst exponent affects the entire kernel; recompute
-                self.H = float(override["H"])
+        base = {key: float(value) for key, value in base.items()}
+        if not (0.0 < base["H"] < 0.5):
+            raise ValueError(f"rBergomi requires H in (0, 0.5); got {base['H']}")
+        if base["xi"] <= 0.0:
+            raise ValueError(f"xi must be positive; got {base['xi']}")
+        if not (-1.0 <= base["rho"] <= 1.0):
+            raise ValueError(f"rho must be in [-1, 1]; got {base['rho']}")
         return base

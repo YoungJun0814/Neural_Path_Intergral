@@ -19,6 +19,7 @@ Invocation::
     # or directly
     python train_driftnet.py --config configs/default.yaml
 """
+
 from __future__ import annotations
 
 import argparse
@@ -26,7 +27,6 @@ import math
 import os
 import sys
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -40,10 +40,10 @@ from src.losses.distribution_match import mmd_loss, moment_match_loss, standardi
 from src.neural_engine import NeuralSDESimulator
 from src.utils import pick_device, set_seed
 
-
 # -----------------------------------------------------------------------------
 # Data loading
 # -----------------------------------------------------------------------------
+
 
 def load_returns(data_path: str) -> np.ndarray:
     if os.path.exists(data_path):
@@ -64,14 +64,13 @@ def load_returns(data_path: str) -> np.ndarray:
 # Config helpers
 # -----------------------------------------------------------------------------
 
+
 def load_config(path: Path) -> dict:
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
-def resolve_target_kurtosis(
-    cfg_value: Optional[float], real_returns: torch.Tensor
-) -> torch.Tensor:
+def resolve_target_kurtosis(cfg_value: float | None, real_returns: torch.Tensor) -> torch.Tensor:
     if cfg_value is None:
         _, _, _, kurt = standardized_moments(real_returns)
         return kurt.detach()
@@ -81,6 +80,7 @@ def resolve_target_kurtosis(
 # -----------------------------------------------------------------------------
 # Main loop
 # -----------------------------------------------------------------------------
+
 
 def main(config_path: str | Path = "configs/default.yaml") -> None:
     cfg = load_config(Path(config_path))

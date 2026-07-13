@@ -14,6 +14,7 @@ We verify this for a fixed `u = +0.5` constant control, pricing a vanilla
 call option under the base Heston model. Both the v-drift correction-on and
 -off variants are run; only the corrected variant should pass.
 """
+
 from __future__ import annotations
 
 import math
@@ -28,19 +29,19 @@ from src.utils import set_seed
 def _constant_control(u_value: float):
     def fn(t, S, v, A):
         return torch.full_like(S, float(u_value))
+
     return fn
 
 
 @pytest.fixture()
 def heston_sim() -> MarketSimulator:
-    return MarketSimulator(
-        mu=0.05, kappa=2.0, theta=0.04, xi=0.5, rho=-0.7, device="cpu"
-    )
+    return MarketSimulator(mu=0.05, kappa=2.0, theta=0.04, xi=0.5, rho=-0.7, device="cpu")
 
 
 def _call_payoff(K: float):
     def payoff(S_T):
         return torch.clamp(S_T - K, min=0.0)
+
     return payoff
 
 
@@ -68,7 +69,12 @@ def test_is_unbiased_constant_positive_control(heston_sim):
     # IS with v-drift correction (correct)
     set_seed(1)
     S_is, _v, log_w, _bh, _ = heston_sim.simulate_controlled(
-        S0=S0, v0=v0, T=T, dt=dt, num_paths=N, control_fn=_constant_control(0.3),
+        S0=S0,
+        v0=v0,
+        T=T,
+        dt=dt,
+        num_paths=N,
+        control_fn=_constant_control(0.3),
         apply_v_drift_correction=True,
     )
     reweighted = payoff(S_is[:, -1]) * torch.exp(log_w)
@@ -76,7 +82,7 @@ def test_is_unbiased_constant_positive_control(heston_sim):
     se_is = float(reweighted.std()) / math.sqrt(N)
 
     diff = mean_is - mean_mc
-    tol = 3.0 * math.sqrt(se_mc ** 2 + se_is ** 2) + 0.05
+    tol = 3.0 * math.sqrt(se_mc**2 + se_is**2) + 0.05
     assert abs(diff) < tol, (
         f"IS not unbiased: MC={mean_mc:.4f} IS={mean_is:.4f} diff={diff:.4f} tol={tol:.4f}"
     )
@@ -96,7 +102,12 @@ def test_is_unbiased_constant_negative_control(heston_sim):
 
     set_seed(3)
     S_is, _v, log_w, _, _ = heston_sim.simulate_controlled(
-        S0=S0, v0=v0, T=T, dt=dt, num_paths=N, control_fn=_constant_control(-0.3),
+        S0=S0,
+        v0=v0,
+        T=T,
+        dt=dt,
+        num_paths=N,
+        control_fn=_constant_control(-0.3),
         apply_v_drift_correction=True,
     )
     reweighted = payoff(S_is[:, -1]) * torch.exp(log_w)
@@ -104,7 +115,7 @@ def test_is_unbiased_constant_negative_control(heston_sim):
     se_is = float(reweighted.std()) / math.sqrt(N)
 
     diff = mean_is - mean_mc
-    tol = 3.0 * math.sqrt(se_mc ** 2 + se_is ** 2) + 0.1
+    tol = 3.0 * math.sqrt(se_mc**2 + se_is**2) + 0.1
     assert abs(diff) < tol, f"negative control not unbiased: MC={mean_mc} IS={mean_is}"
 
 
@@ -114,7 +125,12 @@ def test_zero_control_matches_mc(heston_sim):
     S0, v0, T, dt = 100.0, 0.04, 0.25, 1 / 252.0
     N = 5000
     S_is, _v, log_w, _, _ = heston_sim.simulate_controlled(
-        S0=S0, v0=v0, T=T, dt=dt, num_paths=N, control_fn=_constant_control(0.0),
+        S0=S0,
+        v0=v0,
+        T=T,
+        dt=dt,
+        num_paths=N,
+        control_fn=_constant_control(0.0),
     )
     assert torch.allclose(log_w, torch.zeros_like(log_w))
     # And statistics should match MC within noise
@@ -141,7 +157,12 @@ def test_v_drift_correction_removes_bias_vs_uncorrected(heston_sim):
     # Corrected IS
     set_seed(6)
     S_ok, _, log_w_ok, _, _ = heston_sim.simulate_controlled(
-        S0=S0, v0=v0, T=T, dt=dt, num_paths=N, control_fn=_constant_control(u_val),
+        S0=S0,
+        v0=v0,
+        T=T,
+        dt=dt,
+        num_paths=N,
+        control_fn=_constant_control(u_val),
         apply_v_drift_correction=True,
     )
     mean_ok = float((payoff(S_ok[:, -1]) * torch.exp(log_w_ok)).mean())
@@ -149,7 +170,12 @@ def test_v_drift_correction_removes_bias_vs_uncorrected(heston_sim):
     # Uncorrected IS
     set_seed(6)
     S_bad, _, log_w_bad, _, _ = heston_sim.simulate_controlled(
-        S0=S0, v0=v0, T=T, dt=dt, num_paths=N, control_fn=_constant_control(u_val),
+        S0=S0,
+        v0=v0,
+        T=T,
+        dt=dt,
+        num_paths=N,
+        control_fn=_constant_control(u_val),
         apply_v_drift_correction=False,
     )
     mean_bad = float((payoff(S_bad[:, -1]) * torch.exp(log_w_bad)).mean())
@@ -165,3 +191,29 @@ def test_v_drift_correction_removes_bias_vs_uncorrected(heston_sim):
         f"unbiased test: MC={mean_mc:.3f} corrected={mean_ok:.3f} "
         f"uncorrected={mean_bad:.3f} 3σ={3 * se_mc:.3f}"
     )
+
+
+def test_observed_q_brownian_reconstructs_constant_control_likelihood(heston_sim):
+    torch.manual_seed(713)
+    control_value = -1.7
+    increments: list[torch.Tensor] = []
+
+    def control(_time, spot, _variance, _average):
+        return torch.full_like(spot, control_value)
+
+    def observer(_time, increment):
+        increments.append(increment.detach())
+
+    _S, _v, log_weight, _barrier, _average = heston_sim.simulate_controlled(
+        S0=100.0,
+        v0=0.04,
+        T=0.4,
+        dt=0.03,
+        num_paths=512,
+        control_fn=control,
+        brownian_observer=observer,
+    )
+    brownian_terminal = torch.stack(increments, dim=1).sum(dim=1)
+    expected = -control_value * brownian_terminal - 0.5 * control_value**2 * 0.4
+    assert len(increments) == math.ceil(0.4 / 0.03)
+    assert torch.allclose(log_weight, expected, atol=2e-6, rtol=1e-6)

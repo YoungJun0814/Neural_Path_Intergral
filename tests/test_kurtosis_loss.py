@@ -1,4 +1,5 @@
 """Smoke test for the kurtosis penalty path in ``NeuralSDESimulator.train_step``."""
+
 from __future__ import annotations
 
 import torch
@@ -32,5 +33,7 @@ def test_kurtosis_penalty_runs():
     assert loss < 1e12  # not overflowing
 
     # At least one parameter should have changed
-    changed = any((b - a).abs().sum().item() > 0 for a, b in zip(before, simulator.parameters()))
+    changed = any(
+        (b - a).abs().sum().item() > 0 for a, b in zip(before, simulator.parameters(), strict=True)
+    )
     assert changed, "train_step did not update parameters"

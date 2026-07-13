@@ -1,5 +1,6 @@
 """Gradient flow tests — simulate_controlled must be differentiable through
 the control so that NeuralImportanceSampler.train_step actually updates."""
+
 from __future__ import annotations
 
 import math
@@ -24,14 +25,22 @@ def test_is_loss_has_gradient_through_market_simulator():
     optimizer = torch.optim.Adam(sampler.parameters(), lr=1e-3)
 
     info = sampler.train_step(
-        S0=100.0, T=0.1, dt=1 / 50.0, num_paths=200, optimizer=optimizer,
-        payoff_fn=payoff_fn, v0=0.04,
+        S0=100.0,
+        T=0.1,
+        dt=1 / 50.0,
+        num_paths=200,
+        optimizer=optimizer,
+        payoff_fn=payoff_fn,
+        v0=0.04,
     )
     assert math.isfinite(info["loss"])
     assert math.isfinite(info["mean_estimate"])
     assert info["ess"] > 0
     # At least one parameter should have changed
-    diffs = [float((p_new.detach() - p_old).abs().sum()) for p_new, p_old in zip(sampler.parameters(), params_before)]
+    diffs = [
+        float((p_new.detach() - p_old).abs().sum())
+        for p_new, p_old in zip(sampler.parameters(), params_before, strict=True)
+    ]
     assert max(diffs) > 0, "no parameter moved — gradient did not flow"
 
 
@@ -45,8 +54,13 @@ def test_is_loss_has_gradient_through_neural_sde():
 
     optimizer = torch.optim.Adam(sampler.parameters(), lr=1e-3)
     info = sampler.train_step(
-        S0=100.0, T=0.1, dt=1 / 50.0, num_paths=200, optimizer=optimizer,
-        payoff_fn=payoff, v0=0.04,
+        S0=100.0,
+        T=0.1,
+        dt=1 / 50.0,
+        num_paths=200,
+        optimizer=optimizer,
+        payoff_fn=payoff,
+        v0=0.04,
     )
     assert math.isfinite(info["loss"])
 
@@ -67,7 +81,7 @@ def test_mmd_loss_differentiable():
     loss = mmd_loss(x, y)
     loss.backward()
     assert x.grad is not None and torch.isfinite(x.grad).all()
-    assert float(loss) > 0  # distributions are different
+    assert float(loss.detach()) > 0  # distributions are different
 
 
 def test_standardized_moments_shape():
