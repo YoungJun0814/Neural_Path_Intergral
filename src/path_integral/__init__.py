@@ -11,12 +11,23 @@ from .gaussian_oracles import (
     gaussian_left_tail_doob_drift,
     gaussian_left_tail_probability,
 )
+from .heston_oracle import (
+    HestonLogDesirabilityGradient,
+    HestonOracleControl,
+    HestonOracleNumerics,
+    heston_log_desirability_gradient,
+    heston_soft_left_tail_desirability,
+    heston_soft_oracle_control,
+)
 from .pice import ConstantPICEFit, fit_constant_pice, reconstruct_candidate_increments
 from .potentials import terminal_left_tail_potential
 
 __all__ = [
     "ConstantPICEFit",
     "TiltedDivergenceDiagnostics",
+    "HestonLogDesirabilityGradient",
+    "HestonOracleControl",
+    "HestonOracleNumerics",
     "brownian_log_likelihood",
     "fit_constant_pice",
     "gaussian_exponential_tilt_log_normalizer",
@@ -27,6 +38,9 @@ __all__ = [
     "gaussian_left_tail_doob_drift",
     "gaussian_left_tail_probability",
     "log_tilted_weight",
+    "heston_log_desirability_gradient",
+    "heston_soft_left_tail_desirability",
+    "heston_soft_oracle_control",
     "path_action",
     "reconstruct_candidate_increments",
     "terminal_left_tail_potential",

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from dataclasses import replace
 
 import numpy as np
 import pytest
@@ -15,6 +16,8 @@ from src.evaluation.heston_reference import (
     heston_left_tail_quantile,
     heston_put_price,
     heston_terminal_cdf,
+    heston_terminal_cdf_state_derivatives_vectorized,
+    heston_terminal_cdf_vectorized,
 )
 from src.physics_engine import MarketSimulator
 
@@ -75,6 +78,89 @@ def test_terminal_cdf_and_quantile_inversion(params: HestonReferenceParams) -> N
         terminal_spot=quantile, spot=spot, maturity=maturity, params=params
     )
     assert recovered == pytest.approx(target, abs=2e-8)
+
+
+def test_vectorized_terminal_cdf_matches_scalar_inversion(
+    params: HestonReferenceParams,
+) -> None:
+    thresholds = np.array([70.0, 85.0, 100.0, 125.0])
+    vectorized = heston_terminal_cdf_vectorized(
+        thresholds,
+        spot=100.0,
+        maturity=0.7,
+        params=params,
+        integration_limit=180.0,
+    )
+    scalar = np.array(
+        [
+            heston_terminal_cdf(
+                terminal_spot=float(threshold),
+                spot=100.0,
+                maturity=0.7,
+                params=params,
+                integration_limit=180.0,
+            )
+            for threshold in thresholds
+        ]
+    )
+
+    assert np.all(np.diff(vectorized) > 0.0)
+    assert np.allclose(vectorized, scalar, atol=2e-12, rtol=2e-12)
+
+
+def test_vectorized_cdf_analytic_state_derivatives_match_finite_differences(
+    params: HestonReferenceParams,
+) -> None:
+    thresholds = np.array([80.0, 95.0, 110.0])
+    spot = 100.0
+    maturity = 0.7
+    derivatives = heston_terminal_cdf_state_derivatives_vectorized(
+        thresholds,
+        spot=spot,
+        maturity=maturity,
+        params=params,
+        integration_limit=180.0,
+    )
+    log_spot_step = 1e-4
+    cdf_spot_plus = heston_terminal_cdf_vectorized(
+        thresholds,
+        spot=spot * math.exp(log_spot_step),
+        maturity=maturity,
+        params=params,
+        integration_limit=180.0,
+    )
+    cdf_spot_minus = heston_terminal_cdf_vectorized(
+        thresholds,
+        spot=spot * math.exp(-log_spot_step),
+        maturity=maturity,
+        params=params,
+        integration_limit=180.0,
+    )
+    finite_log_spot = (cdf_spot_plus - cdf_spot_minus) / (2.0 * log_spot_step)
+
+    variance_step = 1e-5
+    cdf_variance_plus = heston_terminal_cdf_vectorized(
+        thresholds,
+        spot=spot,
+        maturity=maturity,
+        params=replace(params, v0=params.v0 + variance_step),
+        integration_limit=180.0,
+    )
+    cdf_variance_minus = heston_terminal_cdf_vectorized(
+        thresholds,
+        spot=spot,
+        maturity=maturity,
+        params=replace(params, v0=params.v0 - variance_step),
+        integration_limit=180.0,
+    )
+    finite_variance = (cdf_variance_plus - cdf_variance_minus) / (2.0 * variance_step)
+
+    assert np.allclose(
+        derivatives.d_cdf_d_log_spot, finite_log_spot, atol=2e-7, rtol=2e-7
+    )
+    assert np.allclose(
+        derivatives.d_cdf_d_variance, finite_variance, atol=2e-6, rtol=2e-6
+    )
 
 
 def test_monte_carlo_matches_fourier_reference(params: HestonReferenceParams) -> None:

@@ -333,6 +333,73 @@ is a tested compatibility restriction that recovers the existing one-driver
 Heston simulator; it is not a claim that one driver spans the full optimal
 control.
 
+### 10.2 Soft Heston desirability and oracle control
+
+For the terminal soft left tail
+
+$$
+g_{\tau,K}(S_T)=\operatorname{sigmoid}
+\left(\frac{K-S_T}{\tau K}\right),
+$$
+
+the conditional desirability is
+
+$$
+h_\tau(t,S,v)=E_{\mathbb M}[g_{\tau,K}(S_T)\mid S_t=S,v_t=v].
+$$
+
+Let \(Y\) be a standard logistic random variable. Integration by parts gives
+the deterministic mixture identity
+
+$$
+h_\tau(t,S,v)
+=E_Y\left[
+F_{S_T\mid S_t=S,v_t=v}(K+\tau K Y)
+\right].
+$$
+
+The implementation maps Gauss–Legendre nodes on \(U\sim\mathrm{Uniform}(0,1)\)
+through \(Y=\log(U/(1-U))\). All positive terminal thresholds are evaluated in
+one vectorized Gil–Pelaez quadrature, so the Heston characteristic function is
+shared across the mixture nodes. The default logistic quadrature order is 96.
+
+The Heston affine characteristic function has
+
+$$
+\partial_x\phi(u)=iu\phi(u),\qquad
+\partial_v\phi(u)=D(u)\phi(u),
+$$
+
+where \(x=\log S\) and \(D(u)\) is the affine variance coefficient. These
+relations are differentiated through the Gil–Pelaez integral to obtain an
+analytic Fourier gradient of \(h\). An independent finite-difference check uses
+two resolutions and Richardson extrapolation. The oracle reports the absolute
+analytic-versus-Richardson discrepancy; it does not silently accept a failed
+cross-check.
+
+The independent-basis oracle is
+
+$$
+u_1^\star
+=\sqrt v\left(\partial_x\log h
+  +\rho\xi\partial_v\log h\right),
+$$
+
+$$
+u_2^\star
+=\xi\sqrt{1-\rho^2}\sqrt v\,\partial_v\log h.
+$$
+
+Near \(v=0\), the verification difference changes from central to second-order
+forward differences. Near maturity or the degenerate variance boundary,
+Fourier truncation can produce a nonmonotone numerical CDF. The implementation
+uses CDF monotonicity as a fail-fast gate and increases the integration cutoff
+geometrically up to a configured maximum. It never repairs a nonmonotone CDF
+silently. The actual cutoff is returned in the gradient diagnostics.
+
+This is a continuous-time soft Föllmer/Doob oracle. It is not an exact
+finite-grid zero-variance proposal and is not the hard event-conditioned law.
+
 | Mathematical object | Code |
 |---|---|
 | \(\Phi_{\tau,K}\) | `src.path_integral.terminal_left_tail_potential` |
@@ -345,6 +412,9 @@ control.
 | candidate Brownian residual | `src.path_integral.reconstruct_candidate_increments` |
 | two-driver controlled Heston | `MarketSimulator.simulate_controlled_two_driver` |
 | Heston path/coordinate output | `TwoDriverHestonPaths` |
+| soft Heston desirability | `heston_soft_left_tail_desirability` |
+| analytic/finite-difference gradient | `heston_log_desirability_gradient` |
+| independent-basis Heston oracle | `heston_soft_oracle_control` |
 
 ## 11. PI0–PI1 verification gates
 

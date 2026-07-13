@@ -1,7 +1,7 @@
 # PI2 Intermediate Review: Two-Driver Heston
 
 Date: 2026-07-13<br>
-Status: simulator and measure-change gate complete; Heston oracle still pending
+Status: simulator and measure-change gate complete; oracle completed in follow-up review
 
 ## Outcome
 
@@ -10,9 +10,10 @@ coordinates without changing the existing one-driver API. This closes the
 proposal-class restriction that previously forced \(u^2=0\), while retaining
 the old implementation as a tested baseline.
 
-PI2 is not complete. The soft conditional desirability, its state gradients,
-the resulting analytic oracle direction, and the PI/PICE/\(J_2\) objective
-benchmark remain open.
+The soft conditional desirability, analytic state gradients, and two-driver
+oracle were subsequently completed and are documented in
+`PI2_HESTON_SOFT_ORACLE_2026-07-13.md`. PI2 is still not complete because the
+trainable PI/PICE/\(J_2\) objective benchmark remains open.
 
 ## Implemented dynamics
 
@@ -79,15 +80,7 @@ No unresolved measure-change error was found in this implementation unit:
 
 ## Remaining PI2 work
 
-1. implement the soft Heston conditional desirability
-   \(h_\tau(t,x,v)=E[g_\tau(S_T)\mid x,v]\);
-2. cross-check \(\partial_x\log h\) and \(\partial_v\log h\) using independent
-   finite-difference resolutions;
-3. construct the two oracle coordinates
-   \(u_1^\star=\sqrt v\,\partial_x\log h
-   +\rho\xi\sqrt v\,\partial_v\log h\) and
-   \(u_2^\star=\xi\sqrt{1-\rho^2}\sqrt v\,\partial_v\log h\);
-4. quantify near-maturity and low-variance numerical instability;
-5. run fixed-control unbiasedness and continuous-reference comparisons across
+1. define the near-maturity oracle clipping or distillation policy;
+2. run fixed-control unbiasedness and continuous-reference comparisons across
    a preregistered time-step grid;
-6. benchmark CEM, one-driver, full two-driver, PI, PICE, and \(J_2\) controls.
+3. benchmark CEM, one-driver, full two-driver, PI, PICE, and \(J_2\) controls.

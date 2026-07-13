@@ -9,11 +9,14 @@ from .backtest import (
 )
 from .heston_reference import (
     HestonReferenceParams,
+    HestonTerminalCDFStateDerivatives,
     heston_call_price,
     heston_characteristic_function,
     heston_left_tail_quantile,
     heston_put_price,
     heston_terminal_cdf,
+    heston_terminal_cdf_state_derivatives_vectorized,
+    heston_terminal_cdf_vectorized,
 )
 from .likelihood import LikelihoodDiagnostics, likelihood_diagnostics
 from .protocol import FrozenExperimentProtocol, FrozenSeedSplit, load_frozen_protocol
@@ -26,10 +29,13 @@ __all__ = [
     "christoffersen_independence",
     "efficiency_metrics",
     "HestonReferenceParams",
+    "HestonTerminalCDFStateDerivatives",
     "heston_characteristic_function",
     "heston_call_price",
     "heston_put_price",
     "heston_terminal_cdf",
+    "heston_terminal_cdf_state_derivatives_vectorized",
+    "heston_terminal_cdf_vectorized",
     "heston_left_tail_quantile",
     "LikelihoodDiagnostics",
     "likelihood_diagnostics",

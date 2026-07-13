@@ -1713,9 +1713,10 @@ test와 Ruff/Mypy를 통과했다. 이 gate는 rough-volatility 성능 주장의
 
 상태 (2026-07-13): **진행 중**. independent-basis two-driver simulator,
 float64 2D likelihood/energy, optional proposal/target Brownian 기록, one-driver
-compatibility, pathwise reconstruction 및 fixed-control unbiasedness gate까지
-완료했다. Soft conditional \(h\), oracle gradient와 objective benchmark는 남아
-있으므로 G-PI2는 아직 통과하지 않았다.
+compatibility, pathwise reconstruction, soft conditional \(h\), analytic
+Fourier/Richardson gradient와 2D oracle control까지 완료했다. Near-maturity
+control clipping policy와 objective benchmark는 남아 있으므로 G-PI2는 아직
+통과하지 않았다.
 
 작업:
 
@@ -2080,14 +2081,14 @@ Figures:
 - [x] path-integral variational formulation 완전 명시
 - [x] soft/hard law의 절대연속성 차이 명시
 - [x] relative variance–chi-square identity proof
-- [ ] Heston two-driver oracle derivation
+- [x] Heston two-driver oracle derivation
 - [ ] controlled BLP discrete correction proof
 - [ ] 적어도 하나의 quantitative variance theorem
 - [x] continuous/discrete theorem 구분
 
 ### 구현
 
-- [ ] two-driver Heston
+- [x] two-driver Heston
 - [ ] two-driver controlled rBergomi BLP
 - [x] path action
 - [ ] PICE training
@@ -2100,7 +2101,7 @@ Figures:
 ### 검증
 
 - [x] Gaussian oracle
-- [ ] Heston oracle
+- [x] Heston oracle
 - [ ] BLP pathwise reconstruction
 - [ ] likelihood normalization
 - [ ] causality
@@ -2148,9 +2149,9 @@ Figures:
 
 ### Week 4
 
-- [ ] Heston conditional soft \(h\)
-- [ ] \(\partial_x,\partial_v\) validation
-- [ ] oracle control
+- [x] Heston conditional soft \(h\)
+- [x] \(\partial_x,\partial_v\) validation
+- [x] oracle control
 - [ ] near-maturity clipping diagnostics
 
 ### Week 5

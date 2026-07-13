@@ -12,7 +12,9 @@ import cmath
 import math
 from dataclasses import dataclass
 
-from scipy.integrate import quad
+import numpy as np
+from numpy.typing import ArrayLike, NDArray
+from scipy.integrate import quad, quad_vec
 from scipy.optimize import brentq
 
 
@@ -42,6 +44,49 @@ class HestonReferenceParams:
             raise ValueError("rho must lie in [-1, 1]")
 
 
+@dataclass(frozen=True)
+class HestonTerminalCDFStateDerivatives:
+    """Vectorized CDF and derivatives with respect to current ``(log S, v)``."""
+
+    cdf: NDArray[np.float64]
+    d_cdf_d_log_spot: NDArray[np.float64]
+    d_cdf_d_variance: NDArray[np.float64]
+
+
+def _heston_characteristic_components(
+    u: complex,
+    *,
+    spot: float,
+    maturity: float,
+    params: HestonReferenceParams,
+) -> tuple[complex, complex]:
+    """Return the characteristic function and its log-linear ``v0`` coefficient."""
+    params.validate()
+    if spot <= 0.0:
+        raise ValueError("spot must be positive")
+    if maturity < 0.0:
+        raise ValueError("maturity must be nonnegative")
+    if maturity == 0.0:
+        return cmath.exp(1j * u * math.log(spot)), 0.0j
+
+    iu = 1j * u
+    a = params.kappa - params.rho * params.xi * iu
+    d = cmath.sqrt(a * a + params.xi**2 * (u * u + iu))
+    if d.real < 0.0:
+        d = -d
+
+    g = (a - d) / (a + d)
+    exp_minus_dt = cmath.exp(-d * maturity)
+    log_ratio = cmath.log((1.0 - g * exp_minus_dt) / (1.0 - g))
+    c = iu * (math.log(spot) + (params.r - params.q) * maturity)
+    c += (params.kappa * params.theta / params.xi**2) * ((a - d) * maturity - 2.0 * log_ratio)
+    variance_coefficient = ((a - d) / params.xi**2) * (
+        (1.0 - exp_minus_dt) / (1.0 - g * exp_minus_dt)
+    )
+    characteristic = cmath.exp(c + variance_coefficient * params.v0)
+    return characteristic, variance_coefficient
+
+
 def heston_characteristic_function(
     u: complex,
     *,
@@ -50,31 +95,10 @@ def heston_characteristic_function(
     params: HestonReferenceParams,
 ) -> complex:
     """Return ``E[exp(i u log(S_T))]`` under the risk-neutral measure."""
-    params.validate()
-    if spot <= 0.0:
-        raise ValueError("spot must be positive")
-    if maturity < 0.0:
-        raise ValueError("maturity must be nonnegative")
-    if maturity == 0.0:
-        return cmath.exp(1j * u * math.log(spot))
-
-    iu = 1j * u
-    a = params.kappa - params.rho * params.xi * iu
-    d = cmath.sqrt(a * a + params.xi**2 * (u * u + iu))
-
-    # Select the square-root branch with nonnegative real part.  This keeps the
-    # exponential decaying and avoids discontinuous quadrature integrands.
-    if d.real < 0.0:
-        d = -d
-
-    g = (a - d) / (a + d)
-    exp_minus_dt = cmath.exp(-d * maturity)
-    log_ratio = cmath.log((1.0 - g * exp_minus_dt) / (1.0 - g))
-
-    c = iu * (math.log(spot) + (params.r - params.q) * maturity)
-    c += (params.kappa * params.theta / params.xi**2) * ((a - d) * maturity - 2.0 * log_ratio)
-    d_coefficient = ((a - d) / params.xi**2) * ((1.0 - exp_minus_dt) / (1.0 - g * exp_minus_dt))
-    return cmath.exp(c + d_coefficient * params.v0)
+    characteristic, _variance_coefficient = _heston_characteristic_components(
+        u, spot=spot, maturity=maturity, params=params
+    )
+    return characteristic
 
 
 def heston_call_price(
@@ -189,6 +213,133 @@ def heston_terminal_cdf(
         epsrel=epsrel,
     )
     return min(max(1.0 - upper_tail, 0.0), 1.0)
+
+
+def heston_terminal_cdf_vectorized(
+    terminal_spots: ArrayLike,
+    *,
+    spot: float,
+    maturity: float,
+    params: HestonReferenceParams,
+    integration_limit: float = 200.0,
+    epsabs: float = 1e-10,
+    epsrel: float = 1e-9,
+) -> NDArray[np.float64]:
+    """Return Heston terminal CDF values from one vector-valued quadrature.
+
+    This is algebraically identical to repeated Gil--Pelaez inversions in
+    :func:`heston_terminal_cdf`, but evaluates the characteristic function only
+    once per integration node for all thresholds.  It is used by the soft
+    path-integral oracle, which needs a deterministic CDF mixture at many
+    nearby terminal levels.
+    """
+    params.validate()
+    thresholds = np.asarray(terminal_spots, dtype=np.float64)
+    if thresholds.ndim != 1 or thresholds.size == 0:
+        raise ValueError("terminal_spots must be a nonempty one-dimensional array")
+    if not np.isfinite(thresholds).all() or np.any(thresholds <= 0.0):
+        raise ValueError("all terminal_spots must be finite and positive")
+    if not math.isfinite(spot) or spot <= 0.0:
+        raise ValueError("spot must be finite and positive")
+    if not math.isfinite(maturity) or maturity <= 0.0:
+        raise ValueError("maturity must be finite and positive")
+    if not math.isfinite(integration_limit) or integration_limit <= 0.0:
+        raise ValueError("integration_limit must be finite and positive")
+    if not math.isfinite(epsabs) or not math.isfinite(epsrel) or epsabs <= 0.0 or epsrel <= 0.0:
+        raise ValueError("epsabs and epsrel must be finite and positive")
+
+    log_thresholds = np.log(thresholds)
+
+    def integrand(u: float) -> NDArray[np.float64]:
+        u_safe = max(float(u), 1e-12)
+        characteristic = heston_characteristic_function(
+            complex(u_safe), spot=spot, maturity=maturity, params=params
+        )
+        oscillatory = np.exp(-1j * u_safe * log_thresholds) * characteristic
+        return np.asarray(np.imag(oscillatory) / u_safe, dtype=np.float64)
+
+    integral, _error = quad_vec(
+        integrand,
+        0.0,
+        integration_limit,
+        epsabs=epsabs,
+        epsrel=epsrel,
+        limit=500,
+    )
+    cdf = 0.5 - np.asarray(integral, dtype=np.float64) / math.pi
+    return np.asarray(np.clip(cdf, 0.0, 1.0), dtype=np.float64)
+
+
+def heston_terminal_cdf_state_derivatives_vectorized(
+    terminal_spots: ArrayLike,
+    *,
+    spot: float,
+    maturity: float,
+    params: HestonReferenceParams,
+    integration_limit: float = 200.0,
+    epsabs: float = 1e-10,
+    epsrel: float = 1e-9,
+) -> HestonTerminalCDFStateDerivatives:
+    r"""Return CDF values and analytic Fourier state derivatives.
+
+    For real Fourier frequency ``u``, ``partial_x phi = i*u*phi`` and
+    ``partial_v phi = D(u)*phi``, where ``x=log(spot)`` and ``D`` is the
+    affine Heston variance coefficient.  Differentiating the Gil--Pelaez
+    integral gives a gradient independent of the finite-difference oracle
+    check.
+    """
+    params.validate()
+    thresholds = np.asarray(terminal_spots, dtype=np.float64)
+    if thresholds.ndim != 1 or thresholds.size == 0:
+        raise ValueError("terminal_spots must be a nonempty one-dimensional array")
+    if not np.isfinite(thresholds).all() or np.any(thresholds <= 0.0):
+        raise ValueError("all terminal_spots must be finite and positive")
+    if not math.isfinite(spot) or spot <= 0.0:
+        raise ValueError("spot must be finite and positive")
+    if not math.isfinite(maturity) or maturity <= 0.0:
+        raise ValueError("maturity must be finite and positive")
+    if not math.isfinite(integration_limit) or integration_limit <= 0.0:
+        raise ValueError("integration_limit must be finite and positive")
+    if not math.isfinite(epsabs) or not math.isfinite(epsrel) or epsabs <= 0.0 or epsrel <= 0.0:
+        raise ValueError("epsabs and epsrel must be finite and positive")
+
+    log_thresholds = np.log(thresholds)
+    count = thresholds.size
+
+    def integrand(u: float) -> NDArray[np.float64]:
+        u_safe = max(float(u), 1e-12)
+        characteristic, variance_coefficient = _heston_characteristic_components(
+            complex(u_safe), spot=spot, maturity=maturity, params=params
+        )
+        oscillatory = np.exp(-1j * u_safe * log_thresholds) * characteristic
+        cdf_integrand = np.imag(oscillatory) / u_safe
+        log_spot_integrand = np.imag(1j * u_safe * oscillatory) / u_safe
+        variance_integrand = np.imag(variance_coefficient * oscillatory) / u_safe
+        return np.asarray(
+            np.concatenate((cdf_integrand, log_spot_integrand, variance_integrand)),
+            dtype=np.float64,
+        )
+
+    integral, _error = quad_vec(
+        integrand,
+        0.0,
+        integration_limit,
+        epsabs=epsabs,
+        epsrel=epsrel,
+        limit=500,
+    )
+    integral_array = np.asarray(integral, dtype=np.float64)
+    raw_cdf = 0.5 - integral_array[:count] / math.pi
+    derivative_log_spot = -integral_array[count : 2 * count] / math.pi
+    derivative_variance = -integral_array[2 * count :] / math.pi
+    clipped = (raw_cdf <= 0.0) | (raw_cdf >= 1.0)
+    derivative_log_spot = np.where(clipped, 0.0, derivative_log_spot)
+    derivative_variance = np.where(clipped, 0.0, derivative_variance)
+    return HestonTerminalCDFStateDerivatives(
+        cdf=np.asarray(np.clip(raw_cdf, 0.0, 1.0), dtype=np.float64),
+        d_cdf_d_log_spot=np.asarray(derivative_log_spot, dtype=np.float64),
+        d_cdf_d_variance=np.asarray(derivative_variance, dtype=np.float64),
+    )
 
 
 def heston_left_tail_quantile(
