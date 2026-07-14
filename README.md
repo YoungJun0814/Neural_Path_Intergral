@@ -25,6 +25,9 @@ The current G2 gate decision is recorded in
 
 For a Korean explanation of the current architecture and completed work, see
 [`docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md`](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md).
+The ranked next-generation model candidates, mathematical constraints, and
+selection gates are documented in
+[`PATH_INTEGRAL_MODEL_CANDIDATES_AND_SELECTION.md`](PATH_INTEGRAL_MODEL_CANDIDATES_AND_SELECTION.md).
 The latest sealed confirmatory review is
 [`docs/phase_reviews/G2_V3_CONFIRMATORY_REVIEW_2026-07-13.md`](docs/phase_reviews/G2_V3_CONFIRMATORY_REVIEW_2026-07-13.md).
 
