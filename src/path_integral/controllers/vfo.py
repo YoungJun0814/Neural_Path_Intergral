@@ -44,6 +44,11 @@ class VolterraFollmerOperator(nn.Module):
     """
 
     uses_running_minimum = True
+    instantaneous: nn.Sequential
+    structural: nn.Sequential
+    residual_cell: nn.GRUCell
+    residual_head: nn.Sequential
+    control_bounds: torch.Tensor
 
     def __init__(
         self,
@@ -94,13 +99,14 @@ class VolterraFollmerOperator(nn.Module):
         self.residual_head = _mlp(residual_dim, hidden_dim, 2)
         # B0 starts at the null proposal while hidden features remain
         # nondegenerate and can train immediately.
-        nn.init.zeros_(self.instantaneous[-1].weight)
-        nn.init.zeros_(self.instantaneous[-1].bias)
+        instantaneous_output = self.instantaneous[-1]
+        if not isinstance(instantaneous_output, nn.Linear):
+            raise TypeError("instantaneous controller must end in a linear layer")
+        nn.init.zeros_(instantaneous_output.weight)
+        nn.init.zeros_(instantaneous_output.bias)
         self.structural_gate_parameter = nn.Parameter(torch.zeros(()))
         self.residual_gate_parameter = nn.Parameter(torch.zeros(()))
-        self.register_buffer(
-            "control_bounds", torch.tensor(control_bound, dtype=torch.float32)
-        )
+        self.register_buffer("control_bounds", torch.tensor(control_bound, dtype=torch.float32))
 
         self._soe_state: torch.Tensor | None = None
         self._residual_state: torch.Tensor | None = None
@@ -125,9 +131,7 @@ class VolterraFollmerOperator(nn.Module):
         device: torch.device,
         dtype: torch.dtype,
     ) -> None:
-        self._soe_state = self.soe_bank.initial_state(
-            batch_size, device=device, dtype=dtype
-        )
+        self._soe_state = self.soe_bank.initial_state(batch_size, device=device, dtype=dtype)
         self._residual_state = torch.zeros(
             batch_size, self.residual_dim, device=device, dtype=dtype
         )
@@ -241,9 +245,7 @@ class VolterraFollmerOperator(nn.Module):
     ) -> None:
         if self._soe_state is None:
             raise RuntimeError("VFO memory must be reset before observing increments")
-        self._soe_state = self.soe_bank.update(
-            self._soe_state, target_driver_one_increment, dt
-        )
+        self._soe_state = self.soe_bank.update(self._soe_state, target_driver_one_increment, dt)
         self._simulation_steps += 1
 
     def branch_diagnostics(self) -> VFOBranchDiagnostics:
@@ -259,9 +261,7 @@ class VolterraFollmerOperator(nn.Module):
             total_rms=float(torch.sqrt(mean_energies[3])),
             structural_gate=float(self.structural_gate.detach()),
             residual_gate=float(self.residual_gate.detach()),
-            residual_energy_fraction=float(
-                mean_energies[2] / mean_energies[3].clamp_min(1e-12)
-            ),
+            residual_energy_fraction=float(mean_energies[2] / mean_energies[3].clamp_min(1e-12)),
         )
 
     def set_stage(self, stage: VFOStage) -> None:
@@ -305,8 +305,9 @@ class VolterraFollmerOperator(nn.Module):
             soe_terms=self.soe_bank.terms,
             hidden_dim=self.hidden_dim,
             residual_dim=self.residual_dim,
-            control_bound=tuple(
-                float(value) for value in self.control_bounds.detach().cpu()
+            control_bound=(
+                float(self.control_bounds[0]),
+                float(self.control_bounds[1]),
             ),
         ).to(device=reference.device, dtype=reference.dtype)
         result.load_state_dict(self.state_dict())

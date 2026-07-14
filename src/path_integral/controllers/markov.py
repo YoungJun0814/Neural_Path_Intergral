@@ -14,13 +14,13 @@ RBergomiTaskMode = Literal["left", "right", "union"]
 class ConstantTwoDriverControl(nn.Module):
     """Non-trainable constant control used by exact CEM baselines."""
 
+    value: torch.Tensor
+
     def __init__(self, first: float, second: float) -> None:
         super().__init__()
         if not math.isfinite(first) or not math.isfinite(second):
             raise ValueError("constant controls must be finite")
-        self.register_buffer(
-            "value", torch.tensor([first, second], dtype=torch.float64)
-        )
+        self.register_buffer("value", torch.tensor([first, second], dtype=torch.float64))
 
     def forward(
         self,
@@ -34,6 +34,10 @@ class ConstantTwoDriverControl(nn.Module):
 
 class LeanRBergomiControl(nn.Module):
     """Small stateless controller with no inactive memory-branch overhead."""
+
+    mode_feature: torch.Tensor
+    control_bounds: torch.Tensor
+    network: nn.Sequential
 
     def __init__(
         self,
@@ -72,20 +76,19 @@ class LeanRBergomiControl(nn.Module):
         mode_feature = torch.zeros(3, dtype=torch.float32)
         mode_feature[mode_index] = 1.0
         self.register_buffer("mode_feature", mode_feature)
-        self.register_buffer(
-            "control_bounds", torch.tensor(control_bound, dtype=torch.float32)
-        )
+        self.register_buffer("control_bounds", torch.tensor(control_bound, dtype=torch.float32))
+        output_layer = nn.Linear(hidden_dim, 2)
         self.network = nn.Sequential(
             nn.Linear(9, hidden_dim),
             nn.SiLU(),
             nn.Linear(hidden_dim, hidden_dim),
             nn.SiLU(),
-            nn.Linear(hidden_dim, 2),
+            output_layer,
         )
-        nn.init.zeros_(self.network[-1].weight)
-        nn.init.zeros_(self.network[-1].bias)
+        nn.init.zeros_(output_layer.weight)
+        nn.init.zeros_(output_layer.bias)
 
-    def forward(
+    def _features(
         self,
         time: float | torch.Tensor,
         spot: torch.Tensor,
@@ -94,9 +97,16 @@ class LeanRBergomiControl(nn.Module):
     ) -> torch.Tensor:
         if spot.shape != variance.shape or spot.shape != volterra.shape:
             raise ValueError("spot, variance, and volterra must have identical shapes")
-        if spot.ndim != 1 or not spot.is_floating_point():
+        if spot.ndim != 1 or not all(
+            value.is_floating_point() for value in (spot, variance, volterra)
+        ):
             raise ValueError("state tensors must be one-dimensional floating-point batches")
-        if not torch.isfinite(spot).all() or not torch.isfinite(variance).all():
+        if not all(
+            value.device == spot.device and value.dtype == spot.dtype
+            for value in (variance, volterra)
+        ):
+            raise ValueError("state tensors must have identical devices and dtypes")
+        if not all(torch.isfinite(value).all() for value in (spot, variance, volterra)):
             raise ValueError("state tensors must be finite")
         tiny = torch.finfo(spot.dtype).tiny
         safe_spot = torch.clamp(spot, min=tiny)
@@ -120,7 +130,16 @@ class LeanRBergomiControl(nn.Module):
             ),
             dim=-1,
         )
-        raw = self.network(features)
+        return features
+
+    def forward(
+        self,
+        time: float | torch.Tensor,
+        spot: torch.Tensor,
+        variance: torch.Tensor,
+        volterra: torch.Tensor,
+    ) -> torch.Tensor:
+        raw = self.network(self._features(time, spot, variance, volterra))
         bounds = self.control_bounds.to(device=raw.device, dtype=raw.dtype)
         return bounds * torch.tanh(raw)
 
@@ -134,8 +153,97 @@ class LeanRBergomiControl(nn.Module):
             upper_threshold=self.upper_threshold,
             mode=self.mode,
             hidden_dim=self.hidden_dim,
-            control_bound=tuple(
-                float(value) for value in self.control_bounds.detach().cpu()
+            control_bound=(
+                float(self.control_bounds[0]),
+                float(self.control_bounds[1]),
+            ),
+        ).to(device=reference.device, dtype=reference.dtype)
+        result.load_state_dict(self.state_dict())
+        result.eval()
+        for parameter in result.parameters():
+            parameter.requires_grad_(False)
+        return result
+
+
+class CEMAnchoredResidualControl(LeanRBergomiControl):
+    """Zero-initialized feedback residual around a fixed two-driver CEM drift."""
+
+    base_control: torch.Tensor
+    residual_bounds: torch.Tensor
+
+    def __init__(
+        self,
+        *,
+        spot: float,
+        xi: float,
+        maturity: float,
+        lower_threshold: float,
+        upper_threshold: float,
+        mode: RBergomiTaskMode,
+        base_control: tuple[float, float],
+        residual_bound: tuple[float, float] = (2.0, 2.0),
+        hidden_dim: int = 24,
+        control_bound: tuple[float, float] = (8.0, 8.0),
+    ) -> None:
+        super().__init__(
+            spot=spot,
+            xi=xi,
+            maturity=maturity,
+            lower_threshold=lower_threshold,
+            upper_threshold=upper_threshold,
+            mode=mode,
+            hidden_dim=hidden_dim,
+            control_bound=control_bound,
+        )
+        if len(base_control) != 2 or not all(math.isfinite(value) for value in base_control):
+            raise ValueError("base_control must contain two finite values")
+        if len(residual_bound) != 2 or not all(
+            math.isfinite(value) and value > 0.0 for value in residual_bound
+        ):
+            raise ValueError("residual_bound must contain two finite positive values")
+        global_bounds = self.control_bounds.detach().cpu()
+        if any(
+            abs(value) > float(global_bounds[index]) for index, value in enumerate(base_control)
+        ):
+            raise ValueError("base_control must lie within the global control bounds")
+        self.register_buffer("base_control", torch.tensor(base_control, dtype=torch.float64))
+        self.register_buffer("residual_bounds", torch.tensor(residual_bound, dtype=torch.float32))
+
+    def forward(
+        self,
+        time: float | torch.Tensor,
+        spot: torch.Tensor,
+        variance: torch.Tensor,
+        volterra: torch.Tensor,
+    ) -> torch.Tensor:
+        raw = self.network(self._features(time, spot, variance, volterra))
+        residual_bounds = self.residual_bounds.to(device=raw.device, dtype=raw.dtype)
+        base = self.base_control.to(device=raw.device, dtype=raw.dtype)
+        total = base + residual_bounds * torch.tanh(raw)
+        global_bounds = self.control_bounds.to(device=raw.device, dtype=raw.dtype)
+        return torch.maximum(torch.minimum(total, global_bounds), -global_bounds)
+
+    def frozen_copy(self) -> CEMAnchoredResidualControl:
+        reference = next(self.parameters())
+        result = CEMAnchoredResidualControl(
+            spot=self.spot,
+            xi=self.xi,
+            maturity=self.maturity,
+            lower_threshold=self.lower_threshold,
+            upper_threshold=self.upper_threshold,
+            mode=self.mode,
+            hidden_dim=self.hidden_dim,
+            control_bound=(
+                float(self.control_bounds[0]),
+                float(self.control_bounds[1]),
+            ),
+            base_control=(
+                float(self.base_control[0]),
+                float(self.base_control[1]),
+            ),
+            residual_bound=(
+                float(self.residual_bounds[0]),
+                float(self.residual_bounds[1]),
             ),
         ).to(device=reference.device, dtype=reference.dtype)
         result.load_state_dict(self.state_dict())

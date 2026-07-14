@@ -28,8 +28,8 @@ For a Korean explanation of the current architecture and completed work, see
 The ranked next-generation model candidates, mathematical constraints, and
 selection gates are documented in
 [`PATH_INTEGRAL_MODEL_CANDIDATES_AND_SELECTION.md`](PATH_INTEGRAL_MODEL_CANDIDATES_AND_SELECTION.md).
-The active integrated execution plan is
-[`PATH_INTEGRAL_RESEARCH_PLAN_V3.md`](PATH_INTEGRAL_RESEARCH_PLAN_V3.md).
+The latest executed stop-gate plan is
+[`PATH_INTEGRAL_RESEARCH_PLAN_V5.md`](PATH_INTEGRAL_RESEARCH_PLAN_V5.md).
 The latest sealed confirmatory review is
 [`docs/phase_reviews/G2_V3_CONFIRMATORY_REVIEW_2026-07-13.md`](docs/phase_reviews/G2_V3_CONFIRMATORY_REVIEW_2026-07-13.md).
 The frozen two-driver Heston feedback gate is reviewed in
@@ -44,6 +44,9 @@ documented in
 The exact-mixture implementation, theoretical errata, Gaussian oracle, rBergomi
 development results, and strong-CEM falsification are reviewed in
 [`docs/phase_reviews/G4_EXACT_MIXTURE_FALSIFICATION_2026-07-15.md`](docs/phase_reviews/G4_EXACT_MIXTURE_FALSIFICATION_2026-07-15.md).
+The final CEM-anchored residual pilot, statistical correction, and neural-search stop
+decision are reviewed in
+[`docs/phase_reviews/G5_CEM_ANCHORED_RESIDUAL_2026-07-15.md`](docs/phase_reviews/G5_CEM_ANCHORED_RESIDUAL_2026-07-15.md).
 
 Run the non-publication G2 smoke pipeline with:
 
@@ -67,9 +70,10 @@ python -m experiments.heston_tail_refinement --smoke --quiet \
 | Component | Description | Status |
 | :--- | :--- | :--- |
 | **Controlled Heston Model** | Applies adapted Brownian drift controls with the correlated-variance Girsanov correction. | Targeted tests available |
-| **Rough Volatility** | Simulates non-Markovian rBergomi dynamics for memory-aware controls. | Under correctness rebuild |
-| **Importance Sampling** | Reweights frozen controlled paths with $d\mathbb M/d\mathbb Q_\phi$. | Discretized-model validation in progress |
-| **Amortized Control** | Conditions one controller on barriers, maturities, and model parameters. | Planned research contribution |
+| **Rough Volatility** | Simulates controlled non-Markovian rBergomi dynamics on a validated finite grid. | Exact-law gate passed |
+| **Importance Sampling** | Uses exact component replay and marginal balance-mixture likelihoods. | Gaussian and rBergomi gates passed |
+| **Constant CEM Mixture** | Two mode-specialized two-driver exponential tilts. | Current practical winner |
+| **Neural VFO / Mixture / Residual** | Tested memory and feedback refinements against matched strong baselines. | Core claims falsified and stopped |
 
 ## 🧠 Model Architecture
 The core system is built on a **Neural SDE (Stochastic Differential Equation)** formulation:

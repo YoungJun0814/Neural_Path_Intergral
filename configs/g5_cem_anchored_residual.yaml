@@ -1,0 +1,56 @@
+schema_version: 1
+protocol_id: g5-cem-anchored-residual-one-shot-development-v1
+frozen: false
+
+model:
+  spot: 100.0
+  maturity: 0.5
+  dt: 0.015625
+  H: 0.10
+  rho: -0.70
+  eta: 1.5
+  xi: 0.04
+
+task:
+  lower_threshold: 42.0
+  upper_threshold: 139.0
+  soft_lower_threshold: 48.0
+  soft_upper_threshold: 135.0
+  soft_scale: 5.0
+
+base:
+  left_control: [3.8983303289164635, -1.694939468100885]
+  right_control: [0.16576571370419146, 3.067465817139147]
+  mixture_weights: [0.5, 0.5]
+
+residual:
+  hidden_dim: 8
+  residual_bound: [2.0, 2.0]
+  global_control_bound: [6.0, 6.0]
+
+training:
+  paths_per_batch: 1500
+  pi_updates: 20
+  pice_updates: 20
+  pi_learning_rate: 0.001
+  pice_learning_rate: 0.001
+  gradient_clip: 5.0
+  behavior_refresh: 5
+
+seeds:
+  initialization: 42501
+  left_training: 42502
+  right_training: 42503
+  initialization_audit: 42504
+  validation: [42601, 42602, 42603, 42604, 42605]
+
+validation:
+  paths_per_seed: 50000
+  timing_repeats: 3
+  maximum_absolute_difference_z: 3.0
+  maximum_replay_error: 1.0e-10
+  minimum_mode_contribution_share: 0.10
+  minimum_work_vrf: 1.10
+  minimum_improving_seeds: 4
+  maximum_break_even_queries: 25
+  target_relative_error: 0.10

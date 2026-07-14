@@ -1,0 +1,207 @@
+{
+  "break_even": {
+    "base_query_seconds": 0.6387292914014794,
+    "incremental_training_seconds": 2.4509445000439882,
+    "queries": null,
+    "residual_query_seconds": 1.2227791249632622,
+    "target_relative_error": 0.1
+  },
+  "gates": {
+    "all_expert_replay_exact": true,
+    "both_modes_contribute": true,
+    "exact_cem_initialization": true,
+    "incremental_break_even": false,
+    "paired_direction_consistent": false,
+    "raw_variance_improves": false,
+    "reported_bias_within_gate": true,
+    "work_improves": false
+  },
+  "initialization_exact": true,
+  "passed": false,
+  "protocol_frozen": false,
+  "protocol_id": "g5-cem-anchored-residual-one-shot-development-v1",
+  "protocol_sha256": "74f9db9c6afebbb94950ae097b25a9a5a1f6c88f59ef7ad29af43a22838352e1",
+  "smoke": true,
+  "training": {
+    "records": {
+      "left": [
+        {
+          "diagnostic": 0.0035633051355386143,
+          "loss": 6.586159097323336,
+          "objective": "pi",
+          "update": 1
+        },
+        {
+          "diagnostic": 0.0033922722183195846,
+          "loss": 6.614108964417939,
+          "objective": "pi",
+          "update": 2
+        },
+        {
+          "diagnostic": 0.24391704339234818,
+          "loss": -3.326831474803821,
+          "objective": "pice",
+          "update": 1
+        },
+        {
+          "diagnostic": 0.21778001012242929,
+          "loss": -3.0558680118396917,
+          "objective": "pice",
+          "update": 2
+        }
+      ],
+      "right": [
+        {
+          "diagnostic": 0.013254238244644629,
+          "loss": 6.055547390407298,
+          "objective": "pi",
+          "update": 1
+        },
+        {
+          "diagnostic": 0.02095947623615135,
+          "loss": 6.006595265990791,
+          "objective": "pi",
+          "update": 2
+        },
+        {
+          "diagnostic": 0.03630249561359843,
+          "loss": 0.23213643154733776,
+          "objective": "pice",
+          "update": 1
+        },
+        {
+          "diagnostic": 0.1994834710265471,
+          "loss": -1.4034558417703038,
+          "objective": "pice",
+          "update": 2
+        }
+      ]
+    },
+    "seconds": {
+      "left": 2.3284632000140846,
+      "right": 0.12248130002990365
+    }
+  },
+  "validation": {
+    "difference_z_vs_natural": -0.004505200220298426,
+    "geometric_work_vrf_vs_cem": 0.5118989961897277,
+    "improving_seeds": 0,
+    "maximum_replay_error": 7.105427357601002e-15,
+    "paired_log_work_ratios": [
+      -0.697470173772001,
+      -0.6417857191689159
+    ],
+    "runs": [
+      {
+        "contribution_ess_fraction": 0.0023333333333333335,
+        "cost_per_path": 2.5150600005872547e-05,
+        "estimate": 0.0023333333333333335,
+        "event_fraction": 0.0023333333333333335,
+        "left_contribution_share": 0.42857142857142855,
+        "method": "natural",
+        "online_work_proxy": 5.856732474414349e-08,
+        "right_contribution_share": 0.5714285714285714,
+        "seed": 42601.0,
+        "single_path_variance": 0.0023286651105925227,
+        "standard_error": 0.000881034450819513
+      },
+      {
+        "contribution_ess_fraction": 0.020368624537049976,
+        "cost_per_path": 5.315936665283516e-05,
+        "estimate": 0.002041381877715843,
+        "event_fraction": 0.237,
+        "left_contribution_share": 0.4363151802787067,
+        "method": "cem_base_mixture",
+        "online_work_proxy": 1.0657959866161392e-08,
+        "right_contribution_share": 0.5636848197212933,
+        "seed": 42601.0,
+        "single_path_variance": 0.00020049072322032583,
+        "standard_error": 0.0002585154561596694
+      },
+      {
+        "contribution_ess_fraction": 0.019718184152692043,
+        "cost_per_path": 0.00010385609998290117,
+        "estimate": 0.0020359183210353626,
+        "event_fraction": 0.23366666666666666,
+        "left_contribution_share": 0.4306965973912904,
+        "method": "cem_residual_mixture",
+        "online_work_proxy": 2.1408267774796e-08,
+        "right_contribution_share": 0.5693034026087096,
+        "seed": 42601.0,
+        "single_path_variance": 0.0002061339466658256,
+        "standard_error": 0.0002621284333209108
+      },
+      {
+        "contribution_ess_fraction": 0.0026666666666666666,
+        "cost_per_path": 2.0817333347319316e-05,
+        "estimate": 0.0026666666666666666,
+        "event_fraction": 0.0026666666666666666,
+        "left_contribution_share": 0.75,
+        "method": "natural",
+        "online_work_proxy": 5.538331566094046e-08,
+        "right_contribution_share": 0.25,
+        "seed": 42602.0,
+        "single_path_variance": 0.0026604423696790286,
+        "standard_error": 0.0009417080881177261
+      },
+      {
+        "contribution_ess_fraction": 0.006713050014008129,
+        "cost_per_path": 5.048130000553404e-05,
+        "estimate": 0.0030428829361223617,
+        "event_fraction": 0.22333333333333333,
+        "left_contribution_share": 0.6154757519509985,
+        "method": "cem_base_mixture",
+        "online_work_proxy": 6.918320155902354e-08,
+        "right_contribution_share": 0.38452424804900154,
+        "seed": 42602.0,
+        "single_path_variance": 0.0013704718688195292,
+        "standard_error": 0.0006758875322664092
+      },
+      {
+        "contribution_ess_fraction": 0.006199861903948751,
+        "cost_per_path": 9.388526666831846e-05,
+        "estimate": 0.0029548313029183816,
+        "event_fraction": 0.21933333333333332,
+        "left_contribution_share": 0.6452728841960057,
+        "method": "cem_residual_mixture",
+        "online_work_proxy": 1.3143912284561177e-07,
+        "right_contribution_share": 0.3547271158039943,
+        "seed": 42602.0,
+        "single_path_variance": 0.0013999973319558758,
+        "standard_error": 0.0006831294001275492
+      }
+    ],
+    "summary": {
+      "cem_base_mixture": {
+        "contribution_ess_fraction": 0.013540837275529053,
+        "cost_per_path": 5.1820333329184596e-05,
+        "estimate": 0.0025421324069191025,
+        "left_contribution_share": 0.5258954661148526,
+        "online_work_proxy": 3.992058071259246e-08,
+        "right_contribution_share": 0.4741045338851474,
+        "single_path_variance": 0.0007854812960199275,
+        "standard_error": 0.0004672014942130393
+      },
+      "cem_residual_mixture": {
+        "contribution_ess_fraction": 0.012959023028320396,
+        "cost_per_path": 9.887068332560981e-05,
+        "estimate": 0.002495374811976872,
+        "left_contribution_share": 0.537984740793648,
+        "online_work_proxy": 7.642369531020389e-08,
+        "right_contribution_share": 0.46201525920635195,
+        "single_path_variance": 0.0008030656393108507,
+        "standard_error": 0.00047262891672423006
+      },
+      "natural": {
+        "contribution_ess_fraction": 0.0025,
+        "cost_per_path": 2.298396667659593e-05,
+        "estimate": 0.0025,
+        "left_contribution_share": 0.5892857142857143,
+        "online_work_proxy": 5.697532020254198e-08,
+        "right_contribution_share": 0.4107142857142857,
+        "single_path_variance": 0.0024945537401357756,
+        "standard_error": 0.0009113712694686195
+      }
+    }
+  }
+}

@@ -428,9 +428,7 @@ class MarketSimulator:
 
         stochastic_log_term = torch.zeros(num_paths, device=self.device, dtype=torch.float64)
         control_energy = torch.zeros(num_paths, device=self.device, dtype=torch.float64)
-        running_spot_integral = torch.zeros(
-            num_paths, device=self.device, dtype=simulation_dtype
-        )
+        running_spot_integral = torch.zeros(num_paths, device=self.device, dtype=simulation_dtype)
         barrier_hit = (
             torch.zeros(num_paths, dtype=torch.bool, device=self.device)
             if barrier_level is not None
@@ -453,9 +451,7 @@ class MarketSimulator:
                     (num_paths, 2), device=self.device, dtype=simulation_dtype
                 )
             else:
-                applied_control = control_fn(
-                    time, current_spot, current_variance, running_average
-                )
+                applied_control = control_fn(time, current_spot, current_variance, running_average)
                 if not isinstance(applied_control, torch.Tensor):
                     raise TypeError("two-driver control_fn must return a torch.Tensor")
                 if applied_control.shape != (num_paths, 2):
@@ -477,28 +473,20 @@ class MarketSimulator:
             proposal_brownian_2 = (
                 torch.randn(num_paths, device=self.device, dtype=simulation_dtype) * sqrt_dt
             )
-            proposal_increment = torch.stack(
-                (proposal_brownian_1, proposal_brownian_2), dim=-1
-            )
+            proposal_increment = torch.stack((proposal_brownian_1, proposal_brownian_2), dim=-1)
             control_1 = applied_control[:, 0]
             control_2 = applied_control[:, 1]
 
             variance_plus = torch.clamp(current_variance, min=0.0)
             sqrt_variance = torch.sqrt(variance_plus)
             next_spot = current_spot * torch.exp(
-                (
-                    params["mu"]
-                    + sqrt_variance * control_1
-                    - 0.5 * variance_plus
-                )
-                * step_dt
+                (params["mu"] + sqrt_variance * control_1 - 0.5 * variance_plus) * step_dt
                 + sqrt_variance * proposal_brownian_1
             )
 
             variance_control = rho * control_1 + sqrt_one_minus_rho2 * control_2
             variance_brownian = (
-                rho * proposal_brownian_1
-                + sqrt_one_minus_rho2 * proposal_brownian_2
+                rho * proposal_brownian_1 + sqrt_one_minus_rho2 * proposal_brownian_2
             )
             variance_drift = params["kappa"] * (params["theta"] - variance_plus)
             variance_drift = variance_drift + params["xi"] * sqrt_variance * variance_control
@@ -703,9 +691,7 @@ class RBergomiSimulator:
         c11 = dt
         c12 = dt ** (alpha + 1.0) / (alpha + 1.0)
         c22 = dt ** (2.0 * alpha + 1.0) / (2.0 * alpha + 1.0)
-        covariance = torch.tensor(
-            ((c11, c12), (c12, c22)), device=self.device, dtype=dtype
-        )
+        covariance = torch.tensor(((c11, c12), (c12, c22)), device=self.device, dtype=dtype)
         local_cholesky = torch.linalg.cholesky(covariance)
 
         i_index = torch.arange(1, n_steps + 1, device=self.device, dtype=dtype).unsqueeze(1)
@@ -723,9 +709,7 @@ class RBergomiSimulator:
         )
         scale = math.sqrt(2.0 * H)
         variance = torch.zeros(n_steps + 1, device=self.device, dtype=dtype)
-        variance[1:] = (scale**2) * (
-            c22 + dt * historical_weights.square().sum(dim=1)
-        )
+        variance[1:] = (scale**2) * (c22 + dt * historical_weights.square().sum(dim=1))
         return local_cholesky, historical_weights, variance, c12
 
     def _hybrid_scheme_volterra(
@@ -753,8 +737,8 @@ class RBergomiSimulator:
         if not (0.0 < H < 0.5):
             raise ValueError(f"rBergomi requires H in (0, 0.5); got {H}")
         dtype = torch.float64
-        local_cholesky, weights, Y_var, _local_drift_coefficient = (
-            self._hybrid_coefficients(n_steps, dt, H=H, dtype=dtype)
+        local_cholesky, weights, Y_var, _local_drift_coefficient = self._hybrid_coefficients(
+            n_steps, dt, H=H, dtype=dtype
         )
 
         # Sample n_steps independent 2-vectors per path
@@ -802,10 +786,7 @@ class RBergomiSimulator:
         num_paths: int,
         *,
         mu: float = 0.0,
-        control_fn: Callable[
-            [float, torch.Tensor, torch.Tensor, torch.Tensor], torch.Tensor
-        ]
-        | None = None,
+        control_fn: Callable[..., torch.Tensor] | None = None,
         override_params: dict | None = None,
         record_augmented: bool = False,
         dtype: torch.dtype = torch.float64,
@@ -839,13 +820,9 @@ class RBergomiSimulator:
         )
         volterra_scale = math.sqrt(2.0 * H)
 
-        current_log_spot = torch.full(
-            (num_paths,), math.log(S0), device=self.device, dtype=dtype
-        )
+        current_log_spot = torch.full((num_paths,), math.log(S0), device=self.device, dtype=dtype)
         current_volterra = torch.zeros(num_paths, device=self.device, dtype=dtype)
-        current_variance = torch.full(
-            (num_paths,), xi, device=self.device, dtype=dtype
-        )
+        current_variance = torch.full((num_paths,), xi, device=self.device, dtype=dtype)
         spot_history = [torch.exp(current_log_spot)]
         variance_history = [current_variance]
         volterra_history = [current_volterra]
@@ -857,22 +834,12 @@ class RBergomiSimulator:
         if callable(reset_memory):
             reset_memory(batch_size=num_paths, device=self.device, dtype=dtype)
 
-        stochastic_log_term = torch.zeros(
-            num_paths, device=self.device, dtype=torch.float64
-        )
+        stochastic_log_term = torch.zeros(num_paths, device=self.device, dtype=torch.float64)
         control_energy = torch.zeros(num_paths, device=self.device, dtype=torch.float64)
-        proposal_brownian_history: list[torch.Tensor] | None = (
-            [] if record_augmented else None
-        )
-        target_brownian_history: list[torch.Tensor] | None = (
-            [] if record_augmented else None
-        )
-        proposal_local_history: list[torch.Tensor] | None = (
-            [] if record_augmented else None
-        )
-        target_local_history: list[torch.Tensor] | None = (
-            [] if record_augmented else None
-        )
+        proposal_brownian_history: list[torch.Tensor] | None = [] if record_augmented else None
+        target_brownian_history: list[torch.Tensor] | None = [] if record_augmented else None
+        proposal_local_history: list[torch.Tensor] | None = [] if record_augmented else None
+        target_local_history: list[torch.Tensor] | None = [] if record_augmented else None
         control_history: list[torch.Tensor] | None = [] if record_augmented else None
 
         for step in range(n_steps):
@@ -890,9 +857,7 @@ class RBergomiSimulator:
                         running_minimum,
                     )
                 else:
-                    control = control_fn(
-                        time, current_spot, current_variance, current_volterra
-                    )
+                    control = control_fn(time, current_spot, current_variance, current_volterra)
                 if not isinstance(control, torch.Tensor):
                     raise TypeError("rBergomi control_fn must return a torch.Tensor")
                 if control.shape != (num_paths, 2):
@@ -901,36 +866,28 @@ class RBergomiSimulator:
                         f"got {tuple(control.shape)}"
                     )
                 if control.device != self.device or control.dtype != dtype:
-                    raise ValueError("rBergomi control output must match simulator device and dtype")
+                    raise ValueError(
+                        "rBergomi control output must match simulator device and dtype"
+                    )
                 if not torch.isfinite(control).all():
                     raise ValueError("rBergomi control output must be finite")
 
             # Causal order: evaluate the control before sampling this interval.
-            local_standard_normal = torch.randn(
-                num_paths, 2, device=self.device, dtype=dtype
-            )
+            local_standard_normal = torch.randn(num_paths, 2, device=self.device, dtype=dtype)
             local_pair = local_standard_normal @ local_cholesky.T
             proposal_driver_one = local_pair[:, 0]
             proposal_local_integral = local_pair[:, 1]
-            proposal_driver_two = (
-                torch.randn(num_paths, device=self.device, dtype=dtype) * sqrt_dt
-            )
-            proposal_brownian = torch.stack(
-                (proposal_driver_one, proposal_driver_two), dim=-1
-            )
+            proposal_driver_two = torch.randn(num_paths, device=self.device, dtype=dtype) * sqrt_dt
+            proposal_brownian = torch.stack((proposal_driver_one, proposal_driver_two), dim=-1)
             target_brownian = proposal_brownian + control * step_dt
             target_driver_one = target_brownian[:, 0]
             target_driver_two = target_brownian[:, 1]
-            target_local_integral = (
-                proposal_local_integral + control[:, 0] * local_drift
-            )
+            target_local_integral = proposal_local_integral + control[:, 0] * local_drift
             observe_increment = getattr(control_fn, "observe_target_increment", None)
             if callable(observe_increment):
                 observe_increment(target_driver_one, step_dt)
 
-            spot_increment = (
-                rho * target_driver_one + rho_perpendicular * target_driver_two
-            )
+            spot_increment = rho * target_driver_one + rho_perpendicular * target_driver_two
             next_log_spot = (
                 current_log_spot
                 + (mu - 0.5 * current_variance) * step_dt
@@ -945,23 +902,16 @@ class RBergomiSimulator:
             )
             next_volterra = volterra_scale * (historical + target_local_integral)
             next_variance = xi * torch.exp(
-                eta * next_volterra
-                - 0.5 * (eta**2) * volterra_variance[step + 1]
+                eta * next_volterra - 0.5 * (eta**2) * volterra_variance[step + 1]
             )
             next_variance = torch.clamp(next_variance, min=1e-10)
-            if not torch.isfinite(next_variance).all() or not torch.isfinite(
-                next_log_spot
-            ).all():
+            if not torch.isfinite(next_variance).all() or not torch.isfinite(next_log_spot).all():
                 raise FloatingPointError("controlled rBergomi path became nonfinite")
 
             control_64 = control.to(torch.float64)
             proposal_64 = proposal_brownian.to(torch.float64)
-            stochastic_log_term = stochastic_log_term + torch.sum(
-                control_64 * proposal_64, dim=-1
-            )
-            control_energy = control_energy + step_dt * torch.sum(
-                control_64.square(), dim=-1
-            )
+            stochastic_log_term = stochastic_log_term + torch.sum(control_64 * proposal_64, dim=-1)
+            control_energy = control_energy + step_dt * torch.sum(control_64.square(), dim=-1)
 
             if proposal_brownian_history is not None:
                 assert target_brownian_history is not None

@@ -1,246 +1,215 @@
-# 현재 모델과 구현 가이드
+# 현재 모델과 구현 결과 가이드
 
-## 1. 한 문장 요약
+Date: 2026-07-15
 
-현재 시스템은 **희귀한 주가 하락 경로를 일부러 자주 생성한 다음, 정확한
-확률 가중치로 원래 시장에서의 발생확률을 복원하는 importance-sampling
-엔진**이다.
+## 1. 결론부터
 
-쉽게 말하면 다음과 같다.
+현재 가장 정확하고 실용적인 모델은 **neural network가 아니라, rBergomi의 두
+Brownian driver를 mode별로 이동시키는 exact two-component CEM mixture**다.
 
-1. 일반 Monte Carlo는 \(10^{-6}\) 사건을 거의 만나지 못한다.
-2. 제어된 simulator는 주가가 하락하도록 Brownian motion의 drift를 바꾼다.
-3. 경로를 억지로 바꾼 만큼 likelihood \(L=dM/dQ\)로 보정한다.
-4. `event × likelihood`의 평균을 내면 원래 measure의 확률을 추정할 수 있다.
-5. 좋은 control은 정답을 바꾸지 않으면서 estimator 분산만 줄인다.
+Neural VFO, mode별 neural mixture, CEM-anchored residual까지 순서대로 강한
+baseline과 비교했지만 모두 CEM mixture보다 효율이 낮았다. 따라서 현재 저장소는
+“neural이 이겼다”는 프로젝트가 아니라 다음 두 결과를 가진 검증된 연구 기반이다.
 
-## 2. 전체 구조
+1. controlled rough-volatility path와 exact mixture likelihood를 올바르게 계산한다.
+2. 이 terminal two-tail 문제에서는 단순한 CEM mixture가 neural refinement보다
+   낫다는 재현 가능한 falsification 결과를 갖는다.
+
+## 2. 우리가 계산하는 문제
+
+rBergomi에서 다음 희귀사건 확률을 계산한다.
+
+$$
+p=P(S_T\le 42\;\text{or}\;S_T\ge139),\qquad T=0.5.
+$$
+
+일반 Monte Carlo는 사건을 거의 만나지 못한다. Importance sampling은 Brownian
+경로를 의도적으로 양쪽 tail로 보내고, 바뀐 확률법칙을 likelihood로 정확히
+보정한다.
 
 ```mermaid
 flowchart LR
-    A["Target model M<br>Heston / rBergomi"] --> B["Rare threshold K<br>Heston Fourier CDF"]
-    B --> C["CEM constant control<br>warm start"]
-    C --> D["Markov feedback<br>affine or MLP"]
-    D --> E["Controlled simulator Q"]
-    E --> F["Path likelihood<br>L = dM/dQ"]
-    E --> G["Rare-event indicator"]
-    F --> H["Weighted contribution<br>indicator × L"]
-    G --> H
-    H --> I["Probability, SE, CI,<br>VRF and concentration"]
+    P["Target rBergomi law P"] --> K["Random expert K"]
+    K --> L["Left CEM tilt"]
+    K --> R["Right CEM tilt"]
+    L --> X["Controlled path X"]
+    R --> X
+    X --> D["Replay every expert density"]
+    D --> M["Exact marginal mixture q_mix"]
+    M --> Y["1_event × p/q_mix"]
+    Y --> E["Probability, SE, ESS, work"]
 ```
 
-현재 논문용 기준 경로는 `Heston → CEM → compact affine/MLP → likelihood
-estimator`이다. rBergomi는 수치엔진 검증까지 완료됐지만 memory-aware control은
-다음 연구 단계다.
+## 3. rBergomi와 제어 좌표
 
-## 3. 기준 시장 모델
-
-### Heston
-
-주가와 분산을 함께 움직인다.
+Rough variance는 과거 Brownian shock 전체를 Volterra kernel로 누적한다.
 
 $$
-\begin{aligned}
-dS_t &= \mu S_t\,dt+\sqrt{v_t}S_t\,dW_t^S,\\
-dv_t &= \kappa(\theta-v_t)\,dt+\xi\sqrt{v_t}\,dW_t^v.
-\end{aligned}
+V_t=\xi_0\exp\left(\eta Y_t-\tfrac12\eta^2t^{2H}\right),
+\qquad
+Y_t=\sqrt{2H}\int_0^t(t-s)^{H-1/2}dW_s^1.
 $$
 
-- \(S_t\): 주가
-- \(v_t\): 순간분산
-- \(\kappa\): 분산이 장기 평균으로 돌아오는 속도
-- \(\theta\): 장기 평균분산
-- \(\xi\): volatility-of-volatility
-- \(\rho\): 가격과 분산 shock의 상관계수
-
-분산은 full-truncation Euler, 주가는 positive log-Euler로 계산한다. 주가에
-사후 floor를 씌워 가짜 left-tail mass가 생기지 않도록 했다.
-
-### rBergomi
-
-rBergomi는 현재 변동성이 과거 Brownian shock 전체의 영향을 받는 rough
-volatility 모델이다. BLP hybrid scheme, \(\sqrt{2H}\) normalization, discrete
-Wick compensator를 구현했고 covariance와 \(E[V_t]=\xi_0\) 테스트를 통과한다.
-
-현재는 base simulator 단계이며 neural memory controller는 아직 연결하지 않았다.
-
-## 4. Measure를 바꾸는 방법
-
-원래 target measure를 \(M\), 경로를 많이 생성하기 위한 proposal을 \(Q\)라고
-한다. Brownian motion을 다음처럼 이동한다.
+가격 Brownian은
 
 $$
-dW_t^M=dW_t^Q+u_t\,dt.
+dB_t=\rho\,dW_t^1+\sqrt{1-\rho^2}\,dW_t^2
 $$
 
-음의 \(u_t\)를 사용하면 하락 경로가 더 자주 나온다. Heston에서는 가격과
-분산 Brownian이 상관돼 있으므로 variance drift도 함께 보정해야 한다.
+이므로 제어는 독립 좌표 `(W1, W2)` 두 개에 적용한다. 첫 좌표는 rough variance와
+가격에 동시에 영향을 주고, 둘째 좌표는 가격의 직교 shock을 제어한다.
+
+현재 simulator는 다음을 검증했다.
+
+- BLP hybrid discretization과 `sqrt(2H)` 정규화;
+- discrete Wick compensator와 `E[V_t]=xi`;
+- target-coordinate Brownian increment 기록;
+- bounded adapted two-driver control;
+- 같은 경로에서 likelihood replay;
+- 제어 0일 때 기존 rBergomi law로의 exact reduction.
+
+## 4. 현재 winning proposal
+
+두 개의 constant expert를 사용한다.
+
+| Expert | `(u1, u2)` | 역할 |
+|---|---:|---|
+| Left | `(3.8983, -1.6949)` | 낮은 terminal spot 경로 생성 |
+| Right | `(0.1658, 3.0675)` | 높은 terminal spot 경로 생성 |
+
+각 expert는 0.5 확률로 선택된다. 단순히 선택된 expert의 likelihood만 사용하는
+대신, 생성된 경로에서 두 expert density를 모두 replay한다.
 
 $$
-dv_t^Q=\left[\kappa(\theta-v_t)+\rho\xi\sqrt{v_t}u_t\right]dt
-       +\xi\sqrt{v_t}\,dW_t^{v,Q}.
+\frac{q_{mix}(X)}{p(X)}
+=\sum_{k=1}^2\alpha_k\frac{q_k(X)}{p(X)},
+\qquad
+\widehat p=\frac1N\sum_{n=1}^N
+1_A(X_n)\frac{p(X_n)}{q_{mix}(X_n)}.
 $$
 
-경로 likelihood는
+`logsumexp`로 계산하므로 underflow에 강하고, balance likelihood는 component-only
+estimator보다 극단적인 weight를 줄인다.
+
+## 5. CEM은 무엇을 학습하는가
+
+CEM은 neural network가 아니다. 희귀사건에 기여한 weighted Brownian increments를
+사용하여 constant exponential tilt를 반복 갱신한다. 두-driver constant control의
+weighted MLE는 본질적으로
 
 $$
-\log L=-\sum_k u_k\Delta W_k^Q-\frac12\sum_k u_k^2\Delta t
+u^*\approx\frac{E_w[W_T]}{T}
 $$
 
-이다. 이 부호나 variance correction이 틀리면 estimator가 biased된다.
+형태다. Left와 right를 별도로 학습하므로 multimodal 사건에서 평균이 0으로
+상쇄되는 문제를 피한다.
 
-## 5. 현재 control 구조
+## 6. 시도하고 중단한 neural 구조
 
-### 5.1 CEM constant control
+### VFO memory branch
 
-모든 시간과 상태에서 같은 \(u\)를 쓴다. 단순하지만 Heston terminal event에서
-매우 강한 baseline이다. elite trajectory, likelihood, Brownian sufficient
-statistic을 같은 경로에서 사용해 weighted maximum likelihood로 업데이트한다.
+Volterra history를 별도 kernel feature로 처리하는 구조를 instantaneous feedback과
+matched 비교했다. terminal task와 path-dependent pivot 모두에서 사전 gate를 넘지
+못했다. 따라서 “rough memory를 넣으면 자동으로 유리하다”는 주장은 기각했다.
 
-### 5.2 Compact affine feedback
+### Mode-specialized exact neural mixture
 
-현재 가장 실용적인 feedback 모델이다.
+Left/right neural expert와 exact marginal likelihood를 구현했다. Natural MC와 single
+neural controller는 이겼지만 strong two-driver CEM mixture보다 약 2.12배
+비효율적이었다.
 
-$$
-u_\phi(t,S,v)=u_{max}\tanh\left[
-w_S(S/K-1)+w_v(v/\theta-1)+w_t(t/T)+b
-\right].
-$$
+### CEM-anchored residual
 
-학습 parameter는 세 weight와 bias뿐이다. CEM constant에서 정확히 시작한 뒤
-상태별 보정만 학습한다. 평가할 때는 frozen 3계수 함수로 변환해 neural module
-호출비를 제거한다.
-
-### 5.3 MLP feedback
-
-더 복잡한 nonlinear controller다. 입력은
+마지막으로 CEM을 exact 초기값으로 보존하고 작은 feedback residual만 학습했다.
 
 $$
-(\log(S/S_0),\log(S/K),\log(v/\theta),t/T)
+u^{CAR}=\operatorname{clip}(u^{CEM}+2\tanh f_\theta, -6,6).
 $$
 
-이고 SiLU MLP 뒤에 bounded tanh output을 사용한다. 표현력은 높지만 현재 CPU
-Heston benchmark에서는 추가 분산 감소보다 추론비 증가가 더 컸다.
+초기에는 CEM과 경로·likelihood가 bitwise 동일하다. 하지만 학습 후 결과는 다음과
+같다.
 
-## 6. 학습 방법
+| 지표 | CEM mixture | Anchored residual |
+|---|---:|---:|
+| 단일경로 분산 | 6.075e-4 | 7.200e-4 |
+| 경로당 비용 | 2.300e-5 | 3.769e-5 |
+| online work | 1.382e-8 | 2.750e-8 |
+| contribution ESS fraction | 0.01015 | 0.00923 |
 
-### CEM warm start
+Residual은 평균 분산이 18.5% 높고 추론비용이 63.8% 높았다. Work 기준 5/5
+seed에서 패배했고 geometric work-VRF는 0.523이었다. 따라서 추가 neural
+architecture search를 중단했다.
 
-처음부터 neural network로 \(10^{-6}\) event를 찾으면 event가 한 번도 나오지
-않아 gradient가 사라질 수 있다. 먼저 CEM으로 사건을 충분히 자주 만드는
-constant control을 찾는다.
+## 7. 이론적으로 보장되는 범위
 
-### Hard-event score gradient
+현재 보장은 **구현된 유한 시간격자**에 대한 것이다.
 
-`S_T <= K` 같은 indicator는 경계에서 미분 불가능하다. 단순 autograd로
-indicator를 미분하면 이론적으로 잘못된 gradient가 된다. 현재 구현은
-likelihood-ratio gradient를 사용한다.
+- control은 현재와 과거 상태만 보는 adapted control이다.
+- control은 bounded라 discrete exponential likelihood가 유한하다.
+- 모든 expert density는 동일 target Brownian 좌표에서 replay된다.
+- marginal mixture likelihood를 사용한 hard-event estimator는 선언된 proposal
+  law 아래 unbiased다.
+- 0 control과 1-component mixture reduction을 테스트한다.
+
+아직 보장하지 않는 것은 다음과 같다.
+
+- `dt -> 0` 연속시간 rare-event estimator의 수렴률;
+- rough Volterra equation에 대한 새로운 Föllmer-drift 정리;
+- 실제 시장 calibration error까지 포함한 out-of-sample 정확도;
+- barrier monitoring bias가 제거된 continuous-barrier 결과;
+- 다른 task에서 CEM이 항상 최적이라는 주장.
+
+## 8. 결과를 읽는 법
+
+Controlled event frequency가 커진 것만으로는 성공이 아니다. 반드시
 
 $$
-\nabla J=-E_Q[1_A L^2\nabla\log q_\phi].
+\text{online work}=\operatorname{Var}(Y)\times\text{seconds per path}
 $$
 
-동일 경로의 Q-Brownian increment를 저장하고, state와 contribution은 detach한
-뒤 control parameter만 미분한다.
+를 비교한다. 학습비용이 있으면 반복 query 수에 따라 break-even도 계산한다.
 
-### Seed stream
+G5에서 확률 추정은 natural MC와 `z=0.951` 차이였고 replay error는
+`1.07e-14`였다. 즉 실패 원인은 bias나 density 오류가 아니라 **분산과 계산비용**이다.
 
-train seed는 하나의 고정 batch가 아니라 random stream의 root다. epoch마다
-서로 다른 deterministic sub-seed를 생성한다. 따라서 재현 가능하면서도 같은
-Brownian path를 반복 암기하지 않는다.
+## 9. 논문 수준에 대한 현재 판단
 
-## 7. 데이터 분리
+현재 결과만으로 “새 neural model이 rough volatility rare-event sampling을
+개선한다”는 저명 저널 논문은 제출하면 안 된다. 핵심 neural 가설이 strong
+baseline에 의해 반증됐기 때문이다.
 
-```mermaid
-flowchart LR
-    T["Train roots"] --> M["Model fitting"]
-    V["Selection roots"] --> S["Checkpoint selection"]
-    A["Audit roots"] --> G["Correctness + work gate"]
-    E["Sealed evaluation roots"] --> P["Final paper table"]
-```
+그렇다고 연구 기반이 무의미한 것은 아니다. Exact mixture engine, Gaussian oracle,
+rBergomi law tests, falsification protocol은 충분히 재사용 가치가 있다. 다음 논문은
+네트워크를 더 튜닝하는 것이 아니라 아래 중 하나로 질문을 바꿔야 한다.
 
-- Train: gradient와 CEM fitting
-- Selection: architecture/checkpoint 선택
-- Audit: 선택 완료 후 한 번만 gate 확인
-- Evaluation: 논문용 최종 결과에서만 사용
+1. finite-grid Volterra system에서 multimodal exponential tilting의 오차·분산을
+   분석하는 theorem-led 연구;
+2. barrier, drawdown, occupation time처럼 terminal constant tilt가 구조적으로
+   부족한 path-dependent 실무 문제.
 
-현재 v3 evaluation seed 11101–11120은 사용하지 않았다.
+둘 다 CEM mixture, exact marginal likelihood, training-inclusive work, sealed 20+
+seed를 필수 baseline으로 유지해야 한다.
 
-## 8. 무엇을 측정하는가
+## 10. 주요 파일
 
-- Mean estimate: 추정 확률
-- Standard error: estimator 불확실성
-- Reported bias-z: 해석값과 차이를 reported SE로 표준화
-- CI coverage: 해석값이 confidence interval 안에 들어오는 비율
-- Contribution ESS: 실제 확률 추정에 기여한 유효 경로 수
-- Top-1% contribution share: 소수 경로가 결과를 독점하는지 확인
-- Online VRF: 분산과 경로당 wall-clock을 함께 고려
-- End-to-end VRF: training cost까지 포함
+- `src/physics_engine.py`: controlled rBergomi simulator
+- `src/path_integral/rbergomi_mixture.py`: randomized expert simulation과 replay
+- `src/path_integral/mixture.py`: exact marginal mixture density
+- `src/path_integral/controllers/markov.py`: constant, lean, anchored controls
+- `src/training/path_mixture.py`: PI/PICE/J2 training primitives
+- `src/training/rbergomi_cem.py`: two-driver CEM
+- `experiments/g4_gaussian_mixture_oracle.py`: analytic Gaussian oracle
+- `experiments/g4_rbergomi_mixture.py`: neural/CEM mixture comparison
+- `experiments/g5_cem_anchored_residual.py`: final residual stop gate
+- `docs/phase_reviews/G5_CEM_ANCHORED_RESIDUAL_2026-07-15.md`: 최종 검토서
 
-단순히 controlled event가 몇 배 자주 발생했는지는 speedup이 아니다.
-
-## 9. 현재까지 완료된 구현
-
-- Heston/Bates/SVJJ full-truncation variance와 positive spot update
-- rBergomi BLP hybrid scheme 및 discrete covariance/Wick normalization
-- correlated-variance Girsanov correction
-- Brownian-only control 아래 jump-law 보존
-- Heston Fourier call/put/CDF/quantile reference
-- same-trajectory CEM
-- compact affine 및 MLP Markov controller
-- hard-indicator score-function training
-- log-domain likelihood/contribution diagnostics
-- work-normalized VRF와 repeated CI report
-- frozen protocol, seed split, checkpoint schema와 SHA-256
-- CI의 Ruff, Mypy, Pytest 검증
-
-## 10. 현재 성능을 어떻게 해석해야 하는가
-
-Heston \(10^{-4}\) audit에서 compact affine은 CEM보다 단일경로 분산이 약 4%
-낮았지만 추론비가 약 6% 높았다. 결과적으로 work efficiency는 거의 1이다.
-
-이 결과는 실패라기보다 중요한 baseline 결론이다. Heston terminal event에서는
-constant exponential tilt가 이미 충분히 강해 복잡한 feedback의 추가 이점이
-작다. 논문 기여는 다음 중 하나에서 나와야 한다.
-
-1. 과거 memory가 필요한 rBergomi
-2. barrier/drawdown처럼 path-dependent event
-3. 여러 \(K,T,H,\rho\) task를 하나의 모델이 처리하는 amortization
-
-## 11. 현재 할 수 없는 주장
-
-- neural이 CEM보다 확실히 빠르다는 주장
-- \(10^{-5},10^{-6}\) v3 confirmatory 결과
-- continuous barrier unbiasedness
-- rough-volatility memory controller 우월성
-- real-market calibrated out-of-sample 성능
-- “Neural Path Integral”이라는 이름의 독립적인 path-integral theorem
-
-## 12. 주요 파일
-
-- `src/physics_engine.py`: Heston, jump, rBergomi simulator
-- `src/evaluation/heston_reference.py`: 해석 Heston reference
-- `src/training/cem.py`: constant-control CEM
-- `src/training/markov_control.py`: affine/MLP controller와 score gradient
-- `src/evaluation/likelihood.py`: weight/contribution diagnostics
-- `experiments/g2_train_validate.py`: sealed selection/audit pipeline
-- `configs/g2_heston_confirmatory_v3.yaml`: 현재 confirmatory protocol
-- `docs/mathematical_specification.md`: 구현과 일치하는 수학 명세
-
-## 13. 재현 명령
+## 11. 재현 명령
 
 ```bash
-pytest -q
-ruff check src tests experiments main.py train_driftnet.py
-mypy src main.py train_driftnet.py experiments/g2_train_validate.py
-```
+python -m experiments.g5_cem_anchored_residual \
+  --config configs/g5_cem_anchored_residual.yaml \
+  --output results/g5_cem_anchored_residual_development_2026-07-15.json
 
-v3 train/selection/audit는 다음 명령으로 재현한다. 이 명령은 evaluation seed를
-사용하지 않는다.
-
-```bash
-python -m experiments.g2_train_validate --quiet \
-  --protocol configs/g2_heston_confirmatory_v3.yaml \
-  --probabilities 1e-4 \
-  --output results/g2_v3_confirmatory_1e-4_2026-07-13.json
+python -m pytest -q
+python -m ruff check src tests experiments main.py train_driftnet.py
 ```

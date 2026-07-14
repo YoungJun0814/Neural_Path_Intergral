@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
 import torch
 
@@ -69,14 +69,10 @@ def vfo_soft_pi_objective(
         record_augmented=False,
         dtype=next(control.parameters()).dtype,
     )
-    potential = _soft_potential(
-        _event_value(paths, event_type), barrier=barrier, scale=soft_scale
-    )
+    potential = _soft_potential(_event_value(paths, event_type), barrier=barrier, scale=soft_scale)
     loss = potential.double().mean() + 0.5 * paths.control_energy.mean()
     log_contribution = -potential.double() + paths.log_likelihood
-    soft_estimate = torch.exp(
-        torch.logsumexp(log_contribution, dim=0) - math.log(num_paths)
-    )
+    soft_estimate = torch.exp(torch.logsumexp(log_contribution, dim=0) - math.log(num_paths))
     return VFOSoftPIObjective(
         loss=loss,
         soft_estimate=soft_estimate.detach(),
@@ -111,9 +107,7 @@ def replay_vfo_on_target_paths(
                 paths.running_minimum[:, step].detach().to(dtype=dtype),
             )
         )
-        control.observe_target_increment(
-            target[:, step, 0].detach().to(dtype=dtype), paths.step_dt
-        )
+        control.observe_target_increment(target[:, step, 0].detach().to(dtype=dtype), paths.step_dt)
     return torch.stack(controls, dim=1)
 
 
@@ -251,7 +245,7 @@ def train_vfo_stage(
     seed: int,
     gradient_clip: float = 5.0,
     behavior_refresh: int = 10,
-    **objective_kwargs: float | int,
+    **objective_kwargs: Any,
 ) -> tuple[VFOTrainingRecord, ...]:
     if updates <= 0 or learning_rate <= 0.0 or gradient_clip <= 0.0:
         raise ValueError("updates, learning_rate, and gradient_clip must be positive")
@@ -266,22 +260,21 @@ def train_vfo_stage(
         torch.manual_seed(int((seed + 1_000_003 * (update - 1)) % (2**63 - 1)))
         optimizer.zero_grad()
         if objective == "pi":
-            result = vfo_soft_pi_objective(
-                simulator, control, **objective_kwargs
-            )
-            diagnostic = float(result.soft_estimate)
+            pi_result = vfo_soft_pi_objective(simulator, control, **objective_kwargs)
+            result: VFOSoftPIObjective | VFOPICEObjective | VFOHardJ2Objective = pi_result
+            diagnostic = float(pi_result.soft_estimate)
         elif objective == "pice":
             if update > 1 and (update - 1) % behavior_refresh == 0:
                 behavior = control.frozen_copy()
-            result = vfo_pice_objective(
+            pice_result = vfo_pice_objective(
                 simulator, control, behavior=behavior, **objective_kwargs
             )
-            diagnostic = float(result.effective_sample_fraction)
+            result = pice_result
+            diagnostic = float(pice_result.effective_sample_fraction)
         elif objective == "j2":
-            result = vfo_hard_j2_objective(
-                simulator, control, **objective_kwargs
-            )
-            diagnostic = float(result.event_fraction)
+            j2_result = vfo_hard_j2_objective(simulator, control, **objective_kwargs)
+            result = j2_result
+            diagnostic = float(j2_result.event_fraction)
         else:
             raise ValueError("unknown VFO objective")
         result.loss.backward()

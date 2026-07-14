@@ -186,5 +186,5 @@ def simulate_rbergomi_mixture(
         log_mixture_q_over_p=mixture_log,
         mixture_log_likelihood=-mixture_log,
         selected_component_log_likelihood=selected_log_likelihood,
-        maximum_selected_replay_error=float(replay_error),
+        maximum_selected_replay_error=float(replay_error.detach()),
     )

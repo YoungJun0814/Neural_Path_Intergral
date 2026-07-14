@@ -2,6 +2,7 @@
 
 from .action import brownian_log_likelihood, log_tilted_weight, path_action
 from .controllers import (
+    CEMAnchoredResidualControl,
     ConstantTwoDriverControl,
     LeanRBergomiControl,
     RBergomiTaskMode,
@@ -49,6 +50,7 @@ from .rbergomi_mixture import (
 
 __all__ = [
     "ConstantPICEFit",
+    "CEMAnchoredResidualControl",
     "ConstantTwoDriverControl",
     "LeanRBergomiControl",
     "RBergomiMixtureSample",

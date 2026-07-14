@@ -70,6 +70,9 @@ def fit_positive_soe_kernel(
 class SOEKernelBank(torch.nn.Module):
     r"""Fixed causal states ``Z_k(t)=int exp(-lambda_k(t-s)) dW_s``."""
 
+    rates: torch.Tensor
+    weights: torch.Tensor
+
     def __init__(
         self,
         *,

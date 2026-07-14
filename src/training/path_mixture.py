@@ -34,12 +34,8 @@ def terminal_mode_potential(
         raise ValueError("thresholds and scale must be finite and positive")
     if lower_threshold >= upper_threshold:
         raise ValueError("lower_threshold must be smaller than upper_threshold")
-    left = torch.nn.functional.softplus(
-        (terminal_spot - lower_threshold) / scale
-    )
-    right = torch.nn.functional.softplus(
-        (upper_threshold - terminal_spot) / scale
-    )
+    left = torch.nn.functional.softplus((terminal_spot - lower_threshold) / scale)
+    right = torch.nn.functional.softplus((upper_threshold - terminal_spot) / scale)
     if mode == "left":
         return left
     if mode == "right":
@@ -91,9 +87,7 @@ def lean_soft_pi_objective(
     )
     loss = potential.double().mean() + 0.5 * paths.control_energy.mean()
     log_contribution = -potential.double() + paths.log_likelihood
-    soft_estimate = torch.exp(
-        torch.logsumexp(log_contribution, dim=0) - math.log(num_paths)
-    )
+    soft_estimate = torch.exp(torch.logsumexp(log_contribution, dim=0) - math.log(num_paths))
     return LeanPIObjective(
         loss=loss,
         soft_estimate=soft_estimate.detach(),
@@ -143,9 +137,7 @@ def lean_pice_objective(
         log_weight = -potential.double() + paths.log_likelihood
         normalized = torch.softmax(log_weight, dim=0)
         ess = torch.reciprocal(torch.sum(normalized.square()))
-        soft_estimate = torch.exp(
-            torch.logsumexp(log_weight, dim=0) - math.log(num_paths)
-        )
+        soft_estimate = torch.exp(torch.logsumexp(log_weight, dim=0) - math.log(num_paths))
     controls = replay_rbergomi_control_on_target_paths(candidate, paths)
     assert paths.target_brownian_increments is not None
     component = all_expert_log_q_over_p(
@@ -200,9 +192,8 @@ def mixture_weight_j2_objective(
         raise ValueError("lower_threshold must be smaller than upper_threshold")
     weights = mixture_weights_from_logits(logits, minimum_weight=minimum_weight)
     candidate_log = log_mixture_q_over_p(sample.component_log_q_over_p.detach(), weights)
-    event = (
-        (sample.paths.spot[:, -1] <= lower_threshold)
-        | (sample.paths.spot[:, -1] >= upper_threshold)
+    event = (sample.paths.spot[:, -1] <= lower_threshold) | (
+        sample.paths.spot[:, -1] >= upper_threshold
     )
     if not bool(event.any()):
         raise RuntimeError("mixture J2 batch contains no hard events")
@@ -262,30 +253,31 @@ def train_lean_pi_pice(
     if behavior_refresh <= 0:
         raise ValueError("behavior_refresh must be positive")
     torch.manual_seed(seed)
-    common = {
-        "spot": spot,
-        "maturity": maturity,
-        "dt": dt,
-        "num_paths": num_paths,
-        "lower_threshold": lower_threshold,
-        "upper_threshold": upper_threshold,
-        "soft_scale": soft_scale,
-        "mode": mode,
-    }
     records: list[LeanTrainingRecord] = []
     optimizer = torch.optim.Adam(control.parameters(), lr=pi_learning_rate)
     for update in range(1, pi_updates + 1):
         optimizer.zero_grad(set_to_none=True)
-        objective = lean_soft_pi_objective(simulator, control, **common)
-        objective.loss.backward()
+        pi_result = lean_soft_pi_objective(
+            simulator,
+            control,
+            spot=spot,
+            maturity=maturity,
+            dt=dt,
+            num_paths=num_paths,
+            lower_threshold=lower_threshold,
+            upper_threshold=upper_threshold,
+            soft_scale=soft_scale,
+            mode=mode,
+        )
+        pi_result.loss.backward()
         torch.nn.utils.clip_grad_norm_(control.parameters(), gradient_clip)
         optimizer.step()
         records.append(
             LeanTrainingRecord(
                 update=update,
                 objective="pi",
-                loss=float(objective.loss.detach()),
-                diagnostic=float(objective.soft_estimate),
+                loss=float(pi_result.loss.detach()),
+                diagnostic=float(pi_result.soft_estimate),
             )
         )
     behavior = control.frozen_copy()
@@ -294,18 +286,28 @@ def train_lean_pi_pice(
         if update > 1 and (update - 1) % behavior_refresh == 0:
             behavior = control.frozen_copy()
         optimizer.zero_grad(set_to_none=True)
-        objective = lean_pice_objective(
-            simulator, control, behavior=behavior, **common
+        pice_result = lean_pice_objective(
+            simulator,
+            control,
+            behavior=behavior,
+            spot=spot,
+            maturity=maturity,
+            dt=dt,
+            num_paths=num_paths,
+            lower_threshold=lower_threshold,
+            upper_threshold=upper_threshold,
+            soft_scale=soft_scale,
+            mode=mode,
         )
-        objective.loss.backward()
+        pice_result.loss.backward()
         torch.nn.utils.clip_grad_norm_(control.parameters(), gradient_clip)
         optimizer.step()
         records.append(
             LeanTrainingRecord(
                 update=update,
                 objective="pice",
-                loss=float(objective.loss.detach()),
-                diagnostic=float(objective.effective_sample_fraction),
+                loss=float(pice_result.loss.detach()),
+                diagnostic=float(pice_result.effective_sample_fraction),
             )
         )
     return records
@@ -353,9 +355,7 @@ def train_mixture_weight_j2(
                 dt=dt,
                 num_paths=num_paths,
                 dtype=reference.dtype,
-                label_generator=torch.Generator(device="cpu").manual_seed(
-                    seed + 100_000 + update
-                ),
+                label_generator=torch.Generator(device="cpu").manual_seed(seed + 100_000 + update),
             )
         optimizer.zero_grad(set_to_none=True)
         objective = mixture_weight_j2_objective(
@@ -368,9 +368,7 @@ def train_mixture_weight_j2(
         objective.loss.backward()
         torch.nn.utils.clip_grad_norm_([logits], gradient_clip)
         optimizer.step()
-        current = mixture_weights_from_logits(
-            logits.detach(), minimum_weight=minimum_weight
-        )
+        current = mixture_weights_from_logits(logits.detach(), minimum_weight=minimum_weight)
         records.append(
             MixtureWeightTrainingRecord(
                 update=update,

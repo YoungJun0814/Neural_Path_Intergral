@@ -19,7 +19,7 @@ import math
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal, cast
 
 import numpy as np
 import torch
@@ -41,6 +41,8 @@ class TwoDriverHestonControl(nn.Module):
     map does not contain two affinely redundant spot coordinates.
     """
 
+    control_bounds: torch.Tensor
+
     def __init__(
         self,
         *,
@@ -55,8 +57,7 @@ class TwoDriverHestonControl(nn.Module):
     ) -> None:
         super().__init__()
         if not all(
-            math.isfinite(value) and value > 0.0
-            for value in (barrier, maturity, variance_scale)
+            math.isfinite(value) and value > 0.0 for value in (barrier, maturity, variance_scale)
         ):
             raise ValueError("barrier, maturity, and variance_scale must be finite and positive")
         if architecture not in ("affine", "mlp"):
@@ -64,13 +65,16 @@ class TwoDriverHestonControl(nn.Module):
         if hidden_dim <= 0 or n_layers <= 0:
             raise ValueError("hidden_dim and n_layers must be positive")
 
+        raw_bounds: tuple[float, ...]
         if isinstance(control_bound, (float, int)):
-            bounds = (float(control_bound), float(control_bound))
+            raw_bounds = (float(control_bound), float(control_bound))
         else:
-            bounds = tuple(float(value) for value in control_bound)
-        initial = tuple(float(value) for value in initial_control)
-        if len(bounds) != 2 or len(initial) != 2:
+            raw_bounds = tuple(float(value) for value in control_bound)
+        initial_values = tuple(float(value) for value in initial_control)
+        if len(raw_bounds) != 2 or len(initial_values) != 2:
             raise ValueError("control_bound and initial_control must contain two coordinates")
+        bounds = (raw_bounds[0], raw_bounds[1])
+        initial = (initial_values[0], initial_values[1])
         if not all(math.isfinite(value) and value > 0.0 for value in bounds):
             raise ValueError("control bounds must be finite and positive")
         if not all(math.isfinite(value) for value in initial):
@@ -167,8 +171,9 @@ class TwoDriverHestonControl(nn.Module):
             "architecture": self.architecture,
             "hidden_dim": self.hidden_dim,
             "n_layers": self.n_layers,
-            "control_bound": tuple(
-                float(value) for value in self.control_bounds.detach().cpu()
+            "control_bound": (
+                float(self.control_bounds[0]),
+                float(self.control_bounds[1]),
             ),
         }
 
@@ -333,19 +338,25 @@ def oracle_alignment(
     device = next(control.parameters()).device
     dtype = next(control.parameters()).dtype
     with torch.no_grad():
-        prediction = control(
-            dataset.time.to(device=device, dtype=dtype),
-            dataset.spot.to(device=device, dtype=dtype),
-            dataset.variance.to(device=device, dtype=dtype),
-            None,
-        ).cpu().double()
+        prediction = (
+            control(
+                dataset.time.to(device=device, dtype=dtype),
+                dataset.spot.to(device=device, dtype=dtype),
+                dataset.variance.to(device=device, dtype=dtype),
+                None,
+            )
+            .cpu()
+            .double()
+        )
     target = dataset.control.cpu().double()
     error = prediction - target
     rmse = float(torch.sqrt(torch.mean(error.square())))
     scale = float(torch.sqrt(torch.mean(target.square())).clamp_min(1e-12))
     cosine = torch.nn.functional.cosine_similarity(prediction, target, dim=-1, eps=1e-12)
     active = torch.abs(target) > 1e-8
-    sign_agreement = float(torch.mean((torch.sign(prediction[active]) == torch.sign(target[active])).double()))
+    sign_agreement = float(
+        torch.mean((torch.sign(prediction[active]) == torch.sign(target[active])).double())
+    )
     return OracleAlignment(
         rmse=rmse,
         normalized_rmse=rmse / scale,
@@ -469,9 +480,7 @@ def candidate_log_density_on_target_paths(
     controls = torch.stack(candidate_controls, dim=1)
     target_for_density = target.detach().to(dtype=controls.dtype)
     log_density = torch.sum(controls * target_for_density, dim=(1, 2))
-    log_density = log_density - 0.5 * paths.step_dt * torch.sum(
-        controls.square(), dim=(1, 2)
-    )
+    log_density = log_density - 0.5 * paths.step_dt * torch.sum(controls.square(), dim=(1, 2))
     return log_density, controls
 
 
@@ -598,9 +607,7 @@ def hard_j2_objective(
         )
         score_terms.append(torch.sum(replayed * proposal[:, step, :].detach(), dim=-1))
     score_log_q = torch.stack(score_terms, dim=1).sum(dim=1)
-    gradient_surrogate = -torch.sum(
-        normalized_terms.to(dtype=score_log_q.dtype) * score_log_q
-    )
+    gradient_surrogate = -torch.sum(normalized_terms.to(dtype=score_log_q.dtype) * score_log_q)
     loss = gradient_surrogate - gradient_surrogate.detach() + log_second_moment.detach()
 
     contribution = event.double() * torch.exp(paths.log_likelihood)
@@ -631,7 +638,7 @@ def train_soft_pi_stage(
     learning_rate: float,
     seed: int,
     gradient_clip: float = 5.0,
-    **objective_kwargs: float | int,
+    **objective_kwargs: Any,
 ) -> tuple[FeedbackTrainingRecord, ...]:
     """Optimize a soft PI stage with deterministic, distinct RNG substreams."""
     return _train_feedback_stage(
@@ -642,7 +649,7 @@ def train_soft_pi_stage(
         gradient_clip=gradient_clip,
         stage="pi",
         objective=lambda: soft_pi_objective(simulator, control, **objective_kwargs),
-        diagnostic=lambda value: float(value.soft_estimate),
+        diagnostic=lambda value: float(cast(SoftPIObjective, value).soft_estimate),
     )
 
 
@@ -655,7 +662,7 @@ def train_feedback_pice_stage(
     seed: int,
     gradient_clip: float = 5.0,
     behavior_refresh: int = 10,
-    **objective_kwargs: float | int,
+    **objective_kwargs: Any,
 ) -> tuple[FeedbackTrainingRecord, ...]:
     """Optimize PICE against periodically frozen behavior policies."""
     if behavior_refresh <= 0:
@@ -697,7 +704,7 @@ def train_hard_j2_stage(
     learning_rate: float,
     seed: int,
     gradient_clip: float = 5.0,
-    **objective_kwargs: float | int,
+    **objective_kwargs: Any,
 ) -> tuple[FeedbackTrainingRecord, ...]:
     """Optimize the hard-event second moment after PI/PICE warm starts."""
     return _train_feedback_stage(
@@ -708,7 +715,7 @@ def train_hard_j2_stage(
         gradient_clip=gradient_clip,
         stage="j2",
         objective=lambda: hard_j2_objective(simulator, control, **objective_kwargs),
-        diagnostic=lambda value: float(value.proposal_event_fraction),
+        diagnostic=lambda value: float(cast(HardJ2Objective, value).proposal_event_fraction),
     )
 
 
