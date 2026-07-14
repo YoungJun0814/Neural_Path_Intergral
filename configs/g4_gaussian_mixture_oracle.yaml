@@ -1,0 +1,24 @@
+schema_version: 1
+protocol_id: g4-gaussian-two-tail-mixture-development-v1
+frozen: false
+
+model:
+  horizon: 1.0
+  threshold: 3.0
+
+optimization:
+  maximum_absolute_drift: 6.0
+  scalar_tolerance: 1.0e-10
+
+simulation:
+  efficacy_paths: 1000000
+  efficacy_seed: 40101
+  component_audit_drift: 1.0
+  component_audit_paths: 1000000
+  component_audit_seed: 40102
+
+gates:
+  maximum_absolute_z: 3.0
+  maximum_density_error: 1.0e-10
+  minimum_second_moment_ratio: 1.20
+  maximum_single_optimum_absolute_drift: 1.0e-5

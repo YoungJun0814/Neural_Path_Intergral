@@ -747,7 +747,7 @@ $$
 -\frac12\sum_i\|u_{k,i}\|^2\Delta t_i.
 $$
 
-mixture likelihood는 모든 expert density를 평가한다.
+Primary balance-mixture likelihood는 모든 expert density를 평가한다.
 
 $$
 \frac{dP}{dQ_{mix}}
@@ -757,8 +757,12 @@ $$
 \right]^{-1}.
 $$
 
-생성 expert 하나의 likelihood만 사용하는 estimator는 금지한다. expert 수에 비례하는
-density-evaluation 비용을 total work에 포함한다.
+Execution erratum (2026-07-15): randomized expert label을 보존한
+`G dP/dQ_K` estimator도 unbiased이므로 이를 수학적으로 금지하거나 biased라고 부르는
+것은 옳지 않다. 다만 위 marginal-mixture balance estimator와는 다른 multiple-IS
+weighting scheme이며 분산이 더 클 수 있다. Primary method가 balance weighting이면 모든
+expert density-evaluation 비용을 total work에 포함하고, component-wise estimator는
+별도 unbiased ablation으로 보고한다.
 
 ---
 

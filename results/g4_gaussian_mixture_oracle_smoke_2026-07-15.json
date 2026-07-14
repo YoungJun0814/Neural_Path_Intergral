@@ -1,0 +1,57 @@
+{
+  "analytic_probability": 0.0026997960632601866,
+  "component_unbiasedness_audit": {
+    "balance_bias_z": -0.8829286579051161,
+    "balance_estimate": 0.0026489978735490995,
+    "balance_second_moment": 0.0003380270277940733,
+    "balance_standard_error": 5.753374211639424e-05,
+    "component_bias_z": 1.411656859232165,
+    "component_estimate": 0.004518348846880714,
+    "component_second_moment": 0.16597497678248102,
+    "component_standard_error": 0.0012882399654896893,
+    "drift": 1.0,
+    "event_fraction": 0.02223,
+    "likelihood_mean": 0.9989178735339526,
+    "likelihood_standard_error": 0.0014897180253249267,
+    "maximum_log_likelihood": 0.4999999994334051,
+    "minimum_log_likelihood": -3.8998450365033634
+  },
+  "efficacy_simulation": {
+    "balance_bias_z": -0.6846964931402886,
+    "balance_estimate": 0.0026891532884485685,
+    "balance_second_moment": 3.139222779530257e-05,
+    "balance_standard_error": 1.5543784608573137e-05,
+    "component_estimate": 0.0013445766470308864,
+    "component_second_moment": 7.84805699607934e-06,
+    "component_standard_error": 7.771892329830844e-06,
+    "event_fraction": 0.56133,
+    "likelihood_mean": 0.9677737164911541,
+    "likelihood_standard_error": 0.02206480741082016,
+    "maximum_log_likelihood": 4.976538064392884,
+    "minimum_log_likelihood": -18.426942395158413,
+    "normalization_z": -1.4605286558287736
+  },
+  "gates": {
+    "balance_estimate_matches": true,
+    "component_estimate_matches_at_audit_drift": true,
+    "density_matches_analytic": true,
+    "mixture_likelihood_normalizes": true,
+    "mixture_second_moment_improves": true,
+    "single_optimum_is_zero": true
+  },
+  "passed": true,
+  "protocol_frozen": false,
+  "protocol_id": "g4-gaussian-two-tail-mixture-development-v1",
+  "protocol_sha256": "8d925aeca91d07ae247f8810c70b77d422961f356f92e3a873543a44956ac993",
+  "single_constant": {
+    "optimal_drift": 8.606869447966384e-09,
+    "second_moment": 0.002699796063260186
+  },
+  "smoke": true,
+  "symmetric_mixture": {
+    "maximum_density_error": 3.552713678800501e-15,
+    "optimal_absolute_drift": 3.1548497435548724,
+    "second_moment": 3.1587692131923336e-05,
+    "second_moment_ratio_vs_single": 85.46987389850183
+  }
+}

@@ -1,0 +1,68 @@
+schema_version: 1
+protocol_id: g4-rbergomi-terminal-strangle-rarity-redesign-v2
+frozen: false
+
+calibration:
+  seed: 42001
+  paths: 200000
+  lower_quantile: 0.001
+  upper_quantile: 0.999
+  observed_lower_quantile: 41.77648686944109
+  observed_upper_quantile: 139.34693814112055
+
+model:
+  spot: 100.0
+  maturity: 0.5
+  dt: 0.015625
+  H: 0.10
+  rho: -0.70
+  eta: 1.5
+  xi: 0.04
+
+task:
+  event_type: terminal_strangle
+  lower_threshold: 42.0
+  upper_threshold: 139.0
+  soft_lower_threshold: 48.0
+  soft_upper_threshold: 135.0
+  soft_scale: 5.0
+
+controller:
+  hidden_dim: 24
+  control_bound: [6.0, 6.0]
+
+training:
+  paths_per_batch: 1500
+  pi_updates: 20
+  pice_updates: 20
+  pi_learning_rate: 0.001
+  pice_learning_rate: 0.001
+  gradient_clip: 5.0
+  behavior_refresh: 5
+  mixture_weight_updates: 20
+  mixture_weight_paths_per_batch: 2500
+  mixture_weight_learning_rate: 0.05
+  mixture_minimum_weight: 0.05
+  cem_paths_per_iteration: 5000
+  cem_max_iterations: 12
+  cem_elite_quantile: 0.90
+  cem_smoothing: 0.70
+
+seeds:
+  initialization: 42301
+  union_training: 42302
+  left_training: 42303
+  right_training: 42304
+  weight_training: 42305
+  left_cem: 42306
+  right_cem: 42307
+  validation: [42401, 42402, 42403, 42404, 42405]
+
+validation:
+  paths_per_seed: 50000
+  timing_repeats: 3
+  maximum_absolute_difference_z: 3.0
+  minimum_mode_contribution_share: 0.10
+  minimum_work_vrf: 1.10
+  minimum_improving_seeds: 4
+  target_relative_error: 0.10

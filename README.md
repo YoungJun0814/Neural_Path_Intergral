@@ -41,6 +41,9 @@ The first training-matched VFO memory ablation and its required pivot are review
 The final path-dependent VFO pivot and the resulting Plan-v3 stop decision are
 documented in
 [`docs/phase_reviews/G3_VFO_PATH_PIVOT_FINAL_2026-07-14.md`](docs/phase_reviews/G3_VFO_PATH_PIVOT_FINAL_2026-07-14.md).
+The exact-mixture implementation, theoretical errata, Gaussian oracle, rBergomi
+development results, and strong-CEM falsification are reviewed in
+[`docs/phase_reviews/G4_EXACT_MIXTURE_FALSIFICATION_2026-07-15.md`](docs/phase_reviews/G4_EXACT_MIXTURE_FALSIFICATION_2026-07-15.md).
 
 Run the non-publication G2 smoke pipeline with:
 

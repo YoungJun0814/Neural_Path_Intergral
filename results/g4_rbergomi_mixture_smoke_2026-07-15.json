@@ -1,0 +1,484 @@
+{
+  "break_even": {
+    "mixture_query_seconds": 1.4747984507892407,
+    "mixture_training_seconds": 0.30164249998051673,
+    "queries": null,
+    "single_query_seconds": 0.5246036072710996,
+    "single_training_seconds": 2.1895441000233404,
+    "target_relative_error": 0.1
+  },
+  "calibration": {
+    "lower_quantile": 0.005,
+    "paths": 200000,
+    "seed": 42001,
+    "upper_quantile": 0.995
+  },
+  "gates": {
+    "all_expert_replay_exact": true,
+    "both_modes_contribute": true,
+    "mixture_raw_variance_improves": false,
+    "mixture_work_improves": false,
+    "paired_direction_consistent": false,
+    "reported_bias_within_gate": true
+  },
+  "learned_weights": [
+    0.49046475509368204,
+    0.509535244906318
+  ],
+  "passed": false,
+  "protocol_frozen": false,
+  "protocol_id": "g4-rbergomi-terminal-strangle-development-v1",
+  "protocol_sha256": "78b24e65dda5cd19c304ed6b6115215954c6a13c3a7dd54e368cf2cf3a3549bd",
+  "smoke": true,
+  "training": {
+    "mixture_parameter_count": 1780,
+    "records": {
+      "left": [
+        {
+          "diagnostic": 0.0021204758347105027,
+          "loss": 9.16464260786557,
+          "objective": "pi",
+          "update": 1
+        },
+        {
+          "diagnostic": 0.002754062786514034,
+          "loss": 9.241504877745573,
+          "objective": "pi",
+          "update": 2
+        },
+        {
+          "diagnostic": 0.022284574785719772,
+          "loss": -0.05706111506982017,
+          "objective": "pice",
+          "update": 1
+        },
+        {
+          "diagnostic": 0.04325435548126977,
+          "loss": -0.08184994140709188,
+          "objective": "pice",
+          "update": 2
+        }
+      ],
+      "mixture_weight": [
+        {
+          "event_fraction": 0.005859375,
+          "log_second_moment": -5.166668780618842,
+          "update": 1,
+          "weights": [
+            0.47751878744725773,
+            0.5224812125527423
+          ]
+        },
+        {
+          "event_fraction": 0.001953125,
+          "log_second_moment": -6.239951141380461,
+          "update": 2,
+          "weights": [
+            0.49046475509368204,
+            0.509535244906318
+          ]
+        }
+      ],
+      "right": [
+        {
+          "diagnostic": 0.020158480231603913,
+          "loss": 6.382225715155283,
+          "objective": "pi",
+          "update": 1
+        },
+        {
+          "diagnostic": 0.023299629617186693,
+          "loss": 6.266688221714877,
+          "objective": "pi",
+          "update": 2
+        },
+        {
+          "diagnostic": 0.09349757839861192,
+          "loss": -0.04528757149586092,
+          "objective": "pice",
+          "update": 1
+        },
+        {
+          "diagnostic": 0.0602800244710878,
+          "loss": -0.04520757796865245,
+          "objective": "pice",
+          "update": 2
+        }
+      ],
+      "union": [
+        {
+          "diagnostic": 0.03693896404644906,
+          "loss": 4.9805540017673735,
+          "objective": "pi",
+          "update": 1
+        },
+        {
+          "diagnostic": 0.02023102133730845,
+          "loss": 5.223497142755475,
+          "objective": "pi",
+          "update": 2
+        },
+        {
+          "diagnostic": 0.10938392022068583,
+          "loss": -0.01631118643253066,
+          "objective": "pice",
+          "update": 1
+        },
+        {
+          "diagnostic": 0.10941843891345755,
+          "loss": -0.01907353643046722,
+          "objective": "pice",
+          "update": 2
+        }
+      ]
+    },
+    "seconds": {
+      "left": 0.11740279995137826,
+      "mixture_weight": 0.08503309998195618,
+      "right": 0.09920660004718229,
+      "union": 2.1895441000233404
+    },
+    "union_parameter_count": 890
+  },
+  "validation": {
+    "geometric_work_vrf_vs_single": 0.35352961695029056,
+    "improving_seeds": 0,
+    "maximum_selected_replay_error": 8.326672684688674e-17,
+    "paired_log_work_ratios": [
+      -1.0786539869640903,
+      -1.0009220432707728
+    ],
+    "runs": [
+      {
+        "contribution_ess_fraction": 0.007666666666666666,
+        "cost_per_path": 2.6107666664756835e-05,
+        "estimate": 0.007666666666666666,
+        "event_fraction": 0.007666666666666666,
+        "left_contribution_share": 0.43478260869565216,
+        "left_event_fraction": 0.0033333333333333335,
+        "method": "natural",
+        "online_work_proxy": 1.986904572860395e-07,
+        "right_contribution_share": 0.5652173913043478,
+        "right_event_fraction": 0.004333333333333333,
+        "seed": 42201.0,
+        "single_path_variance": 0.0076104256974544185,
+        "standard_error": 0.0015927361883934638
+      },
+      {
+        "contribution_ess_fraction": 0.007269608674606133,
+        "cost_per_path": 4.613009999350955e-05,
+        "estimate": 0.007172595040790247,
+        "event_fraction": 0.007333333333333333,
+        "left_contribution_share": 0.404874521654311,
+        "left_event_fraction": 0.0026666666666666666,
+        "method": "single_union_feedback",
+        "online_work_proxy": 3.241918497511661e-07,
+        "right_contribution_share": 0.595125478345689,
+        "right_event_fraction": 0.004666666666666667,
+        "seed": 42201.0,
+        "single_path_variance": 0.007027772534565923,
+        "standard_error": 0.001530552463934284
+      },
+      {
+        "contribution_ess_fraction": 0.00789386114535684,
+        "cost_per_path": 4.387869998269404e-05,
+        "estimate": 0.007737499903985686,
+        "event_fraction": 0.008,
+        "left_contribution_share": 0.4863624673362247,
+        "left_event_fraction": 0.004333333333333333,
+        "method": "left_expert_only",
+        "online_work_proxy": 3.302695299856795e-07,
+        "right_contribution_share": 0.5136375326637752,
+        "right_event_fraction": 0.0036666666666666666,
+        "seed": 42201.0,
+        "single_path_variance": 0.007526875912821924,
+        "standard_error": 0.0015839692666233484
+      },
+      {
+        "contribution_ess_fraction": 0.00688566225957254,
+        "cost_per_path": 4.5383466659889864e-05,
+        "estimate": 0.006891237451366056,
+        "event_fraction": 0.007,
+        "left_contribution_share": 0.39227642945273317,
+        "left_event_fraction": 0.0023333333333333335,
+        "method": "right_expert_only",
+        "online_work_proxy": 3.109498990638748e-07,
+        "right_contribution_share": 0.6077235705472667,
+        "right_event_fraction": 0.004666666666666667,
+        "seed": 42201.0,
+        "single_path_variance": 0.006851611874301658,
+        "standard_error": 0.001511248035488291
+      },
+      {
+        "contribution_ess_fraction": 0.010332889546188282,
+        "cost_per_path": 9.702233333761494e-05,
+        "estimate": 0.010243788786277165,
+        "event_fraction": 0.010333333333333333,
+        "left_contribution_share": 0.45388521578109836,
+        "left_event_fraction": 0.004666666666666667,
+        "method": "fixed_mixture",
+        "online_work_proxy": 9.754501618990782e-07,
+        "right_contribution_share": 0.5461147842189017,
+        "right_event_fraction": 0.005666666666666667,
+        "seed": 42201.0,
+        "single_path_variance": 0.010053872426513809,
+        "standard_error": 0.0018306531099140373
+      },
+      {
+        "contribution_ess_fraction": 0.010163501348964191,
+        "cost_per_path": 9.702233333761494e-05,
+        "estimate": 0.010250104441534456,
+        "event_fraction": 0.010333333333333333,
+        "left_contribution_share": 0.45180246669174806,
+        "left_event_fraction": 0.004666666666666667,
+        "method": "fixed_mixture_component_weight",
+        "online_work_proxy": 9.931004979158858e-07,
+        "right_contribution_share": 0.5481975333082519,
+        "right_event_fraction": 0.005666666666666667,
+        "seed": 42201.0,
+        "single_path_variance": 0.010235792768043716,
+        "standard_error": 0.00184714128389824
+      },
+      {
+        "contribution_ess_fraction": 0.009998953391484398,
+        "cost_per_path": 9.773546666838228e-05,
+        "estimate": 0.00992404531274033,
+        "event_fraction": 0.01,
+        "left_contribution_share": 0.4699477059856929,
+        "left_event_fraction": 0.004666666666666667,
+        "method": "learned_mixture",
+        "online_work_proxy": 9.533570156030675e-07,
+        "right_contribution_share": 0.530052294014307,
+        "right_event_fraction": 0.005333333333333333,
+        "seed": 42201.0,
+        "single_path_variance": 0.009754463227129414,
+        "standard_error": 0.0018031882160153086
+      },
+      {
+        "contribution_ess_fraction": 0.009841092195910991,
+        "cost_per_path": 9.773546666838228e-05,
+        "estimate": 0.009816296109907424,
+        "event_fraction": 0.01,
+        "left_contribution_share": 0.4515360203626108,
+        "left_event_fraction": 0.004666666666666667,
+        "method": "learned_mixture_component_weight",
+        "online_work_proxy": 9.478811336069756e-07,
+        "right_contribution_share": 0.5484639796373891,
+        "right_event_fraction": 0.005333333333333333,
+        "seed": 42201.0,
+        "single_path_variance": 0.009698435643870702,
+        "standard_error": 0.0017980021916811542
+      },
+      {
+        "contribution_ess_fraction": 0.009666666666666667,
+        "cost_per_path": 2.8492933333230517e-05,
+        "estimate": 0.009666666666666667,
+        "event_fraction": 0.009666666666666667,
+        "left_contribution_share": 0.5517241379310345,
+        "left_event_fraction": 0.005333333333333333,
+        "method": "natural",
+        "online_work_proxy": 2.728601359406306e-07,
+        "right_contribution_share": 0.4482758620689655,
+        "right_event_fraction": 0.004333333333333333,
+        "seed": 42202.0,
+        "single_path_variance": 0.009576414360342513,
+        "standard_error": 0.0017866555684054415
+      },
+      {
+        "contribution_ess_fraction": 0.008932873713521835,
+        "cost_per_path": 5.0274533336050806e-05,
+        "estimate": 0.009118012049430807,
+        "event_fraction": 0.009,
+        "left_contribution_share": 0.557724425018793,
+        "left_event_fraction": 0.004666666666666667,
+        "method": "single_union_feedback",
+        "online_work_proxy": 4.6387934694941885e-07,
+        "right_contribution_share": 0.44227557498120695,
+        "right_event_fraction": 0.004333333333333333,
+        "seed": 42202.0,
+        "single_path_variance": 0.0092269249691231,
+        "standard_error": 0.0017537507395221155
+      },
+      {
+        "contribution_ess_fraction": 0.010538308982218128,
+        "cost_per_path": 4.5943733324141554e-05,
+        "estimate": 0.010198791105533499,
+        "event_fraction": 0.010666666666666666,
+        "left_contribution_share": 0.542331836401077,
+        "left_event_fraction": 0.006333333333333333,
+        "method": "left_expert_only",
+        "online_work_proxy": 4.488451335822382e-07,
+        "right_contribution_share": 0.45766816359892293,
+        "right_event_fraction": 0.004333333333333333,
+        "seed": 42202.0,
+        "single_path_variance": 0.009769452787294245,
+        "standard_error": 0.0018045731524189911
+      },
+      {
+        "contribution_ess_fraction": 0.008527301556115807,
+        "cost_per_path": 4.7240566675706456e-05,
+        "estimate": 0.009004449533364227,
+        "event_fraction": 0.008666666666666666,
+        "left_contribution_share": 0.5613110298471651,
+        "left_event_fraction": 0.004333333333333333,
+        "method": "right_expert_only",
+        "online_work_proxy": 4.4549554210185475e-07,
+        "right_contribution_share": 0.4386889701528349,
+        "right_event_fraction": 0.004333333333333333,
+        "seed": 42202.0,
+        "single_path_variance": 0.009430359825276008,
+        "standard_error": 0.0017729786448493965
+      },
+      {
+        "contribution_ess_fraction": 0.009666267275950836,
+        "cost_per_path": 0.00010727300000144169,
+        "estimate": 0.009608479623218055,
+        "event_fraction": 0.009666666666666667,
+        "left_contribution_share": 0.5193126899906391,
+        "left_event_fraction": 0.005,
+        "method": "fixed_mixture",
+        "online_work_proxy": 1.0150030214118616e-06,
+        "right_contribution_share": 0.480687310009361,
+        "right_event_fraction": 0.004666666666666667,
+        "seed": 42202.0,
+        "single_path_variance": 0.009461868516758369,
+        "standard_error": 0.0017759381104793007
+      },
+      {
+        "contribution_ess_fraction": 0.00952533498055606,
+        "cost_per_path": 0.00010727300000144169,
+        "estimate": 0.009777622418757919,
+        "event_fraction": 0.009666666666666667,
+        "left_contribution_share": 0.5322975111125814,
+        "left_event_fraction": 0.005,
+        "method": "fixed_mixture_component_weight",
+        "online_work_proxy": 1.0667554082538875e-06,
+        "right_contribution_share": 0.4677024888874186,
+        "right_event_fraction": 0.004666666666666667,
+        "seed": 42202.0,
+        "single_path_variance": 0.009944304794678538,
+        "standard_error": 0.0018206505059711064
+      },
+      {
+        "contribution_ess_fraction": 0.009999254382990198,
+        "cost_per_path": 0.00012953953334363179,
+        "estimate": 0.009918419383582093,
+        "event_fraction": 0.01,
+        "left_contribution_share": 0.4703225150124917,
+        "left_event_fraction": 0.004666666666666667,
+        "method": "learned_mixture",
+        "online_work_proxy": 1.2621179904714357e-06,
+        "right_contribution_share": 0.5296774849875081,
+        "right_event_fraction": 0.005333333333333333,
+        "seed": 42202.0,
+        "single_path_variance": 0.009743110523050852,
+        "standard_error": 0.0018021385928067846
+      },
+      {
+        "contribution_ess_fraction": 0.009825419879398467,
+        "cost_per_path": 0.00012953953334363179,
+        "estimate": 0.009850416335810007,
+        "event_fraction": 0.01,
+        "left_contribution_share": 0.4773520684587234,
+        "left_event_fraction": 0.004666666666666667,
+        "method": "learned_mixture_component_weight",
+        "online_work_proxy": 1.267117663119332e-06,
+        "right_contribution_share": 0.5226479315412765,
+        "right_event_fraction": 0.005333333333333333,
+        "seed": 42202.0,
+        "single_path_variance": 0.009781706251465542,
+        "standard_error": 0.0018057045025386945
+      }
+    ],
+    "summary": {
+      "fixed_mixture": {
+        "contribution_ess_fraction": 0.009999578411069559,
+        "cost_per_path": 0.00010214766666952831,
+        "difference_z_vs_natural": 0.5096533639162462,
+        "estimate": 0.009926134204747611,
+        "left_contribution_share": 0.48659895288586874,
+        "online_work_proxy": 9.9522659165547e-07,
+        "right_contribution_share": 0.5134010471141314,
+        "single_path_variance": 0.00975787047163609,
+        "standard_error": 0.0018032956101966691
+      },
+      "fixed_mixture_component_weight": {
+        "contribution_ess_fraction": 0.009844418164760126,
+        "cost_per_path": 0.00010214766666952831,
+        "difference_z_vs_natural": 0.5402528545059168,
+        "estimate": 0.010013863430146187,
+        "left_contribution_share": 0.4920499889021647,
+        "online_work_proxy": 1.0299279530848866e-06,
+        "right_contribution_share": 0.5079500110978352,
+        "single_path_variance": 0.010090048781361126,
+        "standard_error": 0.0018338958949346731
+      },
+      "learned_mixture": {
+        "contribution_ess_fraction": 0.009999103887237298,
+        "cost_per_path": 0.00011363750000600704,
+        "difference_z_vs_natural": 0.5077645718809211,
+        "estimate": 0.00992123234816121,
+        "left_contribution_share": 0.4701351104990923,
+        "online_work_proxy": 1.1077375030372516e-06,
+        "right_contribution_share": 0.5298648895009075,
+        "single_path_variance": 0.009748786875090133,
+        "standard_error": 0.0018026634044110467
+      },
+      "learned_mixture_component_weight": {
+        "contribution_ess_fraction": 0.009833256037654729,
+        "cost_per_path": 0.00011363750000600704,
+        "difference_z_vs_natural": 0.472311140066113,
+        "estimate": 0.009833356222858716,
+        "left_contribution_share": 0.4644440444106671,
+        "online_work_proxy": 1.1074993983631539e-06,
+        "right_contribution_share": 0.5355559555893328,
+        "single_path_variance": 0.009740070947668121,
+        "standard_error": 0.0018018533471099243
+      },
+      "left_expert_only": {
+        "contribution_ess_fraction": 0.009216085063787485,
+        "cost_per_path": 4.49112166534178e-05,
+        "difference_z_vs_natural": 0.12599267688452162,
+        "estimate": 0.008968145504759592,
+        "left_contribution_share": 0.5143471518686509,
+        "online_work_proxy": 3.8955733178395886e-07,
+        "right_contribution_share": 0.48565284813134907,
+        "single_path_variance": 0.008648164350058085,
+        "standard_error": 0.0016942712095211697
+      },
+      "natural": {
+        "contribution_ess_fraction": 0.008666666666666666,
+        "cost_per_path": 2.7300299998993678e-05,
+        "difference_z_vs_natural": 0.0,
+        "estimate": 0.008666666666666666,
+        "left_contribution_share": 0.4932533733133433,
+        "online_work_proxy": 2.3577529661333507e-07,
+        "right_contribution_share": 0.5067466266866567,
+        "single_path_variance": 0.008593420028898466,
+        "standard_error": 0.0016896958783994527
+      },
+      "right_expert_only": {
+        "contribution_ess_fraction": 0.007706481907844174,
+        "cost_per_path": 4.6312016667798164e-05,
+        "difference_z_vs_natural": -0.305079241895715,
+        "estimate": 0.007947843492365141,
+        "left_contribution_share": 0.47679372964994915,
+        "online_work_proxy": 3.7822272058286473e-07,
+        "right_contribution_share": 0.5232062703500509,
+        "single_path_variance": 0.008140985849788833,
+        "standard_error": 0.0016421133401688438
+      },
+      "single_union_feedback": {
+        "contribution_ess_fraction": 0.008101241194063984,
+        "cost_per_path": 4.820231666478018e-05,
+        "difference_z_vs_natural": -0.22127175564027093,
+        "estimate": 0.008145303545110527,
+        "left_contribution_share": 0.481299473336552,
+        "online_work_proxy": 3.940355983502925e-07,
+        "right_contribution_share": 0.5187005266634479,
+        "single_path_variance": 0.008127348751844512,
+        "standard_error": 0.0016421516017281997
+      }
+    }
+  }
+}
