@@ -1,0 +1,33 @@
+schema_version: 1
+protocol_id: g2-controlled-rbergomi-law-development
+frozen: false
+
+seeds:
+  regime_root: 16001
+  refinement_root: 16101
+
+model:
+  spot: 100.0
+  maturity: 0.25
+  eta: 1.2
+  xi: 0.04
+  mu: 0.0
+  dt: 0.0078125
+  H_grid: [0.05, 0.10, 0.20]
+  rho_grid: [-0.90, -0.70, -0.50]
+
+proposal:
+  control: [-0.45, 0.25]
+
+payoffs:
+  hard_barrier: 80.0
+  soft_barrier: 85.0
+  soft_scale: 5.0
+
+evaluation:
+  paths_per_law: 30000
+  refinement_paths: 30000
+  refinement_dt_grid: [0.015625, 0.0078125, 0.00390625]
+  maximum_absolute_z: 3.0
+  maximum_refinement_relative_change: 0.05
+  minimum_contribution_ess_fraction: 0.01

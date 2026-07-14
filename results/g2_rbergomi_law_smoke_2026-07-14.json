@@ -1,0 +1,330 @@
+{
+  "gates": {
+    "confirmatory_pass": false,
+    "contribution_ess": true,
+    "finite": true,
+    "g2_law_pass": false,
+    "law_z": true,
+    "refinement": false
+  },
+  "protocol_frozen": false,
+  "protocol_id": "g2-controlled-rbergomi-law-development",
+  "protocol_sha256": "92dc2bf60f541e897e15bebecef57e23b4d90dcda0e1dded6df9c9fad9c4f8d4",
+  "refinement": {
+    "relative_changes_vs_finest": [
+      0.07872218907346093
+    ],
+    "runs": [
+      {
+        "H": 0.1,
+        "dt": 0.015625,
+        "finite": true,
+        "forward_variance": {
+          "natural_mean": 0.03967092643209561,
+          "natural_se": 0.0011113704449953942,
+          "natural_target_z": -0.29609710190354493,
+          "weighted_mean": 0.04113711126983526,
+          "weighted_se": 0.0015087273829865024,
+          "weighted_target_z": 0.7536890247092668
+        },
+        "hard_payoff": {
+          "difference_z": -0.004658767880845818,
+          "natural_mean": 0.032,
+          "natural_se": 0.003936463879414784,
+          "weighted_mean": 0.03196945320476828,
+          "weighted_se": 0.005243701164060454
+        },
+        "likelihood": {
+          "mean": 1.011470425700925,
+          "normalization_z": 1.958063747031398,
+          "se": 0.0058580450806646365
+        },
+        "paths": 2000,
+        "rho": -0.7,
+        "seed": 16101,
+        "soft_payoff": {
+          "contribution_ess": 379.54000183509083,
+          "contribution_ess_fraction": 0.18977000091754542,
+          "difference_z": 0.45906759191631885,
+          "natural_mean": 0.127370553703456,
+          "natural_se": 0.004494667513625202,
+          "weighted_mean": 0.1308291204066596,
+          "weighted_se": 0.006046282073260048
+        },
+        "spot": {
+          "natural_mean": 100.02340198255479,
+          "natural_se": 0.2164081374873712,
+          "natural_target_z": 0.10813818198566212,
+          "weighted_mean": 100.70424591257394,
+          "weighted_se": 0.40383401471394215,
+          "weighted_target_z": 1.7438994411424074
+        },
+        "timing": {
+          "controlled_cost_per_path": 1.1313850001897662e-05,
+          "controlled_seconds": 0.022627700003795326,
+          "natural_seconds": 0.014240399992559105
+        }
+      },
+      {
+        "H": 0.1,
+        "dt": 0.0078125,
+        "finite": true,
+        "forward_variance": {
+          "natural_mean": 0.0390704765710352,
+          "natural_se": 0.0012750868323164123,
+          "natural_target_z": -0.7289883366422703,
+          "weighted_mean": 0.03960832916823763,
+          "weighted_se": 0.0015083409761950392,
+          "weighted_target_z": -0.2596699539055187
+        },
+        "hard_payoff": {
+          "difference_z": 0.8275145318446071,
+          "natural_mean": 0.0355,
+          "natural_se": 0.004138651860160538,
+          "weighted_mean": 0.04156044831614406,
+          "weighted_se": 0.006042167734073879
+        },
+        "likelihood": {
+          "mean": 0.9995189314145465,
+          "normalization_z": -0.08124190908560402,
+          "se": 0.005921433787906114
+        },
+        "paths": 2000,
+        "rho": -0.7,
+        "seed": 16102,
+        "soft_payoff": {
+          "contribution_ess": 325.17043668339727,
+          "contribution_ess_fraction": 0.16258521834169865,
+          "difference_z": -0.30510475712799046,
+          "natural_mean": 0.12360221757096079,
+          "natural_se": 0.004466825665935294,
+          "weighted_mean": 0.12128156974228156,
+          "weighted_se": 0.00615627759206506
+        },
+        "spot": {
+          "natural_mean": 100.24485488144992,
+          "natural_se": 0.21692753996034864,
+          "natural_target_z": 1.1287404148624045,
+          "weighted_mean": 100.1181140252425,
+          "weighted_se": 0.4070531187869748,
+          "weighted_target_z": 0.2901685794583445
+        },
+        "timing": {
+          "controlled_cost_per_path": 2.3626299982424826e-05,
+          "controlled_seconds": 0.04725259996484965,
+          "natural_seconds": 0.0543531000148505
+        }
+      }
+    ],
+    "z_vs_finest": [
+      1.1064667970943267
+    ]
+  },
+  "regimes": [
+    {
+      "H": 0.05,
+      "dt": 0.0078125,
+      "finite": true,
+      "forward_variance": {
+        "natural_mean": 0.03863835802051621,
+        "natural_se": 0.0011659339203043012,
+        "natural_target_z": -1.1678551895363074,
+        "weighted_mean": 0.038517824667294205,
+        "weighted_se": 0.0014494758755576244,
+        "weighted_target_z": -1.0225595042315496
+      },
+      "hard_payoff": {
+        "difference_z": 1.1000953767259578,
+        "natural_mean": 0.03,
+        "natural_se": 0.0038154001938617323,
+        "weighted_mean": 0.03748800349596159,
+        "weighted_se": 0.005636815759628617
+      },
+      "likelihood": {
+        "mean": 0.9952392061411209,
+        "normalization_z": -0.8054068116288842,
+        "se": 0.005911042457228119
+      },
+      "paths": 2000,
+      "rho": -0.9,
+      "seed": 16001,
+      "soft_payoff": {
+        "contribution_ess": 343.9928465920538,
+        "contribution_ess_fraction": 0.1719964232960269,
+        "difference_z": -0.49551441074780456,
+        "natural_mean": 0.1276811720397911,
+        "natural_se": 0.004470055635905008,
+        "weighted_mean": 0.12394093267781772,
+        "weighted_se": 0.006082256923501573
+      },
+      "spot": {
+        "natural_mean": 99.9802294488424,
+        "natural_se": 0.21980856530374848,
+        "natural_target_z": -0.08994440744511292,
+        "weighted_mean": 99.6372454891267,
+        "weighted_se": 0.4010711764796809,
+        "weighted_target_z": -0.9044641753050024
+      },
+      "timing": {
+        "controlled_cost_per_path": 2.716840000357479e-05,
+        "controlled_seconds": 0.05433680000714958,
+        "natural_seconds": 0.06567899999208748
+      }
+    },
+    {
+      "H": 0.05,
+      "dt": 0.0078125,
+      "finite": true,
+      "forward_variance": {
+        "natural_mean": 0.04070201065967642,
+        "natural_se": 0.0014909225333268167,
+        "natural_target_z": 0.47085656295633754,
+        "weighted_mean": 0.04163144304272673,
+        "weighted_se": 0.0017886456525616884,
+        "weighted_target_z": 0.9121108143416693
+      },
+      "hard_payoff": {
+        "difference_z": -0.4521933504299131,
+        "natural_mean": 0.0295,
+        "natural_se": 0.0037844465933618947,
+        "weighted_mean": 0.026678089762769728,
+        "weighted_se": 0.004962029718217302
+      },
+      "likelihood": {
+        "mean": 0.9986991706924987,
+        "normalization_z": -0.22283245363984383,
+        "se": 0.005837701314386591
+      },
+      "paths": 2000,
+      "rho": -0.7,
+      "seed": 16002,
+      "soft_payoff": {
+        "contribution_ess": 357.70552961571434,
+        "contribution_ess_fraction": 0.17885276480785717,
+        "difference_z": -0.7491248739131369,
+        "natural_mean": 0.12712304614600187,
+        "natural_se": 0.004335640088218108,
+        "weighted_mean": 0.12167947350003758,
+        "weighted_se": 0.005831410483163674
+      },
+      "spot": {
+        "natural_mean": 99.96141083532409,
+        "natural_se": 0.22012084737388327,
+        "natural_target_z": -0.17530899565531338,
+        "weighted_mean": 99.96014944372065,
+        "weighted_se": 0.4101896953960969,
+        "weighted_target_z": -0.09715152946703352
+      },
+      "timing": {
+        "controlled_cost_per_path": 1.829030000953935e-05,
+        "controlled_seconds": 0.0365806000190787,
+        "natural_seconds": 0.042322499968577176
+      }
+    },
+    {
+      "H": 0.1,
+      "dt": 0.0078125,
+      "finite": true,
+      "forward_variance": {
+        "natural_mean": 0.04124701423480974,
+        "natural_se": 0.0013017926474858917,
+        "natural_target_z": 0.9579207850175336,
+        "weighted_mean": 0.04355824502182836,
+        "weighted_se": 0.0017277276516101357,
+        "weighted_target_z": 2.0594941676787397
+      },
+      "hard_payoff": {
+        "difference_z": -0.9889999801219606,
+        "natural_mean": 0.034,
+        "natural_se": 0.004053420174069567,
+        "weighted_mean": 0.027714281748293254,
+        "weighted_se": 0.004895285645243501
+      },
+      "likelihood": {
+        "mean": 1.0128493103593152,
+        "normalization_z": 2.2112109786408727,
+        "se": 0.005810983430994501
+      },
+      "paths": 2000,
+      "rho": -0.9,
+      "seed": 16101,
+      "soft_payoff": {
+        "contribution_ess": 374.9983460775056,
+        "contribution_ess_fraction": 0.1874991730387528,
+        "difference_z": 0.55756957519027,
+        "natural_mean": 0.12377411231226328,
+        "natural_se": 0.004508133563963324,
+        "weighted_mean": 0.12793935632004588,
+        "weighted_se": 0.0059567584815190455
+      },
+      "spot": {
+        "natural_mean": 100.01586799786816,
+        "natural_se": 0.212803408553126,
+        "natural_target_z": 0.07456646477631379,
+        "weighted_mean": 100.93390690148482,
+        "weighted_se": 0.3919637015288787,
+        "weighted_target_z": 2.382636192693497
+      },
+      "timing": {
+        "controlled_cost_per_path": 1.4886399992974475e-05,
+        "controlled_seconds": 0.02977279998594895,
+        "natural_seconds": 0.035667399992235005
+      }
+    },
+    {
+      "H": 0.1,
+      "dt": 0.0078125,
+      "finite": true,
+      "forward_variance": {
+        "natural_mean": 0.0390704765710352,
+        "natural_se": 0.0012750868323164123,
+        "natural_target_z": -0.7289883366422703,
+        "weighted_mean": 0.03960832916823763,
+        "weighted_se": 0.0015083409761950392,
+        "weighted_target_z": -0.2596699539055187
+      },
+      "hard_payoff": {
+        "difference_z": 0.8275145318446071,
+        "natural_mean": 0.0355,
+        "natural_se": 0.004138651860160538,
+        "weighted_mean": 0.04156044831614406,
+        "weighted_se": 0.006042167734073879
+      },
+      "likelihood": {
+        "mean": 0.9995189314145465,
+        "normalization_z": -0.08124190908560402,
+        "se": 0.005921433787906114
+      },
+      "paths": 2000,
+      "rho": -0.7,
+      "seed": 16102,
+      "soft_payoff": {
+        "contribution_ess": 325.17043668339727,
+        "contribution_ess_fraction": 0.16258521834169865,
+        "difference_z": -0.30510475712799046,
+        "natural_mean": 0.12360221757096079,
+        "natural_se": 0.004466825665935294,
+        "weighted_mean": 0.12128156974228156,
+        "weighted_se": 0.00615627759206506
+      },
+      "spot": {
+        "natural_mean": 100.24485488144992,
+        "natural_se": 0.21692753996034864,
+        "natural_target_z": 1.1287404148624045,
+        "weighted_mean": 100.1181140252425,
+        "weighted_se": 0.4070531187869748,
+        "weighted_target_z": 0.2901685794583445
+      },
+      "timing": {
+        "controlled_cost_per_path": 1.3986049976665526e-05,
+        "controlled_seconds": 0.027972099953331053,
+        "natural_seconds": 0.02423139999154955
+      }
+    }
+  ],
+  "smoke": true,
+  "summary": {
+    "maximum_absolute_z": 2.382636192693497,
+    "minimum_contribution_ess_fraction": 0.16258521834169865
+  }
+}

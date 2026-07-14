@@ -1,0 +1,43 @@
+schema_version: 1
+protocol_id: g2-controlled-rbergomi-law-confirmatory-v2-global-tests
+frozen: true
+
+# v1 remains a recorded failure because one of 45 individual z statistics was
+# -3.34. Independent 5 x 100,000-path diagnostics did not reproduce a bias.
+# v2 replaces the multiplicity-blind all-|z|<=3 gate with five preregistered
+# family tests. Each family uses a directional z and a chi-square omnibus test;
+# p>=0.01 is a Bonferroni allocation over five families. |z|>4 remains an
+# unconditional numerical alarm. Only the new roots below are used here.
+seeds:
+  regime_root: 19001
+  refinement_root: 19101
+
+model:
+  spot: 100.0
+  maturity: 0.25
+  eta: 1.2
+  xi: 0.04
+  mu: 0.0
+  dt: 0.0078125
+  H_grid: [0.05, 0.10, 0.20]
+  rho_grid: [-0.90, -0.70, -0.50]
+
+proposal:
+  control: [-0.45, 0.25]
+
+payoffs:
+  hard_barrier: 80.0
+  soft_barrier: 85.0
+  soft_scale: 5.0
+
+evaluation:
+  paths_per_law: 30000
+  refinement_paths: 30000
+  refinement_dt_grid: [0.015625, 0.0078125, 0.00390625]
+  law_z_mode: family_global
+  maximum_absolute_z_alarm: 4.0
+  maximum_absolute_family_directional_z: 3.0
+  minimum_family_chi_square_p: 0.01
+  maximum_absolute_z: 3.0
+  maximum_refinement_relative_change: 0.05
+  minimum_contribution_ess_fraction: 0.01

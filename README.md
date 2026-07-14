@@ -28,8 +28,19 @@ For a Korean explanation of the current architecture and completed work, see
 The ranked next-generation model candidates, mathematical constraints, and
 selection gates are documented in
 [`PATH_INTEGRAL_MODEL_CANDIDATES_AND_SELECTION.md`](PATH_INTEGRAL_MODEL_CANDIDATES_AND_SELECTION.md).
+The active integrated execution plan is
+[`PATH_INTEGRAL_RESEARCH_PLAN_V3.md`](PATH_INTEGRAL_RESEARCH_PLAN_V3.md).
 The latest sealed confirmatory review is
 [`docs/phase_reviews/G2_V3_CONFIRMATORY_REVIEW_2026-07-13.md`](docs/phase_reviews/G2_V3_CONFIRMATORY_REVIEW_2026-07-13.md).
+The frozen two-driver Heston feedback gate is reviewed in
+[`docs/phase_reviews/G1_TWO_DRIVER_FEEDBACK_CONFIRMATORY_2026-07-14.md`](docs/phase_reviews/G1_TWO_DRIVER_FEEDBACK_CONFIRMATORY_2026-07-14.md).
+The controlled finite-grid rBergomi BLP law gate is reviewed in
+[`docs/phase_reviews/G2_CONTROLLED_RBERGOMI_LAW_2026-07-14.md`](docs/phase_reviews/G2_CONTROLLED_RBERGOMI_LAW_2026-07-14.md).
+The first training-matched VFO memory ablation and its required pivot are reviewed in
+[`docs/phase_reviews/G3_VFO_MATCHED_ABLATION_2026-07-14.md`](docs/phase_reviews/G3_VFO_MATCHED_ABLATION_2026-07-14.md).
+The final path-dependent VFO pivot and the resulting Plan-v3 stop decision are
+documented in
+[`docs/phase_reviews/G3_VFO_PATH_PIVOT_FINAL_2026-07-14.md`](docs/phase_reviews/G3_VFO_PATH_PIVOT_FINAL_2026-07-14.md).
 
 Run the non-publication G2 smoke pipeline with:
 

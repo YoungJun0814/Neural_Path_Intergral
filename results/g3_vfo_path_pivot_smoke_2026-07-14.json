@@ -1,0 +1,430 @@
+{
+  "development_gates": {
+    "joint_online_work_improves": false,
+    "no_takeover": true,
+    "structural_online_work_improves": true
+  },
+  "diagnostics": {
+    "maximum_residual_energy_fraction": 6.018095558210217e-05,
+    "takeover_alarm": false
+  },
+  "protocol_frozen": false,
+  "protocol_id": "g3-vfo-path-dependent-pivot-development",
+  "protocol_sha256": "4a0f0845c5a2bd0b961ecb56906dd4488cf787e3d47599d42ec0c6a3531dad40",
+  "smoke": true,
+  "soe_fit": {
+    "maximum_relative_error": 0.0005642154221794663,
+    "relative_l2_error": 0.00010865809926412637
+  },
+  "training": {
+    "records": {
+      "instant_matched_j2": [
+        {
+          "diagnostic": 0.07421875,
+          "loss": -3.017206628689131,
+          "objective": "j2",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.06640625,
+          "loss": -3.074868563524437,
+          "objective": "j2",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 2
+        }
+      ],
+      "instant_matched_pi": [
+        {
+          "diagnostic": 0.1614481920130442,
+          "loss": 2.571570007343945,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.17115220031393996,
+          "loss": 2.5323631707134076,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 2
+        }
+      ],
+      "instant_matched_pice_1": [
+        {
+          "diagnostic": 0.3335278608929476,
+          "loss": -0.056486954080621786,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.31366383243443746,
+          "loss": -0.07492050495450446,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 2
+        }
+      ],
+      "instant_matched_pice_2": [
+        {
+          "diagnostic": 0.33376746599358115,
+          "loss": -0.07890851742249776,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.3469977519974116,
+          "loss": -0.09812370189574586,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 2
+        }
+      ],
+      "instant_pi": [
+        {
+          "diagnostic": 0.13886643571652946,
+          "loss": 2.7969692234560446,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.15016972855444863,
+          "loss": 2.737009661134628,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 2
+        }
+      ],
+      "joint_j2": [
+        {
+          "diagnostic": 0.07421875,
+          "loss": -2.901447589433051,
+          "objective": "j2",
+          "residual_energy_fraction": 4.840796963557757e-05,
+          "residual_gate": -0.0019770428921209214,
+          "stage": "joint",
+          "structural_gate": 0.003975301516707535,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.06640625,
+          "loss": -2.976392734222711,
+          "objective": "j2",
+          "residual_energy_fraction": 6.018095558210217e-05,
+          "residual_gate": -0.0022770415246884303,
+          "stage": "joint",
+          "structural_gate": 0.0042752963224320486,
+          "takeover_alarm": false,
+          "update": 2
+        }
+      ],
+      "residual_pice": [
+        {
+          "diagnostic": 0.33398579252976796,
+          "loss": -0.07944886038975008,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "residual",
+          "structural_gate": 0.003975301516707535,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.3473295289139024,
+          "loss": -0.0846056860429525,
+          "objective": "pice",
+          "residual_energy_fraction": 1.1933128609030495e-05,
+          "residual_gate": -0.0009999996229665064,
+          "stage": "residual",
+          "structural_gate": 0.003975301516707535,
+          "takeover_alarm": false,
+          "update": 2
+        }
+      ],
+      "structural_matched_j2": [
+        {
+          "diagnostic": 0.07421875,
+          "loss": -3.0198504461736637,
+          "objective": "j2",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": 0.005948528213964949,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.06640625,
+          "loss": -3.0774398331887336,
+          "objective": "j2",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": 0.006248517016951532,
+          "takeover_alarm": false,
+          "update": 2
+        }
+      ],
+      "structural_matched_pice": [
+        {
+          "diagnostic": 0.33398579252976796,
+          "loss": -0.07944886038975008,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": 0.003975301516707535,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.3473295289139024,
+          "loss": -0.09927455333500129,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": 0.0049752813229981055,
+          "takeover_alarm": false,
+          "update": 2
+        }
+      ],
+      "structural_pi": [
+        {
+          "diagnostic": 0.1614481920130442,
+          "loss": 2.571570007343945,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.17114796677299238,
+          "loss": 2.5322356105682666,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": 0.0009999995961882378,
+          "takeover_alarm": false,
+          "update": 2
+        }
+      ],
+      "structural_pice": [
+        {
+          "diagnostic": 0.33352269151939723,
+          "loss": -0.056683199925540106,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": 0.0019956753817243493,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.3136909161044789,
+          "loss": -0.07513031238394464,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": 0.0029956689526665294,
+          "takeover_alarm": false,
+          "update": 2
+        }
+      ]
+    },
+    "seconds": {
+      "instant_matched_j2": 0.1300065999967046,
+      "instant_matched_pi": 0.11459640000248328,
+      "instant_matched_pice_1": 0.1104308000067249,
+      "instant_matched_pice_2": 0.1239752999972552,
+      "instant_pi": 2.949391900037881,
+      "joint_j2": 0.6169282000046223,
+      "residual_pice": 0.356821299996227,
+      "structural_matched_j2": 0.35472960001789033,
+      "structural_matched_pice": 0.17955940001411363,
+      "structural_pi": 0.12935870001092553,
+      "structural_pice": 0.14545760001055896
+    }
+  },
+  "validation": {
+    "runs": [
+      {
+        "contribution_ess_fraction": 0.081,
+        "cost_per_path": 5.462916666874662e-05,
+        "estimate": 0.081,
+        "event_fraction": 0.081,
+        "method": "natural",
+        "seconds": 0.16388750000623986,
+        "seed": 21101.0,
+        "single_path_variance": 0.0744638212737607,
+        "standard_error": 0.0049820953180283725
+      },
+      {
+        "contribution_ess_fraction": 0.08233333333333333,
+        "cost_per_path": 6.965686666080729e-05,
+        "estimate": 0.08233333333333333,
+        "event_fraction": 0.08233333333333333,
+        "method": "natural",
+        "seconds": 0.20897059998242185,
+        "seed": 21102.0,
+        "single_path_variance": 0.07557974880516001,
+        "standard_error": 0.005019287758409554
+      },
+      {
+        "contribution_ess_fraction": 0.09839735571977873,
+        "cost_per_path": 0.00019761266668016713,
+        "estimate": 0.08112343429430176,
+        "event_fraction": 0.10033333333333333,
+        "method": "instant_matched",
+        "seconds": 0.5928380000405014,
+        "seed": 21101.0,
+        "single_path_variance": 0.06032109184584367,
+        "standard_error": 0.004484086374645478
+      },
+      {
+        "contribution_ess_fraction": 0.10247994585660704,
+        "cost_per_path": 0.00018359936667062962,
+        "estimate": 0.08463154502260142,
+        "event_fraction": 0.10433333333333333,
+        "method": "instant_matched",
+        "seconds": 0.5507981000118889,
+        "seed": 21102.0,
+        "single_path_variance": 0.06275012591757542,
+        "standard_error": 0.004573478833359984
+      },
+      {
+        "contribution_ess_fraction": 0.09894240539545436,
+        "cost_per_path": 0.00016395763333033149,
+        "estimate": 0.08142288389305218,
+        "event_fraction": 0.101,
+        "method": "structural_matched",
+        "seconds": 0.4918728999909945,
+        "seed": 21101.0,
+        "single_path_variance": 0.0603959528025022,
+        "standard_error": 0.004486867979727143
+      },
+      {
+        "contribution_ess_fraction": 0.10268349541222292,
+        "cost_per_path": 0.0001960077666832755,
+        "estimate": 0.08462637150249605,
+        "event_fraction": 0.10466666666666667,
+        "method": "structural_matched",
+        "seconds": 0.5880233000498265,
+        "seed": 21102.0,
+        "single_path_variance": 0.06260387870251953,
+        "standard_error": 0.004568146184997423
+      },
+      {
+        "contribution_ess_fraction": 0.0926404835588511,
+        "cost_per_path": 0.00035215076666402943,
+        "estimate": 0.07982591458230416,
+        "event_fraction": 0.09366666666666666,
+        "method": "full_vfo",
+        "seconds": 1.0564522999920882,
+        "seed": 21101.0,
+        "single_path_variance": 0.0624325653239656,
+        "standard_error": 0.004561891615107546
+      },
+      {
+        "contribution_ess_fraction": 0.09861201505697113,
+        "cost_per_path": 0.0002615866000026775,
+        "estimate": 0.08538585173227964,
+        "event_fraction": 0.09966666666666667,
+        "method": "full_vfo",
+        "seconds": 0.7847598000080325,
+        "seed": 21102.0,
+        "single_path_variance": 0.06666510235879808,
+        "standard_error": 0.004713989900950789
+      }
+    ],
+    "summary": {
+      "full_vfo": {
+        "combined_standard_error": 0.0032799602091433426,
+        "difference_z_vs_natural": 0.19473514232791872,
+        "mean_cost_per_path": 0.00030686868333335346,
+        "mean_estimate": 0.08260588315729189,
+        "mean_single_path_variance": 0.06454883384138184,
+        "online_work_proxy": 1.9808015651608252e-05,
+        "online_work_vrf_vs_instant": 0.5921369156271651
+      },
+      "instant_matched": {
+        "combined_standard_error": 0.003202488846759385,
+        "difference_z_vs_natural": 0.2538041237636,
+        "mean_cost_per_path": 0.00019060601667539838,
+        "mean_estimate": 0.0828774896584516,
+        "mean_single_path_variance": 0.061535608881709544,
+        "online_work_proxy": 1.1729057292637921e-05,
+        "online_work_vrf_vs_instant": 1.0
+      },
+      "natural": {
+        "combined_standard_error": 0.003536047346955363,
+        "difference_z_vs_natural": 0.0,
+        "mean_cost_per_path": 6.214301666477696e-05,
+        "mean_estimate": 0.08166666666666667,
+        "mean_single_path_variance": 0.07502178503946036,
+        "online_work_proxy": 4.6620800379285e-06,
+        "online_work_vrf_vs_instant": 2.5158421127942474
+      },
+      "structural_matched": {
+        "combined_standard_error": 0.0032015599258411217,
+        "difference_z_vs_natural": 0.28468336294974494,
+        "mean_cost_per_path": 0.0001799827000068035,
+        "mean_estimate": 0.0830246276977741,
+        "mean_single_path_variance": 0.06149991575251086,
+        "online_work_proxy": 1.1068920887327851e-05,
+        "online_work_vrf_vs_instant": 1.0596387319079876
+      }
+    }
+  }
+}

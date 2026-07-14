@@ -1,0 +1,54 @@
+schema_version: 1
+protocol_id: g3-vfo-path-dependent-pivot-development
+frozen: false
+
+# The one Plan-v3 task/representation pivot after the matched terminal-event
+# memory ablation failed. All methods receive running-minimum progress and the
+# same matched training schedule.
+seeds:
+  initialization: 21001
+  instant_pi: 21002
+  structural_pi: 21003
+  structural_pice: 21004
+  residual_pice: 21005
+  joint_j2: 21006
+  validation: [21101, 21102, 21103]
+
+model:
+  spot: 100.0
+  maturity: 0.5
+  dt: 0.015625
+  H: 0.05
+  rho: -0.90
+  eta: 1.5
+  xi: 0.04
+
+task:
+  event_type: down_barrier
+  hard_barrier: 75.0
+  soft_barrier: 80.0
+  soft_scale: 5.0
+
+controller:
+  soe_terms: 8
+  hidden_dim: 32
+  residual_dim: 16
+  control_bound: [6.0, 6.0]
+
+training:
+  paths_per_batch: 1500
+  instant_pi_updates: 20
+  structural_pi_updates: 20
+  structural_pice_updates: 20
+  residual_pice_updates: 20
+  joint_j2_updates: 20
+  pi_learning_rate: 0.001
+  pice_learning_rate: 0.001
+  j2_learning_rate: 0.0003
+  gradient_clip: 5.0
+  behavior_refresh: 5
+
+validation:
+  paths_per_seed: 20000
+  maximum_absolute_difference_z: 3.0
+  maximum_residual_energy_fraction: 0.90

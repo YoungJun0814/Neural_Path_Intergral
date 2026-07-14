@@ -1,5 +1,8 @@
 # Neural Path-Integral Rare-Event Engine: 연구·구현·투고 계획 v2
 
+> Historical detailed reference. Forward execution is governed by
+> [PATH_INTEGRAL_RESEARCH_PLAN_V3.md](PATH_INTEGRAL_RESEARCH_PLAN_V3.md).
+
 Status: active design draft<br>
 Version: 2.0<br>
 Date: 2026-07-13<br>

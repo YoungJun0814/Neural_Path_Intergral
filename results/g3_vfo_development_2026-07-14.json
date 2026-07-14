@@ -1,0 +1,1356 @@
+{
+  "development_gates": {
+    "joint_online_work_improves": true,
+    "no_takeover": true,
+    "structural_online_work_improves": true
+  },
+  "diagnostics": {
+    "maximum_residual_energy_fraction": 7.497166063571757e-05,
+    "takeover_alarm": false
+  },
+  "protocol_frozen": false,
+  "protocol_id": "g3-vfo-staged-development",
+  "protocol_sha256": "8ed9af123d28b2e56cf15096bb2333caed5a6b52166702bf1fffe03b48a3c3f0",
+  "smoke": false,
+  "soe_fit": {
+    "maximum_relative_error": 0.0007337003594385604,
+    "relative_l2_error": 0.00013955647113553048
+  },
+  "training": {
+    "records": {
+      "instant_pi": [
+        {
+          "diagnostic": 0.1267461998684522,
+          "loss": 3.147931690263758,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.12616936185198355,
+          "loss": 3.16542343693036,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 2
+        },
+        {
+          "diagnostic": 0.12006173891400163,
+          "loss": 3.199093056387611,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 3
+        },
+        {
+          "diagnostic": 0.12522658995423228,
+          "loss": 3.144133314690109,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 4
+        },
+        {
+          "diagnostic": 0.13439921552405384,
+          "loss": 3.07996088057715,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 5
+        },
+        {
+          "diagnostic": 0.11709878579480221,
+          "loss": 3.1707457482153636,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 6
+        },
+        {
+          "diagnostic": 0.11793923447268809,
+          "loss": 3.149504157617022,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 7
+        },
+        {
+          "diagnostic": 0.12246522722495261,
+          "loss": 3.0690954613474015,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 8
+        },
+        {
+          "diagnostic": 0.12724045532319495,
+          "loss": 3.0093640751435804,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 9
+        },
+        {
+          "diagnostic": 0.12473039884084412,
+          "loss": 3.0306929088199897,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 10
+        },
+        {
+          "diagnostic": 0.11961870580616918,
+          "loss": 3.016753523866245,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 11
+        },
+        {
+          "diagnostic": 0.13126718420673514,
+          "loss": 2.92628376762436,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 12
+        },
+        {
+          "diagnostic": 0.12783844716938186,
+          "loss": 2.848594084752183,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 13
+        },
+        {
+          "diagnostic": 0.1215032172430093,
+          "loss": 2.9299007441026514,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 14
+        },
+        {
+          "diagnostic": 0.12388221306765157,
+          "loss": 2.839932823000142,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 15
+        },
+        {
+          "diagnostic": 0.12643257060504334,
+          "loss": 2.7849491846874708,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 16
+        },
+        {
+          "diagnostic": 0.1219228197411688,
+          "loss": 2.8436393820523795,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 17
+        },
+        {
+          "diagnostic": 0.12945480296535322,
+          "loss": 2.730834785855252,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 18
+        },
+        {
+          "diagnostic": 0.12800225966596926,
+          "loss": 2.7010114041202344,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 19
+        },
+        {
+          "diagnostic": 0.12414423911763779,
+          "loss": 2.708446290542041,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "instant",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 20
+        }
+      ],
+      "joint_j2": [
+        {
+          "diagnostic": 0.286,
+          "loss": -5.15366518763658,
+          "objective": "j2",
+          "residual_energy_fraction": 7.497166063571757e-05,
+          "residual_gate": 0.019613402543286713,
+          "stage": "joint",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.274,
+          "loss": -5.16389527561685,
+          "objective": "j2",
+          "residual_energy_fraction": 6.972808768391484e-05,
+          "residual_gate": 0.019313516266087925,
+          "stage": "joint",
+          "structural_gate": -0.028857932544093325,
+          "takeover_alarm": false,
+          "update": 2
+        },
+        {
+          "diagnostic": 0.2673333333333333,
+          "loss": -5.2325611601921,
+          "objective": "j2",
+          "residual_energy_fraction": 6.540121131469567e-05,
+          "residual_gate": 0.01914727425374502,
+          "stage": "joint",
+          "structural_gate": -0.029156387033082393,
+          "takeover_alarm": false,
+          "update": 3
+        },
+        {
+          "diagnostic": 0.2906666666666667,
+          "loss": -5.107376717730181,
+          "objective": "j2",
+          "residual_energy_fraction": 6.265512136629764e-05,
+          "residual_gate": 0.01905387127619999,
+          "stage": "joint",
+          "structural_gate": -0.02945508604134098,
+          "takeover_alarm": false,
+          "update": 4
+        },
+        {
+          "diagnostic": 0.288,
+          "loss": -5.198652382982125,
+          "objective": "j2",
+          "residual_energy_fraction": 6.108093470498911e-05,
+          "residual_gate": 0.019124387004634,
+          "stage": "joint",
+          "structural_gate": -0.02975354071119789,
+          "takeover_alarm": false,
+          "update": 5
+        },
+        {
+          "diagnostic": 0.288,
+          "loss": -5.215981145765042,
+          "objective": "j2",
+          "residual_energy_fraction": 6.002011898882709e-05,
+          "residual_gate": 0.019266547459745806,
+          "stage": "joint",
+          "structural_gate": -0.03005190069219897,
+          "takeover_alarm": false,
+          "update": 6
+        },
+        {
+          "diagnostic": 0.2926666666666667,
+          "loss": -5.3044705831175065,
+          "objective": "j2",
+          "residual_energy_fraction": 5.8996518979481855e-05,
+          "residual_gate": 0.01946533769517072,
+          "stage": "joint",
+          "structural_gate": -0.030348468252645932,
+          "takeover_alarm": false,
+          "update": 7
+        },
+        {
+          "diagnostic": 0.30133333333333334,
+          "loss": -5.267011238240789,
+          "objective": "j2",
+          "residual_energy_fraction": 5.843558508586543e-05,
+          "residual_gate": 0.01964936788946994,
+          "stage": "joint",
+          "structural_gate": -0.030645077581043453,
+          "takeover_alarm": false,
+          "update": 8
+        },
+        {
+          "diagnostic": 0.30133333333333334,
+          "loss": -5.272493928860262,
+          "objective": "j2",
+          "residual_energy_fraction": 5.801215480934607e-05,
+          "residual_gate": 0.019867599809108658,
+          "stage": "joint",
+          "structural_gate": -0.03093978376347824,
+          "takeover_alarm": false,
+          "update": 9
+        },
+        {
+          "diagnostic": 0.292,
+          "loss": -5.389512486619626,
+          "objective": "j2",
+          "residual_energy_fraction": 5.790387876531145e-05,
+          "residual_gate": 0.02010738197721722,
+          "stage": "joint",
+          "structural_gate": -0.03123434262752586,
+          "takeover_alarm": false,
+          "update": 10
+        },
+        {
+          "diagnostic": 0.31533333333333335,
+          "loss": -5.287520689930199,
+          "objective": "j2",
+          "residual_energy_fraction": 5.776593764977443e-05,
+          "residual_gate": 0.02033659567574064,
+          "stage": "joint",
+          "structural_gate": -0.03152827846056814,
+          "takeover_alarm": false,
+          "update": 11
+        },
+        {
+          "diagnostic": 0.338,
+          "loss": -5.293808789513799,
+          "objective": "j2",
+          "residual_energy_fraction": 5.823079681763362e-05,
+          "residual_gate": 0.020580263417283296,
+          "stage": "joint",
+          "structural_gate": -0.03181980732734011,
+          "takeover_alarm": false,
+          "update": 12
+        },
+        {
+          "diagnostic": 0.30866666666666664,
+          "loss": -5.395498100991794,
+          "objective": "j2",
+          "residual_energy_fraction": 5.7928789064161814e-05,
+          "residual_gate": 0.02084133543210303,
+          "stage": "joint",
+          "structural_gate": -0.032109521740792527,
+          "takeover_alarm": false,
+          "update": 13
+        },
+        {
+          "diagnostic": 0.3426666666666667,
+          "loss": -5.243758394696522,
+          "objective": "j2",
+          "residual_energy_fraction": 5.866912835713843e-05,
+          "residual_gate": 0.02111729180682117,
+          "stage": "joint",
+          "structural_gate": -0.032397105192019354,
+          "takeover_alarm": false,
+          "update": 14
+        },
+        {
+          "diagnostic": 0.334,
+          "loss": -5.294762369314429,
+          "objective": "j2",
+          "residual_energy_fraction": 5.888981812190049e-05,
+          "residual_gate": 0.021402886117420025,
+          "stage": "joint",
+          "structural_gate": -0.03268311999678811,
+          "takeover_alarm": false,
+          "update": 15
+        },
+        {
+          "diagnostic": 0.3453333333333333,
+          "loss": -5.295063067299029,
+          "objective": "j2",
+          "residual_energy_fraction": 6.006497500845303e-05,
+          "residual_gate": 0.021696946380115077,
+          "stage": "joint",
+          "structural_gate": -0.03296666814857885,
+          "takeover_alarm": false,
+          "update": 16
+        },
+        {
+          "diagnostic": 0.35733333333333334,
+          "loss": -5.304731925444232,
+          "objective": "j2",
+          "residual_energy_fraction": 6.111360448922384e-05,
+          "residual_gate": 0.021999788123219666,
+          "stage": "joint",
+          "structural_gate": -0.03324651126164079,
+          "takeover_alarm": false,
+          "update": 17
+        },
+        {
+          "diagnostic": 0.33666666666666667,
+          "loss": -5.279608857238157,
+          "objective": "j2",
+          "residual_energy_fraction": 6.209778358048404e-05,
+          "residual_gate": 0.02230954442113807,
+          "stage": "joint",
+          "structural_gate": -0.033524676506675885,
+          "takeover_alarm": false,
+          "update": 18
+        },
+        {
+          "diagnostic": 0.3586666666666667,
+          "loss": -5.288317371224055,
+          "objective": "j2",
+          "residual_energy_fraction": 6.444314806860486e-05,
+          "residual_gate": 0.02262755443201761,
+          "stage": "joint",
+          "structural_gate": -0.033797142095806636,
+          "takeover_alarm": false,
+          "update": 19
+        },
+        {
+          "diagnostic": 0.36866666666666664,
+          "loss": -5.2782967511175025,
+          "objective": "j2",
+          "residual_energy_fraction": 6.550897419042059e-05,
+          "residual_gate": 0.022952270528322296,
+          "stage": "joint",
+          "structural_gate": -0.0340658804984707,
+          "takeover_alarm": false,
+          "update": 20
+        }
+      ],
+      "residual_pice": [
+        {
+          "diagnostic": 0.7961479110709421,
+          "loss": -0.7297574771012485,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.7975336187427199,
+          "loss": -0.7814126592145576,
+          "objective": "pice",
+          "residual_energy_fraction": 2.9461025727824597e-08,
+          "residual_gate": 0.0009999978442729101,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 2
+        },
+        {
+          "diagnostic": 0.7948529190549513,
+          "loss": -0.7498270802920666,
+          "objective": "pice",
+          "residual_energy_fraction": 1.293428488233946e-07,
+          "residual_gate": 0.0019636735102881056,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 3
+        },
+        {
+          "diagnostic": 0.7907003633814237,
+          "loss": -0.7644441031884146,
+          "objective": "pice",
+          "residual_energy_fraction": 3.371753187726538e-07,
+          "residual_gate": 0.0029445163803481353,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 4
+        },
+        {
+          "diagnostic": 0.7943463908721624,
+          "loss": -0.7654713376234441,
+          "objective": "pice",
+          "residual_energy_fraction": 6.562347583408517e-07,
+          "residual_gate": 0.003880237605854523,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 5
+        },
+        {
+          "diagnostic": 0.8030841217695069,
+          "loss": -0.7306455585774669,
+          "objective": "pice",
+          "residual_energy_fraction": 1.1509929324909895e-06,
+          "residual_gate": 0.004840291863880679,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 6
+        },
+        {
+          "diagnostic": 0.8089070075636349,
+          "loss": -0.7277777742229092,
+          "objective": "pice",
+          "residual_energy_fraction": 1.86444483966837e-06,
+          "residual_gate": 0.0058118233742042195,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 7
+        },
+        {
+          "diagnostic": 0.7937229715426675,
+          "loss": -0.7219285698431744,
+          "objective": "pice",
+          "residual_energy_fraction": 2.819910734748865e-06,
+          "residual_gate": 0.006744775181319938,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 8
+        },
+        {
+          "diagnostic": 0.782423527431428,
+          "loss": -0.7679710002540703,
+          "objective": "pice",
+          "residual_energy_fraction": 4.105633713277634e-06,
+          "residual_gate": 0.007699964628071423,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 9
+        },
+        {
+          "diagnostic": 0.7927724311476303,
+          "loss": -0.7692957022462971,
+          "objective": "pice",
+          "residual_energy_fraction": 5.848695203472452e-06,
+          "residual_gate": 0.008673851655142052,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 10
+        },
+        {
+          "diagnostic": 0.7977346867748311,
+          "loss": -0.793255158156575,
+          "objective": "pice",
+          "residual_energy_fraction": 8.04372067253312e-06,
+          "residual_gate": 0.009651859227370232,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 11
+        },
+        {
+          "diagnostic": 0.7885334957974413,
+          "loss": -0.7445941149949888,
+          "objective": "pice",
+          "residual_energy_fraction": 1.0881179926619468e-05,
+          "residual_gate": 0.010652137780354317,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 12
+        },
+        {
+          "diagnostic": 0.7983902782625435,
+          "loss": -0.6831234704543658,
+          "objective": "pice",
+          "residual_energy_fraction": 1.3991932667319219e-05,
+          "residual_gate": 0.011599213617472527,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 13
+        },
+        {
+          "diagnostic": 0.8038601487255684,
+          "loss": -0.754255534486554,
+          "objective": "pice",
+          "residual_energy_fraction": 1.7943745330777684e-05,
+          "residual_gate": 0.01257833413718248,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 14
+        },
+        {
+          "diagnostic": 0.7885585577083732,
+          "loss": -0.7093545093489448,
+          "objective": "pice",
+          "residual_energy_fraction": 2.2229687510141787e-05,
+          "residual_gate": 0.01352039916264852,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 15
+        },
+        {
+          "diagnostic": 0.7945228040944267,
+          "loss": -0.7256546541487325,
+          "objective": "pice",
+          "residual_energy_fraction": 2.7640151858056708e-05,
+          "residual_gate": 0.014497695701694714,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 16
+        },
+        {
+          "diagnostic": 0.7934078914863071,
+          "loss": -0.7532217889531161,
+          "objective": "pice",
+          "residual_energy_fraction": 3.406688894864418e-05,
+          "residual_gate": 0.015494035726771596,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 17
+        },
+        {
+          "diagnostic": 0.8089167450505691,
+          "loss": -0.7405149531300785,
+          "objective": "pice",
+          "residual_energy_fraction": 4.22270594733192e-05,
+          "residual_gate": 0.01652355007815289,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 18
+        },
+        {
+          "diagnostic": 0.7876463167519349,
+          "loss": -0.7234236279175164,
+          "objective": "pice",
+          "residual_energy_fraction": 5.1379713573670994e-05,
+          "residual_gate": 0.01753768429650251,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 19
+        },
+        {
+          "diagnostic": 0.7812734790183714,
+          "loss": -0.7261613197764478,
+          "objective": "pice",
+          "residual_energy_fraction": 6.172229542657238e-05,
+          "residual_gate": 0.018559417326940646,
+          "stage": "residual",
+          "structural_gate": -0.02855817979746879,
+          "takeover_alarm": false,
+          "update": 20
+        }
+      ],
+      "structural_pi": [
+        {
+          "diagnostic": 0.1208404905941375,
+          "loss": 2.695121186694684,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": 0.0,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.12663561814023078,
+          "loss": 2.582501331205447,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.000999999638414039,
+          "takeover_alarm": false,
+          "update": 2
+        },
+        {
+          "diagnostic": 0.1248280583907506,
+          "loss": 2.554314002633875,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.001998810840416929,
+          "takeover_alarm": false,
+          "update": 3
+        },
+        {
+          "diagnostic": 0.12514654477636541,
+          "loss": 2.5875626551785116,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.002998096613732025,
+          "takeover_alarm": false,
+          "update": 4
+        },
+        {
+          "diagnostic": 0.12697695716889745,
+          "loss": 2.525450778491148,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.0039980259045415455,
+          "takeover_alarm": false,
+          "update": 5
+        },
+        {
+          "diagnostic": 0.12384912436980941,
+          "loss": 2.5230857576544756,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.004998677662381046,
+          "takeover_alarm": false,
+          "update": 6
+        },
+        {
+          "diagnostic": 0.1286241925283381,
+          "loss": 2.4296569361131755,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.005998545688459336,
+          "takeover_alarm": false,
+          "update": 7
+        },
+        {
+          "diagnostic": 0.12580096155143672,
+          "loss": 2.407453779841859,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.006997515930777993,
+          "takeover_alarm": false,
+          "update": 8
+        },
+        {
+          "diagnostic": 0.1254195540271917,
+          "loss": 2.4095976047817422,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.007997274355452619,
+          "takeover_alarm": false,
+          "update": 9
+        },
+        {
+          "diagnostic": 0.12338484177394198,
+          "loss": 2.3655272438470987,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.00899620877529124,
+          "takeover_alarm": false,
+          "update": 10
+        },
+        {
+          "diagnostic": 0.12441165793924734,
+          "loss": 2.367631141186243,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.00999349450529868,
+          "takeover_alarm": false,
+          "update": 11
+        },
+        {
+          "diagnostic": 0.12702101482293246,
+          "loss": 2.2955330432735312,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.010988811696426393,
+          "takeover_alarm": false,
+          "update": 12
+        },
+        {
+          "diagnostic": 0.1272842398930974,
+          "loss": 2.2876472518705464,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.011975384050733315,
+          "takeover_alarm": false,
+          "update": 13
+        },
+        {
+          "diagnostic": 0.12601016117899605,
+          "loss": 2.2696665783207486,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.012949517993952258,
+          "takeover_alarm": false,
+          "update": 14
+        },
+        {
+          "diagnostic": 0.12464761560654815,
+          "loss": 2.331817058616794,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.013906527182635395,
+          "takeover_alarm": false,
+          "update": 15
+        },
+        {
+          "diagnostic": 0.12490876257342162,
+          "loss": 2.284023722238808,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.014840348612980423,
+          "takeover_alarm": false,
+          "update": 16
+        },
+        {
+          "diagnostic": 0.1294460141758547,
+          "loss": 2.1686147833825156,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.015746396398616885,
+          "takeover_alarm": false,
+          "update": 17
+        },
+        {
+          "diagnostic": 0.13009793438720405,
+          "loss": 2.2475319964008227,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.01661033084125294,
+          "takeover_alarm": false,
+          "update": 18
+        },
+        {
+          "diagnostic": 0.12164302157810751,
+          "loss": 2.347453388111458,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.017440695766695317,
+          "takeover_alarm": false,
+          "update": 19
+        },
+        {
+          "diagnostic": 0.12453144727142212,
+          "loss": 2.287029767115916,
+          "objective": "pi",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.01822391693805224,
+          "takeover_alarm": false,
+          "update": 20
+        }
+      ],
+      "structural_pice": [
+        {
+          "diagnostic": 0.7450337867868032,
+          "loss": -0.6926423395452725,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.018949448301714033,
+          "takeover_alarm": false,
+          "update": 1
+        },
+        {
+          "diagnostic": 0.7608238424230129,
+          "loss": -0.7676282140723953,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.017949789338587152,
+          "takeover_alarm": false,
+          "update": 2
+        },
+        {
+          "diagnostic": 0.769762198171789,
+          "loss": -0.7135682335438993,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.018338268972270925,
+          "takeover_alarm": false,
+          "update": 3
+        },
+        {
+          "diagnostic": 0.7605703875904073,
+          "loss": -0.7454911355014691,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.0187416494110713,
+          "takeover_alarm": false,
+          "update": 4
+        },
+        {
+          "diagnostic": 0.7559893562316724,
+          "loss": -0.6631394498209818,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.0193111220051079,
+          "takeover_alarm": false,
+          "update": 5
+        },
+        {
+          "diagnostic": 0.7778152457023433,
+          "loss": -0.7274085734714908,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.019483015838156627,
+          "takeover_alarm": false,
+          "update": 6
+        },
+        {
+          "diagnostic": 0.7834847034111178,
+          "loss": -0.722852780264851,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.01976963674632742,
+          "takeover_alarm": false,
+          "update": 7
+        },
+        {
+          "diagnostic": 0.7881684614249425,
+          "loss": -0.6995673588150616,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.02015370943709792,
+          "takeover_alarm": false,
+          "update": 8
+        },
+        {
+          "diagnostic": 0.7757787946404372,
+          "loss": -0.7174248179751288,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.02053460276756409,
+          "takeover_alarm": false,
+          "update": 9
+        },
+        {
+          "diagnostic": 0.7784144136161764,
+          "loss": -0.7241130673480758,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.02098004294544801,
+          "takeover_alarm": false,
+          "update": 10
+        },
+        {
+          "diagnostic": 0.7830567655348036,
+          "loss": -0.7284056827778628,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.0215201920167782,
+          "takeover_alarm": false,
+          "update": 11
+        },
+        {
+          "diagnostic": 0.7907034528209583,
+          "loss": -0.7716783801402209,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.022136869496396292,
+          "takeover_alarm": false,
+          "update": 12
+        },
+        {
+          "diagnostic": 0.7918890580705565,
+          "loss": -0.7159737803048253,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.02286842856897009,
+          "takeover_alarm": false,
+          "update": 13
+        },
+        {
+          "diagnostic": 0.7876206236491831,
+          "loss": -0.7051100744011727,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.023573591795281207,
+          "takeover_alarm": false,
+          "update": 14
+        },
+        {
+          "diagnostic": 0.7852083315830723,
+          "loss": -0.7544274536966442,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.02419918770188348,
+          "takeover_alarm": false,
+          "update": 15
+        },
+        {
+          "diagnostic": 0.7912442280265714,
+          "loss": -0.7514913353819243,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.024888780954243257,
+          "takeover_alarm": false,
+          "update": 16
+        },
+        {
+          "diagnostic": 0.801889270932274,
+          "loss": -0.7402839050706292,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.025607585466939694,
+          "takeover_alarm": false,
+          "update": 17
+        },
+        {
+          "diagnostic": 0.7863082665358505,
+          "loss": -0.7603992522018137,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.026353564437525193,
+          "takeover_alarm": false,
+          "update": 18
+        },
+        {
+          "diagnostic": 0.7827763128827165,
+          "loss": -0.7551657226559885,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.02711456231015086,
+          "takeover_alarm": false,
+          "update": 19
+        },
+        {
+          "diagnostic": 0.7813833100669786,
+          "loss": -0.7194977301145282,
+          "objective": "pice",
+          "residual_energy_fraction": 0.0,
+          "residual_gate": 0.0,
+          "stage": "structural",
+          "structural_gate": -0.027885687583070112,
+          "takeover_alarm": false,
+          "update": 20
+        }
+      ]
+    },
+    "seconds": {
+      "instant_pi": 12.782925399951637,
+      "joint_j2": 19.237769400002435,
+      "residual_pice": 15.537487400055397,
+      "structural_pi": 13.925304599979427,
+      "structural_pice": 13.264261600037571
+    }
+  },
+  "validation": {
+    "runs": [
+      {
+        "contribution_ess_fraction": 0.0334,
+        "cost_per_path": 2.21061499993084e-05,
+        "estimate": 0.0334,
+        "event_fraction": 0.0334,
+        "method": "natural",
+        "seconds": 0.442122999986168,
+        "seed": 20101.0,
+        "single_path_variance": 0.032286054302722765,
+        "standard_error": 0.001270552130034867
+      },
+      {
+        "contribution_ess_fraction": 0.0332,
+        "cost_per_path": 1.8612599998596123e-05,
+        "estimate": 0.0332,
+        "event_fraction": 0.0332,
+        "method": "natural",
+        "seconds": 0.3722519999719225,
+        "seed": 20102.0,
+        "single_path_variance": 0.032099364968260054,
+        "standard_error": 0.0012668734145181999
+      },
+      {
+        "contribution_ess_fraction": 0.0326,
+        "cost_per_path": 2.0935184997506438e-05,
+        "estimate": 0.0326,
+        "event_fraction": 0.0326,
+        "method": "natural",
+        "seconds": 0.4187036999501288,
+        "seed": 20103.0,
+        "single_path_variance": 0.03153881694085018,
+        "standard_error": 0.0012557630537018156
+      },
+      {
+        "contribution_ess_fraction": 0.07601098306076418,
+        "cost_per_path": 6.421211000124458e-05,
+        "estimate": 0.03389421334972662,
+        "event_fraction": 0.0796,
+        "method": "instant",
+        "seconds": 1.2842422000248916,
+        "seed": 20101.0,
+        "single_path_variance": 0.013965718776735313,
+        "standard_error": 0.0008356350512255728
+      },
+      {
+        "contribution_ess_fraction": 0.07250016432959822,
+        "cost_per_path": 7.709379000007175e-05,
+        "estimate": 0.032174000286885746,
+        "event_fraction": 0.07605,
+        "method": "instant",
+        "seconds": 1.541875800001435,
+        "seed": 20102.0,
+        "single_path_variance": 0.01324361930915386,
+        "standard_error": 0.0008137450248435888
+      },
+      {
+        "contribution_ess_fraction": 0.07199066955142518,
+        "cost_per_path": 6.920100999996066e-05,
+        "estimate": 0.03170064646972743,
+        "event_fraction": 0.07545,
+        "method": "instant",
+        "seconds": 1.3840201999992132,
+        "seed": 20103.0,
+        "single_path_variance": 0.012954900536829555,
+        "standard_error": 0.0008048260848416121
+      },
+      {
+        "contribution_ess_fraction": 0.19191098903653514,
+        "cost_per_path": 6.700103499752004e-05,
+        "estimate": 0.032707348686233956,
+        "event_fraction": 0.26925,
+        "method": "structural",
+        "seconds": 1.3400206999504007,
+        "seed": 20101.0,
+        "single_path_variance": 0.004504760999070096,
+        "standard_error": 0.0004745925093735728
+      },
+      {
+        "contribution_ess_fraction": 0.19468339553402192,
+        "cost_per_path": 6.371833500161301e-05,
+        "estimate": 0.03341962949137181,
+        "event_fraction": 0.2706,
+        "method": "structural",
+        "seconds": 1.2743667000322603,
+        "seed": 20102.0,
+        "single_path_variance": 0.004620220664130544,
+        "standard_error": 0.00048063607147875114
+      },
+      {
+        "contribution_ess_fraction": 0.190970591237512,
+        "cost_per_path": 5.8033210001303813e-05,
+        "estimate": 0.03400598078581747,
+        "event_fraction": 0.27195,
+        "method": "structural",
+        "seconds": 1.1606642000260763,
+        "seed": 20103.0,
+        "single_path_variance": 0.004899256095124579,
+        "standard_error": 0.0004949371725342813
+      },
+      {
+        "contribution_ess_fraction": 0.19189327360005154,
+        "cost_per_path": 5.9194564999779685e-05,
+        "estimate": 0.032732139717892,
+        "event_fraction": 0.2678,
+        "method": "residual",
+        "seconds": 1.1838912999955937,
+        "seed": 20101.0,
+        "single_path_variance": 0.004512107912915342,
+        "standard_error": 0.0004749793633893657
+      },
+      {
+        "contribution_ess_fraction": 0.19420989322302998,
+        "cost_per_path": 5.865147500007879e-05,
+        "estimate": 0.033340694259055656,
+        "event_fraction": 0.26865,
+        "method": "residual",
+        "seconds": 1.1730295000015758,
+        "seed": 20102.0,
+        "single_path_variance": 0.004612342769270733,
+        "standard_error": 0.0004802261326328843
+      },
+      {
+        "contribution_ess_fraction": 0.19126699969213115,
+        "cost_per_path": 5.8135359999141654e-05,
+        "estimate": 0.03390227939419225,
+        "event_fraction": 0.27025,
+        "method": "residual",
+        "seconds": 1.1627071999828331,
+        "seed": 20103.0,
+        "single_path_variance": 0.004860093585001226,
+        "standard_error": 0.0004929550478999696
+      },
+      {
+        "contribution_ess_fraction": 0.21725260250137393,
+        "cost_per_path": 5.8840914999018426e-05,
+        "estimate": 0.033064619465376345,
+        "event_fraction": 0.3674,
+        "method": "joint_j2",
+        "seconds": 1.1768182999803685,
+        "seed": 20101.0,
+        "single_path_variance": 0.003939176294083335,
+        "standard_error": 0.00044380042215411055
+      },
+      {
+        "contribution_ess_fraction": 0.22519163890503732,
+        "cost_per_path": 5.8270250001805834e-05,
+        "estimate": 0.033417574344374826,
+        "event_fraction": 0.3694,
+        "method": "joint_j2",
+        "seconds": 1.1654050000361167,
+        "seed": 20102.0,
+        "single_path_variance": 0.003842497539263228,
+        "standard_error": 0.0004383205185285779
+      },
+      {
+        "contribution_ess_fraction": 0.22208766652378034,
+        "cost_per_path": 5.769409000058659e-05,
+        "estimate": 0.03350268652343525,
+        "event_fraction": 0.36955,
+        "method": "joint_j2",
+        "seconds": 1.1538818000117317,
+        "seed": 20103.0,
+        "single_path_variance": 0.00393176180044948,
+        "standard_error": 0.0004433825549370137
+      }
+    ],
+    "summary": {
+      "instant": {
+        "combined_standard_error": 0.0004723713147674232,
+        "difference_z_vs_natural": -0.5486386667926532,
+        "mean_cost_per_path": 7.016897000042565e-05,
+        "mean_estimate": 0.0325896200354466,
+        "mean_single_path_variance": 0.013388079540906242,
+        "online_work_proxy": 9.394277516691626e-07,
+        "online_work_vrf_vs_instant": 1.0
+      },
+      "joint_j2": {
+        "combined_standard_error": 0.0002550973194880299,
+        "difference_z_vs_natural": 0.33832671900127775,
+        "mean_cost_per_path": 5.826841833380362e-05,
+        "mean_estimate": 0.033328293444395474,
+        "mean_single_path_variance": 0.003904478544598681,
+        "online_work_proxy": 2.2750778921203665e-07,
+        "online_work_vrf_vs_instant": 4.129211377433845
+      },
+      "natural": {
+        "combined_standard_error": 0.000730008509127854,
+        "difference_z_vs_natural": 0.0,
+        "mean_cost_per_path": 2.0551311665136987e-05,
+        "mean_estimate": 0.03306666666666667,
+        "mean_single_path_variance": 0.03197474540394433,
+        "online_work_proxy": 6.571229582098664e-07,
+        "online_work_vrf_vs_instant": 1.4296072598473057
+      },
+      "residual": {
+        "combined_standard_error": 0.0002787326902167828,
+        "difference_z_vs_natural": 0.33064657777681383,
+        "mean_cost_per_path": 5.866046666633338e-05,
+        "mean_estimate": 0.033325037790379965,
+        "mean_single_path_variance": 0.0046615147557291,
+        "online_work_proxy": 2.7344663094306807e-07,
+        "online_work_vrf_vs_instant": 3.4355067693803574
+      },
+      "structural": {
+        "combined_standard_error": 0.00027912798496513327,
+        "difference_z_vs_natural": 0.39790824336233854,
+        "mean_cost_per_path": 6.291752666681229e-05,
+        "mean_estimate": 0.033377652987807746,
+        "mean_single_path_variance": 0.00467474591944174,
+        "online_work_proxy": 2.941234510470476e-07,
+        "online_work_vrf_vs_instant": 3.193991326855787
+      }
+    }
+  }
+}

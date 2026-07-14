@@ -1,0 +1,51 @@
+schema_version: 1
+protocol_id: g3-vfo-staged-development
+frozen: false
+
+seeds:
+  initialization: 20001
+  instant_pi: 20002
+  structural_pi: 20003
+  structural_pice: 20004
+  residual_pice: 20005
+  joint_j2: 20006
+  validation: [20101, 20102, 20103]
+
+model:
+  spot: 100.0
+  maturity: 0.25
+  dt: 0.0078125
+  H: 0.10
+  rho: -0.70
+  eta: 1.2
+  xi: 0.04
+
+task:
+  event_type: terminal
+  hard_barrier: 80.0
+  soft_barrier: 85.0
+  soft_scale: 5.0
+
+controller:
+  soe_terms: 8
+  hidden_dim: 32
+  residual_dim: 16
+  control_bound: [6.0, 6.0]
+
+training:
+  paths_per_batch: 1500
+  instant_pi_updates: 20
+  structural_pi_updates: 20
+  structural_pice_updates: 20
+  residual_pice_updates: 20
+  joint_j2_updates: 20
+  pi_learning_rate: 0.001
+  pice_learning_rate: 0.001
+  j2_learning_rate: 0.0003
+  gradient_clip: 5.0
+  behavior_refresh: 5
+
+validation:
+  paths_per_seed: 20000
+  maximum_absolute_difference_z: 3.0
+  maximum_residual_energy_fraction: 0.90

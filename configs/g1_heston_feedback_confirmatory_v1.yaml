@@ -1,0 +1,76 @@
+schema_version: 1
+protocol_id: g1-two-driver-heston-feedback-confirmatory-v1
+frozen: true
+
+# Frozen after the development run identified two specification bugs:
+# (1) continuous-reference bias is tested only on the finest declared grid;
+# (2) the low-variance oracle derivative check uses its converged 1e-4 step.
+# These roots are new and the historical sealed roots 11101--11120 remain unused.
+seeds:
+  oracle_initialization: 14001
+  cem: 14000
+  pi: 14002
+  pice: 14003
+  j2: 14004
+  validation: [15001, 15002, 15003, 15004, 15005]
+
+model:
+  spot: 100.0
+  variance: 0.04
+  maturity: 1.0
+  rate: 0.0
+  dividend_yield: 0.0
+  kappa: 1.5
+  theta: 0.04
+  xi: 0.30
+  rho: -0.70
+  dt: 0.00390625
+
+event:
+  target_probability: 1.0e-3
+  soft_temperature: 0.05
+
+oracle:
+  train_time_fractions: [0.0, 0.2, 0.4, 0.6, 0.8]
+  validation_time_fractions: [0.1, 0.3, 0.5, 0.7]
+  train_spot_multipliers: [0.75, 0.9, 1.0, 1.1]
+  validation_spot_multipliers: [0.8, 0.95, 1.05]
+  train_variance_multipliers: [0.25, 1.0, 2.0]
+  validation_variance_multipliers: [0.5, 1.5]
+  distillation_epochs: 1000
+  learning_rate: 0.003
+  maximum_normalized_rmse: 0.35
+  minimum_mean_cosine: 0.90
+  minimum_sign_agreement: 0.85
+  maximum_gradient_discrepancy: 1.0e-4
+  variance_relative_step: 0.0025
+
+controller:
+  architecture: mlp
+  hidden_dim: 32
+  n_layers: 2
+  control_bound: [8.0, 8.0]
+
+cem:
+  paths_per_iteration: 20000
+  max_iterations: 8
+  elite_quantile: 0.90
+  smoothing: 0.70
+  initial_control: -1.0
+
+training:
+  paths_per_batch: 5000
+  pi_updates: 50
+  pice_updates: 50
+  j2_updates: 50
+  pi_learning_rate: 0.001
+  pice_learning_rate: 0.001
+  j2_learning_rate: 0.0003
+  behavior_refresh: 10
+  gradient_clip: 5.0
+
+validation:
+  paths_per_seed: 50000
+  dt_grid: [0.015625, 0.0078125, 0.00390625]
+  maximum_absolute_bias_z: 3.0
+  maximum_relative_refinement_change: 0.10
