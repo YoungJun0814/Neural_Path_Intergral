@@ -31,7 +31,9 @@ selection gates are documented in
 The post-G5 archive of non-selected theorem, tensor-network, CEM, and quantum
 research directions is
 [`RESEARCH_DIRECTION_BACKLOG_POST_G5_2026-07-16.md`](RESEARCH_DIRECTION_BACKLOG_POST_G5_2026-07-16.md).
-The latest executed stop-gate plan is
+The active path-functional spectral Doob--Volterra plan is
+[`PATH_INTEGRAL_RESEARCH_PLAN_V6.md`](PATH_INTEGRAL_RESEARCH_PLAN_V6.md).
+The preceding executed neural stop-gate plan is
 [`PATH_INTEGRAL_RESEARCH_PLAN_V5.md`](PATH_INTEGRAL_RESEARCH_PLAN_V5.md).
 The latest sealed confirmatory review is
 [`docs/phase_reviews/G2_V3_CONFIRMATORY_REVIEW_2026-07-13.md`](docs/phase_reviews/G2_V3_CONFIRMATORY_REVIEW_2026-07-13.md).
