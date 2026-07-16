@@ -6,10 +6,19 @@ from .controllers import (
     ConstantTwoDriverControl,
     LeanRBergomiControl,
     RBergomiTaskMode,
+    SpectralDoobVolterraControl,
+    TimePiecewiseTwoDriverControl,
     VFOBranchDiagnostics,
     VolterraFollmerOperator,
 )
 from .divergence import TiltedDivergenceDiagnostics, tilted_divergence_diagnostics
+from .gaussian_excursion_oracle import (
+    GaussianExcursionOracle,
+    GaussianExcursionSample,
+    GaussianExcursionSpec,
+    build_gaussian_excursion_oracle,
+    simulate_gaussian_excursion,
+)
 from .gaussian_mixture_oracle import (
     gaussian_single_drift_second_moment,
     gaussian_symmetric_mixture_log_q_over_p,
@@ -40,6 +49,7 @@ from .mixture import (
     sample_mixture_labels,
     selected_component_log_p_over_q,
 )
+from .path_functionals import DownsideExcursionTask
 from .pice import ConstantPICEFit, fit_constant_pice, reconstruct_candidate_increments
 from .potentials import terminal_left_tail_potential
 from .rbergomi_mixture import (
@@ -52,9 +62,15 @@ __all__ = [
     "ConstantPICEFit",
     "CEMAnchoredResidualControl",
     "ConstantTwoDriverControl",
+    "DownsideExcursionTask",
+    "GaussianExcursionOracle",
+    "GaussianExcursionSample",
+    "GaussianExcursionSpec",
     "LeanRBergomiControl",
     "RBergomiMixtureSample",
     "RBergomiTaskMode",
+    "SpectralDoobVolterraControl",
+    "TimePiecewiseTwoDriverControl",
     "TiltedDivergenceDiagnostics",
     "VFOBranchDiagnostics",
     "VolterraFollmerOperator",
@@ -62,6 +78,7 @@ __all__ = [
     "HestonOracleControl",
     "HestonOracleNumerics",
     "brownian_log_likelihood",
+    "build_gaussian_excursion_oracle",
     "fit_constant_pice",
     "gaussian_exponential_tilt_log_normalizer",
     "gaussian_exponential_tilt_optimal_control",
@@ -87,6 +104,7 @@ __all__ = [
     "log_mixture_q_over_p",
     "sample_mixture_labels",
     "selected_component_log_p_over_q",
+    "simulate_gaussian_excursion",
     "simulate_rbergomi_mixture",
     "terminal_left_tail_potential",
     "tilted_divergence_diagnostics",

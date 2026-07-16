@@ -1,0 +1,54 @@
+schema_version: 1
+protocol_id: g0-piecewise-cem-downside-excursion-v1
+frozen: true
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  dt: 0.015625
+  H: 0.1
+  eta: 1.9
+  xi: 0.04
+  rho: -0.7
+
+task:
+  hit_barrier: 30.0
+  stress_level: 60.0
+  minimum_occupation: 0.30
+  hit_scale: 5.0
+  occupation_scale: 0.05
+
+# One-shot natural-law calibration (seed 6101, 30,000 paths): 0.0036333.
+# These thresholds are frozen; G0 failure must not trigger threshold redesign.
+calibration:
+  seed: 6101
+  paths: 30000
+  observed_probability: 0.0036333333333333335
+  target_probability_interval: [0.001, 0.01]
+
+cem:
+  constant_segments: 1
+  piecewise_segments: 4
+  initial_segment: [1.0, -1.0]
+  paths_per_iteration: 10000
+  max_iterations: 8
+  elite_quantile: 0.90
+  smoothing: 0.60
+  min_elite_paths: 96
+  control_bound: 8.0
+  target_level_repetitions: 2
+
+validation:
+  paths_per_seed: 40000
+  timing_repeats: 2
+  target_relative_error: 0.10
+  minimum_raw_vrf: 1.25
+  minimum_work_vrf: 1.10
+  minimum_improving_seeds: 4
+  maximum_absolute_difference_z: 3.0
+  maximum_break_even_queries: 50
+
+seeds:
+  constant_training: 6201
+  piecewise_training: 6204
+  validation: [6301, 6302, 6303, 6304, 6305]

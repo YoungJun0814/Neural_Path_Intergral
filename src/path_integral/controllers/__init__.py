@@ -5,7 +5,9 @@ from .markov import (
     ConstantTwoDriverControl,
     LeanRBergomiControl,
     RBergomiTaskMode,
+    TimePiecewiseTwoDriverControl,
 )
+from .sdv import SpectralDoobVolterraControl
 from .vfo import VFOBranchDiagnostics, VolterraFollmerOperator
 
 __all__ = [
@@ -13,6 +15,8 @@ __all__ = [
     "ConstantTwoDriverControl",
     "LeanRBergomiControl",
     "RBergomiTaskMode",
+    "TimePiecewiseTwoDriverControl",
+    "SpectralDoobVolterraControl",
     "VFOBranchDiagnostics",
     "VolterraFollmerOperator",
 ]

@@ -1,0 +1,205 @@
+{
+  "constant_search": [
+    {
+      "control": -2.5,
+      "estimate": 0.03329000387804006,
+      "second_moment": 0.007778570204597006
+    },
+    {
+      "control": -2.0,
+      "estimate": 0.033406038217764424,
+      "second_moment": 0.005577601201996492
+    },
+    {
+      "control": -1.5,
+      "estimate": 0.03286916470909996,
+      "second_moment": 0.005294083891287444
+    },
+    {
+      "control": -1.0,
+      "estimate": 0.03307179160117471,
+      "second_moment": 0.007162873212574709
+    },
+    {
+      "control": -0.5,
+      "estimate": 0.0340950106827525,
+      "second_moment": 0.013563210066713273
+    }
+  ],
+  "convergence_differences": [
+    0.0009417630961639153,
+    0.00022275807963363647
+  ],
+  "gates": {
+    "grid_convergence": true,
+    "natural_reference_agreement": true,
+    "oracle_reference_z": true,
+    "second_moment_below_constant": true
+  },
+  "metrics": {
+    "reference_z": -0.23653875409531935,
+    "second_moment_vrf_vs_constant": 3.612136617069552
+  },
+  "passed": true,
+  "protocol_id": "m0-gaussian-excursion-oracle-v1",
+  "protocol_sha256": "bd74ed2edcc23aa279c29e20324623bfffda2227f5b5c9fce6e33b6cc3cf4c17",
+  "reference_probabilities": [
+    0.034484812411746155,
+    0.03354304931558224,
+    0.0333202912359486
+  ],
+  "runs": [
+    {
+      "estimate": 0.03397,
+      "event_fraction": 0.03397,
+      "mean_control_energy": 0.0,
+      "mean_likelihood": 1.0,
+      "method": "natural",
+      "second_moment": 0.03397,
+      "seed": 6002,
+      "standard_error": 0.0005728557171197004
+    },
+    {
+      "estimate": 0.033115672431871655,
+      "event_fraction": 0.35188,
+      "mean_control_energy": 2.25,
+      "mean_likelihood": 0.9899803921717238,
+      "method": "constant",
+      "second_moment": 0.005265388667012014,
+      "seed": 6002,
+      "standard_error": 0.00020417596808201818
+    },
+    {
+      "estimate": 0.03328187438394236,
+      "event_fraction": 0.93852,
+      "mean_control_energy": 6.608175568523175,
+      "mean_likelihood": 0.42324343648394447,
+      "method": "projected_oracle",
+      "second_moment": 0.001508595707913635,
+      "seed": 6002,
+      "standard_error": 6.331797174346804e-05
+    },
+    {
+      "estimate": 0.03342,
+      "event_fraction": 0.03342,
+      "mean_control_energy": 0.0,
+      "mean_likelihood": 1.0,
+      "method": "natural",
+      "second_moment": 0.03342,
+      "seed": 6003,
+      "standard_error": 0.0005683610352079595
+    },
+    {
+      "estimate": 0.033195942782043186,
+      "event_fraction": 0.35286,
+      "mean_control_energy": 2.25,
+      "mean_likelihood": 0.9955200498523868,
+      "method": "constant",
+      "second_moment": 0.005748737883283802,
+      "seed": 6003,
+      "standard_error": 0.0002155646940997634
+    },
+    {
+      "estimate": 0.03328900772667188,
+      "event_fraction": 0.93906,
+      "mean_control_energy": 6.604726374736269,
+      "mean_likelihood": 0.5736166548211531,
+      "method": "projected_oracle",
+      "second_moment": 0.0015081837710568845,
+      "seed": 6003,
+      "standard_error": 6.324790399118563e-05
+    },
+    {
+      "estimate": 0.03297,
+      "event_fraction": 0.03297,
+      "mean_control_energy": 0.0,
+      "mean_likelihood": 1.0,
+      "method": "natural",
+      "second_moment": 0.03297,
+      "seed": 6004,
+      "standard_error": 0.0005646529724793746
+    },
+    {
+      "estimate": 0.03316812188806305,
+      "event_fraction": 0.35119,
+      "mean_control_energy": 2.25,
+      "mean_likelihood": 1.0064557742904257,
+      "method": "constant",
+      "second_moment": 0.005424197470627966,
+      "seed": 6004,
+      "standard_error": 0.00020794509857677772
+    },
+    {
+      "estimate": 0.03317228207787531,
+      "event_fraction": 0.93622,
+      "mean_control_energy": 6.630466494608708,
+      "mean_likelihood": 0.6357904702935904,
+      "method": "projected_oracle",
+      "second_moment": 0.00149802552426059,
+      "seed": 6004,
+      "standard_error": 6.305784664088097e-05
+    },
+    {
+      "estimate": 0.03308,
+      "event_fraction": 0.03308,
+      "mean_control_energy": 0.0,
+      "mean_likelihood": 1.0,
+      "method": "natural",
+      "second_moment": 0.03308,
+      "seed": 6005,
+      "standard_error": 0.0005655619635401111
+    },
+    {
+      "estimate": 0.033606332043674726,
+      "event_fraction": 0.35434,
+      "mean_control_energy": 2.25,
+      "mean_likelihood": 0.990362300248299,
+      "method": "constant",
+      "second_moment": 0.005493365776791286,
+      "seed": 6005,
+      "standard_error": 0.00020890246201517591
+    },
+    {
+      "estimate": 0.03328675704095353,
+      "event_fraction": 0.93851,
+      "mean_control_energy": 6.596913612524778,
+      "mean_likelihood": 0.5587903768517046,
+      "method": "projected_oracle",
+      "second_moment": 0.001511711400003551,
+      "seed": 6005,
+      "standard_error": 6.353796052538267e-05
+    },
+    {
+      "estimate": 0.03405,
+      "event_fraction": 0.03405,
+      "mean_control_energy": 0.0,
+      "mean_likelihood": 1.0,
+      "method": "natural",
+      "second_moment": 0.03405,
+      "seed": 6006,
+      "standard_error": 0.0005735061151309905
+    },
+    {
+      "estimate": 0.03334676113006004,
+      "event_fraction": 0.35518,
+      "mean_control_energy": 2.25,
+      "mean_likelihood": 0.9830829336894107,
+      "method": "constant",
+      "second_moment": 0.005271556501679377,
+      "seed": 6006,
+      "standard_error": 0.00020395076905298224
+    },
+    {
+      "estimate": 0.03326872831267685,
+      "event_fraction": 0.9392,
+      "mean_control_energy": 6.5780223303000644,
+      "mean_likelihood": 0.5802836467709919,
+      "method": "projected_oracle",
+      "second_moment": 0.0015045515444289163,
+      "seed": 6006,
+      "standard_error": 6.306720529392385e-05
+    }
+  ],
+  "selected_constant_control": -1.5,
+  "smoke": false
+}

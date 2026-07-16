@@ -1,0 +1,27 @@
+schema_version: 1
+protocol_id: m0-gaussian-excursion-oracle-v1
+frozen: true
+
+spec:
+  steps: 16
+  maturity: 1.0
+  hit_barrier: -2.0
+  stress_level: -0.8
+  minimum_occupation: 0.25
+
+oracle:
+  state_minimum: -6.0
+  state_maximum: 6.0
+  state_points: [101, 201, 401]
+  control_bound: 8.0
+
+constant_search:
+  controls: [-2.5, -2.0, -1.5, -1.0, -0.5]
+  paths: 50000
+  seed: 6001
+
+validation:
+  paths_per_seed: 100000
+  seeds: [6002, 6003, 6004, 6005, 6006]
+  maximum_reference_z: 4.0
+  minimum_second_moment_vrf: 1.25

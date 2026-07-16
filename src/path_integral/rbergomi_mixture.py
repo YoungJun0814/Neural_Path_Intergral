@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
+from typing import cast
 
 import torch
 
@@ -41,7 +42,7 @@ def replay_rbergomi_control_on_target_paths(
     *,
     path_mask: torch.Tensor | None = None,
 ) -> torch.Tensor:
-    """Causally replay a stateless controller on fixed canonical target paths."""
+    """Causally replay a stateless or stateful controller on canonical paths."""
     target = paths.target_brownian_increments
     if target is None:
         raise ValueError("target Brownian increments must be recorded")
@@ -62,14 +63,27 @@ def replay_rbergomi_control_on_target_paths(
         return torch.empty(
             (0, steps, drivers), device=target.device, dtype=target.dtype
         )
+    reset_memory = getattr(control, "reset_for_simulation", None)
+    if callable(reset_memory):
+        reset_memory(batch_size=batch, device=target.device, dtype=target.dtype)
     controls: list[torch.Tensor] = []
     for step in range(steps):
-        value = control(
-            step * paths.step_dt,
-            paths.spot[path_mask, step],
-            paths.variance[path_mask, step],
-            paths.volterra[path_mask, step],
-        )
+        if bool(getattr(control, "uses_running_minimum", False)):
+            stateful_control = cast(Callable[..., torch.Tensor], control)
+            value = stateful_control(
+                step * paths.step_dt,
+                paths.spot[path_mask, step],
+                paths.variance[path_mask, step],
+                paths.volterra[path_mask, step],
+                paths.running_minimum[path_mask, step],
+            )
+        else:
+            value = control(
+                step * paths.step_dt,
+                paths.spot[path_mask, step],
+                paths.variance[path_mask, step],
+                paths.volterra[path_mask, step],
+            )
         if value.shape != (batch, 2):
             raise ValueError("replayed controller must return shape (batch, 2)")
         if value.device != target.device or value.dtype != target.dtype:
@@ -77,6 +91,9 @@ def replay_rbergomi_control_on_target_paths(
         if not torch.isfinite(value).all():
             raise ValueError("replayed control must be finite")
         controls.append(value)
+        observe_increment = getattr(control, "observe_target_increment", None)
+        if callable(observe_increment):
+            observe_increment(target[path_mask, step, 0], paths.step_dt)
     return torch.stack(controls, dim=1)
 
 

@@ -1,0 +1,547 @@
+{
+  "break_even": {
+    "constant_query_seconds": 0.6319251222921136,
+    "incremental_training_seconds": 0.7274586999974417,
+    "piecewise_query_seconds": 0.16591830141193828,
+    "queries": 2
+  },
+  "fits": {
+    "constant": {
+      "control": [
+        [
+          2.352775218554598,
+          -0.7209039609623613
+        ]
+      ],
+      "converged": true,
+      "history": [
+        {
+          "control_after": [
+            [
+              1.7030831218976443,
+              -0.785081552736418
+            ]
+          ],
+          "control_before": [
+            [
+              1.0,
+              -1.0
+            ]
+          ],
+          "control_candidate": [
+            [
+              2.1718052031627404,
+              -0.64180258789403
+            ]
+          ],
+          "elite_fraction": 0.1,
+          "elite_weight_ess": 312.52473282769745,
+          "hard_event_fraction": 0.0519,
+          "hard_probability_estimate": 0.003618132691352067,
+          "iteration": 0,
+          "level": -1.9209654463152386
+        },
+        {
+          "control_after": [
+            [
+              2.178136958045256,
+              -0.7905772379463243
+            ]
+          ],
+          "control_before": [
+            [
+              1.7030831218976443,
+              -0.785081552736418
+            ]
+          ],
+          "control_candidate": [
+            [
+              2.4948395154769964,
+              -0.7942410280862617
+            ]
+          ],
+          "elite_fraction": 0.1373,
+          "elite_weight_ess": 420.81406376716524,
+          "hard_event_fraction": 0.1373,
+          "hard_probability_estimate": 0.0032899132385194514,
+          "iteration": 1,
+          "level": 0.0
+        },
+        {
+          "control_after": [
+            [
+              2.352775218554598,
+              -0.7209039609623613
+            ]
+          ],
+          "control_before": [
+            [
+              2.178136958045256,
+              -0.7905772379463243
+            ]
+          ],
+          "control_candidate": [
+            [
+              2.4692007255608255,
+              -0.6744551096397193
+            ]
+          ],
+          "elite_fraction": 0.2523,
+          "elite_weight_ess": 213.79758234401942,
+          "hard_event_fraction": 0.2523,
+          "hard_probability_estimate": 0.003480609904936297,
+          "iteration": 2,
+          "level": 0.0
+        }
+      ],
+      "seconds": 2.870174200001202
+    },
+    "piecewise": {
+      "control": [
+        [
+          3.2870548930234627,
+          -0.6817601914659581
+        ],
+        [
+          2.8734573407728785,
+          -0.7801504374964134
+        ],
+        [
+          2.1761512957023426,
+          -0.8173874548574247
+        ],
+        [
+          0.8197942361817501,
+          -0.3603176389407034
+        ]
+      ],
+      "converged": true,
+      "history": [
+        {
+          "control_after": [
+            [
+              2.2205219187661887,
+              -0.8874944081460305
+            ],
+            [
+              2.099937362493479,
+              -1.064599397172201
+            ],
+            [
+              1.6391289899184849,
+              -0.8022575360752451
+            ],
+            [
+              0.8890630470552174,
+              -0.7802705650701919
+            ]
+          ],
+          "control_before": [
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              1.0,
+              -1.0
+            ]
+          ],
+          "control_candidate": [
+            [
+              3.034203197943648,
+              -0.8124906802433842
+            ],
+            [
+              2.8332289374891317,
+              -1.1076656619536682
+            ],
+            [
+              2.0652149831974747,
+              -0.6704292267920751
+            ],
+            [
+              0.8151050784253624,
+              -0.6337842751169864
+            ]
+          ],
+          "elite_fraction": 0.1,
+          "elite_weight_ess": 390.201363627943,
+          "hard_event_fraction": 0.0556,
+          "hard_probability_estimate": 0.003607849844627435,
+          "iteration": 0,
+          "level": -1.668249377699367
+        },
+        {
+          "control_after": [
+            [
+              2.7935368281830804,
+              -0.6553708764891975
+            ],
+            [
+              2.822663977496111,
+              -0.8851118750839525
+            ],
+            [
+              2.091003422165226,
+              -0.8911713662328908
+            ],
+            [
+              0.8544572823096365,
+              -0.44730641682091493
+            ]
+          ],
+          "control_before": [
+            [
+              2.2205219187661887,
+              -0.8874944081460305
+            ],
+            [
+              2.099937362493479,
+              -1.064599397172201
+            ],
+            [
+              1.6391289899184849,
+              -0.8022575360752451
+            ],
+            [
+              0.8890630470552174,
+              -0.7802705650701919
+            ]
+          ],
+          "control_candidate": [
+            [
+              3.1755467677943416,
+              -0.5006218553846421
+            ],
+            [
+              3.304481720831199,
+              -0.7654535270251202
+            ],
+            [
+              2.3922530436630534,
+              -0.9504472530046546
+            ],
+            [
+              0.8313867724792492,
+              -0.22533031798806363
+            ]
+          ],
+          "elite_fraction": 0.1852,
+          "elite_weight_ess": 475.73841648383456,
+          "hard_event_fraction": 0.1852,
+          "hard_probability_estimate": 0.0037300530673148743,
+          "iteration": 1,
+          "level": 0.0
+        },
+        {
+          "control_after": [
+            [
+              3.2870548930234627,
+              -0.6817601914659581
+            ],
+            [
+              2.8734573407728785,
+              -0.7801504374964134
+            ],
+            [
+              2.1761512957023426,
+              -0.8173874548574247
+            ],
+            [
+              0.8197942361817501,
+              -0.3603176389407034
+            ]
+          ],
+          "control_before": [
+            [
+              2.7935368281830804,
+              -0.6553708764891975
+            ],
+            [
+              2.822663977496111,
+              -0.8851118750839525
+            ],
+            [
+              2.091003422165226,
+              -0.8911713662328908
+            ],
+            [
+              0.8544572823096365,
+              -0.44730641682091493
+            ]
+          ],
+          "control_candidate": [
+            [
+              3.616066936250384,
+              -0.699353068117132
+            ],
+            [
+              2.90731958295739,
+              -0.7101761457713872
+            ],
+            [
+              2.2329165447270864,
+              -0.7681981806071139
+            ],
+            [
+              0.7966855387631592,
+              -0.3023251203538957
+            ]
+          ],
+          "elite_fraction": 0.3227,
+          "elite_weight_ess": 342.5055369137313,
+          "hard_event_fraction": 0.3227,
+          "hard_probability_estimate": 0.0038539310769560436,
+          "iteration": 2,
+          "level": 0.0
+        }
+      ],
+      "seconds": 3.5976328999986436
+    }
+  },
+  "gates": {
+    "break_even": true,
+    "paired_consistency": true,
+    "raw_vrf": true,
+    "reported_bias": true,
+    "work_vrf": true
+  },
+  "passed": true,
+  "protocol_id": "g0-piecewise-cem-downside-excursion-v1",
+  "protocol_sha256": "761b6912aad0e4ed5fd82fd2abfc5f94acf1e6bf5d440608fc42ef29cef0a2c7",
+  "smoke": false,
+  "task": {
+    "hit_barrier": 30.0,
+    "hit_scale": 5.0,
+    "minimum_occupation": 0.3,
+    "occupation_scale": 0.05,
+    "stress_level": 60.0
+  },
+  "validation": {
+    "difference_z_vs_natural": 0.7232160118323226,
+    "geometric_raw_vrf": 2.9088256921897897,
+    "geometric_work_vrf": 2.8453294558966653,
+    "improving_seeds": 5,
+    "paired_log_raw_ratios": [
+      2.7510812732705427,
+      0.9875777172099546,
+      0.9520085119549723,
+      0.04179877957983668,
+      0.6062810056622607
+    ],
+    "paired_log_work_ratios": [
+      2.776626009810222,
+      0.9522520453143345,
+      0.8518406692265097,
+      0.001439509824293483,
+      0.6462360787993418
+    ],
+    "runs": [
+      {
+        "cost_per_path": 8.118733249998513e-05,
+        "estimate": 0.003725,
+        "event_fraction": 0.003725,
+        "method": "natural",
+        "online_work_proxy": 3.013038211775144e-07,
+        "second_moment": 0.003725,
+        "seed": 6301.0,
+        "single_path_variance": 0.0037112171554296303,
+        "standard_error": 0.00030459879987573943
+      },
+      {
+        "cost_per_path": 8.131983375001255e-05,
+        "estimate": 0.003914111595473124,
+        "event_fraction": 0.2942,
+        "method": "constant_cem",
+        "online_work_proxy": 2.400784513546181e-07,
+        "second_moment": 0.002967520714695081,
+        "seed": 6301.0,
+        "single_path_variance": 0.002952274251969693,
+        "standard_error": 0.00027167417304418604
+      },
+      {
+        "cost_per_path": 7.926884750002045e-05,
+        "estimate": 0.003613612705356284,
+        "event_fraction": 0.378825,
+        "method": "piecewise_cem",
+        "online_work_proxy": 1.4944446223677788e-08,
+        "second_moment": 0.00020158210098915062,
+        "seed": 6301.0,
+        "single_path_variance": 0.0001885286174202789,
+        "standard_error": 6.865286181585566e-05
+      },
+      {
+        "cost_per_path": 7.705606499998794e-05,
+        "estimate": 0.0038,
+        "event_fraction": 0.0038,
+        "method": "natural",
+        "online_work_proxy": 2.9170765011266545e-07,
+        "second_moment": 0.0038,
+        "seed": 6302.0,
+        "single_path_variance": 0.003785654641366791,
+        "standard_error": 0.0003076383689239198
+      },
+      {
+        "cost_per_path": 8.323902874999476e-05,
+        "estimate": 0.003620675947385385,
+        "event_fraction": 0.295625,
+        "method": "constant_cem",
+        "online_work_proxy": 3.9388600633282066e-08,
+        "second_moment": 0.0004862961696285063,
+        "seed": 6302.0,
+        "single_path_variance": 0.0004731987052802385,
+        "standard_error": 0.00010876565465258765
+      },
+      {
+        "cost_per_path": 8.62320574999785e-05,
+        "estimate": 0.0035945855877317014,
+        "event_fraction": 0.3776,
+        "method": "piecewise_cem",
+        "online_work_proxy": 1.5198920492484752e-08,
+        "second_moment": 0.00018917267353950543,
+        "seed": 6302.0,
+        "single_path_variance": 0.0001762560343928769,
+        "standard_error": 6.638072656895165e-05
+      },
+      {
+        "cost_per_path": 7.801413500001218e-05,
+        "estimate": 0.00335,
+        "event_fraction": 0.00335,
+        "method": "natural",
+        "online_work_proxy": 2.604783505787687e-07,
+        "second_moment": 0.00335,
+        "seed": 6303.0,
+        "single_path_variance": 0.0033388609715243015,
+        "standard_error": 0.0002889143892022471
+      },
+      {
+        "cost_per_path": 8.665006375001666e-05,
+        "estimate": 0.0036408715517594415,
+        "event_fraction": 0.294825,
+        "method": "constant_cem",
+        "online_work_proxy": 3.733734986424606e-08,
+        "second_moment": 0.00044414329662483833,
+        "seed": 6303.0,
+        "single_path_variance": 0.0004308981234216216,
+        "standard_error": 0.00010379042867981874
+      },
+      {
+        "cost_per_path": 9.577920499998527e-05,
+        "estimate": 0.003560095959580454,
+        "event_fraction": 0.3771,
+        "method": "piecewise_cem",
+        "online_work_proxy": 1.592919347402049e-08,
+        "second_moment": 0.0001789817321723549,
+        "seed": 6303.0,
+        "single_path_variance": 0.00016631160672113472,
+        "standard_error": 6.448092871561612e-05
+      },
+      {
+        "cost_per_path": 8.350097000000005e-05,
+        "estimate": 0.00305,
+        "event_fraction": 0.00305,
+        "method": "natural",
+        "online_work_proxy": 2.539075384149221e-07,
+        "second_moment": 0.00305,
+        "seed": 6304.0,
+        "single_path_variance": 0.003040773519336625,
+        "standard_error": 0.00027571604593025706
+      },
+      {
+        "cost_per_path": 8.347918375000063e-05,
+        "estimate": 0.0034574756369152113,
+        "event_fraction": 0.293425,
+        "method": "constant_cem",
+        "online_work_proxy": 3.7659619753859444e-08,
+        "second_moment": 0.0004630687339185552,
+        "seed": 6304.0,
+        "single_path_variance": 0.0004511258742855061,
+        "standard_error": 0.00010619861984572893
+      },
+      {
+        "cost_per_path": 8.691725500000303e-05,
+        "estimate": 0.003666057957312695,
+        "event_fraction": 0.37545,
+        "method": "piecewise_cem",
+        "online_work_proxy": 3.7605447361444766e-08,
+        "second_moment": 0.00044608718345239885,
+        "seed": 6304.0,
+        "single_path_variance": 0.0004326580189565749,
+        "standard_error": 0.00010400216571742328
+      },
+      {
+        "cost_per_path": 8.306180624997524e-05,
+        "estimate": 0.00365,
+        "event_fraction": 0.00365,
+        "method": "natural",
+        "online_work_proxy": 3.020765538125254e-07,
+        "second_moment": 0.00365,
+        "seed": 6305.0,
+        "single_path_variance": 0.003636768419210911,
+        "standard_error": 0.0003015281255211075
+      },
+      {
+        "cost_per_path": 9.294577250000202e-05,
+        "estimate": 0.0034709045928830408,
+        "event_fraction": 0.29165,
+        "method": "constant_cem",
+        "online_work_proxy": 3.5914831847573424e-08,
+        "second_moment": 0.00039844381633210533,
+        "seed": 6305.0,
+        "single_path_variance": 0.000386406297796628,
+        "standard_error": 9.828609995780533e-05
+      },
+      {
+        "cost_per_path": 8.930532874999244e-05,
+        "estimate": 0.0036349775130225426,
+        "event_fraction": 0.37435,
+        "method": "piecewise_cem",
+        "online_work_proxy": 1.881988972648798e-08,
+        "second_moment": 0.0002239442630359405,
+        "seed": 6305.0,
+        "single_path_variance": 0.0002107364699274966,
+        "standard_error": 7.258382566513985e-05
+      }
+    ],
+    "summary": {
+      "constant_cem": {
+        "combined_standard_error": 6.851206647557558e-05,
+        "cost_per_path": 8.552677650000532e-05,
+        "estimate": 0.0036208078648832403,
+        "event_fraction": 0.293945,
+        "online_work_proxy": 7.807577069071581e-08,
+        "second_moment": 0.0009518945462398172,
+        "single_path_variance": 0.0009387806505507374,
+        "standard_error": 0.00013774299523602534
+      },
+      "natural": {
+        "combined_standard_error": 0.00013233772971782558,
+        "cost_per_path": 8.05640617499921e-05,
+        "estimate": 0.003515,
+        "event_fraction": 0.003515,
+        "online_work_proxy": 2.818947828192792e-07,
+        "second_moment": 0.003515,
+        "single_path_variance": 0.003502654941373652,
+        "standard_error": 0.0002956791458906542
+      },
+      "piecewise_cem": {
+        "combined_standard_error": 3.427084398462288e-05,
+        "cost_per_path": 8.750053874999594e-05,
+        "estimate": 0.0036138659446007353,
+        "event_fraction": 0.376665,
+        "online_work_proxy": 2.0499579455623155e-08,
+        "second_moment": 0.0002479535906378701,
+        "single_path_variance": 0.00023489814948367242,
+        "standard_error": 7.522010169659731e-05
+      }
+    }
+  }
+}

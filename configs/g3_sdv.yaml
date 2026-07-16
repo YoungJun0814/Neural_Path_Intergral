@@ -1,0 +1,62 @@
+schema_version: 1
+protocol_id: g3-sdv-downside-excursion-v1
+frozen: true
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  dt: 0.015625
+  H: 0.1
+  eta: 1.9
+  xi: 0.04
+  rho: -0.7
+
+task:
+  hit_barrier: 30.0
+  stress_level: 60.0
+  minimum_occupation: 0.30
+  hit_scale: 5.0
+  occupation_scale: 0.05
+
+# Frozen from results/g0_piecewise_cem_frozen_2026-07-16.json.
+anchor:
+  values:
+    - [3.2870548930234627, -0.6817601914659581]
+    - [2.8734573407728785, -0.7801504374964134]
+    - [2.1761512957023426, -0.8173874548574247]
+    - [0.8197942361817501, -0.3603176389407034]
+  source_protocol_sha256: 761b6912aad0e4ed5fd82fd2abfc5f94acf1e6bf5d440608fc42ef29cef0a2c7
+
+architecture:
+  soe_terms: 8
+  hidden_dim: 48
+  control_bound: [8.0, 8.0]
+  residual_bound: [0.5, 0.5]
+  desirability_floor: 0.00001
+  initial_desirability: 0.005
+
+training:
+  updates: 60
+  paths_per_update: 1024
+  learning_rate: 0.001
+  gradient_clip: 2.0
+  natural_behavior_mass: 0.20
+  moment_loss_weight: 2.0
+  anchor_loss_weight: 0.02
+
+validation:
+  paths_per_seed: 40000
+  timing_repeats: 2
+  target_relative_error: 0.10
+  minimum_raw_vrf: 1.35
+  minimum_work_vrf: 1.25
+  minimum_improving_seeds: 4
+  maximum_absolute_difference_z: 3.0
+  maximum_break_even_queries: 50
+  maximum_replay_error: 0.000000000002
+
+seeds:
+  initialization: 6400
+  training: 6401
+  replay_audit: 6402
+  validation: [6501, 6502, 6503, 6504, 6505]

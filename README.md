@@ -33,6 +33,9 @@ research directions is
 [`RESEARCH_DIRECTION_BACKLOG_POST_G5_2026-07-16.md`](RESEARCH_DIRECTION_BACKLOG_POST_G5_2026-07-16.md).
 The active path-functional spectral Doob--Volterra plan is
 [`PATH_INTEGRAL_RESEARCH_PLAN_V6.md`](PATH_INTEGRAL_RESEARCH_PLAN_V6.md).
+Its completed M0/G0/G3 implementation, theoretical audit, and falsification
+decision are recorded in
+[`docs/phase_reviews/G6_SDV_PATH_FUNCTIONAL_FALSIFICATION_2026-07-16.md`](docs/phase_reviews/G6_SDV_PATH_FUNCTIONAL_FALSIFICATION_2026-07-16.md).
 The preceding executed neural stop-gate plan is
 [`PATH_INTEGRAL_RESEARCH_PLAN_V5.md`](PATH_INTEGRAL_RESEARCH_PLAN_V5.md).
 The latest sealed confirmatory review is
@@ -77,8 +80,9 @@ python -m experiments.heston_tail_refinement --smoke --quiet \
 | **Controlled Heston Model** | Applies adapted Brownian drift controls with the correlated-variance Girsanov correction. | Targeted tests available |
 | **Rough Volatility** | Simulates controlled non-Markovian rBergomi dynamics on a validated finite grid. | Exact-law gate passed |
 | **Importance Sampling** | Uses exact component replay and marginal balance-mixture likelihoods. | Gaussian and rBergomi gates passed |
-| **Constant CEM Mixture** | Two mode-specialized two-driver exponential tilts. | Current practical winner |
-| **Neural VFO / Mixture / Residual** | Tested memory and feedback refinements against matched strong baselines. | Core claims falsified and stopped |
+| **Time-piecewise CEM** | Four equal-time two-driver shifts for a hit-plus-occupation event. | Current practical winner; G0 passed |
+| **SDV-PIS** | Causal SOE lift, desirability head, and conditional-moment residual around piecewise CEM. | Exact-law checks passed; G3 efficiency claim falsified |
+| **Earlier neural VFO / Mixture / Residual** | Tested memory and feedback refinements against matched strong baselines. | Core claims falsified and stopped |
 
 ## 🧠 Model Architecture
 The core system is built on a **Neural SDE (Stochastic Differential Equation)** formulation:

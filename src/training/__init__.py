@@ -70,6 +70,18 @@ from .rbergomi_cem import (
     TwoDriverCEMResult,
     fit_rbergomi_two_driver_cem,
 )
+from .rbergomi_piecewise_cem import (
+    PiecewiseCEMIteration,
+    PiecewiseCEMResult,
+    fit_rbergomi_piecewise_cem,
+)
+from .sdv import (
+    SDVRegressionObjective,
+    SDVTrainingRecord,
+    replay_sdv_outputs_on_target_paths,
+    sdv_regression_objective,
+    train_sdv_regression,
+)
 from .vfo import (
     VFOHardJ2Objective,
     VFOObjectiveName,
@@ -111,11 +123,19 @@ __all__ = [
     "TwoDriverHestonControl",
     "TwoDriverCEMIteration",
     "TwoDriverCEMResult",
+    "PiecewiseCEMIteration",
+    "PiecewiseCEMResult",
+    "SDVRegressionObjective",
+    "SDVTrainingRecord",
     "build_heston_oracle_dataset",
     "candidate_log_density_on_target_paths",
     "feedback_pice_objective",
     "fit_heston_oracle_distillation",
     "fit_rbergomi_two_driver_cem",
+    "fit_rbergomi_piecewise_cem",
+    "replay_sdv_outputs_on_target_paths",
+    "sdv_regression_objective",
+    "train_sdv_regression",
     "hard_j2_objective",
     "load_two_driver_control_checkpoint",
     "markov_control_state_sha256",

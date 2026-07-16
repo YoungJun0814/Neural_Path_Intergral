@@ -32,6 +32,51 @@ class ConstantTwoDriverControl(nn.Module):
         return self.value.to(device=spot.device, dtype=spot.dtype).expand(spot.shape[0], -1)
 
 
+class TimePiecewiseTwoDriverControl(nn.Module):
+    """Non-trainable deterministic two-driver drift on equal time segments."""
+
+    values: torch.Tensor
+
+    def __init__(
+        self,
+        values: tuple[tuple[float, float], ...],
+        *,
+        maturity: float,
+    ) -> None:
+        super().__init__()
+        if not math.isfinite(maturity) or maturity <= 0.0:
+            raise ValueError("maturity must be finite and positive")
+        if not values or any(len(value) != 2 for value in values):
+            raise ValueError("values must contain nonempty two-driver segments")
+        if not all(math.isfinite(entry) for value in values for entry in value):
+            raise ValueError("piecewise controls must be finite")
+        self.maturity = float(maturity)
+        self.segments = len(values)
+        self.register_buffer("values", torch.tensor(values, dtype=torch.float64))
+
+    def forward(
+        self,
+        time: float | torch.Tensor,
+        spot: torch.Tensor,
+        _variance: torch.Tensor,
+        _volterra: torch.Tensor,
+    ) -> torch.Tensor:
+        resolved_time = (
+            time.to(device=spot.device, dtype=spot.dtype)
+            if torch.is_tensor(time)
+            else torch.as_tensor(float(time), device=spot.device, dtype=spot.dtype)
+        ).expand_as(spot)
+        segment = torch.floor(resolved_time / self.maturity * self.segments).long()
+        segment = torch.clamp(segment, min=0, max=self.segments - 1)
+        values = self.values.to(device=spot.device, dtype=spot.dtype)
+        return values[segment]
+
+    def as_tuple(self) -> tuple[tuple[float, float], ...]:
+        return tuple(
+            (float(value[0]), float(value[1])) for value in self.values.detach().cpu()
+        )
+
+
 class LeanRBergomiControl(nn.Module):
     """Small stateless controller with no inactive memory-branch overhead."""
 
