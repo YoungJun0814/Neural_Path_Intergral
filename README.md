@@ -28,6 +28,9 @@ For a Korean explanation of the current architecture and completed work, see
 The ranked next-generation model candidates, mathematical constraints, and
 selection gates are documented in
 [`PATH_INTEGRAL_MODEL_CANDIDATES_AND_SELECTION.md`](PATH_INTEGRAL_MODEL_CANDIDATES_AND_SELECTION.md).
+The post-G5 archive of non-selected theorem, tensor-network, CEM, and quantum
+research directions is
+[`RESEARCH_DIRECTION_BACKLOG_POST_G5_2026-07-16.md`](RESEARCH_DIRECTION_BACKLOG_POST_G5_2026-07-16.md).
 The latest executed stop-gate plan is
 [`PATH_INTEGRAL_RESEARCH_PLAN_V5.md`](PATH_INTEGRAL_RESEARCH_PLAN_V5.md).
 The latest sealed confirmatory review is
