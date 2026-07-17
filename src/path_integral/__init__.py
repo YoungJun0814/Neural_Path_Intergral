@@ -52,10 +52,33 @@ from .mixture import (
 from .path_functionals import DownsideExcursionTask
 from .pice import ConstantPICEFit, fit_constant_pice, reconstruct_candidate_increments
 from .potentials import terminal_left_tail_potential
+from .rbergomi_branching import (
+    BranchedCoupledRBergomiPaths,
+    ConditionalVolterraBridgeCoefficients,
+    RBergomiCoarseTrunks,
+    conditional_volterra_bridge_coefficients,
+    refine_rbergomi_coarse_trunks,
+    sample_conditional_brownian_fine_pairs,
+    sample_conditional_volterra_fine_innovations,
+    sample_rbergomi_coarse_trunks,
+    simulate_branched_rbergomi_adjacent,
+    subset_rbergomi_coarse_trunks,
+)
+from .rbergomi_coupling import (
+    AdjacentLocalGaussianCoefficients,
+    CoupledRBergomiPaths,
+    RBergomiLevelPaths,
+    adjacent_local_gaussian_coefficients,
+    simulate_coupled_rbergomi_adjacent,
+)
 from .rbergomi_mixture import (
     RBergomiMixtureSample,
     replay_rbergomi_control_on_target_paths,
     simulate_rbergomi_mixture,
+)
+from .rbergomi_multilevel import (
+    CoupledRBergomiMixtureSample,
+    simulate_coupled_rbergomi_mixture,
 )
 
 __all__ = [
@@ -68,6 +91,13 @@ __all__ = [
     "GaussianExcursionSpec",
     "LeanRBergomiControl",
     "RBergomiMixtureSample",
+    "AdjacentLocalGaussianCoefficients",
+    "BranchedCoupledRBergomiPaths",
+    "ConditionalVolterraBridgeCoefficients",
+    "CoupledRBergomiMixtureSample",
+    "CoupledRBergomiPaths",
+    "RBergomiLevelPaths",
+    "RBergomiCoarseTrunks",
     "RBergomiTaskMode",
     "SpectralDoobVolterraControl",
     "TimePiecewiseTwoDriverControl",
@@ -97,6 +127,8 @@ __all__ = [
     "SOEKernelBank",
     "fit_positive_soe_kernel",
     "all_expert_log_q_over_p",
+    "adjacent_local_gaussian_coefficients",
+    "conditional_volterra_bridge_coefficients",
     "gaussian_single_drift_second_moment",
     "gaussian_symmetric_mixture_log_q_over_p",
     "gaussian_symmetric_mixture_second_moment",
@@ -106,6 +138,14 @@ __all__ = [
     "selected_component_log_p_over_q",
     "simulate_gaussian_excursion",
     "simulate_rbergomi_mixture",
+    "simulate_coupled_rbergomi_adjacent",
+    "refine_rbergomi_coarse_trunks",
+    "sample_conditional_brownian_fine_pairs",
+    "sample_conditional_volterra_fine_innovations",
+    "sample_rbergomi_coarse_trunks",
+    "simulate_branched_rbergomi_adjacent",
+    "subset_rbergomi_coarse_trunks",
+    "simulate_coupled_rbergomi_mixture",
     "terminal_left_tail_potential",
     "tilted_divergence_diagnostics",
 ]

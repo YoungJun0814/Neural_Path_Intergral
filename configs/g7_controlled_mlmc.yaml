@@ -1,0 +1,58 @@
+schema_version: 1
+protocol_id: g7-controlled-multilevel-volterra-v1
+frozen: true
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  H: 0.1
+  eta: 1.9
+  xi: 0.04
+  rho: -0.7
+
+task:
+  hit_barrier: 30.0
+  stress_level: 60.0
+  minimum_occupation: 0.30
+  hit_scale: 5.0
+  occupation_scale: 0.05
+
+hierarchy:
+  fine_steps: [16, 32, 64, 128]
+
+# Frozen winning G0 controller. It is an input, not refitted on G7 validation seeds.
+event_cem_anchor:
+  source: results/g0_piecewise_cem_frozen_2026-07-16.json
+  values:
+    - [3.2870548930234627, -0.6817601914659581]
+    - [2.8734573407728785, -0.7801504374964134]
+    - [2.1761512957023426, -0.8173874548574247]
+    - [0.8197942361817501, -0.3603176389407034]
+
+correction_cem:
+  paths_per_iteration: 20000
+  max_iterations: 4
+  smoothing: 0.60
+  min_disagreement_paths: 96
+  control_bound: 8.0
+  parameter_tolerance: 0.04
+  stable_repetitions: 2
+
+mixture:
+  natural_weight: 0.05
+  controlled_weight: 0.95
+
+validation:
+  paths_per_seed: 20000
+  target_relative_error: 0.10
+  maximum_absolute_difference_z: 3.0
+  minimum_improved_correction_levels: 2
+  minimum_geometric_work_ratio: 1.25
+  minimum_improving_seeds: 4
+  maximum_break_even_queries: 50
+  maximum_likelihood_normalization_z: 4.0
+  maximum_replay_error: 1.0e-10
+
+seeds:
+  correction_training: [8001, 8002, 8003]
+  validation: [8101, 8102, 8103, 8104, 8105]

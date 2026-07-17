@@ -1,0 +1,78 @@
+schema_version: 1
+protocol_id: g8-coarse-conditioned-volterra-bridge-v1
+frozen: true
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  H: 0.1
+  eta: 1.9
+  xi: 0.04
+  rho: -0.7
+
+task:
+  hit_barrier: 30.0
+  stress_level: 60.0
+  minimum_occupation: 0.30
+  hit_scale: 5.0
+  occupation_scale: 0.05
+
+hierarchy:
+  base_steps: 16
+  correction_fine_steps: [32, 64, 128]
+
+event_cem_anchor:
+  values:
+    - [3.2870548930234627, -0.6817601914659581]
+    - [2.8734573407728785, -0.7801504374964134]
+    - [2.1761512957023426, -0.8173874548574247]
+    - [0.8197942361817501, -0.3603176389407034]
+
+# Frozen G7 correction controls; G8 validation seeds are untouched.
+correction_controls:
+  "32":
+    - [3.065933268855444, -0.546559791818443]
+    - [3.072189560255868, -0.8317326181315996]
+    - [2.0234527809734337, -0.7902272026121765]
+    - [0.7825873627036315, -0.31591654919393164]
+  "64":
+    - [3.140880021085997, -0.5046876580621966]
+    - [2.8918759666536493, -0.7777774828058183]
+    - [1.9852547273023076, -0.6537455653180033]
+    - [0.5617992596802193, -0.31303636837608495]
+  "128":
+    - [3.058552449900937, -0.6168470441971212]
+    - [2.9457757867752195, -0.7362390469644542]
+    - [2.065802382685384, -0.8301332361012634]
+    - [0.756230055255791, -0.35324164228452626]
+
+development:
+  paths_per_level: 12000
+  fit_paths: 6000
+  maximum_branches: 8
+  high_variance_fraction: 0.10
+  feature_points: 9
+  hidden_dimension: 24
+  epochs: 80
+  batch_size: 512
+  learning_rate: 0.002
+  weight_decay: 0.0001
+  selection_fractions: [0.03, 0.05, 0.075, 0.10, 0.15, 0.20, 0.30]
+  high_branch_candidates: [2, 4, 8]
+
+validation:
+  paths_per_seed: 12000
+  target_relative_error: 0.10
+  maximum_absolute_difference_z: 3.0
+  maximum_likelihood_normalization_z: 4.0
+  maximum_constraint_error: 1.0e-10
+  minimum_fixed_improved_levels: 2
+  minimum_correction_work_ratio: 1.10
+  minimum_total_work_ratio: 1.25
+  minimum_improving_seeds: 4
+  maximum_break_even_queries: 50
+
+seeds:
+  development: [9001, 9002, 9003]
+  allocator: [9011, 9012, 9013]
+  validation: [9101, 9102, 9103, 9104, 9105]

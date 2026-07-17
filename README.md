@@ -36,6 +36,16 @@ The active path-functional spectral Doob--Volterra plan is
 Its completed M0/G0/G3 implementation, theoretical audit, and falsification
 decision are recorded in
 [`docs/phase_reviews/G6_SDV_PATH_FUNCTIONAL_FALSIFICATION_2026-07-16.md`](docs/phase_reviews/G6_SDV_PATH_FUNCTIONAL_FALSIFICATION_2026-07-16.md).
+The exact adjacent-grid controlled-MLMC theory contract is
+[`CONTROLLED_MULTILEVEL_VOLTERRA_PLAN_V7.md`](CONTROLLED_MULTILEVEL_VOLTERRA_PLAN_V7.md).
+Its completed implementation, post-implementation theory audit, and negative
+end-to-end work decision are recorded in
+[`docs/phase_reviews/G7_CONTROLLED_MLMC_FALSIFICATION_2026-07-17.md`](docs/phase_reviews/G7_CONTROLLED_MLMC_FALSIFICATION_2026-07-17.md).
+The exact coarse-conditioned Volterra bridge branching contract is
+[`BOUNDARY_AWARE_VOLTERRA_BRANCHING_PLAN_V8.md`](BOUNDARY_AWARE_VOLTERRA_BRANCHING_PLAN_V8.md).
+Its finite-grid exactness passed and its correction-level work improved, but
+the end-to-end hypothesis was falsified; see
+[`docs/phase_reviews/G8_VOLTERRA_BRIDGE_BRANCHING_FALSIFICATION_2026-07-17.md`](docs/phase_reviews/G8_VOLTERRA_BRIDGE_BRANCHING_FALSIFICATION_2026-07-17.md).
 The preceding executed neural stop-gate plan is
 [`PATH_INTEGRAL_RESEARCH_PLAN_V5.md`](PATH_INTEGRAL_RESEARCH_PLAN_V5.md).
 The latest sealed confirmatory review is
@@ -82,6 +92,8 @@ python -m experiments.heston_tail_refinement --smoke --quiet \
 | **Importance Sampling** | Uses exact component replay and marginal balance-mixture likelihoods. | Gaussian and rBergomi gates passed |
 | **Time-piecewise CEM** | Four equal-time two-driver shifts for a hit-plus-occupation event. | Current practical winner; G0 passed |
 | **SDV-PIS** | Causal SOE lift, desirability head, and conditional-moment residual around piecewise CEM. | Exact-law checks passed; G3 efficiency claim falsified |
+| **Controlled adjacent-grid MLMC** | Exact BLP fine/coarse coupling, correction-CEM, and defensive mixture. | Exactness passed; G7 total-work claim falsified |
+| **Conditional Volterra bridge branching** | Exact BLP coarse-conditioned fine bridges with coarse-only adaptive branch counts. | Exactness and correction-level gain passed; G8 end-to-end work claim falsified |
 | **Earlier neural VFO / Mixture / Residual** | Tested memory and feedback refinements against matched strong baselines. | Core claims falsified and stopped |
 
 ## 🧠 Model Architecture

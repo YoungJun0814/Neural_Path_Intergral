@@ -19,8 +19,24 @@ from .heston_reference import (
     heston_terminal_cdf_vectorized,
 )
 from .likelihood import LikelihoodDiagnostics, likelihood_diagnostics
+from .multilevel import (
+    MLMCAllocation,
+    break_even_query_count,
+    optimal_mlmc_sample_counts,
+    single_level_online_work,
+)
 from .protocol import FrozenExperimentProtocol, FrozenSeedSplit, load_frozen_protocol
 from .statistics import RepeatedEstimateReport, repeated_estimate_report
+from .volterra_branching import (
+    AdaptiveBranchedCorrection,
+    BoundaryBranchingPolicy,
+    BoundaryPolicyCalibration,
+    boundary_branch_counts,
+    calibrate_boundary_branching_policy,
+    coarse_boundary_margins,
+    evaluate_adaptive_branched_correction,
+    evaluate_variable_branched_correction,
+)
 
 __all__ = [
     "compute_var_series",
@@ -38,10 +54,22 @@ __all__ = [
     "heston_terminal_cdf_vectorized",
     "heston_left_tail_quantile",
     "LikelihoodDiagnostics",
+    "AdaptiveBranchedCorrection",
+    "BoundaryBranchingPolicy",
+    "BoundaryPolicyCalibration",
+    "MLMCAllocation",
+    "break_even_query_count",
+    "boundary_branch_counts",
+    "calibrate_boundary_branching_policy",
+    "coarse_boundary_margins",
+    "evaluate_adaptive_branched_correction",
+    "evaluate_variable_branched_correction",
     "likelihood_diagnostics",
     "FrozenSeedSplit",
     "FrozenExperimentProtocol",
     "load_frozen_protocol",
+    "optimal_mlmc_sample_counts",
     "RepeatedEstimateReport",
     "repeated_estimate_report",
+    "single_level_online_work",
 ]

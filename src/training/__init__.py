@@ -70,6 +70,11 @@ from .rbergomi_cem import (
     TwoDriverCEMResult,
     fit_rbergomi_two_driver_cem,
 )
+from .rbergomi_multilevel_cem import (
+    CorrectionCEMIteration,
+    CorrectionCEMResult,
+    fit_rbergomi_correction_cem,
+)
 from .rbergomi_piecewise_cem import (
     PiecewiseCEMIteration,
     PiecewiseCEMResult,
@@ -94,9 +99,21 @@ from .vfo import (
     vfo_pice_objective,
     vfo_soft_pi_objective,
 )
+from .volterra_branching import (
+    BoundaryVarianceFit,
+    BoundaryVarianceTrainingRecord,
+    CoarseBoundaryVarianceModel,
+    boundary_variance_scores,
+    coarse_variance_features,
+    fit_coarse_boundary_variance_model,
+    score_threshold_branch_counts,
+)
 
 __all__ = [
     "CEMBatch",
+    "BoundaryVarianceFit",
+    "BoundaryVarianceTrainingRecord",
+    "CoarseBoundaryVarianceModel",
     "CEMIteration",
     "CEMResult",
     "HestonTerminalLossSampler",
@@ -125,14 +142,20 @@ __all__ = [
     "TwoDriverCEMResult",
     "PiecewiseCEMIteration",
     "PiecewiseCEMResult",
+    "CorrectionCEMIteration",
+    "CorrectionCEMResult",
     "SDVRegressionObjective",
     "SDVTrainingRecord",
     "build_heston_oracle_dataset",
+    "boundary_variance_scores",
+    "coarse_variance_features",
     "candidate_log_density_on_target_paths",
     "feedback_pice_objective",
     "fit_heston_oracle_distillation",
     "fit_rbergomi_two_driver_cem",
     "fit_rbergomi_piecewise_cem",
+    "fit_rbergomi_correction_cem",
+    "fit_coarse_boundary_variance_model",
     "replay_sdv_outputs_on_target_paths",
     "sdv_regression_objective",
     "train_sdv_regression",
@@ -145,6 +168,7 @@ __all__ = [
     "mixture_weights_from_logits",
     "oracle_alignment",
     "save_two_driver_control_checkpoint",
+    "score_threshold_branch_counts",
     "save_markovian_control_checkpoint",
     "load_markovian_control_checkpoint",
     "markov_control_objective",

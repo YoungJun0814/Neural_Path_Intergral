@@ -1,0 +1,1308 @@
+{
+  "development": {
+    "calibrations": {
+      "32": {
+        "fit_paths": 6000,
+        "fixed_work_ratios": {
+          "1": 1.0,
+          "2": 1.565216749543669,
+          "4": 1.2999936870728264,
+          "8": 1.0656512452114881
+        },
+        "holdout_paths": 6000,
+        "irreducible_variance_fraction": 0.2118534087586869,
+        "selected": {
+          "high_branches": 4,
+          "holdout_mean_branches": 1.879,
+          "holdout_selected_fraction": 0.293,
+          "holdout_variance": 9.754611875176036e-05,
+          "holdout_work_proxy": 0.0074259909283340125,
+          "holdout_work_ratio": 2.3895560154717326,
+          "score_threshold": -0.2527823847028464,
+          "selection_fraction": 0.3
+        },
+        "top_variance_recall": 0.43166667222976685,
+        "training_history": [
+          {
+            "accuracy": 0.7811666666666667,
+            "epoch": 0,
+            "loss": 1.1754849581111315,
+            "positive_recall": 0.40166667103767395
+          },
+          {
+            "accuracy": 0.7526666666666667,
+            "epoch": 12,
+            "loss": 0.7093826213378295,
+            "positive_recall": 0.8933333158493042
+          },
+          {
+            "accuracy": 0.7736666666666666,
+            "epoch": 25,
+            "loss": 0.6650432469120329,
+            "positive_recall": 0.8983333110809326
+          },
+          {
+            "accuracy": 0.785,
+            "epoch": 38,
+            "loss": 0.6407333918586426,
+            "positive_recall": 0.9016666412353516
+          },
+          {
+            "accuracy": 0.7858333333333334,
+            "epoch": 51,
+            "loss": 0.6204261363824577,
+            "positive_recall": 0.9283333420753479
+          },
+          {
+            "accuracy": 0.8103333333333333,
+            "epoch": 64,
+            "loss": 0.5994576134853651,
+            "positive_recall": 0.9049999713897705
+          },
+          {
+            "accuracy": 0.8113333333333334,
+            "epoch": 77,
+            "loss": 0.5817681280057678,
+            "positive_recall": 0.92166668176651
+          },
+          {
+            "accuracy": 0.809,
+            "epoch": 79,
+            "loss": 0.5793817830090805,
+            "positive_recall": 0.9183333516120911
+          }
+        ]
+      },
+      "64": {
+        "fit_paths": 6000,
+        "fixed_work_ratios": {
+          "1": 1.0,
+          "2": 1.0262168625862633,
+          "4": 0.6058485963457719,
+          "8": 0.47288643087186716
+        },
+        "holdout_paths": 6000,
+        "irreducible_variance_fraction": 0.35823220764784053,
+        "selected": {
+          "high_branches": 2,
+          "holdout_mean_branches": 1.1958333333333333,
+          "holdout_selected_fraction": 0.19583333333333333,
+          "holdout_variance": 0.0001136494580343936,
+          "holdout_work_proxy": 0.012334754511999519,
+          "holdout_work_ratio": 1.2526501812044126,
+          "score_threshold": 0.47904592824815484,
+          "selection_fraction": 0.2
+        },
+        "top_variance_recall": 0.476666659116745,
+        "training_history": [
+          {
+            "accuracy": 0.81,
+            "epoch": 0,
+            "loss": 1.190926474599556,
+            "positive_recall": 0.4216666519641876
+          },
+          {
+            "accuracy": 0.7915,
+            "epoch": 12,
+            "loss": 0.5943066535911956,
+            "positive_recall": 0.925000011920929
+          },
+          {
+            "accuracy": 0.8285,
+            "epoch": 25,
+            "loss": 0.5474482432244713,
+            "positive_recall": 0.9150000214576721
+          },
+          {
+            "accuracy": 0.82,
+            "epoch": 38,
+            "loss": 0.5312739940627049,
+            "positive_recall": 0.9399999976158142
+          },
+          {
+            "accuracy": 0.8378333333333333,
+            "epoch": 51,
+            "loss": 0.5044181206043048,
+            "positive_recall": 0.9300000071525574
+          },
+          {
+            "accuracy": 0.8356666666666667,
+            "epoch": 64,
+            "loss": 0.4937132923092204,
+            "positive_recall": 0.9333333373069763
+          },
+          {
+            "accuracy": 0.8535,
+            "epoch": 77,
+            "loss": 0.47030343619966136,
+            "positive_recall": 0.9316666722297668
+          },
+          {
+            "accuracy": 0.8515,
+            "epoch": 79,
+            "loss": 0.46773023383610945,
+            "positive_recall": 0.9383333325386047
+          }
+        ]
+      },
+      "128": {
+        "fit_paths": 6000,
+        "fixed_work_ratios": {
+          "1": 1.0,
+          "2": 0.900671314863091,
+          "4": 0.5269569373679787,
+          "8": 0.3204691037689323
+        },
+        "holdout_paths": 6000,
+        "irreducible_variance_fraction": 0.37063462969593464,
+        "selected": {
+          "high_branches": 2,
+          "holdout_mean_branches": 1.1493333333333333,
+          "holdout_selected_fraction": 0.14933333333333335,
+          "holdout_variance": 8.243207182356936e-05,
+          "holdout_work_proxy": 0.01740261936567557,
+          "holdout_work_ratio": 1.3775061413816097,
+          "score_threshold": 1.3048849229612696,
+          "selection_fraction": 0.15
+        },
+        "top_variance_recall": 0.4749999940395355,
+        "training_history": [
+          {
+            "accuracy": 0.5465,
+            "epoch": 0,
+            "loss": 1.1853204225841758,
+            "positive_recall": 0.871666669845581
+          },
+          {
+            "accuracy": 0.7891666666666667,
+            "epoch": 12,
+            "loss": 0.6201833447940621,
+            "positive_recall": 0.9083333611488342
+          },
+          {
+            "accuracy": 0.8058333333333333,
+            "epoch": 25,
+            "loss": 0.5873474424502306,
+            "positive_recall": 0.925000011920929
+          },
+          {
+            "accuracy": 0.8233333333333334,
+            "epoch": 38,
+            "loss": 0.5595756905260617,
+            "positive_recall": 0.9266666769981384
+          },
+          {
+            "accuracy": 0.8221666666666667,
+            "epoch": 51,
+            "loss": 0.534968057505004,
+            "positive_recall": 0.9466666579246521
+          },
+          {
+            "accuracy": 0.8251666666666667,
+            "epoch": 64,
+            "loss": 0.5149351635182541,
+            "positive_recall": 0.9566666483879089
+          },
+          {
+            "accuracy": 0.8421666666666666,
+            "epoch": 77,
+            "loss": 0.49531231404756876,
+            "positive_recall": 0.9383333325386047
+          },
+          {
+            "accuracy": 0.8411666666666666,
+            "epoch": 79,
+            "loss": 0.48958063235481236,
+            "positive_recall": 0.9516666531562805
+          }
+        ]
+      }
+    },
+    "checkpoints": {
+      "32": {
+        "path": "results/checkpoints/g8_volterra_branching_likelihood_audit/g8_boundary_allocator_32.pt",
+        "sha256": "69e0826042c3fa22b7a0abfa37b160bf83f08e81adef657af3627b18239c56c1"
+      },
+      "64": {
+        "path": "results/checkpoints/g8_volterra_branching_likelihood_audit/g8_boundary_allocator_64.pt",
+        "sha256": "d5ed7544b6da6c8f2d51e55b254ace1d7f03f77ddf3524147e0be12aa0645705"
+      },
+      "128": {
+        "path": "results/checkpoints/g8_volterra_branching_likelihood_audit/g8_boundary_allocator_128.pt",
+        "sha256": "112f39e5ba60a48be27dc6f0ee13bdde046d37d3e5554c0a05b47e0396762f3d"
+      }
+    },
+    "fixed_best_work_ratios": {
+      "32": 1.565216749543669,
+      "64": 1.0262168625862633,
+      "128": 0.900671314863091
+    },
+    "fixed_improved_levels": 1,
+    "maximum_branches": 8,
+    "paths_per_level": 12000,
+    "seconds": 41.52882039999531
+  },
+  "gates": {
+    "adaptive_correction_work": true,
+    "break_even": false,
+    "conditional_constraint": true,
+    "correction_consistency": true,
+    "fixed_branch_feasibility": false,
+    "improving_seeds": false,
+    "likelihood_normalization": true,
+    "positive_variance_decay": false,
+    "total_work": false
+  },
+  "passed": false,
+  "protocol_id": "g8-coarse-conditioned-volterra-bridge-v1.1-posthoc-likelihood-audit",
+  "protocol_sha256": "d0c7359b4dcf0d3d459b5088ef129daa294d7dd666271c5057074fcde6eb1b7b",
+  "rate_diagnostics": {
+    "h": [
+      0.03125,
+      0.015625,
+      0.0078125
+    ],
+    "interpretation": "empirical finite-level diagnostic, not a theorem",
+    "mean_adaptive_correction_variance": [
+      0.00013724934959886788,
+      0.00023866450847011885,
+      0.00022983110542072532
+    ],
+    "variance_log_slope": -0.3718873767390472
+  },
+  "smoke": false,
+  "theory_contract": {
+    "allocation_measurability": "coarse path only",
+    "conditioning": "coarse Brownian and BLP singular-local innovations",
+    "continuous_rate_claimed": false,
+    "likelihood": "one exact fine-space likelihood per branch",
+    "likelihood_gate": "gaussian_log_moments",
+    "self_normalized": false
+  },
+  "validation": {
+    "aggregate_correction_difference_z": 0.6785190070708241,
+    "allocations": [
+      {
+        "adaptive_mlmc": {
+          "continuous_optimal_work": 2.233233258818681,
+          "predicted_online_work": 2.2334067849250445,
+          "predicted_variance": 1.4802329417087834e-07,
+          "sample_counts": [
+            8868,
+            5283,
+            5707,
+            3201
+          ]
+        },
+        "baseline_online_seconds": 3.1024363372489887,
+        "baseline_sample_count": 6085,
+        "seed": 9101
+      },
+      {
+        "adaptive_mlmc": {
+          "continuous_optimal_work": 1.9471155498217148,
+          "predicted_online_work": 1.9474740035953255,
+          "predicted_variance": 1.4800754924876091e-07,
+          "sample_counts": [
+            6613,
+            2680,
+            2259,
+            3045
+          ]
+        },
+        "baseline_online_seconds": 0.41987309333282974,
+        "baseline_sample_count": 1097,
+        "seed": 9102
+      },
+      {
+        "adaptive_mlmc": {
+          "continuous_optimal_work": 3.3372396491722855,
+          "predicted_online_work": 3.337418603151468,
+          "predicted_variance": 1.480268581313413e-07,
+          "sample_counts": [
+            12064,
+            8175,
+            9050,
+            7483
+          ]
+        },
+        "baseline_online_seconds": 0.322811518916477,
+        "baseline_sample_count": 1297,
+        "seed": 9103
+      },
+      {
+        "adaptive_mlmc": {
+          "continuous_optimal_work": 1.478029385573128,
+          "predicted_online_work": 1.4781229886859462,
+          "predicted_variance": 1.4802542129170245e-07,
+          "sample_counts": [
+            10044,
+            3993,
+            4733,
+            4606
+          ]
+        },
+        "baseline_online_seconds": 0.39034613614935004,
+        "baseline_sample_count": 1101,
+        "seed": 9104
+      },
+      {
+        "adaptive_mlmc": {
+          "continuous_optimal_work": 1.5885018044375212,
+          "predicted_online_work": 1.5888039171548893,
+          "predicted_variance": 1.480066470473153e-07,
+          "sample_counts": [
+            7786,
+            4185,
+            2542,
+            2609
+          ]
+        },
+        "baseline_online_seconds": 0.4981608866007567,
+        "baseline_sample_count": 1222,
+        "seed": 9105
+      }
+    ],
+    "break_even_is_finite": false,
+    "break_even_queries": null,
+    "correction_geometric_work_ratio": 1.937943773110046,
+    "improving_total_work_seeds": 1,
+    "maximum_conditional_constraint_error": 3.552713678800501e-15,
+    "maximum_likelihood_normalization_z": 4.67605133532535,
+    "maximum_log_likelihood_moment_z": 2.4068298937911528,
+    "mean_baseline_online_seconds": 0.9467255944496804,
+    "mean_candidate_online_seconds": 2.1170452595025346,
+    "paths_per_seed": 12000,
+    "reference_probability": 0.003847529020701819,
+    "runs": [
+      {
+        "adaptive_levels": [
+          {
+            "cost_per_parent": 2.877210833321442e-05,
+            "estimate": 0.003046646436383015,
+            "fine_steps": 16,
+            "likelihood_mean": 0.7957300142437378,
+            "likelihood_normalization_z": 3.9411512511973443,
+            "log_likelihood_mean": -3.3342469234495606,
+            "log_likelihood_mean_z": 1.7790778464881603,
+            "log_likelihood_moment_z": 1.7790778464881603,
+            "log_likelihood_variance": 6.593255617721707,
+            "log_likelihood_variance_z": 0.09543858415990447,
+            "method": "base_piecewise_cem_shared",
+            "second_moment": 0.00015923072567093413,
+            "single_path_variance": 0.00014996116792661033,
+            "standard_error": 0.00011178892607894664
+          },
+          {
+            "branch_disagreement_fraction": 0.14006083851342416,
+            "cost_per_parent": 9.664787500029585e-05,
+            "estimate": 0.00018717276367216578,
+            "fine_steps": 32,
+            "high_branches": 4,
+            "likelihood_mean": 0.9280637257204096,
+            "likelihood_normalization_z": 0.9741271620809844,
+            "log_likelihood_mean": -3.1528754471078817,
+            "log_likelihood_mean_z": 0.20087721772570277,
+            "log_likelihood_moment_z": 0.24430751424397631,
+            "log_likelihood_variance": 6.334885387020887,
+            "log_likelihood_variance_z": 0.24430751424397631,
+            "maximum_constraint_error": 3.1086244689504383e-15,
+            "mean_branches": 1.89025,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": -0.2527823847028464,
+            "second_moment": 0.00017879961030209125,
+            "selected_fraction": 0.29675,
+            "single_path_variance": 0.00017877947494826152,
+            "standard_error": 0.00012205854979894605
+          },
+          {
+            "branch_disagreement_fraction": 0.09930715935334873,
+            "cost_per_parent": 9.329909999966427e-05,
+            "estimate": 0.0001339558490740033,
+            "fine_steps": 64,
+            "high_branches": 2,
+            "likelihood_mean": 0.993622654676998,
+            "likelihood_normalization_z": 0.053885848175408736,
+            "log_likelihood_mean": -2.9851267203702427,
+            "log_likelihood_mean_z": 0.06201022908861102,
+            "log_likelihood_moment_z": 1.4081282978683232,
+            "log_likelihood_variance": 5.859001148396005,
+            "log_likelihood_variance_z": 1.4081282978683232,
+            "maximum_constraint_error": 2.6645352591003757e-15,
+            "mean_branches": 1.19075,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": 0.47904592824815484,
+            "second_moment": 0.0002013761927723065,
+            "selected_fraction": 0.19075,
+            "single_path_variance": 0.00020137502985535915,
+            "standard_error": 0.00012954247368313835
+          },
+          {
+            "branch_disagreement_fraction": 0.1034079274535615,
+            "cost_per_parent": 0.0002921609000004537,
+            "estimate": 0.0003458089221121078,
+            "fine_steps": 128,
+            "high_branches": 2,
+            "likelihood_mean": 0.959141416028144,
+            "likelihood_normalization_z": 0.49020228073472655,
+            "log_likelihood_mean": -3.068895130394993,
+            "log_likelihood_mean_z": 0.31495044759274143,
+            "log_likelihood_moment_z": 0.50941453519012,
+            "log_likelihood_variance": 6.192513370579807,
+            "log_likelihood_variance_z": 0.50941453519012,
+            "maximum_constraint_error": 2.6645352591003757e-15,
+            "mean_branches": 1.1395,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": 1.3048849229612696,
+            "second_moment": 0.00019852273976045195,
+            "selected_fraction": 0.1395,
+            "single_path_variance": 0.00019841969092404912,
+            "standard_error": 0.00012858839078109174
+          }
+        ],
+        "adaptive_mlmc": {
+          "estimate": 0.0037135839712412917,
+          "online_work_coefficient": 3.305962291111938e-07,
+          "standard_error": 0.0002463965915034608
+        },
+        "correction_work_ratios": {
+          "32": 1.3132324014793855,
+          "64": 1.17172726670466,
+          "128": 1.9641742361324352
+        },
+        "seed": 9101,
+        "single_level": {
+          "cost_per_parent": 0.0005098498499998338,
+          "estimate": 0.0043233530466377365,
+          "fine_steps": 128,
+          "likelihood_mean": 1.163516532509242,
+          "likelihood_normalization_z": 0.8769178418932063,
+          "log_likelihood_mean": -3.3055132684787667,
+          "log_likelihood_mean_z": 0.5524892187072513,
+          "log_likelihood_moment_z": 0.5524892187072513,
+          "log_likelihood_variance": 6.58698687559198,
+          "log_likelihood_variance_z": 0.021703732553530485,
+          "method": "single_level_piecewise_cem",
+          "second_moment": 0.0009193357325040692,
+          "single_path_variance": 0.0009007194108891763,
+          "standard_error": 0.00027397071176939945
+        },
+        "standard_levels": [
+          {
+            "cost_per_parent": 2.877210833321442e-05,
+            "estimate": 0.003046646436383015,
+            "fine_steps": 16,
+            "likelihood_mean": 0.7957300142437378,
+            "likelihood_normalization_z": 3.9411512511973443,
+            "log_likelihood_mean": -3.3342469234495606,
+            "log_likelihood_mean_z": 1.7790778464881603,
+            "log_likelihood_moment_z": 1.7790778464881603,
+            "log_likelihood_variance": 6.593255617721707,
+            "log_likelihood_variance_z": 0.09543858415990447,
+            "method": "base_piecewise_cem",
+            "second_moment": 0.00015923072567093413,
+            "single_path_variance": 0.00014996116792661033,
+            "standard_error": 0.00011178892607894664
+          },
+          {
+            "cost_per_parent": 7.468518333310688e-05,
+            "estimate": 0.00030931274319923345,
+            "fine_steps": 32,
+            "likelihood_mean": 0.7812940621544608,
+            "likelihood_normalization_z": 4.67605133532535,
+            "log_likelihood_mean": -3.133295039659394,
+            "log_likelihood_mean_z": 1.0544229577508932,
+            "log_likelihood_moment_z": 2.2131384693403042,
+            "log_likelihood_variance": 6.13453160311407,
+            "log_likelihood_variance_z": 2.2131384693403042,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.0003038908777757129,
+            "single_path_variance": 0.0003038205217794297,
+            "standard_error": 0.0001591174937426821
+          },
+          {
+            "cost_per_parent": 0.00017942938333241425,
+            "estimate": 0.0002970265248750951,
+            "fine_steps": 64,
+            "likelihood_mean": 0.9622704703805194,
+            "likelihood_normalization_z": 0.37876083376862135,
+            "log_likelihood_mean": -2.962411624475737,
+            "log_likelihood_mean_z": 0.9566032723520782,
+            "log_likelihood_moment_z": 0.9566032723520782,
+            "log_likelihood_variance": 5.912230810054976,
+            "log_likelihood_variance_z": 0.7172211337253485,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.00012276994336611082,
+            "single_path_variance": 0.0001226919429382018,
+            "standard_error": 0.00010111542205906814
+          },
+          {
+            "cost_per_parent": 0.0005171197499997409,
+            "estimate": 0.00019510388950829638,
+            "fine_steps": 128,
+            "likelihood_mean": 0.9722249369881456,
+            "likelihood_normalization_z": 0.29829759445787934,
+            "log_likelihood_mean": -3.082141601676191,
+            "log_likelihood_mean_z": 0.27008314541640976,
+            "log_likelihood_moment_z": 0.3509384548259945,
+            "log_likelihood_variance": 6.124179002043072,
+            "log_likelihood_variance_z": 0.3509384548259945,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.00022020878171958864,
+            "single_path_variance": 0.0002201890652806228,
+            "standard_error": 0.000135458808400876
+          }
+        ],
+        "standard_mlmc": {
+          "estimate": 0.00384808959396564,
+          "online_work_coefficient": 4.929891696092868e-07,
+          "standard_error": 0.000257659772103457
+        },
+        "total_work_ratio": 1.389101314822698
+      },
+      {
+        "adaptive_levels": [
+          {
+            "cost_per_parent": 5.1120691665952714e-05,
+            "estimate": 0.0030283642431128835,
+            "fine_steps": 16,
+            "likelihood_mean": 0.9960502966492922,
+            "likelihood_normalization_z": 0.03270140272373854,
+            "log_likelihood_mean": -3.2800867163632725,
+            "log_likelihood_mean_z": 0.5329250698767949,
+            "log_likelihood_moment_z": 0.5329250698767949,
+            "log_likelihood_variance": 6.543116375193873,
+            "log_likelihood_variance_z": 0.49431443661188285,
+            "method": "base_piecewise_cem_shared",
+            "second_moment": 0.0001791159386013372,
+            "single_path_variance": 0.00016995911187170083,
+            "standard_error": 0.00011900949257366714
+          },
+          {
+            "branch_disagreement_fraction": 0.14103074541030747,
+            "cost_per_parent": 0.00014887243333335694,
+            "estimate": 0.00024183940897669532,
+            "fine_steps": 32,
+            "high_branches": 4,
+            "likelihood_mean": 1.2736851744416335,
+            "likelihood_normalization_z": 0.6493982931804151,
+            "log_likelihood_mean": -3.1954716967110595,
+            "log_likelihood_mean_z": 1.655971138749683,
+            "log_likelihood_moment_z": 1.655971138749683,
+            "log_likelihood_variance": 6.366932537873592,
+            "log_likelihood_variance_z": 0.6373829062461926,
+            "maximum_constraint_error": 3.552713678800501e-15,
+            "mean_branches": 1.88375,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": -0.2527823847028464,
+            "second_moment": 8.132175166028781e-05,
+            "selected_fraction": 0.2945833333333333,
+            "single_path_variance": 8.127003786369249e-05,
+            "standard_error": 8.229521951673564e-05
+          },
+          {
+            "branch_disagreement_fraction": 0.10552412877994273,
+            "cost_per_parent": 0.00024495743333318386,
+            "estimate": 0.0002663938457579857,
+            "fine_steps": 64,
+            "high_branches": 2,
+            "likelihood_mean": 1.2308673048461527,
+            "likelihood_normalization_z": 1.2669108740997868,
+            "log_likelihood_mean": -2.954010642966955,
+            "log_likelihood_mean_z": 1.333328654888524,
+            "log_likelihood_moment_z": 1.333328654888524,
+            "log_likelihood_variance": 5.9737399537736,
+            "log_likelihood_variance_z": 0.08115155418954967,
+            "maximum_constraint_error": 2.6645352591003757e-15,
+            "mean_branches": 1.19325,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": 0.47904592824815484,
+            "second_moment": 9.505301466283108e-05,
+            "selected_fraction": 0.19325,
+            "single_path_variance": 9.498996481219718e-05,
+            "standard_error": 8.897095256889426e-05
+          },
+          {
+            "branch_disagreement_fraction": 0.10072047158139874,
+            "cost_per_parent": 0.00021578847500010548,
+            "estimate": 0.00021669656895602232,
+            "fine_steps": 128,
+            "high_branches": 2,
+            "likelihood_mean": 1.0862799757207031,
+            "likelihood_normalization_z": 0.6870309604634283,
+            "log_likelihood_mean": -3.075489049751171,
+            "log_likelihood_mean_z": 0.023728411846903795,
+            "log_likelihood_moment_z": 2.2249906394630385,
+            "log_likelihood_variance": 6.328774662308482,
+            "log_likelihood_variance_z": 2.2249906394630385,
+            "maximum_constraint_error": 2.6645352591003757e-15,
+            "mean_branches": 1.1450833333333332,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": 1.3048849229612696,
+            "second_moment": 0.00015207901287097838,
+            "selected_fraction": 0.14508333333333334,
+            "single_path_variance": 0.00015204472586181114,
+            "standard_error": 0.00011256284387762063
+          }
+        ],
+        "adaptive_mlmc": {
+          "estimate": 0.003753294066803587,
+          "online_work_coefficient": 2.882408525275735e-07,
+          "standard_error": 0.00020376944496362418
+        },
+        "correction_work_ratios": {
+          "32": 3.031845919797386,
+          "64": 1.7710505786076476,
+          "128": 3.5563994027936
+        },
+        "seed": 9102,
+        "single_level": {
+          "cost_per_parent": 0.0003827466666662076,
+          "estimate": 0.0037664343187189756,
+          "fine_steps": 128,
+          "likelihood_mean": 1.0163031492613566,
+          "likelihood_normalization_z": 0.088336089223144,
+          "log_likelihood_mean": -3.2897598580558745,
+          "log_likelihood_mean_z": 0.1199958547414799,
+          "log_likelihood_moment_z": 0.7467252332480211,
+          "log_likelihood_variance": 6.521657076634247,
+          "log_likelihood_variance_z": 0.7467252332480211,
+          "method": "single_level_piecewise_cem",
+          "second_moment": 0.00017654667162586893,
+          "single_path_variance": 0.00016237417532990705,
+          "standard_error": 0.00011632360584804898
+        },
+        "standard_levels": [
+          {
+            "cost_per_parent": 5.1120691665952714e-05,
+            "estimate": 0.0030283642431128835,
+            "fine_steps": 16,
+            "likelihood_mean": 0.9960502966492922,
+            "likelihood_normalization_z": 0.03270140272373854,
+            "log_likelihood_mean": -3.2800867163632725,
+            "log_likelihood_mean_z": 0.5329250698767949,
+            "log_likelihood_moment_z": 0.5329250698767949,
+            "log_likelihood_variance": 6.543116375193873,
+            "log_likelihood_variance_z": 0.49431443661188285,
+            "method": "base_piecewise_cem",
+            "second_moment": 0.0001791159386013372,
+            "single_path_variance": 0.00016995911187170083,
+            "standard_error": 0.00011900949257366714
+          },
+          {
+            "cost_per_parent": 0.0001613723249999263,
+            "estimate": 0.00021832928708512747,
+            "fine_steps": 32,
+            "likelihood_mean": 1.073062283153085,
+            "likelihood_normalization_z": 0.5319875257095488,
+            "log_likelihood_mean": -3.178820991862528,
+            "log_likelihood_mean_z": 0.930136488512192,
+            "log_likelihood_moment_z": 0.930136488512192,
+            "log_likelihood_variance": 6.26067869221359,
+            "log_likelihood_variance_z": 0.6658771628473685,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.00022734096375888913,
+            "single_path_variance": 0.00022731223876788095,
+            "standard_error": 0.00013763243282013902
+          },
+          {
+            "cost_per_parent": 0.00027935660000002826,
+            "estimate": 8.369502345019486e-05,
+            "fine_steps": 64,
+            "likelihood_mean": 1.0335533043512313,
+            "likelihood_normalization_z": 0.26791019260037524,
+            "log_likelihood_mean": -2.9854115626626734,
+            "log_likelihood_mean_z": 0.07478341772963247,
+            "log_likelihood_moment_z": 1.8464881669862332,
+            "log_likelihood_variance": 5.825228524910505,
+            "log_likelihood_variance_z": 1.8464881669862332,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.00014751113634158534,
+            "single_path_variance": 0.00014751642451999876,
+            "standard_error": 0.00011087396167119926
+          },
+          {
+            "cost_per_parent": 0.0007674995833331195,
+            "estimate": 0.0003666196458934885,
+            "fine_steps": 128,
+            "likelihood_mean": 0.902914169209074,
+            "likelihood_normalization_z": 1.6193046790173284,
+            "log_likelihood_mean": -3.05891186136127,
+            "log_likelihood_mean_z": 0.7558639277791769,
+            "log_likelihood_moment_z": 0.7558639277791769,
+            "log_likelihood_variance": 6.136156392828493,
+            "log_likelihood_variance_z": 0.20013902262978298,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.00015215268256302998,
+            "single_path_variance": 0.00015203094184339764,
+            "standard_error": 0.00011255774142019939
+          }
+        ],
+        "standard_mlmc": {
+          "estimate": 0.0036970081995416943,
+          "online_work_coefficient": 6.877858731218312e-07,
+          "standard_error": 0.00024097349733303628
+        },
+        "total_work_ratio": 0.21561195720600052
+      },
+      {
+        "adaptive_levels": [
+          {
+            "cost_per_parent": 1.9286466666623406e-05,
+            "estimate": 0.003009583467182881,
+            "fine_steps": 16,
+            "likelihood_mean": 0.842030404265513,
+            "likelihood_normalization_z": 2.090012899107535,
+            "log_likelihood_mean": -3.2953432402938123,
+            "log_likelihood_mean_z": 0.11834880292805813,
+            "log_likelihood_moment_z": 1.3303295826952581,
+            "log_likelihood_variance": 6.472040577885431,
+            "log_likelihood_variance_z": 1.3303295826952581,
+            "method": "base_piecewise_cem_shared",
+            "second_moment": 0.00013354681750167243,
+            "single_path_variance": 0.00012449959982237068,
+            "standard_error": 0.00010185758023762503
+          },
+          {
+            "branch_disagreement_fraction": 0.1414842498665243,
+            "cost_per_parent": 7.782590833327655e-05,
+            "estimate": 0.0002608439000062499,
+            "fine_steps": 32,
+            "high_branches": 4,
+            "likelihood_mean": 1.164479767786919,
+            "likelihood_normalization_z": 1.167295400039066,
+            "log_likelihood_mean": -3.1240224781721504,
+            "log_likelihood_mean_z": 1.458630856763239,
+            "log_likelihood_moment_z": 1.458630856763239,
+            "log_likelihood_variance": 6.410982347444145,
+            "log_likelihood_variance_z": 1.177677306960653,
+            "maximum_constraint_error": 3.552713678800501e-15,
+            "mean_branches": 1.873,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": -0.2527823847028464,
+            "second_moment": 0.00023076307213787235,
+            "selected_fraction": 0.291,
+            "single_path_variance": 0.00023071425878596344,
+            "standard_error": 0.00013865853104718664
+          },
+          {
+            "branch_disagreement_fraction": 0.10450374728584437,
+            "cost_per_parent": 0.00017148104999917753,
+            "estimate": 0.0005853525501783533,
+            "fine_steps": 64,
+            "high_branches": 2,
+            "likelihood_mean": 0.9543906172272691,
+            "likelihood_normalization_z": 0.7059732111027143,
+            "log_likelihood_mean": -2.952824287627946,
+            "log_likelihood_mean_z": 1.3865284111842275,
+            "log_likelihood_moment_z": 2.240797207043101,
+            "log_likelihood_variance": 6.14012584955063,
+            "log_likelihood_variance_z": 2.240797207043101,
+            "maximum_constraint_error": 2.6645352591003757e-15,
+            "mean_branches": 1.18975,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": 0.47904592824815484,
+            "second_moment": 0.0006231833551738338,
+            "selected_fraction": 0.18975,
+            "single_path_variance": 0.0006228926252846199,
+            "standard_error": 0.00022783265519612925
+          },
+          {
+            "branch_disagreement_fraction": 0.10184915550378568,
+            "cost_per_parent": 0.00012249316666687566,
+            "estimate": 0.000529973540676055,
+            "fine_steps": 128,
+            "high_branches": 2,
+            "likelihood_mean": 0.9691123329306398,
+            "likelihood_normalization_z": 0.3837241506793092,
+            "log_likelihood_mean": -3.06846017652039,
+            "log_likelihood_mean_z": 0.33416029017275206,
+            "log_likelihood_moment_z": 0.8466763983789074,
+            "log_likelihood_variance": 6.219300720330403,
+            "log_likelihood_variance_z": 0.8466763983789074,
+            "maximum_constraint_error": 2.6645352591003757e-15,
+            "mean_branches": 1.1446666666666667,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": 1.3048849229612696,
+            "second_moment": 0.0003044925159627314,
+            "selected_fraction": 0.14466666666666667,
+            "single_path_variance": 0.00030423699709199794,
+            "standard_error": 0.0001592265150375396
+          }
+        ],
+        "adaptive_mlmc": {
+          "estimate": 0.004385753458043539,
+          "online_work_coefficient": 4.940275895050592e-07,
+          "standard_error": 0.00032689747130980687
+        },
+        "correction_work_ratios": {
+          "32": 1.0009692946121906,
+          "64": 0.42023122287037695,
+          "128": 2.1847342488562713
+        },
+        "seed": 9103,
+        "single_level": {
+          "cost_per_parent": 0.00024889091666652045,
+          "estimate": 0.004001847017821328,
+          "fine_steps": 128,
+          "likelihood_mean": 0.9057844400235688,
+          "likelihood_normalization_z": 1.1491784208536413,
+          "log_likelihood_mean": -3.2497071503924744,
+          "log_likelihood_mean_z": 1.829774710988473,
+          "log_likelihood_moment_z": 1.829774710988473,
+          "log_likelihood_variance": 6.591663175487026,
+          "log_likelihood_variance_z": 0.07670779424447985,
+          "method": "single_level_piecewise_cem",
+          "second_moment": 0.0002078914315010186,
+          "single_path_variance": 0.00019189264300055323,
+          "standard_error": 0.0001264557376451517
+        },
+        "standard_levels": [
+          {
+            "cost_per_parent": 1.9286466666623406e-05,
+            "estimate": 0.003009583467182881,
+            "fine_steps": 16,
+            "likelihood_mean": 0.842030404265513,
+            "likelihood_normalization_z": 2.090012899107535,
+            "log_likelihood_mean": -3.2953432402938123,
+            "log_likelihood_mean_z": 0.11834880292805813,
+            "log_likelihood_moment_z": 1.3303295826952581,
+            "log_likelihood_variance": 6.472040577885431,
+            "log_likelihood_variance_z": 1.3303295826952581,
+            "method": "base_piecewise_cem",
+            "second_moment": 0.00013354681750167243,
+            "single_path_variance": 0.00012449959982237068,
+            "standard_error": 0.00010185758023762503
+          },
+          {
+            "cost_per_parent": 7.931737500014908e-05,
+            "estimate": 0.0002337661395532955,
+            "fine_steps": 32,
+            "likelihood_mean": 0.9648960623997045,
+            "likelihood_normalization_z": 0.46954762337943423,
+            "log_likelihood_mean": -3.1616187288331625,
+            "log_likelihood_mean_z": 0.18025840930796558,
+            "log_likelihood_moment_z": 0.97544573608966,
+            "log_likelihood_variance": 6.3944945545404215,
+            "log_likelihood_variance_z": 0.97544573608966,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.00022663114670316245,
+            "single_path_variance": 0.00022659538304377135,
+            "standard_error": 0.0001374152414653518
+          },
+          {
+            "cost_per_parent": 0.00028192504166751556,
+            "estimate": 0.00035941848458527183,
+            "fine_steps": 64,
+            "likelihood_mean": 0.9291129893102743,
+            "likelihood_normalization_z": 0.9427293217195925,
+            "log_likelihood_mean": -2.992792257973852,
+            "log_likelihood_mean_z": 0.4057560858136684,
+            "log_likelihood_moment_z": 0.4057560858136684,
+            "log_likelihood_variance": 5.97510308009678,
+            "log_likelihood_variance_z": 0.09884457933709787,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.00015933091583104393,
+            "single_path_variance": 0.0001592150021008605,
+            "standard_error": 0.00011518644382798861
+          },
+          {
+            "cost_per_parent": 0.00038434217500010466,
+            "estimate": 4.161390726218764e-05,
+            "fine_steps": 128,
+            "likelihood_mean": 0.867119712943073,
+            "likelihood_normalization_z": 2.2402066267985483,
+            "log_likelihood_mean": -3.0584654169540055,
+            "log_likelihood_mean_z": 0.7755812525003378,
+            "log_likelihood_moment_z": 0.7755812525003378,
+            "log_likelihood_variance": 6.120422981764721,
+            "log_likelihood_variance_z": 0.39822803028030057,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.0002118223681623215,
+            "single_path_variance": 0.00021183828963584973,
+            "standard_error": 0.00013286531075863058
+          }
+        ],
+        "standard_mlmc": {
+          "estimate": 0.003644381998583636,
+          "online_work_coefficient": 4.6276553724193984e-07,
+          "standard_error": 0.00024531413103115566
+        },
+        "total_work_ratio": 0.09667544249060597
+      },
+      {
+        "adaptive_levels": [
+          {
+            "cost_per_parent": 1.9329808333471495e-05,
+            "estimate": 0.0032913045888061715,
+            "fine_steps": 16,
+            "likelihood_mean": 0.9571483115042632,
+            "likelihood_normalization_z": 0.43372158610576395,
+            "log_likelihood_mean": -3.2824619813474993,
+            "log_likelihood_mean_z": 0.43152923211859234,
+            "log_likelihood_moment_z": 0.43152923211859234,
+            "log_likelihood_variance": 6.558474965326747,
+            "log_likelihood_variance_z": 0.31366202805924076,
+            "method": "base_piecewise_cem_shared",
+            "second_moment": 0.00020611256234671926,
+            "single_path_variance": 0.00019529615112968623,
+            "standard_error": 0.0001275722511395295
+          },
+          {
+            "branch_disagreement_fraction": 0.1460634753638436,
+            "cost_per_parent": 5.740874166682867e-05,
+            "estimate": 0.0002528531651346703,
+            "fine_steps": 32,
+            "high_branches": 4,
+            "likelihood_mean": 1.0718252954934189,
+            "likelihood_normalization_z": 0.6446371823649949,
+            "log_likelihood_mean": -3.1926395291748535,
+            "log_likelihood_mean_z": 1.5325117806170208,
+            "log_likelihood_moment_z": 1.5325117806170208,
+            "log_likelihood_variance": 6.4231418489532714,
+            "log_likelihood_variance_z": 1.3268200761328437,
+            "maximum_constraint_error": 3.1086244689504383e-15,
+            "mean_branches": 1.901,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": -0.2527823847028464,
+            "second_moment": 9.171682698871762e-05,
+            "selected_fraction": 0.30033333333333334,
+            "single_path_variance": 9.166053064313725e-05,
+            "standard_error": 8.739781206411732e-05
+          },
+          {
+            "branch_disagreement_fraction": 0.09957226000981699,
+            "cost_per_parent": 7.553560833306013e-05,
+            "estimate": 0.0003143103042117968,
+            "fine_steps": 64,
+            "high_branches": 2,
+            "likelihood_mean": 1.2201982546140373,
+            "likelihood_normalization_z": 1.0661024252253943,
+            "log_likelihood_mean": -3.021411335390323,
+            "log_likelihood_mean_z": 1.6891219492281657,
+            "log_likelihood_moment_z": 1.6891219492281657,
+            "log_likelihood_variance": 6.073536971430524,
+            "log_likelihood_variance_z": 1.3764908877551032,
+            "maximum_constraint_error": 2.6645352591003757e-15,
+            "mean_branches": 1.1884166666666667,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": 0.47904592824815484,
+            "second_moment": 0.00016953323041863456,
+            "selected_fraction": 0.18841666666666668,
+            "single_path_variance": 0.00016944856016467514,
+            "standard_error": 0.00011883060778711965
+          },
+          {
+            "branch_disagreement_fraction": 0.1013794613531859,
+            "cost_per_parent": 0.00015137456666707293,
+            "estimate": 4.982843958979997e-05,
+            "fine_steps": 128,
+            "high_branches": 2,
+            "likelihood_mean": 1.4821097806978578,
+            "likelihood_normalization_z": 1.0350396408924978,
+            "log_likelihood_mean": -3.0215302929926584,
+            "log_likelihood_mean_z": 2.4068298937911528,
+            "log_likelihood_moment_z": 2.4068298937911528,
+            "log_likelihood_variance": 6.095774080817163,
+            "log_likelihood_variance_z": 0.7085660941994313,
+            "maximum_constraint_error": 3.1086244689504383e-15,
+            "mean_branches": 1.14175,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": 1.3048849229612696,
+            "second_moment": 0.00032158752596445555,
+            "selected_fraction": 0.14175,
+            "single_path_variance": 0.0003216118440781259,
+            "standard_error": 0.00016371006996061815
+          }
+        ],
+        "adaptive_mlmc": {
+          "estimate": 0.003908296497742439,
+          "online_work_coefficient": 2.187997780601222e-07,
+          "standard_error": 0.0002546267016005366
+        },
+        "correction_work_ratios": {
+          "32": 4.021397537947747,
+          "64": 1.7955186446415352,
+          "128": 7.8856563403413515
+        },
+        "seed": 9104,
+        "single_level": {
+          "cost_per_parent": 0.00035453781666607633,
+          "estimate": 0.0037677590691734745,
+          "fine_steps": 128,
+          "likelihood_mean": 0.8670925227699581,
+          "likelihood_normalization_z": 1.9989310060949244,
+          "log_likelihood_mean": -3.284133686368059,
+          "log_likelihood_mean_z": 0.36016711792508055,
+          "log_likelihood_moment_z": 0.5899389750724331,
+          "log_likelihood_variance": 6.635296733505438,
+          "log_likelihood_variance_z": 0.5899389750724331,
+          "method": "single_level_piecewise_cem",
+          "second_moment": 0.0001771078692824796,
+          "single_path_variance": 0.00016292543799895114,
+          "standard_error": 0.00011652089869738359
+        },
+        "standard_levels": [
+          {
+            "cost_per_parent": 1.9329808333471495e-05,
+            "estimate": 0.0032913045888061715,
+            "fine_steps": 16,
+            "likelihood_mean": 0.9571483115042632,
+            "likelihood_normalization_z": 0.43372158610576395,
+            "log_likelihood_mean": -3.2824619813474993,
+            "log_likelihood_mean_z": 0.43152923211859234,
+            "log_likelihood_moment_z": 0.43152923211859234,
+            "log_likelihood_variance": 6.558474965326747,
+            "log_likelihood_variance_z": 0.31366202805924076,
+            "method": "base_piecewise_cem",
+            "second_moment": 0.00020611256234671926,
+            "single_path_variance": 0.00019529615112968623,
+            "standard_error": 0.0001275722511395295
+          },
+          {
+            "cost_per_parent": 7.229939166669889e-05,
+            "estimate": 0.000357345414333974,
+            "fine_steps": 32,
+            "likelihood_mean": 0.8536360568263057,
+            "likelihood_normalization_z": 2.148230424464902,
+            "log_likelihood_mean": -3.183682493733973,
+            "log_likelihood_mean_z": 1.142058238527502,
+            "log_likelihood_moment_z": 1.142058238527502,
+            "log_likelihood_variance": 6.255392515313622,
+            "log_likelihood_variance_z": 0.7307149409917785,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.0002927898511308401,
+            "single_path_variance": 0.00029268654593116677,
+            "standard_error": 0.00015617472745058306
+          },
+          {
+            "cost_per_parent": 0.00018194175833317178,
+            "estimate": 0.0003308859083320311,
+            "fine_steps": 64,
+            "likelihood_mean": 0.9935319402945276,
+            "likelihood_normalization_z": 0.06706431705214673,
+            "log_likelihood_mean": -2.9536296565004,
+            "log_likelihood_mean_z": 1.3504132386601881,
+            "log_likelihood_moment_z": 1.3504132386601881,
+            "log_likelihood_variance": 5.935773375611569,
+            "log_likelihood_variance_z": 0.41164475584864785,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.00012641169643393878,
+            "single_path_variance": 0.0001263127370109987,
+            "standard_error": 0.00010259659554577444
+          },
+          {
+            "cost_per_parent": 0.0004333331333339932,
+            "estimate": 0.0004288334810919472,
+            "fine_steps": 128,
+            "likelihood_mean": 0.8866828457425342,
+            "likelihood_normalization_z": 1.2519959183347937,
+            "log_likelihood_mean": -3.0960257388807517,
+            "log_likelihood_mean_z": 0.8832794074389927,
+            "log_likelihood_moment_z": 0.8832794074389927,
+            "log_likelihood_variance": 6.108473103603405,
+            "log_likelihood_variance_z": 0.5486810691620069,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.0008860431060909298,
+            "single_path_variance": 0.0008859330356894935,
+            "standard_error": 0.00027171262939753915
+          }
+        ],
+        "standard_mlmc": {
+          "estimate": 0.004408369392564124,
+          "online_work_coefficient": 9.566921950386739e-07,
+          "standard_error": 0.00035358031498766837
+        },
+        "total_work_ratio": 0.2640004006386151
+      },
+      {
+        "adaptive_levels": [
+          {
+            "cost_per_parent": 2.177102499990724e-05,
+            "estimate": 0.003017754045307632,
+            "fine_steps": 16,
+            "likelihood_mean": 0.9326293527855808,
+            "likelihood_normalization_z": 0.7307752589049241,
+            "log_likelihood_mean": -3.3189911590811363,
+            "log_likelihood_mean_z": 1.1278363980391306,
+            "log_likelihood_moment_z": 1.1278363980391306,
+            "log_likelihood_variance": 6.508659611769051,
+            "log_likelihood_variance_z": 0.8996053682514371,
+            "method": "base_piecewise_cem_shared",
+            "second_moment": 0.00013207493158068072,
+            "single_path_variance": 0.00012297834029775074,
+            "standard_error": 0.00010123336912704508
+          },
+          {
+            "branch_disagreement_fraction": 0.14168670406981923,
+            "cost_per_parent": 6.363019999965521e-05,
+            "estimate": 0.0002890625000907959,
+            "fine_steps": 32,
+            "high_branches": 4,
+            "likelihood_mean": 0.9672664745442001,
+            "likelihood_normalization_z": 0.41758852000994223,
+            "log_likelihood_mean": -3.144562868345829,
+            "log_likelihood_mean_z": 0.5632377155672329,
+            "log_likelihood_moment_z": 0.5711207661221962,
+            "log_likelihood_variance": 6.268404112328654,
+            "log_likelihood_variance_z": 0.5711207661221962,
+            "maximum_constraint_error": 3.3306690738754696e-15,
+            "mean_branches": 1.8715,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": -0.2527823847028464,
+            "second_moment": 0.00010389735101174793,
+            "selected_fraction": 0.2905,
+            "single_path_variance": 0.00010382244575328474,
+            "standard_error": 9.301543140490396e-05
+          },
+          {
+            "branch_disagreement_fraction": 0.10947986577181208,
+            "cost_per_parent": 0.00017379798333301249,
+            "estimate": 0.00023113564479677466,
+            "fine_steps": 64,
+            "high_branches": 2,
+            "likelihood_mean": 0.9490182284268472,
+            "likelihood_normalization_z": 0.5849270182150359,
+            "log_likelihood_mean": -2.9994367322388267,
+            "log_likelihood_mean_z": 0.7037143787350487,
+            "log_likelihood_moment_z": 1.1814352055987138,
+            "log_likelihood_variance": 5.876466297446687,
+            "log_likelihood_variance_z": 1.1814352055987138,
+            "maximum_constraint_error": 2.6645352591003757e-15,
+            "mean_branches": 1.192,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": 0.47904592824815484,
+            "second_moment": 0.0001046610678898523,
+            "selected_fraction": 0.192,
+            "single_path_variance": 0.00010461636223374287,
+            "standard_error": 9.337039244934788e-05
+          },
+          {
+            "branch_disagreement_fraction": 0.10087878567797226,
+            "cost_per_parent": 0.00027259787499982245,
+            "estimate": 0.0004448891481096581,
+            "fine_steps": 128,
+            "high_branches": 2,
+            "likelihood_mean": 0.8360268952371664,
+            "likelihood_normalization_z": 3.2999111470555307,
+            "log_likelihood_mean": -3.080422561672235,
+            "log_likelihood_mean_z": 0.19416132981069284,
+            "log_likelihood_moment_z": 0.19416132981069284,
+            "log_likelihood_variance": 6.149063480031396,
+            "log_likelihood_variance_z": 0.037634395672471184,
+            "maximum_constraint_error": 2.6645352591003757e-15,
+            "mean_branches": 1.1474166666666668,
+            "method": "adaptive_volterra_branching",
+            "score_threshold": 1.3048849229612696,
+            "second_moment": 0.0001730257919792688,
+            "selected_fraction": 0.14741666666666667,
+            "single_path_variance": 0.0001728422691476425,
+            "standard_error": 0.00012001467588995192
+          }
+        ],
+        "adaptive_mlmc": {
+          "estimate": 0.003982841338304861,
+          "online_work_coefficient": 2.3515354001183153e-07,
+          "standard_error": 0.00020499175134470267
+        },
+        "correction_work_ratios": {
+          "32": 1.5048304232652165,
+          "64": 2.4002720644899176,
+          "128": 1.8722348923840046
+        },
+        "seed": 9105,
+        "single_level": {
+          "cost_per_parent": 0.00040766030000061925,
+          "estimate": 0.0039858391448006,
+          "fine_steps": 128,
+          "likelihood_mean": 0.9006205670888681,
+          "likelihood_normalization_z": 1.2667323646696313,
+          "log_likelihood_mean": -3.301880900065968,
+          "log_likelihood_mean_z": 0.3974298713468829,
+          "log_likelihood_moment_z": 0.3974298713468829,
+          "log_likelihood_variance": 6.571965417932611,
+          "log_likelihood_variance_z": 0.1549832213048267,
+          "method": "single_level_piecewise_cem",
+          "second_moment": 0.00019670332966327287,
+          "single_path_variance": 0.00018083148526546445,
+          "standard_error": 0.00012275703824542487
+        },
+        "standard_levels": [
+          {
+            "cost_per_parent": 2.177102499990724e-05,
+            "estimate": 0.003017754045307632,
+            "fine_steps": 16,
+            "likelihood_mean": 0.9326293527855808,
+            "likelihood_normalization_z": 0.7307752589049241,
+            "log_likelihood_mean": -3.3189911590811363,
+            "log_likelihood_mean_z": 1.1278363980391306,
+            "log_likelihood_moment_z": 1.1278363980391306,
+            "log_likelihood_variance": 6.508659611769051,
+            "log_likelihood_variance_z": 0.8996053682514371,
+            "method": "base_piecewise_cem",
+            "second_moment": 0.00013207493158068072,
+            "single_path_variance": 0.00012297834029775074,
+            "standard_error": 0.00010123336912704508
+          },
+          {
+            "cost_per_parent": 5.860525833365197e-05,
+            "estimate": 8.249010308096731e-05,
+            "fine_steps": 32,
+            "likelihood_mean": 0.9508061724331948,
+            "likelihood_normalization_z": 0.5129887451468893,
+            "log_likelihood_mean": -3.1613428082848,
+            "log_likelihood_mean_z": 0.16823052841427308,
+            "log_likelihood_moment_z": 0.46711613468645885,
+            "log_likelihood_variance": 6.276883534294051,
+            "log_likelihood_variance_z": 0.46711613468645885,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.0001696237856602362,
+            "single_path_variance": 0.00016963111696954164,
+            "standard_error": 0.00011889460212359713
+          },
+          {
+            "cost_per_parent": 0.00017336922500059396,
+            "estimate": 0.00020850174326022977,
+            "fine_steps": 64,
+            "likelihood_mean": 0.9163872497380676,
+            "likelihood_normalization_z": 1.1947488520458673,
+            "log_likelihood_mean": -2.9930910221396396,
+            "log_likelihood_mean_z": 0.41915357330089803,
+            "log_likelihood_moment_z": 0.5533581627263591,
+            "log_likelihood_variance": 6.0101202365525745,
+            "log_likelihood_variance_z": 0.5533581627263591,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.0002517512402810049,
+            "single_path_variance": 0.00025172874469938137,
+            "standard_error": 0.00014483575315375383
+          },
+          {
+            "cost_per_parent": 0.0005856629083330821,
+            "estimate": 0.00033105002720517127,
+            "fine_steps": 128,
+            "likelihood_mean": 0.8491798458167068,
+            "likelihood_normalization_z": 2.3098483108260144,
+            "log_likelihood_mean": -3.0976410632566993,
+            "log_likelihood_mean_z": 0.9546205973661319,
+            "log_likelihood_moment_z": 2.014107064355623,
+            "log_likelihood_variance": 5.992080226283346,
+            "log_likelihood_variance_z": 2.014107064355623,
+            "method": "standard_adjacent_correction",
+            "second_moment": 0.0001507178737202452,
+            "single_path_variance": 0.00015062083133565168,
+            "standard_error": 0.00011203453014422669
+          }
+        ],
+        "standard_mlmc": {
+          "estimate": 0.003639795918854,
+          "online_work_coefficient": 4.321257342582706e-07,
+          "standard_error": 0.00024065172506174514
+        },
+        "total_work_ratio": 0.3134880194836436
+      }
+    ],
+    "seconds": 104.98619150000741,
+    "total_geometric_work_ratio": 0.29916424937197905,
+    "variance_budget": 1.48034795651427e-07
+  }
+}
