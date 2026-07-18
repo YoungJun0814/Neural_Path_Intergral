@@ -1,0 +1,31 @@
+schema_version: 1
+protocol_id: g10-dcs-mgi-development-v1
+development_only: true
+
+calibration_source:
+  path: results/g9_mgvs_calibration_2026-07-18.json
+  canonical_json_sha256: 3976d987d60eae7083e0de6f73952125dcef5bbcd4a2667e9f8fc633a44ab726
+
+regime_ids:
+  - low_rough_low_corr__deep
+  - base__rare
+  - high_rough_high_corr__rare
+  - high_vol_of_vol__deep
+
+mixture:
+  natural_weight_candidates: [0.05, 0.10, 0.20, 0.50]
+
+evaluation:
+  fine_steps: 512
+  paths_per_seed: 3000
+  validation_seeds: [31000101, 31000102, 31000103, 31000104, 31000105]
+  label_seed_base: 32000101
+  thread_count: 1
+
+gates:
+  maximum_exactness_error: 1.0e-11
+  maximum_defensive_bound_violation: 1.0e-11
+  maximum_paired_mean_difference_z: 3.0
+  maximum_outer_likelihood_normalization_z: 4.0
+  minimum_geometric_work_ratio: 1.25
+  minimum_improved_regime_fraction: 0.75

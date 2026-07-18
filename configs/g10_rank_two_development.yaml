@@ -1,0 +1,32 @@
+schema_version: 1
+protocol_id: g10-rank-two-stratified-development-v1
+development_only: true
+
+selection_source:
+  path: results/g10_control_span_calibration_v1_2026-07-19.json
+  canonical_json_sha256: 70c9bbb268b2c44e3d7c5af2490c04546b91536141c6b7e1448745cf96132a18
+
+regime_ids:
+  - low_rough_low_corr__deep
+  - base__rare
+  - high_rough_high_corr__rare
+  - high_vol_of_vol__deep
+
+inner_samples: [1, 2, 4, 8]
+event_direction_decay_candidates: [-4.0, 0.0, 4.0]
+
+evaluation:
+  fine_steps: 512
+  paths_per_seed: 2000
+  seeds: [80000101, 80000102, 80000103]
+  label_seed_base: 81000101
+  inner_seed_base: 82000101
+  thread_count: 1
+
+gates:
+  maximum_exactness_error: 1.0e-11
+  maximum_defensive_bound_violation: 1.0e-11
+  maximum_paired_mean_difference_z: 3.0
+  minimum_raw_over_rank_two_work_ratio: 2.0
+  minimum_rank_one_over_rank_two_work_ratio: 1.05
+  minimum_improved_regime_fraction: 0.75

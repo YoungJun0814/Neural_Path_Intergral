@@ -1,0 +1,29 @@
+schema_version: 1
+protocol_id: g10-dcs-mgi-multiregime-calibration-v1
+frozen: true
+calibration_only: true
+
+calibration_sources:
+  - path: results/g9_mgvs_calibration_2026-07-18.json
+    canonical_json_sha256: 3976d987d60eae7083e0de6f73952125dcef5bbcd4a2667e9f8fc633a44ab726
+    group: core
+  - path: results/g9_mgvs_stress_calibration_2026-07-18.json
+    canonical_json_sha256: a3f88dbef382531ebe7171d3f4b773ffbf023e38a48ac6447d9b13f4da2a30b8
+    group: stress
+
+mixture:
+  natural_weight_candidates: [0.05, 0.10, 0.20, 0.50]
+
+evaluation:
+  fine_steps: 512
+  paths_per_seed: 2000
+  calibration_seeds: [35000101, 35000102, 35000103]
+  label_seed_base: 40000101
+  thread_count: 1
+
+gates:
+  maximum_exactness_error: 1.0e-11
+  maximum_defensive_bound_violation: 1.0e-11
+  maximum_paired_mean_difference_z: 3.0
+  maximum_outer_likelihood_normalization_z: 4.0
+  minimum_geometric_work_ratio: 1.25

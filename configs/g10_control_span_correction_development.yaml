@@ -1,0 +1,28 @@
+schema_version: 1
+protocol_id: g10-dcs-mgi-correction-development-v1
+development_only: true
+
+selection_source:
+  path: results/g10_control_span_development_v1_2026-07-19.json
+  canonical_json_sha256: da0329a80f970fc3f735525d4a9321bc30f0b28a50cbf9cea61b7cae28851f58
+
+calibration_source:
+  path: results/g9_mgvs_calibration_2026-07-18.json
+  canonical_json_sha256: 3976d987d60eae7083e0de6f73952125dcef5bbcd4a2667e9f8fc633a44ab726
+
+hierarchy:
+  fine_steps: [32, 64, 128, 256, 512]
+
+evaluation:
+  paths_per_seed: 2000
+  validation_seeds: [33000101, 33000102, 33000103, 33000104, 33000105]
+  label_seed_base: 34000101
+  thread_count: 1
+
+gates:
+  maximum_exactness_error: 1.0e-11
+  maximum_defensive_bound_violation: 1.0e-11
+  maximum_paired_mean_difference_z: 3.0
+  maximum_outer_likelihood_normalization_z: 4.0
+  minimum_geometric_correction_work_ratio: 1.50
+  minimum_smoothed_variance_slope: 0.0

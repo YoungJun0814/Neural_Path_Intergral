@@ -1,0 +1,35 @@
+schema_version: 1
+protocol_id: g10-dcs-mgi-multiregime-frozen-v1
+frozen: true
+
+selection_source:
+  path: results/g10_control_span_calibration_v1_2026-07-19.json
+  canonical_json_sha256: 70c9bbb268b2c44e3d7c5af2490c04546b91536141c6b7e1448745cf96132a18
+
+reference_source:
+  path: results/g9_mgvs_frozen_v3_2026-07-18.json
+  canonical_json_sha256: 08afda8930b15bfcde7c61a3327adb85799543e1b2d748f7dce9069665f07e11
+
+hierarchy:
+  correction_fine_steps: [32, 64, 128, 256, 512]
+  single_steps: 512
+
+validation:
+  paths_per_seed: 2000
+  seeds: [90000101, 90000102, 90000103, 90000104, 90000105, 90000106, 90000107, 90000108, 90000109, 90000110]
+  single_label_seed_base: 100000101
+  correction_label_seed_base: 110000101
+  thread_count: 1
+
+gates:
+  maximum_exactness_error: 1.0e-11
+  maximum_defensive_bound_violation: 1.0e-11
+  maximum_paired_mean_difference_z: 3.0
+  maximum_outer_likelihood_normalization_z: 4.0
+  maximum_reference_difference_z: 3.0
+  minimum_geometric_work_ratio: 2.0
+  minimum_total_work_ratio_lower_95: 1.0
+  minimum_improved_core_regime_fraction: 0.80
+  minimum_core_likelihood_pass_fraction: 0.90
+  minimum_geometric_correction_work_ratio: 1.50
+  minimum_smoothed_variance_slope: 0.0

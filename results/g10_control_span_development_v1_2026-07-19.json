@@ -1,0 +1,1375 @@
+{
+  "aggregate": {
+    "geometric_selected_work_ratio": 1.3901371250039867,
+    "improved_regime_fraction": 1,
+    "passed_regimes": 2,
+    "total_regimes": 4
+  },
+  "calibration_hash": "3976d987d60eae7083e0de6f73952125dcef5bbcd4a2667e9f8fc633a44ab726",
+  "development_only": true,
+  "gates": {
+    "all_regimes_admissible": true,
+    "geometric_development_work": true,
+    "improved_regime_fraction": true
+  },
+  "passed": true,
+  "paths_per_seed": 3000,
+  "protocol_id": "g10-dcs-mgi-development-v1",
+  "protocol_sha256": "f57ec2dfdd22d9ac857f9cb45fc6b6ea5899f2d68cd4bb356877ecbd29fba7b0",
+  "regimes": [
+    {
+      "candidates": [
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 20.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": true,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 2.2815094519054453,
+          "marginalized_estimate": 0.0003679146913858504,
+          "marginalized_over_raw_variance": 0.2895881807216387,
+          "marginalized_variance": 1.7211432474781e-06,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 3.730349362740526e-14,
+          "maximum_outer_likelihood": 19.998753448923654,
+          "natural_weight": 0.05,
+          "outer_likelihood_normalization_z": 1.6383690352326918,
+          "paired_mean_difference_z": -0.6521216315527166,
+          "passed": true,
+          "paths": 15000,
+          "raw_estimate": 0.00037841321237904016,
+          "raw_variance": 5.943416762345411e-06,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.2759117000096012,
+              "marginalized_variance": 2.8594850216907046e-06,
+              "maximum_exactness_error": 3.730349362740526e-14,
+              "maximum_outer_likelihood": 19.98787947990347,
+              "raw_over_marginalized_work_ratio": 1.1940150885176606,
+              "raw_postprocess_seconds": 0.03437439999834169,
+              "raw_variance": 4.663382004380244e-06,
+              "seed": 31000101,
+              "simulation_seconds": 0.6258322000066983
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2755882999917958,
+              "marginalized_variance": 1.5097920384452345e-06,
+              "maximum_exactness_error": 3.552713678800501e-14,
+              "maximum_outer_likelihood": 19.989565615224418,
+              "raw_over_marginalized_work_ratio": 4.862351551972339,
+              "raw_postprocess_seconds": 0.032715499997721054,
+              "raw_variance": 1.0621134379075029e-05,
+              "seed": 31000102,
+              "simulation_seconds": 0.5108717000111938
+            },
+            {
+              "marginalized_postprocess_seconds": 0.24494180000328925,
+              "marginalized_variance": 1.1365791508870377e-06,
+              "maximum_exactness_error": 3.375077994860476e-14,
+              "maximum_outer_likelihood": 19.981115686191064,
+              "raw_over_marginalized_work_ratio": 2.876355883572015,
+              "raw_postprocess_seconds": 0.02812180000182707,
+              "raw_variance": 4.659341112474819e-06,
+              "seed": 31000103,
+              "simulation_seconds": 0.4817777999996906
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2396769999904791,
+              "marginalized_variance": 1.5086254960900434e-06,
+              "maximum_exactness_error": 3.108624468950438e-14,
+              "maximum_outer_likelihood": 19.99062667938287,
+              "raw_over_marginalized_work_ratio": 1.2750157031663902,
+              "raw_postprocess_seconds": 0.032337399999960326,
+              "raw_variance": 2.7990202312834045e-06,
+              "seed": 31000104,
+              "simulation_seconds": 0.4231995000009192
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2700308000057703,
+              "marginalized_variance": 1.5931285069664306e-06,
+              "maximum_exactness_error": 3.375077994860476e-14,
+              "maximum_outer_likelihood": 19.998753448923654,
+              "raw_over_marginalized_work_ratio": 2.9033342573629577,
+              "raw_postprocess_seconds": 0.03537079998932313,
+              "raw_variance": 6.980669922423351e-06,
+              "seed": 31000105,
+              "simulation_seconds": 0.42546199999924283
+            }
+          ]
+        },
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 10.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": false,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 1.1395821016873722,
+          "marginalized_estimate": 0.00035543512518873544,
+          "marginalized_over_raw_variance": 0.6320662862218341,
+          "marginalized_variance": 1.6477264543779151e-06,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 3.6415315207705135e-14,
+          "maximum_outer_likelihood": 9.999756013671863,
+          "natural_weight": 0.1,
+          "outer_likelihood_normalization_z": 0.3186881031045935,
+          "paired_mean_difference_z": 2.1750491557845884,
+          "passed": false,
+          "paths": 15000,
+          "raw_estimate": 0.0003285581025366982,
+          "raw_variance": 2.6068886923667026e-06,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.26167540000460576,
+              "marginalized_variance": 8.808509926665276e-07,
+              "maximum_exactness_error": 3.375077994860476e-14,
+              "maximum_outer_likelihood": 9.999756013671863,
+              "raw_over_marginalized_work_ratio": 1.420716328375049,
+              "raw_postprocess_seconds": 0.03983330000482965,
+              "raw_variance": 1.8117656552833787e-06,
+              "seed": 31000101,
+              "simulation_seconds": 0.45563150000816677
+            },
+            {
+              "marginalized_postprocess_seconds": 0.29192650000914,
+              "marginalized_variance": 1.4133812920836985e-06,
+              "maximum_exactness_error": 3.197442310920451e-14,
+              "maximum_outer_likelihood": 9.997492773593361,
+              "raw_over_marginalized_work_ratio": 1.6183557408316196,
+              "raw_postprocess_seconds": 0.03064680000534281,
+              "raw_variance": 3.5305765595604994e-06,
+              "seed": 31000102,
+              "simulation_seconds": 0.4500708000123268
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2462087000021711,
+              "marginalized_variance": 2.062336512541471e-06,
+              "maximum_exactness_error": 3.375077994860476e-14,
+              "maximum_outer_likelihood": 9.998721025073595,
+              "raw_over_marginalized_work_ratio": 0.7468732924108505,
+              "raw_postprocess_seconds": 0.03529530001105741,
+              "raw_variance": 2.2075084686826385e-06,
+              "seed": 31000103,
+              "simulation_seconds": 0.45161810000718106
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2515101000026334,
+              "marginalized_variance": 2.811847108486932e-06,
+              "maximum_exactness_error": 3.6415315207705135e-14,
+              "maximum_outer_likelihood": 9.99906463778322,
+              "raw_over_marginalized_work_ratio": 0.5438167173740797,
+              "raw_postprocess_seconds": 0.03494100000534672,
+              "raw_variance": 2.2128126579261203e-06,
+              "seed": 31000104,
+              "simulation_seconds": 0.4494386000005761
+            },
+            {
+              "marginalized_postprocess_seconds": 0.23643420000735205,
+              "marginalized_variance": 1.0710497191902936e-06,
+              "maximum_exactness_error": 3.375077994860476e-14,
+              "maximum_outer_likelihood": 9.99685667180259,
+              "raw_over_marginalized_work_ratio": 2.058008904748652,
+              "raw_postprocess_seconds": 0.028624099999433383,
+              "raw_variance": 3.2721093030559782e-06,
+              "seed": 31000105,
+              "simulation_seconds": 0.40032060000521597
+            }
+          ]
+        },
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 5.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": true,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 2.2751031337531025,
+          "marginalized_estimate": 0.0003602465006482781,
+          "marginalized_over_raw_variance": 0.3031898974160435,
+          "marginalized_variance": 2.204029197677781e-06,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 3.552713678800501e-14,
+          "maximum_outer_likelihood": 4.999821114176496,
+          "natural_weight": 0.2,
+          "outer_likelihood_normalization_z": 1.0387276769487812,
+          "paired_mean_difference_z": -1.1057901738877,
+          "passed": true,
+          "paths": 15000,
+          "raw_estimate": 0.0003790954684159011,
+          "raw_variance": 7.269467803715656e-06,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.2583576000033645,
+              "marginalized_variance": 1.188139495221825e-06,
+              "maximum_exactness_error": 3.552713678800501e-14,
+              "maximum_outer_likelihood": 4.999675848233846,
+              "raw_over_marginalized_work_ratio": 1.7626152788853597,
+              "raw_postprocess_seconds": 0.0374011999956565,
+              "raw_variance": 3.069516668549093e-06,
+              "seed": 31000101,
+              "simulation_seconds": 0.4370597999950405
+            },
+            {
+              "marginalized_postprocess_seconds": 0.25840839999727905,
+              "marginalized_variance": 1.4047598750524029e-06,
+              "maximum_exactness_error": 2.842170943040401e-14,
+              "maximum_outer_likelihood": 4.999697125102937,
+              "raw_over_marginalized_work_ratio": 2.4431206830760805,
+              "raw_postprocess_seconds": 0.026667099999031052,
+              "raw_variance": 5.284835770522194e-06,
+              "seed": 31000102,
+              "simulation_seconds": 0.402585599993472
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2818022999999812,
+              "marginalized_variance": 2.3676983578445237e-06,
+              "maximum_exactness_error": 3.108624468950438e-14,
+              "maximum_outer_likelihood": 4.999652038874582,
+              "raw_over_marginalized_work_ratio": 1.2556698926110048,
+              "raw_postprocess_seconds": 0.04578610000316985,
+              "raw_variance": 4.441834440335719e-06,
+              "seed": 31000103,
+              "simulation_seconds": 0.4319465000007767
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2685046000115108,
+              "marginalized_variance": 1.0592418003254182e-06,
+              "maximum_exactness_error": 3.197442310920451e-14,
+              "maximum_outer_likelihood": 4.9997560040301074,
+              "raw_over_marginalized_work_ratio": 5.220053830088111,
+              "raw_postprocess_seconds": 0.036706600003526546,
+              "raw_variance": 8.104294043197655e-06,
+              "seed": 31000104,
+              "simulation_seconds": 0.46103439999569673
+            },
+            {
+              "marginalized_postprocess_seconds": 0.24750149999454152,
+              "marginalized_variance": 4.995001392103867e-06,
+              "maximum_exactness_error": 3.019806626980426e-14,
+              "maximum_outer_likelihood": 4.999821114176496,
+              "raw_over_marginalized_work_ratio": 2.1594966250513994,
+              "raw_postprocess_seconds": 0.03682959999423474,
+              "raw_variance": 1.5442569682215388e-05,
+              "seed": 31000105,
+              "simulation_seconds": 0.4512524999881862
+            }
+          ]
+        },
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 2.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": true,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 1.3040115664222225,
+          "marginalized_estimate": 0.00034951435320064293,
+          "marginalized_over_raw_variance": 0.6022543916106748,
+          "marginalized_variance": 3.4566768252253933e-06,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 4.085620730620576e-14,
+          "maximum_outer_likelihood": 1.9999983513815436,
+          "natural_weight": 0.5,
+          "outer_likelihood_normalization_z": 0.9758733253460157,
+          "paired_mean_difference_z": 0.1260809351523442,
+          "passed": true,
+          "paths": 15000,
+          "raw_estimate": 0.00034767169225491195,
+          "raw_variance": 5.73956267214727e-06,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.2602230999909807,
+              "marginalized_variance": 3.5064462519336626e-06,
+              "maximum_exactness_error": 3.019806626980426e-14,
+              "maximum_outer_likelihood": 1.9999939890533722,
+              "raw_over_marginalized_work_ratio": 1.3737375035777506,
+              "raw_postprocess_seconds": 0.03644660000281874,
+              "raw_variance": 7.143189702485906e-06,
+              "seed": 31000101,
+              "simulation_seconds": 0.426923999999417
+            },
+            {
+              "marginalized_postprocess_seconds": 0.24509859998943284,
+              "marginalized_variance": 1.1978515787368502e-06,
+              "maximum_exactness_error": 3.375077994860476e-14,
+              "maximum_outer_likelihood": 1.9999828087568061,
+              "raw_over_marginalized_work_ratio": 1.6237091985532894,
+              "raw_postprocess_seconds": 0.027991800001473166,
+              "raw_variance": 2.869441728096136e-06,
+              "seed": 31000102,
+              "simulation_seconds": 0.4287676999956602
+            },
+            {
+              "marginalized_postprocess_seconds": 0.24166120000882074,
+              "marginalized_variance": 1.4244442202539432e-06,
+              "maximum_exactness_error": 2.842170943040401e-14,
+              "maximum_outer_likelihood": 1.9999983513815436,
+              "raw_over_marginalized_work_ratio": 1.6000903016599186,
+              "raw_postprocess_seconds": 0.03220889999647625,
+              "raw_variance": 3.3827624885253628e-06,
+              "seed": 31000103,
+              "simulation_seconds": 0.4003981999994721
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2549857000121847,
+              "marginalized_variance": 2.3161102934360717e-06,
+              "maximum_exactness_error": 2.6645352591003757e-14,
+              "maximum_outer_likelihood": 1.9999969512143805,
+              "raw_over_marginalized_work_ratio": 1.5356810215698868,
+              "raw_postprocess_seconds": 0.028057100003934465,
+              "raw_variance": 5.387986702847401e-06,
+              "seed": 31000104,
+              "simulation_seconds": 0.41271939998841844
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2958270000090124,
+              "marginalized_variance": 8.839889162181972e-06,
+              "maximum_exactness_error": 4.085620730620576e-14,
+              "maximum_outer_likelihood": 1.9999942236977606,
+              "raw_over_marginalized_work_ratio": 0.6879386373738701,
+              "raw_postprocess_seconds": 0.026608999993186444,
+              "raw_variance": 9.913737758867144e-06,
+              "seed": 31000105,
+              "simulation_seconds": 0.40058549999957904
+            }
+          ]
+        }
+      ],
+      "passed": true,
+      "regime_id": "low_rough_low_corr__deep",
+      "selected_natural_weight": 0.05,
+      "selected_work_ratio": 2.2815094519054453
+    },
+    {
+      "candidates": [
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 20.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": false,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 1.1422093084267415,
+          "marginalized_estimate": 0.017121957908918937,
+          "marginalized_over_raw_variance": 0.6585899327104443,
+          "marginalized_variance": 0.0017994293837593936,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 3.019806626980426e-14,
+          "maximum_outer_likelihood": 19.904676354734708,
+          "natural_weight": 0.05,
+          "outer_likelihood_normalization_z": 1.5267562598034574,
+          "paired_mean_difference_z": -0.6553893838458658,
+          "passed": false,
+          "paths": 15000,
+          "raw_estimate": 0.017299903595062758,
+          "raw_variance": 0.0027322455057182463,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.23167839999950957,
+              "marginalized_variance": 0.0011011056427064326,
+              "maximum_exactness_error": 3.019806626980426e-14,
+              "maximum_outer_likelihood": 19.904676354734708,
+              "raw_over_marginalized_work_ratio": 1.5445888325320487,
+              "raw_postprocess_seconds": 0.027906800009077415,
+              "raw_variance": 0.002417555399515165,
+              "seed": 31100101,
+              "simulation_seconds": 0.45558330000494607
+            },
+            {
+              "marginalized_postprocess_seconds": 0.24233449999883305,
+              "marginalized_variance": 0.0012028404075230023,
+              "maximum_exactness_error": 1.9539925233402755e-14,
+              "maximum_outer_likelihood": 19.525227597572894,
+              "raw_over_marginalized_work_ratio": 1.18242544063251,
+              "raw_postprocess_seconds": 0.02899999999499414,
+              "raw_variance": 0.002123862306941697,
+              "seed": 31100102,
+              "simulation_seconds": 0.4034715000016149
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2252670999878319,
+              "marginalized_variance": 0.0012634206259756274,
+              "maximum_exactness_error": 2.1316282072803006e-14,
+              "maximum_outer_likelihood": 19.681782048040493,
+              "raw_over_marginalized_work_ratio": 1.0731989663535355,
+              "raw_postprocess_seconds": 0.02689700000337325,
+              "raw_variance": 0.001974954284157816,
+              "seed": 31100103,
+              "simulation_seconds": 0.40759010000329
+            },
+            {
+              "marginalized_postprocess_seconds": 0.23979759999201633,
+              "marginalized_variance": 0.003802534893297259,
+              "maximum_exactness_error": 2.4868995751603507e-14,
+              "maximum_outer_likelihood": 19.523915357980385,
+              "raw_over_marginalized_work_ratio": 0.6766998328790016,
+              "raw_postprocess_seconds": 0.028180499997688457,
+              "raw_variance": 0.0036779380192178356,
+              "seed": 31100104,
+              "simulation_seconds": 0.46471039998868946
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2211793000024045,
+              "marginalized_variance": 0.001626458370179985,
+              "maximum_exactness_error": 2.6645352591003757e-14,
+              "maximum_outer_likelihood": 19.515394867398882,
+              "raw_over_marginalized_work_ratio": 1.4657689069758515,
+              "raw_postprocess_seconds": 0.027162700003827922,
+              "raw_variance": 0.0034642193208415137,
+              "seed": 31100105,
+              "simulation_seconds": 0.4010310000012396
+            }
+          ]
+        },
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 10.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": false,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 1.0618790232160646,
+          "marginalized_estimate": 0.016629686437452534,
+          "marginalized_over_raw_variance": 0.6556804238150735,
+          "marginalized_variance": 0.0013662285937180321,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 2.353672812205332e-14,
+          "maximum_outer_likelihood": 9.982805746604301,
+          "natural_weight": 0.1,
+          "outer_likelihood_normalization_z": 0.49408684672795716,
+          "paired_mean_difference_z": 0.3694946245114044,
+          "passed": false,
+          "paths": 15000,
+          "raw_estimate": 0.016530100353349834,
+          "raw_variance": 0.0020836806225945216,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.25966670000343584,
+              "marginalized_variance": 0.0011089633087626744,
+              "maximum_exactness_error": 2.353672812205332e-14,
+              "maximum_outer_likelihood": 9.96763112716247,
+              "raw_over_marginalized_work_ratio": 1.3471821426946238,
+              "raw_postprocess_seconds": 0.030754699997487478,
+              "raw_variance": 0.0021932709420113745,
+              "seed": 31100101,
+              "simulation_seconds": 0.45829319999029394
+            },
+            {
+              "marginalized_postprocess_seconds": 0.27963079999608453,
+              "marginalized_variance": 0.0010885409741245313,
+              "maximum_exactness_error": 2.3092638912203256e-14,
+              "maximum_outer_likelihood": 9.93040137219804,
+              "raw_over_marginalized_work_ratio": 1.0929884528092209,
+              "raw_postprocess_seconds": 0.03753100000903942,
+              "raw_variance": 0.0017695941882556485,
+              "seed": 31100102,
+              "simulation_seconds": 0.45923629999742843
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2524929999926826,
+              "marginalized_variance": 0.0017197439965966628,
+              "maximum_exactness_error": 2.1316282072803006e-14,
+              "maximum_outer_likelihood": 9.951284379249987,
+              "raw_over_marginalized_work_ratio": 0.8658485332048876,
+              "raw_postprocess_seconds": 0.023780699993949383,
+              "raw_variance": 0.002195110261887864,
+              "seed": 31100103,
+              "simulation_seconds": 0.4585511999903247
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2638997999893036,
+              "marginalized_variance": 0.0010420570816064541,
+              "maximum_exactness_error": 2.1316282072803006e-14,
+              "maximum_outer_likelihood": 9.976477670506197,
+              "raw_over_marginalized_work_ratio": 1.2808975213438223,
+              "raw_postprocess_seconds": 0.0325853999966057,
+              "raw_variance": 0.0020513459108240043,
+              "seed": 31100104,
+              "simulation_seconds": 0.39828369999304414
+            },
+            {
+              "marginalized_postprocess_seconds": 0.22948870000254828,
+              "marginalized_variance": 0.0018723244707951126,
+              "maximum_exactness_error": 2.220446049250313e-14,
+              "maximum_outer_likelihood": 9.982805746604301,
+              "raw_over_marginalized_work_ratio": 0.8267553353232208,
+              "raw_postprocess_seconds": 0.028314299997873604,
+              "raw_variance": 0.0022105193229247093,
+              "seed": 31100105,
+              "simulation_seconds": 0.44169049999618437
+            }
+          ]
+        },
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 5.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": false,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 1.1116209167058777,
+          "marginalized_estimate": 0.017025616977589874,
+          "marginalized_over_raw_variance": 0.5930726449500342,
+          "marginalized_variance": 0.0018270166765750574,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 2.1760371282653068e-14,
+          "maximum_outer_likelihood": 4.998846946190074,
+          "natural_weight": 0.2,
+          "outer_likelihood_normalization_z": 1.1790735657146296,
+          "paired_mean_difference_z": -0.7161337317875196,
+          "passed": false,
+          "paths": 15000,
+          "raw_estimate": 0.017244050057083442,
+          "raw_variance": 0.0030805950875191384,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.2443792999983998,
+              "marginalized_variance": 0.001441049160651289,
+              "maximum_exactness_error": 2.1760371282653068e-14,
+              "maximum_outer_likelihood": 4.998846946190074,
+              "raw_over_marginalized_work_ratio": 0.9281551355743881,
+              "raw_postprocess_seconds": 0.02933380000467878,
+              "raw_variance": 0.001998430087210395,
+              "seed": 31100101,
+              "simulation_seconds": 0.40586280000570696
+            },
+            {
+              "marginalized_postprocess_seconds": 0.24987049998890143,
+              "marginalized_variance": 0.0015272385017622517,
+              "maximum_exactness_error": 1.9539925233402755e-14,
+              "maximum_outer_likelihood": 4.997712381810947,
+              "raw_over_marginalized_work_ratio": 1.69317519363572,
+              "raw_postprocess_seconds": 0.028396199995768256,
+              "raw_variance": 0.0038719516856217883,
+              "seed": 31100102,
+              "simulation_seconds": 0.41691920001176186
+            },
+            {
+              "marginalized_postprocess_seconds": 0.28245670000615064,
+              "marginalized_variance": 0.0018472009620061933,
+              "maximum_exactness_error": 2.1316282072803006e-14,
+              "maximum_outer_likelihood": 4.997759118035816,
+              "raw_over_marginalized_work_ratio": 1.1987858283297075,
+              "raw_postprocess_seconds": 0.03361800000129733,
+              "raw_variance": 0.003377455037183591,
+              "seed": 31100103,
+              "simulation_seconds": 0.44015769999532495
+            },
+            {
+              "marginalized_postprocess_seconds": 0.25257320000673644,
+              "marginalized_variance": 0.0024331243458068784,
+              "maximum_exactness_error": 2.1316282072803006e-14,
+              "maximum_outer_likelihood": 4.985339616615927,
+              "raw_over_marginalized_work_ratio": 1.081980530285058,
+              "raw_postprocess_seconds": 0.03384119999827817,
+              "raw_variance": 0.003849994410168825,
+              "seed": 31100104,
+              "simulation_seconds": 0.439160100009758
+            },
+            {
+              "marginalized_postprocess_seconds": 0.27472169999964535,
+              "marginalized_variance": 0.001886573227227283,
+              "maximum_exactness_error": 1.7763568394002505e-14,
+              "maximum_outer_likelihood": 4.994529320112034,
+              "raw_over_marginalized_work_ratio": 0.832721993052769,
+              "raw_postprocess_seconds": 0.03670200001215562,
+              "raw_variance": 0.0023041446163740947,
+              "seed": 31100105,
+              "simulation_seconds": 0.47332319999986794
+            }
+          ]
+        },
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 2.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": false,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 1.2024976002878152,
+          "marginalized_estimate": 0.01766771103901401,
+          "marginalized_over_raw_variance": 0.5499189609404531,
+          "marginalized_variance": 0.0021819226818437796,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 2.7533531010703882e-14,
+          "maximum_outer_likelihood": 1.9998439140935182,
+          "natural_weight": 0.5,
+          "outer_likelihood_normalization_z": 1.6596389602227666,
+          "paired_mean_difference_z": -0.5283091277649126,
+          "passed": false,
+          "paths": 15000,
+          "raw_estimate": 0.017844043676106827,
+          "raw_variance": 0.003967716767052963,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.2949579999985872,
+              "marginalized_variance": 0.0019398666491365166,
+              "maximum_exactness_error": 2.1316282072803006e-14,
+              "maximum_outer_likelihood": 1.9992292747941895,
+              "raw_over_marginalized_work_ratio": 1.2041736238250889,
+              "raw_postprocess_seconds": 0.0437272999988636,
+              "raw_variance": 0.0035460381872844822,
+              "seed": 31100101,
+              "simulation_seconds": 0.4412392000085674
+            },
+            {
+              "marginalized_postprocess_seconds": 0.26227510000171605,
+              "marginalized_variance": 0.002750421896705967,
+              "maximum_exactness_error": 2.7533531010703882e-14,
+              "maximum_outer_likelihood": 1.9998439140935182,
+              "raw_over_marginalized_work_ratio": 1.2882426523200092,
+              "raw_postprocess_seconds": 0.029749199995421804,
+              "raw_variance": 0.00536448966951539,
+              "seed": 31100102,
+              "simulation_seconds": 0.42261880000296514
+            },
+            {
+              "marginalized_postprocess_seconds": 0.29322599999431986,
+              "marginalized_variance": 0.0022803042773502777,
+              "maximum_exactness_error": 1.865174681370263e-14,
+              "maximum_outer_likelihood": 1.999230635517237,
+              "raw_over_marginalized_work_ratio": 1.0748260698917762,
+              "raw_postprocess_seconds": 0.029270399987581186,
+              "raw_variance": 0.003854800741853979,
+              "seed": 31100103,
+              "simulation_seconds": 0.431553399990662
+            },
+            {
+              "marginalized_postprocess_seconds": 0.24504069999966305,
+              "marginalized_variance": 0.0019310671481345006,
+              "maximum_exactness_error": 2.5757174171303632e-14,
+              "maximum_outer_likelihood": 1.9997738299554466,
+              "raw_over_marginalized_work_ratio": 1.1965874825667722,
+              "raw_postprocess_seconds": 0.02845040000102017,
+              "raw_variance": 0.003335581512077884,
+              "seed": 31100104,
+              "simulation_seconds": 0.45986820000689477
+            },
+            {
+              "marginalized_postprocess_seconds": 0.23582950000127312,
+              "marginalized_variance": 0.002009315771421909,
+              "maximum_exactness_error": 1.9317880628477724e-14,
+              "maximum_outer_likelihood": 1.9997545825109342,
+              "raw_over_marginalized_work_ratio": 1.260235358422811,
+              "raw_postprocess_seconds": 0.03318600000056904,
+              "raw_variance": 0.0037415186526209526,
+              "seed": 31100105,
+              "simulation_seconds": 0.3911361000064062
+            }
+          ]
+        }
+      ],
+      "passed": false,
+      "regime_id": "base__rare",
+      "selected_natural_weight": 0.5,
+      "selected_work_ratio": 1.2024976002878152
+    },
+    {
+      "candidates": [
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 20.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": false,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 0.9337261675846131,
+          "marginalized_estimate": 0.021267734784427596,
+          "marginalized_over_raw_variance": 0.7630751777512511,
+          "marginalized_variance": 0.0018836175024417197,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 2.5757174171303632e-14,
+          "maximum_outer_likelihood": 19.985389269576253,
+          "natural_weight": 0.05,
+          "outer_likelihood_normalization_z": 0.8532980112525655,
+          "paired_mean_difference_z": -1.165923286780489,
+          "passed": false,
+          "paths": 15000,
+          "raw_estimate": 0.02153068175001013,
+          "raw_variance": 0.0024684560019271723,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.23024119999899995,
+              "marginalized_variance": 0.0016484082859993861,
+              "maximum_exactness_error": 2.4868995751603507e-14,
+              "maximum_outer_likelihood": 19.841984959402872,
+              "raw_over_marginalized_work_ratio": 1.269930263155779,
+              "raw_postprocess_seconds": 0.037477299993042834,
+              "raw_variance": 0.002923420950091183,
+              "seed": 31200101,
+              "simulation_seconds": 0.4486637000081828
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2477151000057347,
+              "marginalized_variance": 0.0014182634705301766,
+              "maximum_exactness_error": 2.5757174171303632e-14,
+              "maximum_outer_likelihood": 19.96498721395946,
+              "raw_over_marginalized_work_ratio": 0.8016927394664909,
+              "raw_postprocess_seconds": 0.03556689999822993,
+              "raw_variance": 0.0016637969696400435,
+              "seed": 31200102,
+              "simulation_seconds": 0.42233289999421686
+            },
+            {
+              "marginalized_postprocess_seconds": 0.23459370000637136,
+              "marginalized_variance": 0.003420469618323721,
+              "maximum_exactness_error": 1.9539925233402755e-14,
+              "maximum_outer_likelihood": 19.985389269576253,
+              "raw_over_marginalized_work_ratio": 0.7656961410902171,
+              "raw_postprocess_seconds": 0.03378389999852516,
+              "raw_variance": 0.0038080576663345766,
+              "seed": 31200103,
+              "simulation_seconds": 0.40853849999257363
+            },
+            {
+              "marginalized_postprocess_seconds": 0.22617379999428522,
+              "marginalized_variance": 0.001884369146239478,
+              "maximum_exactness_error": 1.9539925233402755e-14,
+              "maximum_outer_likelihood": 19.900598848566283,
+              "raw_over_marginalized_work_ratio": 0.7391572122026563,
+              "raw_postprocess_seconds": 0.026905699996859767,
+              "raw_variance": 0.0020228131542173746,
+              "seed": 31200104,
+              "simulation_seconds": 0.4136714999913238
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2685516000055941,
+              "marginalized_variance": 0.0010474232749765632,
+              "maximum_exactness_error": 2.3092638912203256e-14,
+              "maximum_outer_likelihood": 19.964239959814723,
+              "raw_over_marginalized_work_ratio": 1.2317329228307334,
+              "raw_postprocess_seconds": 0.03563300000678282,
+              "raw_variance": 0.001920561849312588,
+              "seed": 31200105,
+              "simulation_seconds": 0.4410345999931451
+            }
+          ]
+        },
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 10.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": false,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 1.0362646921214516,
+          "marginalized_estimate": 0.02073109797822878,
+          "marginalized_over_raw_variance": 0.6282696673364457,
+          "marginalized_variance": 0.0014439040501503476,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 2.6645352591003757e-14,
+          "maximum_outer_likelihood": 9.986945485762012,
+          "natural_weight": 0.1,
+          "outer_likelihood_normalization_z": 1.1951874521856665,
+          "paired_mean_difference_z": 1.8372895929087685,
+          "passed": false,
+          "paths": 15000,
+          "raw_estimate": 0.020302272972065275,
+          "raw_variance": 0.002298223398674952,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.238874599992414,
+              "marginalized_variance": 0.0013457918650058096,
+              "maximum_exactness_error": 2.220446049250313e-14,
+              "maximum_outer_likelihood": 9.935287391802783,
+              "raw_over_marginalized_work_ratio": 0.861166405129091,
+              "raw_postprocess_seconds": 0.032456200002343394,
+              "raw_variance": 0.0016745777464967344,
+              "seed": 31200101,
+              "simulation_seconds": 0.4315007999975933
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2523393000010401,
+              "marginalized_variance": 0.0014197644974991415,
+              "maximum_exactness_error": 2.6645352591003757e-14,
+              "maximum_outer_likelihood": 9.986945485762012,
+              "raw_over_marginalized_work_ratio": 1.0574804127837563,
+              "raw_postprocess_seconds": 0.03144250001059845,
+              "raw_variance": 0.0022338728066949383,
+              "seed": 31200102,
+              "simulation_seconds": 0.4213201999955345
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2799811000004411,
+              "marginalized_variance": 0.0014589969475947728,
+              "maximum_exactness_error": 2.042810365310288e-14,
+              "maximum_outer_likelihood": 9.981669661715056,
+              "raw_over_marginalized_work_ratio": 1.0003878620613296,
+              "raw_postprocess_seconds": 0.030589100002544,
+              "raw_variance": 0.00224214851788334,
+              "seed": 31200103,
+              "simulation_seconds": 0.43453989998670295
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2734197999961907,
+              "marginalized_variance": 0.0014904229160068003,
+              "maximum_exactness_error": 2.6645352591003757e-14,
+              "maximum_outer_likelihood": 9.978422289475745,
+              "raw_over_marginalized_work_ratio": 0.8534396637032851,
+              "raw_postprocess_seconds": 0.030128400001558475,
+              "raw_variance": 0.001944131853578181,
+              "seed": 31200104,
+              "simulation_seconds": 0.4302825000049779
+            },
+            {
+              "marginalized_postprocess_seconds": 0.24448059999849647,
+              "marginalized_variance": 0.0015057753342436948,
+              "maximum_exactness_error": 2.042810365310288e-14,
+              "maximum_outer_likelihood": 9.940074798775845,
+              "raw_over_marginalized_work_ratio": 1.5369256452980096,
+              "raw_postprocess_seconds": 0.031136700010392815,
+              "raw_variance": 0.0033960518955345035,
+              "seed": 31200105,
+              "simulation_seconds": 0.42526940000243485
+            }
+          ]
+        },
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 5.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": false,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 0.8123891170217532,
+          "marginalized_estimate": 0.021200152201782507,
+          "marginalized_over_raw_variance": 0.9074166349537987,
+          "marginalized_variance": 0.0021692678767482325,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 3.552713678800501e-14,
+          "maximum_outer_likelihood": 4.9985689681542285,
+          "natural_weight": 0.2,
+          "outer_likelihood_normalization_z": 0.5785346840948042,
+          "paired_mean_difference_z": 0.654566279183969,
+          "passed": false,
+          "paths": 15000,
+          "raw_estimate": 0.020994558786076766,
+          "raw_variance": 0.0023905974314198915,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.23594519999460317,
+              "marginalized_variance": 0.001836772628179272,
+              "maximum_exactness_error": 2.042810365310288e-14,
+              "maximum_outer_likelihood": 4.996556714712469,
+              "raw_over_marginalized_work_ratio": 1.043651409687972,
+              "raw_postprocess_seconds": 0.03924209999968298,
+              "raw_variance": 0.0027327541667181627,
+              "seed": 31200101,
+              "simulation_seconds": 0.42296470000292175
+            },
+            {
+              "marginalized_postprocess_seconds": 0.23524010000983253,
+              "marginalized_variance": 0.0014346713059362147,
+              "maximum_exactness_error": 2.6645352591003757e-14,
+              "maximum_outer_likelihood": 4.996494006374002,
+              "raw_over_marginalized_work_ratio": 0.965783852799381,
+              "raw_postprocess_seconds": 0.028543400010676123,
+              "raw_variance": 0.0020471858484320924,
+              "seed": 31200102,
+              "simulation_seconds": 0.4043372000014642
+            },
+            {
+              "marginalized_postprocess_seconds": 0.26241500000469387,
+              "marginalized_variance": 0.004155025510516482,
+              "maximum_exactness_error": 3.552713678800501e-14,
+              "maximum_outer_likelihood": 4.9985689681542285,
+              "raw_over_marginalized_work_ratio": 0.37826262485352385,
+              "raw_postprocess_seconds": 0.02796469999884721,
+              "raw_variance": 0.0023794147380335248,
+              "seed": 31200103,
+              "simulation_seconds": 0.42823499999940395
+            },
+            {
+              "marginalized_postprocess_seconds": 0.26310159999411553,
+              "marginalized_variance": 0.0013230955639123266,
+              "maximum_exactness_error": 2.1316282072803006e-14,
+              "maximum_outer_likelihood": 4.996283920275071,
+              "raw_over_marginalized_work_ratio": 0.9864609196871712,
+              "raw_postprocess_seconds": 0.03370790000190027,
+              "raw_variance": 0.0019326777797075286,
+              "seed": 31200104,
+              "simulation_seconds": 0.4434276999963913
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2271277999971062,
+              "marginalized_variance": 0.002098015054952811,
+              "maximum_exactness_error": 2.042810365310288e-14,
+              "maximum_outer_likelihood": 4.996860299883127,
+              "raw_over_marginalized_work_ratio": 0.9408313137415181,
+              "raw_postprocess_seconds": 0.030147100012982264,
+              "raw_variance": 0.002862554459999347,
+              "seed": 31200105,
+              "simulation_seconds": 0.4073754999990342
+            }
+          ]
+        },
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 2.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": false,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 1.033457577166599,
+          "marginalized_estimate": 0.021106894625710405,
+          "marginalized_over_raw_variance": 0.6429486630420065,
+          "marginalized_variance": 0.0026690904272650617,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 2.842170943040401e-14,
+          "maximum_outer_likelihood": 1.9999302168214763,
+          "natural_weight": 0.5,
+          "outer_likelihood_normalization_z": 0.37146747896438365,
+          "paired_mean_difference_z": -0.10064356948747592,
+          "passed": false,
+          "paths": 15000,
+          "raw_estimate": 0.021135958537787995,
+          "raw_variance": 0.004151327439793866,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.2773569000128191,
+              "marginalized_variance": 0.002635495090194448,
+              "maximum_exactness_error": 2.398081733190338e-14,
+              "maximum_outer_likelihood": 1.9998374877105116,
+              "raw_over_marginalized_work_ratio": 1.0217094781889633,
+              "raw_postprocess_seconds": 0.042540599999483675,
+              "raw_variance": 0.004082579319003414,
+              "seed": 31200101,
+              "simulation_seconds": 0.41238879998854827
+            },
+            {
+              "marginalized_postprocess_seconds": 0.22518170000694226,
+              "marginalized_variance": 0.0021017409242563446,
+              "maximum_exactness_error": 2.842170943040401e-14,
+              "maximum_outer_likelihood": 1.9997572232007268,
+              "raw_over_marginalized_work_ratio": 1.141879508454436,
+              "raw_postprocess_seconds": 0.028340899996692315,
+              "raw_variance": 0.003532527888251327,
+              "seed": 31200102,
+              "simulation_seconds": 0.38875959999859333
+            },
+            {
+              "marginalized_postprocess_seconds": 0.25704370001039933,
+              "marginalized_variance": 0.003296282650234726,
+              "maximum_exactness_error": 2.1316282072803006e-14,
+              "maximum_outer_likelihood": 1.9995923782657696,
+              "raw_over_marginalized_work_ratio": 1.0871432372536702,
+              "raw_postprocess_seconds": 0.027183300000615418,
+              "raw_variance": 0.00541066403702375,
+              "seed": 31200103,
+              "simulation_seconds": 0.4236388999997871
+            },
+            {
+              "marginalized_postprocess_seconds": 0.258368499999051,
+              "marginalized_variance": 0.0027499687587361522,
+              "maximum_exactness_error": 1.9539925233402755e-14,
+              "maximum_outer_likelihood": 1.999679577851678,
+              "raw_over_marginalized_work_ratio": 1.0566578743624586,
+              "raw_postprocess_seconds": 0.035594799992395565,
+              "raw_variance": 0.0043493398823445046,
+              "seed": 31200104,
+              "simulation_seconds": 0.4128305000049295
+            },
+            {
+              "marginalized_postprocess_seconds": 0.25024899998970795,
+              "marginalized_variance": 0.0025586867368532534,
+              "maximum_exactness_error": 1.5987211554602254e-14,
+              "maximum_outer_likelihood": 1.9999302168214763,
+              "raw_over_marginalized_work_ratio": 0.8796186014286866,
+              "raw_postprocess_seconds": 0.02950760000385344,
+              "raw_variance": 0.0033810163392126317,
+              "seed": 31200105,
+              "simulation_seconds": 0.4100170000019716
+            }
+          ]
+        }
+      ],
+      "passed": false,
+      "regime_id": "high_rough_high_corr__rare",
+      "selected_natural_weight": 0.1,
+      "selected_work_ratio": 1.0362646921214516
+    },
+    {
+      "candidates": [
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 20.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": false,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 1.2239605878344342,
+          "marginalized_estimate": 0.00527231016819473,
+          "marginalized_over_raw_variance": 0.553754109017461,
+          "marginalized_variance": 0.0002371372900502115,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 3.197442310920451e-14,
+          "maximum_outer_likelihood": 19.992388028008094,
+          "natural_weight": 0.05,
+          "outer_likelihood_normalization_z": 0.2899408918102303,
+          "paired_mean_difference_z": -1.340251033445444,
+          "passed": false,
+          "paths": 15000,
+          "raw_estimate": 0.005422649780306797,
+          "raw_variance": 0.0004282357208526539,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.2550547999999253,
+              "marginalized_variance": 0.0002585378390679298,
+              "maximum_exactness_error": 3.108624468950438e-14,
+              "maximum_outer_likelihood": 19.907889670812448,
+              "raw_over_marginalized_work_ratio": 1.2088045615968162,
+              "raw_postprocess_seconds": 0.028253299999050796,
+              "raw_variance": 0.00047176711122008013,
+              "seed": 31300101,
+              "simulation_seconds": 0.4168483999965247
+            },
+            {
+              "marginalized_postprocess_seconds": 0.23661100000026636,
+              "marginalized_variance": 0.000154783587749995,
+              "maximum_exactness_error": 2.930988785010413e-14,
+              "maximum_outer_likelihood": 19.992388028008094,
+              "raw_over_marginalized_work_ratio": 1.1133600544417537,
+              "raw_postprocess_seconds": 0.024930500003392808,
+              "raw_variance": 0.0002574034067886317,
+              "seed": 31300102,
+              "simulation_seconds": 0.4038616999896476
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2442695000063395,
+              "marginalized_variance": 0.00039159036366192375,
+              "maximum_exactness_error": 3.197442310920451e-14,
+              "maximum_outer_likelihood": 19.985293383989195,
+              "raw_over_marginalized_work_ratio": 1.3384344028932733,
+              "raw_postprocess_seconds": 0.032006399997044355,
+              "raw_variance": 0.0007596039743038222,
+              "seed": 31300103,
+              "simulation_seconds": 0.4404248000064399
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2607843000005232,
+              "marginalized_variance": 0.00011132167402859673,
+              "maximum_exactness_error": 3.019806626980426e-14,
+              "maximum_outer_likelihood": 19.9570428239263,
+              "raw_over_marginalized_work_ratio": 1.6385606764402656,
+              "raw_postprocess_seconds": 0.027563999989069998,
+              "raw_variance": 0.00027863361794055357,
+              "seed": 31300104,
+              "simulation_seconds": 0.4145301999960793
+            },
+            {
+              "marginalized_postprocess_seconds": 0.27790319999621715,
+              "marginalized_variance": 0.0002693664511233606,
+              "maximum_exactness_error": 3.197442310920451e-14,
+              "maximum_outer_likelihood": 19.898377138374354,
+              "raw_over_marginalized_work_ratio": 0.9306488022630954,
+              "raw_postprocess_seconds": 0.036414100002730265,
+              "raw_variance": 0.0003738490461722081,
+              "seed": 31300105,
+              "simulation_seconds": 0.45511009999609087
+            }
+          ]
+        },
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 10.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": true,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 1.3135704661020657,
+          "marginalized_estimate": 0.005098088829441222,
+          "marginalized_over_raw_variance": 0.5287732876227368,
+          "marginalized_variance": 0.00018754085539501885,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 4.085620730620576e-14,
+          "maximum_outer_likelihood": 9.999927308831255,
+          "natural_weight": 0.1,
+          "outer_likelihood_normalization_z": 0.750505918934674,
+          "paired_mean_difference_z": 0.1197114116743431,
+          "passed": true,
+          "paths": 15000,
+          "raw_estimate": 0.005085937368593489,
+          "raw_variance": 0.00035467157624048397,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.27872149999893736,
+              "marginalized_variance": 0.00016869285199350314,
+              "maximum_exactness_error": 4.085620730620576e-14,
+              "maximum_outer_likelihood": 9.995533640406315,
+              "raw_over_marginalized_work_ratio": 0.9393472014616452,
+              "raw_postprocess_seconds": 0.029654099998879246,
+              "raw_variance": 0.00024044212968782818,
+              "seed": 31300101,
+              "simulation_seconds": 0.45176869998977054
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2558145000075456,
+              "marginalized_variance": 0.00014491817176786204,
+              "maximum_exactness_error": 2.7533531010703882e-14,
+              "maximum_outer_likelihood": 9.999927308831255,
+              "raw_over_marginalized_work_ratio": 2.132970560877183,
+              "raw_postprocess_seconds": 0.03493879998859484,
+              "raw_variance": 0.0004526455746156998,
+              "seed": 31300102,
+              "simulation_seconds": 0.44070799999462906
+            },
+            {
+              "marginalized_postprocess_seconds": 0.23027110000839457,
+              "marginalized_variance": 0.00015638031411143686,
+              "maximum_exactness_error": 3.2862601528904634e-14,
+              "maximum_outer_likelihood": 9.995577101030317,
+              "raw_over_marginalized_work_ratio": 1.2387359759333854,
+              "raw_postprocess_seconds": 0.028036000003339723,
+              "raw_variance": 0.0002762259151733711,
+              "seed": 31300103,
+              "simulation_seconds": 0.44675260000803974
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2340606000070693,
+              "marginalized_variance": 0.00015797880486010106,
+              "maximum_exactness_error": 3.108624468950438e-14,
+              "maximum_outer_likelihood": 9.998675181021122,
+              "raw_over_marginalized_work_ratio": 1.6879098829330719,
+              "raw_postprocess_seconds": 0.037525099993217736,
+              "raw_variance": 0.00037320802637588453,
+              "seed": 31300104,
+              "simulation_seconds": 0.4543095999979414
+            },
+            {
+              "marginalized_postprocess_seconds": 0.22895129999960773,
+              "marginalized_variance": 0.000309907031413198,
+              "maximum_exactness_error": 2.6645352591003757e-14,
+              "maximum_outer_likelihood": 9.993845495282615,
+              "raw_over_marginalized_work_ratio": 0.9335291051006169,
+              "raw_postprocess_seconds": 0.026578400007565506,
+              "raw_variance": 0.00043065019560177656,
+              "seed": 31300105,
+              "simulation_seconds": 0.3876477000012528
+            }
+          ]
+        },
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 5.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": true,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 1.2566513693650037,
+          "marginalized_estimate": 0.005061371782355809,
+          "marginalized_over_raw_variance": 0.5151835167440776,
+          "marginalized_variance": 0.0002182487253777178,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 3.552713678800501e-14,
+          "maximum_outer_likelihood": 4.999975978537277,
+          "natural_weight": 0.2,
+          "outer_likelihood_normalization_z": 0.6025766717151154,
+          "paired_mean_difference_z": -1.1414702208205474,
+          "passed": true,
+          "paths": 15000,
+          "raw_estimate": 0.005188511417713657,
+          "raw_variance": 0.00042363297404589707,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.2581406999961473,
+              "marginalized_variance": 0.00030933045373525864,
+              "maximum_exactness_error": 3.552713678800501e-14,
+              "maximum_outer_likelihood": 4.999574455050035,
+              "raw_over_marginalized_work_ratio": 0.9856555936681338,
+              "raw_postprocess_seconds": 0.044386599998688325,
+              "raw_variance": 0.0004431993747755068,
+              "seed": 31300101,
+              "simulation_seconds": 0.4268305000005057
+            },
+            {
+              "marginalized_postprocess_seconds": 0.24819699999352451,
+              "marginalized_variance": 0.0001632863044122608,
+              "maximum_exactness_error": 3.552713678800501e-14,
+              "maximum_outer_likelihood": 4.999709077348235,
+              "raw_over_marginalized_work_ratio": 1.2893354178129004,
+              "raw_postprocess_seconds": 0.02941959998861421,
+              "raw_variance": 0.0003122251650331277,
+              "seed": 31300102,
+              "simulation_seconds": 0.4235002000059467
+            },
+            {
+              "marginalized_postprocess_seconds": 0.24905790000048,
+              "marginalized_variance": 0.00016781487199395766,
+              "maximum_exactness_error": 3.019806626980426e-14,
+              "maximum_outer_likelihood": 4.999975978537277,
+              "raw_over_marginalized_work_ratio": 1.1797341018992291,
+              "raw_postprocess_seconds": 0.023898200000985526,
+              "raw_variance": 0.000308872330361021,
+              "seed": 31300103,
+              "simulation_seconds": 0.3780699999915669
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2434027999988757,
+              "marginalized_variance": 0.00023316808918543542,
+              "maximum_exactness_error": 2.6645352591003757e-14,
+              "maximum_outer_likelihood": 4.999855966438131,
+              "raw_over_marginalized_work_ratio": 1.9417913837287142,
+              "raw_postprocess_seconds": 0.03491370000119787,
+              "raw_variance": 0.0006857749998219355,
+              "seed": 31300104,
+              "simulation_seconds": 0.37020119999942835
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2561120000027586,
+              "marginalized_variance": 0.00021768315401271527,
+              "maximum_exactness_error": 3.197442310920451e-14,
+              "maximum_outer_likelihood": 4.999157273909045,
+              "raw_over_marginalized_work_ratio": 1.0764558870345795,
+              "raw_postprocess_seconds": 0.027908600008231588,
+              "raw_variance": 0.00036732469537901894,
+              "seed": 31300105,
+              "simulation_seconds": 0.37415689999761526
+            }
+          ]
+        },
+        {
+          "admissible": true,
+          "declared_outer_likelihood_bound": 2.0,
+          "gates": {
+            "defensive_bound": true,
+            "development_work": false,
+            "exactness": true,
+            "mean_consistency": true,
+            "outer_likelihood_normalization": true
+          },
+          "geometric_raw_over_marginalized_work_ratio": 1.1459151603427016,
+          "marginalized_estimate": 0.0052606618330430215,
+          "marginalized_over_raw_variance": 0.5943406876266688,
+          "marginalized_variance": 0.00034081806295202294,
+          "maximum_defensive_bound_violation": 0.0,
+          "maximum_exactness_error": 3.375077994860476e-14,
+          "maximum_outer_likelihood": 1.9999922171001496,
+          "natural_weight": 0.5,
+          "outer_likelihood_normalization_z": 1.5846592705733527,
+          "paired_mean_difference_z": 0.4691721820818576,
+          "passed": false,
+          "paths": 15000,
+          "raw_estimate": 0.005199961640470319,
+          "raw_variance": 0.0005734388879095311,
+          "runs": [
+            {
+              "marginalized_postprocess_seconds": 0.2573150000098394,
+              "marginalized_variance": 0.00043679180372008345,
+              "maximum_exactness_error": 3.197442310920451e-14,
+              "maximum_outer_likelihood": 1.9999922171001496,
+              "raw_over_marginalized_work_ratio": 1.1827798558339102,
+              "raw_postprocess_seconds": 0.04759100000956096,
+              "raw_variance": 0.0007373981725435649,
+              "seed": 31300101,
+              "simulation_seconds": 0.44318940000084694
+            },
+            {
+              "marginalized_postprocess_seconds": 0.28630389999307226,
+              "marginalized_variance": 0.00047417329899099926,
+              "maximum_exactness_error": 2.6645352591003757e-14,
+              "maximum_outer_likelihood": 1.999984435519354,
+              "raw_over_marginalized_work_ratio": 0.7279261592183784,
+              "raw_postprocess_seconds": 0.03357329999562353,
+              "raw_variance": 0.0005522998205644542,
+              "seed": 31300102,
+              "simulation_seconds": 0.3875655000010738
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2750529000040842,
+              "marginalized_variance": 0.0002349264991868798,
+              "maximum_exactness_error": 2.6645352591003757e-14,
+              "maximum_outer_likelihood": 1.9999743675618682,
+              "raw_over_marginalized_work_ratio": 1.3260366884103472,
+              "raw_postprocess_seconds": 0.041361100011272356,
+              "raw_variance": 0.0004687125502335023,
+              "seed": 31300103,
+              "simulation_seconds": 0.42176820000167936
+            },
+            {
+              "marginalized_postprocess_seconds": 0.27860099999816157,
+              "marginalized_variance": 0.0002444673390628829,
+              "maximum_exactness_error": 3.197442310920451e-14,
+              "maximum_outer_likelihood": 1.9999837366837752,
+              "raw_over_marginalized_work_ratio": 1.5737954921449404,
+              "raw_postprocess_seconds": 0.029035400002612732,
+              "raw_variance": 0.0005817885622200091,
+              "seed": 31300104,
+              "simulation_seconds": 0.4582508000021335
+            },
+            {
+              "marginalized_postprocess_seconds": 0.2772597000002861,
+              "marginalized_variance": 0.00031354149279622437,
+              "maximum_exactness_error": 3.375077994860476e-14,
+              "maximum_outer_likelihood": 1.9999801907147823,
+              "raw_over_marginalized_work_ratio": 1.0996823189720633,
+              "raw_postprocess_seconds": 0.03586590000486467,
+              "raw_variance": 0.0005274494675428836,
+              "seed": 31300105,
+              "simulation_seconds": 0.4198146999988239
+            }
+          ]
+        }
+      ],
+      "passed": true,
+      "regime_id": "high_vol_of_vol__deep",
+      "selected_natural_weight": 0.1,
+      "selected_work_ratio": 1.3135704661020657
+    }
+  ],
+  "restriction": "development evidence only; selected weights may not use future validation",
+  "seeds": [
+    31000101,
+    31000102,
+    31000103,
+    31000104,
+    31000105
+  ],
+  "smoke": false,
+  "steps": 512
+}

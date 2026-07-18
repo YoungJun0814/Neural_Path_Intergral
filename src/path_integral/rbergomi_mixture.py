@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from typing import cast
+from typing import Literal, cast
 
 import torch
 
@@ -14,11 +14,13 @@ from src.path_integral.mixture import (
     sample_mixture_labels,
     selected_component_log_p_over_q,
 )
+from src.path_integral.rbergomi_fft import simulate_rbergomi_fft
 from src.physics_engine import RBergomiSimulator, TwoDriverRBergomiPaths
 
 RBergomiControl = Callable[
     [float, torch.Tensor, torch.Tensor, torch.Tensor], torch.Tensor
 ]
+SimulationEngine = Literal["reference", "fft"]
 
 
 @dataclass(frozen=True)
@@ -137,10 +139,13 @@ def simulate_rbergomi_mixture(
     num_paths: int,
     dtype: torch.dtype = torch.float64,
     label_generator: torch.Generator | None = None,
+    engine: SimulationEngine = "reference",
 ) -> RBergomiMixtureSample:
     """Sample a randomized expert mixture and evaluate its exact marginal density."""
     if not controls:
         raise ValueError("at least one expert control is required")
+    if engine not in ("reference", "fft"):
+        raise ValueError("engine must be 'reference' or 'fft'")
     labels_draw = sample_mixture_labels(
         weights, num_paths, generator=label_generator
     )
@@ -150,8 +155,8 @@ def simulate_rbergomi_mixture(
         count = int(torch.sum(labels_draw == expert_index))
         if count == 0:
             continue
-        parts.append(
-            simulator.simulate_controlled_two_driver(
+        if engine == "reference":
+            part = simulator.simulate_controlled_two_driver(
                 S0=spot,
                 T=maturity,
                 dt=dt,
@@ -160,7 +165,17 @@ def simulate_rbergomi_mixture(
                 record_augmented=True,
                 dtype=dtype,
             )
-        )
+        else:
+            part = simulate_rbergomi_fft(
+                simulator,
+                S0=spot,
+                T=maturity,
+                dt=dt,
+                num_paths=count,
+                control_fn=control,
+                dtype=dtype,
+            )
+        parts.append(part)
         grouped_labels.append(
             torch.full(
                 (count,),
@@ -180,6 +195,24 @@ def simulate_rbergomi_mixture(
         dtype=paths.controls.dtype,
     )
     for expert_index, control in enumerate(controls):
+        deterministic = bool(getattr(control, "is_deterministic_time_control", False))
+        evaluator = getattr(control, "deterministic_schedule", None)
+        if deterministic and callable(evaluator):
+            times = torch.arange(
+                steps,
+                device=paths.controls.device,
+                dtype=paths.controls.dtype,
+            ) * paths.step_dt
+            schedule = cast(torch.Tensor, evaluator(times))
+            if (
+                schedule.shape != (steps, drivers)
+                or schedule.device != paths.controls.device
+                or schedule.dtype != paths.controls.dtype
+                or not torch.isfinite(schedule).all()
+            ):
+                raise ValueError("deterministic expert returned an invalid schedule")
+            replayed[:, expert_index] = schedule.unsqueeze(0)
+            continue
         selected = labels == expert_index
         replayed[selected, expert_index] = paths.controls[selected]
         unselected = ~selected

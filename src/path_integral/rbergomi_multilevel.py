@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass
+from typing import Literal, cast
 
 import torch
 
@@ -19,8 +20,11 @@ from src.path_integral.rbergomi_coupling import (
     RBergomiLevelPaths,
     simulate_coupled_rbergomi_adjacent,
 )
+from src.path_integral.rbergomi_fft import simulate_coupled_rbergomi_adjacent_fft
 from src.path_integral.rbergomi_mixture import replay_rbergomi_control_on_target_paths
 from src.physics_engine import RBergomiSimulator, TwoDriverRBergomiPaths
+
+SimulationEngine = Literal["reference", "fft"]
 
 
 @dataclass(frozen=True)
@@ -124,6 +128,7 @@ def simulate_coupled_rbergomi_mixture(
     num_paths: int,
     dtype: torch.dtype = torch.float64,
     label_generator: torch.Generator | None = None,
+    engine: SimulationEngine = "reference",
 ) -> CoupledRBergomiMixtureSample:
     """Sample a mixture and evaluate every expert on one fine target path.
 
@@ -134,6 +139,8 @@ def simulate_coupled_rbergomi_mixture(
     """
     if not controls:
         raise ValueError("at least one expert control is required")
+    if engine not in ("reference", "fft"):
+        raise ValueError("engine must be 'reference' or 'fft'")
     labels_draw = sample_mixture_labels(weights, num_paths, generator=label_generator)
     parts: list[CoupledRBergomiPaths] = []
     grouped_labels: list[torch.Tensor] = []
@@ -141,8 +148,8 @@ def simulate_coupled_rbergomi_mixture(
         count = int(torch.sum(labels_draw == expert_index))
         if count == 0:
             continue
-        parts.append(
-            simulate_coupled_rbergomi_adjacent(
+        if engine == "reference":
+            part = simulate_coupled_rbergomi_adjacent(
                 simulator,
                 S0=spot,
                 T=maturity,
@@ -152,7 +159,17 @@ def simulate_coupled_rbergomi_mixture(
                 record_augmented=True,
                 dtype=dtype,
             )
-        )
+        else:
+            part = simulate_coupled_rbergomi_adjacent_fft(
+                simulator,
+                S0=spot,
+                T=maturity,
+                fine_steps=fine_steps,
+                num_paths=count,
+                control_fn=control,
+                dtype=dtype,
+            )
+        parts.append(part)
         grouped_labels.append(
             torch.full(
                 (count,), expert_index, device=simulator.device, dtype=torch.long
@@ -171,6 +188,24 @@ def simulate_coupled_rbergomi_mixture(
     )
     replay_paths = _as_replay_paths(paths)
     for expert_index, control in enumerate(controls):
+        deterministic = bool(getattr(control, "is_deterministic_time_control", False))
+        evaluator = getattr(control, "deterministic_schedule", None)
+        if deterministic and callable(evaluator):
+            times = torch.arange(
+                steps,
+                device=selected_controls.device,
+                dtype=selected_controls.dtype,
+            ) * paths.fine.step_dt
+            schedule = cast(torch.Tensor, evaluator(times))
+            if (
+                schedule.shape != (steps, drivers)
+                or schedule.device != selected_controls.device
+                or schedule.dtype != selected_controls.dtype
+                or not torch.isfinite(schedule).all()
+            ):
+                raise ValueError("deterministic expert returned an invalid schedule")
+            replayed[:, expert_index] = schedule.unsqueeze(0)
+            continue
         selected = labels == expert_index
         replayed[selected, expert_index] = selected_controls[selected]
         unselected = ~selected

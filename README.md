@@ -16,6 +16,19 @@ and [`MGVS_THEORETICAL_TECHNICAL_AUDIT_V1.md`](MGVS_THEORETICAL_TECHNICAL_AUDIT_
 The final 12-core/6-stress headline hypothesis did not pass; see the
 [`G9 frozen falsification report`](G9_FROZEN_FALSIFICATION_REPORT_2026-07-18.md).
 
+## Completed G10 research track: DCS-MGI
+
+G10 integrates the complete deterministic price-control span of a natural/CEM
+defensive mixture. Its bounded outer likelihood, exact single-grid estimator, and
+exact adjacent-grid correction passed all finite-grid audits. The frozen suite
+improved single-level work by `1.335x` in aggregate and in `12/12` core regimes, while
+correction work improved by `2.395x`. The predeclared `2x` single-level headline still
+failed. The unbiased rank-two extension also failed its development work gate and was
+stopped. See
+[`CONTROL_SPAN_MARGINALIZED_GAUSSIAN_PLAN_V10.md`](CONTROL_SPAN_MARGINALIZED_GAUSSIAN_PLAN_V10.md)
+and the
+[`G10 final audit`](G10_CONTROL_SPAN_FALSIFICATION_REPORT_2026-07-19.md).
+
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
 
