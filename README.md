@@ -46,6 +46,9 @@ The exact coarse-conditioned Volterra bridge branching contract is
 Its finite-grid exactness passed and its correction-level work improved, but
 the end-to-end hypothesis was falsified; see
 [`docs/phase_reviews/G8_VOLTERRA_BRIDGE_BRANCHING_FALSIFICATION_2026-07-17.md`](docs/phase_reviews/G8_VOLTERRA_BRIDGE_BRANCHING_FALSIFICATION_2026-07-17.md).
+The active top-journal research contract is the bias-free monotone Gaussian
+smoothing plan in
+[`MONOTONE_GAUSSIAN_VOLTERRA_SMOOTHING_PLAN_V9.md`](MONOTONE_GAUSSIAN_VOLTERRA_SMOOTHING_PLAN_V9.md).
 The preceding executed neural stop-gate plan is
 [`PATH_INTEGRAL_RESEARCH_PLAN_V5.md`](PATH_INTEGRAL_RESEARCH_PLAN_V5.md).
 The latest sealed confirmatory review is
@@ -94,6 +97,7 @@ python -m experiments.heston_tail_refinement --smoke --quiet \
 | **SDV-PIS** | Causal SOE lift, desirability head, and conditional-moment residual around piecewise CEM. | Exact-law checks passed; G3 efficiency claim falsified |
 | **Controlled adjacent-grid MLMC** | Exact BLP fine/coarse coupling, correction-CEM, and defensive mixture. | Exactness passed; G7 total-work claim falsified |
 | **Conditional Volterra bridge branching** | Exact BLP coarse-conditioned fine bridges with coarse-only adaptive branch counts. | Exactness and correction-level gain passed; G8 end-to-end work claim falsified |
+| **Monotone Gaussian Volterra smoothing** | Analytically integrates one price-only Gaussian direction, including the exact controlled likelihood. | Active V9 theory/falsification plan; not implemented yet |
 | **Earlier neural VFO / Mixture / Residual** | Tested memory and feedback refinements against matched strong baselines. | Core claims falsified and stopped |
 
 ## 🧠 Model Architecture
