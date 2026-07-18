@@ -1,0 +1,28 @@
+schema_version: 1
+protocol_id: g9-positive-direction-calibration-v1
+frozen: true
+
+calibration_sources:
+  - path: results/g9_mgvs_calibration_2026-07-18.json
+    canonical_json_sha256: 3976d987d60eae7083e0de6f73952125dcef5bbcd4a2667e9f8fc633a44ab726
+    group: core
+  - path: results/g9_mgvs_stress_calibration_2026-07-18.json
+    canonical_json_sha256: a3f88dbef382531ebe7171d3f4b773ffbf023e38a48ac6447d9b13f4da2a30b8
+    group: stress
+
+hierarchy:
+  fine_steps: [32, 64, 128, 256, 512]
+
+direction_family:
+  formula: q_i proportional to exp(-decay*(i+0.5)/N)
+  decay_candidates: [-4.0, -2.0, -1.0, 0.0, 1.0, 2.0, 4.0]
+
+evaluation:
+  paths: 3000
+  chunk_size: 1000
+  seed_base: 14101
+  thread_count: 1
+
+gates:
+  maximum_exactness_error: 1.0e-11
+  maximum_selected_over_flat_variance: 1.000000000001

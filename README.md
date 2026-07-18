@@ -2,7 +2,7 @@
 
 > Research prototype for controlled-SDE importance sampling in quantitative finance.
 
-## Current G9 research track: MGVS
+## Completed G9 research track: MGVS
 
 The active track is **Monotone Gaussian Volterra Smoothing (MGVS)**: an exact
 finite-grid conditional Monte Carlo estimator for downside hit-and-occupation
@@ -13,6 +13,8 @@ smoothing proof requires a deterministic time-only proposal.
 
 See [`MONOTONE_GAUSSIAN_VOLTERRA_SMOOTHING_PLAN_V9.md`](MONOTONE_GAUSSIAN_VOLTERRA_SMOOTHING_PLAN_V9.md)
 and [`MGVS_THEORETICAL_TECHNICAL_AUDIT_V1.md`](MGVS_THEORETICAL_TECHNICAL_AUDIT_V1.md).
+The final 12-core/6-stress headline hypothesis did not pass; see the
+[`G9 frozen falsification report`](G9_FROZEN_FALSIFICATION_REPORT_2026-07-18.md).
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
@@ -58,8 +60,8 @@ The exact coarse-conditioned Volterra bridge branching contract is
 Its finite-grid exactness passed and its correction-level work improved, but
 the end-to-end hypothesis was falsified; see
 [`docs/phase_reviews/G8_VOLTERRA_BRIDGE_BRANCHING_FALSIFICATION_2026-07-17.md`](docs/phase_reviews/G8_VOLTERRA_BRIDGE_BRANCHING_FALSIFICATION_2026-07-17.md).
-The active top-journal research contract is the bias-free monotone Gaussian
-smoothing plan in
+The completed G9 top-journal falsification contract is the bias-free monotone
+Gaussian smoothing plan in
 [`MONOTONE_GAUSSIAN_VOLTERRA_SMOOTHING_PLAN_V9.md`](MONOTONE_GAUSSIAN_VOLTERRA_SMOOTHING_PLAN_V9.md).
 The preceding executed neural stop-gate plan is
 [`PATH_INTEGRAL_RESEARCH_PLAN_V5.md`](PATH_INTEGRAL_RESEARCH_PLAN_V5.md).
@@ -109,7 +111,7 @@ python -m experiments.heston_tail_refinement --smoke --quiet \
 | **SDV-PIS** | Causal SOE lift, desirability head, and conditional-moment residual around piecewise CEM. | Exact-law checks passed; G3 efficiency claim falsified |
 | **Controlled adjacent-grid MLMC** | Exact BLP fine/coarse coupling, correction-CEM, and defensive mixture. | Exactness passed; G7 total-work claim falsified |
 | **Conditional Volterra bridge branching** | Exact BLP coarse-conditioned fine bridges with coarse-only adaptive branch counts. | Exactness and correction-level gain passed; G8 end-to-end work claim falsified |
-| **Monotone Gaussian Volterra smoothing** | Analytically integrates one price-only Gaussian direction, including the exact controlled likelihood. | Active V9 theory/falsification plan; not implemented yet |
+| **Monotone Gaussian Volterra smoothing** | Analytically integrates one price-only Gaussian direction, including the exact controlled likelihood. | Exactness and MLMC correction gain passed; G9 end-to-end work claim falsified |
 | **Earlier neural VFO / Mixture / Residual** | Tested memory and feedback refinements against matched strong baselines. | Core claims falsified and stopped |
 
 ## 🧠 Model Architecture

@@ -1,0 +1,50 @@
+schema_version: 1
+protocol_id: g9-mgvs-stress-calibration-v1
+frozen: true
+
+common:
+  spot: 100.0
+  maturity: 1.0
+  xi: 0.04
+  training_steps: 128
+  validation_steps: 512
+
+tasks:
+  ultra_deep:
+    hit_barrier: 20.0
+    stress_level: 50.0
+    minimum_occupation: 0.40
+    hit_scale: 5.0
+    occupation_scale: 0.05
+  persistent_deep:
+    hit_barrier: 30.0
+    stress_level: 55.0
+    minimum_occupation: 0.50
+    hit_scale: 5.0
+    occupation_scale: 0.05
+
+models:
+  low_rough_low_corr: {H: 0.05, eta: 1.5, rho: -0.3}
+  base: {H: 0.10, eta: 1.9, rho: -0.7}
+  high_vol_of_vol: {H: 0.15, eta: 2.3, rho: -0.5}
+
+cem:
+  segments: 4
+  initial_segment: [2.0, -1.0]
+  paths_per_iteration: 12000
+  max_iterations: 8
+  elite_quantile: 0.90
+  smoothing: 0.70
+  min_elite_paths: 128
+  control_bound: 10.0
+  target_level_repetitions: 2
+
+calibration_validation:
+  paths: 20000
+  chunk_size: 1000
+  minimum_event_fraction: 0.002
+  maximum_likelihood_normalization_z: 5.0
+
+seeds:
+  training_base: 12101
+  validation_base: 13101

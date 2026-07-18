@@ -47,6 +47,31 @@ def positive_flat_direction(
     )
 
 
+def positive_exponential_direction(
+    steps: int,
+    *,
+    decay: float,
+    device: torch.device | str,
+    dtype: torch.dtype = torch.float64,
+) -> torch.Tensor:
+    """Return ``q_i proportional to exp(-decay*(i+1/2)/steps)``.
+
+    Positive decay emphasizes early increments; negative decay emphasizes late
+    increments.  The direction is deterministic and strictly positive.
+    """
+    if steps <= 0:
+        raise ValueError("steps must be positive")
+    if not math.isfinite(decay):
+        raise ValueError("decay must be finite")
+    if not torch.empty((), dtype=dtype).is_floating_point():
+        raise TypeError("dtype must be floating point")
+    midpoint = (torch.arange(steps, device=device, dtype=dtype) + 0.5) / steps
+    log_weight = -float(decay) * midpoint
+    log_weight = log_weight - torch.max(log_weight)
+    direction = torch.exp(log_weight)
+    return direction / torch.linalg.vector_norm(direction)
+
+
 def validate_positive_unit_direction(
     direction: torch.Tensor,
     *,

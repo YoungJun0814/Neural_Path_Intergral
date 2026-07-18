@@ -1,0 +1,57 @@
+schema_version: 1
+protocol_id: g9-mgvs-multiregime-calibration-v1
+frozen: true
+
+common:
+  spot: 100.0
+  maturity: 1.0
+  xi: 0.04
+  training_steps: 64
+  validation_steps: 512
+
+tasks:
+  moderate:
+    hit_barrier: 65.0
+    stress_level: 80.0
+    minimum_occupation: 0.15
+    hit_scale: 5.0
+    occupation_scale: 0.05
+  rare:
+    hit_barrier: 45.0
+    stress_level: 70.0
+    minimum_occupation: 0.25
+    hit_scale: 5.0
+    occupation_scale: 0.05
+  deep:
+    hit_barrier: 30.0
+    stress_level: 60.0
+    minimum_occupation: 0.30
+    hit_scale: 5.0
+    occupation_scale: 0.05
+
+models:
+  low_rough_low_corr: {H: 0.05, eta: 1.5, rho: -0.3}
+  base: {H: 0.10, eta: 1.9, rho: -0.7}
+  high_rough_high_corr: {H: 0.20, eta: 1.5, rho: -0.9}
+  high_vol_of_vol: {H: 0.15, eta: 2.3, rho: -0.5}
+
+cem:
+  segments: 4
+  initial_segment: [1.0, -0.5]
+  paths_per_iteration: 8000
+  max_iterations: 6
+  elite_quantile: 0.90
+  smoothing: 0.70
+  min_elite_paths: 96
+  control_bound: 8.0
+  target_level_repetitions: 2
+
+calibration_validation:
+  paths: 10000
+  chunk_size: 1000
+  minimum_event_fraction: 0.002
+  maximum_likelihood_normalization_z: 5.0
+
+seeds:
+  training_base: 10101
+  validation_base: 11101

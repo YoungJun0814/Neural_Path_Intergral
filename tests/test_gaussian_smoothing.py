@@ -14,6 +14,7 @@ from src.path_integral.gaussian_smoothing import (
     decompose_gaussian_shift,
     downside_excursion_thresholds,
     orthogonal_gaussian_residual,
+    positive_exponential_direction,
     positive_flat_direction,
     stable_normal_cdf_difference,
 )
@@ -48,6 +49,16 @@ def test_gaussian_direction_decomposition_is_orthogonal_and_reconstructs() -> No
         rtol=0.0,
     )
     assert abs(float(torch.dot(split.orthogonal_shift, direction))) < 2e-15
+
+
+def test_exponential_direction_is_positive_unit_and_decay_oriented() -> None:
+    front = positive_exponential_direction(16, decay=3.0, device="cpu")
+    back = positive_exponential_direction(16, decay=-3.0, device="cpu")
+    assert torch.all(front > 0.0) and torch.all(back > 0.0)
+    assert float(torch.linalg.vector_norm(front)) == pytest.approx(1.0, abs=2e-15)
+    assert float(torch.linalg.vector_norm(back)) == pytest.approx(1.0, abs=2e-15)
+    assert float(front[0]) > float(front[-1])
+    assert float(back[0]) < float(back[-1])
 
 
 @pytest.mark.parametrize(

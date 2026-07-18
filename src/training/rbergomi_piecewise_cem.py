@@ -8,6 +8,7 @@ from dataclasses import dataclass
 import torch
 
 from src.path_integral import DownsideExcursionTask, TimePiecewiseTwoDriverControl
+from src.path_integral.rbergomi_fft import simulate_rbergomi_fft
 from src.physics_engine import RBergomiSimulator
 
 PiecewiseValues = tuple[tuple[float, float], ...]
@@ -95,16 +96,14 @@ def fit_rbergomi_piecewise_cem(
     target_hits = 0
     torch.manual_seed(seed)
     for iteration in range(max_iterations):
-        proposal = TimePiecewiseTwoDriverControl(
-            _as_values(control), maturity=maturity
-        )
-        paths = simulator.simulate_controlled_two_driver(
+        proposal = TimePiecewiseTwoDriverControl(_as_values(control), maturity=maturity)
+        paths = simulate_rbergomi_fft(
+            simulator,
             S0=spot,
             T=maturity,
             dt=dt,
             num_paths=num_paths,
             control_fn=proposal,
-            record_augmented=True,
             dtype=torch.float64,
         )
         assert paths.target_brownian_increments is not None

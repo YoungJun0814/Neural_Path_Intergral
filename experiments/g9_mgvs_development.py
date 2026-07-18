@@ -101,6 +101,7 @@ def _evaluate_level(
     bootstrap_replicates: int,
     bootstrap_seed: int,
     confidence_level: float,
+    direction: torch.Tensor | None = None,
 ) -> tuple[
     PairedLevelDiagnostics,
     dict[str, float | int],
@@ -158,6 +159,7 @@ def _evaluate_level(
                 task=task,
                 rho=simulator.rho,
                 declared_deterministic_control=True,
+                direction=direction,
             )
             smoothed_value = smoothed.level.smoothed_contribution
             raw_replay = smoothed.level.raw_contribution
@@ -168,6 +170,7 @@ def _evaluate_level(
                 task=task,
                 rho=simulator.rho,
                 declared_deterministic_control=True,
+                direction=direction,
             )
             smoothed_value = smoothed.smoothed_correction
             raw_replay = smoothed.raw_correction

@@ -1,0 +1,57 @@
+schema_version: 1
+protocol_id: g9-mgvs-frozen-multiregime-v3
+frozen: true
+
+calibration_sources:
+  - path: results/g9_mgvs_calibration_2026-07-18.json
+    canonical_json_sha256: 3976d987d60eae7083e0de6f73952125dcef5bbcd4a2667e9f8fc633a44ab726
+    group: core
+  - path: results/g9_mgvs_stress_calibration_2026-07-18.json
+    canonical_json_sha256: a3f88dbef382531ebe7171d3f4b773ffbf023e38a48ac6447d9b13f4da2a30b8
+    group: stress
+
+direction_source:
+  path: results/g9_direction_calibration_2026-07-18.json
+  canonical_json_sha256: 3ecd06531a5de92a21c97ccee0f6ea38c0b5642edd492fe60ff24a49ce65b3f3
+
+legacy_baselines:
+  g7:
+    path: results/g7_controlled_mlmc_frozen_2026-07-17.json
+    canonical_json_sha256: 5b911ae1cbd1b607865cc9e721529ff43670da124a031f733df6958cd858e3a4
+  g8:
+    path: results/g8_volterra_bridge_branching_frozen_2026-07-17.json
+    canonical_json_sha256: e8422bbac1612d86396dc4fdeebb7743fc96895bf8e1b46702f2aec8e5ff67d2
+
+hierarchy:
+  fine_steps: [32, 64, 128, 256, 512]
+
+reference:
+  paths_per_regime: 50000
+  chunk_size: 1000
+  seed_base: 50101
+
+validation:
+  paths_per_seed: 2000
+  chunk_size: 1000
+  seed_level_bootstrap_replicates: 100
+  pooled_bootstrap_replicates: 300
+  confidence_level: 0.95
+  target_relative_error: 0.10
+  thread_count: 1
+
+seeds:
+  validation: [60101, 60102, 60103, 60104, 60105, 60106, 60107, 60108, 60109, 60110]
+  bootstrap_base: 70101
+
+gates:
+  maximum_pooled_mean_difference_z: 3.0
+  maximum_smoothed_over_raw_variance_ci_upper: 1.05
+  minimum_correction_work_ratio: 1.5
+  minimum_total_work_ratio: 2.0
+  minimum_total_work_ratio_lower_95: 1.0
+  minimum_core_regime_improvement_fraction: 0.80
+  minimum_improving_seeds_per_regime: 8
+  minimum_coverage_fraction: 0.80
+  maximum_reference_difference_z: 3.0
+  maximum_likelihood_normalization_z: 4.0
+  maximum_exactness_error: 1.0e-11
