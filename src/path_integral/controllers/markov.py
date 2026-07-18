@@ -14,6 +14,7 @@ RBergomiTaskMode = Literal["left", "right", "union"]
 class ConstantTwoDriverControl(nn.Module):
     """Non-trainable constant control used by exact CEM baselines."""
 
+    is_deterministic_time_control = True
     value: torch.Tensor
 
     def __init__(self, first: float, second: float) -> None:
@@ -31,10 +32,17 @@ class ConstantTwoDriverControl(nn.Module):
     ) -> torch.Tensor:
         return self.value.to(device=spot.device, dtype=spot.dtype).expand(spot.shape[0], -1)
 
+    def deterministic_schedule(self, times: torch.Tensor) -> torch.Tensor:
+        """Evaluate the time-only control without constructing dummy states."""
+        if times.ndim != 1 or not times.is_floating_point() or not torch.isfinite(times).all():
+            raise ValueError("times must be a finite floating vector")
+        return self.value.to(device=times.device, dtype=times.dtype).expand(times.shape[0], -1)
+
 
 class TimePiecewiseTwoDriverControl(nn.Module):
     """Non-trainable deterministic two-driver drift on equal time segments."""
 
+    is_deterministic_time_control = True
     values: torch.Tensor
 
     def __init__(
@@ -71,10 +79,17 @@ class TimePiecewiseTwoDriverControl(nn.Module):
         values = self.values.to(device=spot.device, dtype=spot.dtype)
         return values[segment]
 
+    def deterministic_schedule(self, times: torch.Tensor) -> torch.Tensor:
+        """Evaluate the piecewise schedule independently of simulated paths."""
+        if times.ndim != 1 or not times.is_floating_point() or not torch.isfinite(times).all():
+            raise ValueError("times must be a finite floating vector")
+        segment = torch.floor(times / self.maturity * self.segments).long()
+        segment = torch.clamp(segment, min=0, max=self.segments - 1)
+        values = self.values.to(device=times.device, dtype=times.dtype)
+        return values[segment]
+
     def as_tuple(self) -> tuple[tuple[float, float], ...]:
-        return tuple(
-            (float(value[0]), float(value[1])) for value in self.values.detach().cpu()
-        )
+        return tuple((float(value[0]), float(value[1])) for value in self.values.detach().cpu())
 
 
 class LeanRBergomiControl(nn.Module):

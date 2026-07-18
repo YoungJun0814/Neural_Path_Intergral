@@ -1,0 +1,18 @@
+{
+  "event_mismatches": 0,
+  "gates": {
+    "event_threshold": true,
+    "shifted_integral": true,
+    "tail_difference": true
+  },
+  "passed": true,
+  "paths": 5000,
+  "protocol_id": "g9-m0-gaussian-smoothing-oracle-v1",
+  "quadrature_absolute_errors": [
+    2.553296116203363e-17,
+    0.0,
+    0.0
+  ],
+  "seed": 9701,
+  "tail_relative_error": 1.3142844647023857e-14
+}

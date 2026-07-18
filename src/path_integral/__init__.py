@@ -34,6 +34,19 @@ from .gaussian_oracles import (
     gaussian_left_tail_doob_drift,
     gaussian_left_tail_probability,
 )
+from .gaussian_smoothing import (
+    DownsideThresholds,
+    GaussianShiftDecomposition,
+    decompose_gaussian_shift,
+    downside_excursion_thresholds,
+    orthogonal_gaussian_residual,
+    positive_flat_direction,
+    scaled_normal_cdf,
+    scaled_normal_cdf_difference,
+    signed_log_normal_cdf_difference,
+    stable_normal_cdf_difference,
+    validate_positive_unit_direction,
+)
 from .heston_oracle import (
     HestonLogDesirabilityGradient,
     HestonOracleControl,
@@ -71,6 +84,15 @@ from .rbergomi_coupling import (
     adjacent_local_gaussian_coefficients,
     simulate_coupled_rbergomi_adjacent,
 )
+from .rbergomi_fft import (
+    AdjacentRBergomiFFTInnovations,
+    BLPFFTKernel,
+    RBergomiFFTInnovations,
+    blp_fft_kernel,
+    historical_volterra_convolution,
+    simulate_coupled_rbergomi_adjacent_fft,
+    simulate_rbergomi_fft,
+)
 from .rbergomi_mixture import (
     RBergomiMixtureSample,
     replay_rbergomi_control_on_target_paths,
@@ -79,6 +101,17 @@ from .rbergomi_mixture import (
 from .rbergomi_multilevel import (
     CoupledRBergomiMixtureSample,
     simulate_coupled_rbergomi_mixture,
+)
+from .rbergomi_smoothing import (
+    AffineRBergomiLogSpot,
+    SmoothedAdjacentRBergomiEstimate,
+    SmoothedRBergomiEstimate,
+    SmoothedRBergomiLevel,
+    affine_rbergomi_log_spot,
+    evaluate_smoothed_adjacent_rbergomi_sample,
+    evaluate_smoothed_rbergomi_sample,
+    simulate_smoothed_adjacent_rbergomi,
+    simulate_smoothed_rbergomi,
 )
 
 __all__ = [
@@ -148,4 +181,31 @@ __all__ = [
     "simulate_coupled_rbergomi_mixture",
     "terminal_left_tail_potential",
     "tilted_divergence_diagnostics",
+    "AdjacentRBergomiFFTInnovations",
+    "AffineRBergomiLogSpot",
+    "BLPFFTKernel",
+    "DownsideThresholds",
+    "GaussianShiftDecomposition",
+    "RBergomiFFTInnovations",
+    "SmoothedAdjacentRBergomiEstimate",
+    "SmoothedRBergomiEstimate",
+    "SmoothedRBergomiLevel",
+    "affine_rbergomi_log_spot",
+    "blp_fft_kernel",
+    "decompose_gaussian_shift",
+    "downside_excursion_thresholds",
+    "evaluate_smoothed_adjacent_rbergomi_sample",
+    "evaluate_smoothed_rbergomi_sample",
+    "historical_volterra_convolution",
+    "orthogonal_gaussian_residual",
+    "positive_flat_direction",
+    "scaled_normal_cdf",
+    "scaled_normal_cdf_difference",
+    "signed_log_normal_cdf_difference",
+    "simulate_coupled_rbergomi_adjacent_fft",
+    "simulate_rbergomi_fft",
+    "simulate_smoothed_adjacent_rbergomi",
+    "simulate_smoothed_rbergomi",
+    "stable_normal_cdf_difference",
+    "validate_positive_unit_direction",
 ]

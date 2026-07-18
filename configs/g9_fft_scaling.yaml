@@ -1,0 +1,29 @@
+schema_version: 1
+protocol_id: g9-fft-scaling-v1
+frozen: true
+
+model:
+  spot: 100.0
+  maturity: 0.25
+  H: 0.1
+  eta: 1.2
+  xi: 0.04
+  rho: -0.7
+
+benchmark:
+  steps: [64, 128, 256, 512, 1024]
+  paths: 32
+  warmup_repetitions: 1
+  timed_repetitions: 5
+  thread_count: 1
+
+validation:
+  replay_paths: 64
+  replay_steps: 128
+  replay_seed: 9401
+  maximum_path_error: 1.0e-11
+  maximum_cost_exponent_upper_95: 1.35
+  minimum_speedup_at_1024: 1.0
+
+seeds:
+  timing: [9411, 9412, 9413, 9414, 9415]

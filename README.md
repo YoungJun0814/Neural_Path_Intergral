@@ -2,6 +2,18 @@
 
 > Research prototype for controlled-SDE importance sampling in quantitative finance.
 
+## Current G9 research track: MGVS
+
+The active track is **Monotone Gaussian Volterra Smoothing (MGVS)**: an exact
+finite-grid conditional Monte Carlo estimator for downside hit-and-occupation
+events under kappa=1 BLP rBergomi, combined with deterministic two-driver
+importance sampling, exact adjacent-grid coupling, and an FFT Volterra engine.
+The implementation rejects path-dependent controls because the current analytic
+smoothing proof requires a deterministic time-only proposal.
+
+See [`MONOTONE_GAUSSIAN_VOLTERRA_SMOOTHING_PLAN_V9.md`](MONOTONE_GAUSSIAN_VOLTERRA_SMOOTHING_PLAN_V9.md)
+and [`MGVS_THEORETICAL_TECHNICAL_AUDIT_V1.md`](MGVS_THEORETICAL_TECHNICAL_AUDIT_V1.md).
+
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
 
