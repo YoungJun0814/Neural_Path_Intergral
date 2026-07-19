@@ -33,7 +33,7 @@ def _config(name: str):
 
 
 def test_frozen_protocol_selects_640_declared_cells_and_excludes_low_h_excursion() -> None:
-    config = _config("g11_m7_confirmatory_v1.yaml")
+    config = _config("g11_m7_confirmatory_v2.yaml")
     contexts, inputs = _load_regimes(config)
     task_counts = {context["name"]: len(context["tasks"]) for context in contexts}
     assert task_counts == {"low_h007": 8, "primary_h012": 12, "high_h030": 12}
@@ -45,7 +45,7 @@ def test_frozen_protocol_selects_640_declared_cells_and_excludes_low_h_excursion
 
 def test_qualification_protocol_is_disjoint_and_contains_one_cell() -> None:
     qualification = _config("g11_m7_local_qualification.yaml")
-    confirmatory = _config("g11_m7_confirmatory_v1.yaml")
+    confirmatory = _config("g11_m7_confirmatory_v2.yaml")
     assert qualification["protocol_id"] != confirmatory["protocol_id"]
     assert not qualification["frozen"] and confirmatory["frozen"]
     assert expected_cell_count(qualification) == 1

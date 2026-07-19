@@ -48,6 +48,17 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _canonical_sha256(payload: dict[str, Any]) -> str:
+    encoded = json.dumps(
+        payload,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+        allow_nan=False,
+    ).encode("ascii")
+    return hashlib.sha256(encoded).hexdigest()
+
+
 def _atomic_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
@@ -111,23 +122,23 @@ def _verify_source(config: dict[str, Any]) -> list[dict[str, str]]:
 
 def _verified_payload(declaration: dict[str, Any]) -> tuple[dict[str, Any], str]:
     path = Path(declaration["path"])
-    actual = _sha256(path)
-    if actual != str(declaration["sha256"]):
-        raise ValueError(f"input artifact hash mismatch: {path}")
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError(f"input artifact is not an object: {path}")
+    actual = _canonical_sha256(payload)
+    if actual != str(declaration["canonical_sha256"]):
+        raise ValueError(f"input artifact canonical hash mismatch: {path}")
     return payload, actual
 
 
 def _verified_yaml(declaration: dict[str, Any]) -> tuple[dict[str, Any], str]:
     path = Path(declaration["path"])
-    actual = _sha256(path)
-    if actual != str(declaration["sha256"]):
-        raise ValueError(f"input config hash mismatch: {path}")
     payload = yaml.safe_load(path.read_bytes())
     if not isinstance(payload, dict):
         raise ValueError(f"input config is not a mapping: {path}")
+    actual = _canonical_sha256(payload)
+    if actual != str(declaration["canonical_sha256"]):
+        raise ValueError(f"input config canonical hash mismatch: {path}")
     return payload, actual
 
 
@@ -175,15 +186,20 @@ def _load_regimes(
             (
                 {
                     "path": str(declaration["calibration_config"]["path"]),
-                    "sha256": config_hash,
+                    "canonical_sha256": config_hash,
+                    "generation_sha256": str(
+                        declaration["calibration_config"]["generation_sha256"]
+                    ),
                 },
                 {
                     "path": str(declaration["calibration_result"]["path"]),
-                    "sha256": result_hash,
+                    "canonical_sha256": result_hash,
                 },
             )
         )
-        if calibration_result.get("config_sha256") != config_hash:
+        if calibration_result.get("config_sha256") != str(
+            declaration["calibration_config"]["generation_sha256"]
+        ):
             raise ValueError("calibration result does not match its config")
         if calibration_result.get("smoke") is not False:
             raise ValueError("M7 cannot use smoke calibration")

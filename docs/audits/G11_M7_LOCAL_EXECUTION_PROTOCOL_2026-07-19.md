@@ -116,11 +116,19 @@ and censored cell counts are always reported separately.
 
 The estimator core is pinned to commit
 `e358a562df9637eeaa6db5826307471bf5c6e2ce` and ten core source-file SHA-256 values.
-The protocol itself is pinned by the Git tag `g11-m7-confirmatory-v1-freeze`, avoiding
-the circular impossibility of embedding a commit hash inside the commit it identifies.
+The first freeze candidate, `g11-m7-confirmatory-v1-freeze`, failed its seed-free
+detached-worktree preflight because raw JSON byte hashes were not portable across Git
+line-ending normalization. No confirmatory seed was allocated. V1 is retained as a
+negative provenance artifact rather than silently moving its tag.
+
+V2 replaces raw JSON/YAML byte hashes with canonical parsed-content SHA-256 values
+while retaining each calibration config's original generation-byte hash for linkage
+to the existing result. The executable protocol ID is `g11-m7-confirmatory-v2` and is
+pinned by the Git tag `g11-m7-confirmatory-v2-freeze`, avoiding the circular
+impossibility of embedding a commit hash inside the commit it identifies.
 
 The qualification protocol ID is `g11-m7-local-qualification-v1`; the confirmatory ID
-is `g11-m7-confirmatory-v1`. Because the full protocol identifier is part of every
+is `g11-m7-confirmatory-v2`. Because the full protocol identifier is part of every
 canonical seed key, qualification and confirmatory streams are disjoint.
 
 Confirmatory execution additionally requires:

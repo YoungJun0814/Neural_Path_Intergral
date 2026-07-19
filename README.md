@@ -235,7 +235,7 @@ seed:
 
 ```bash
 python -m experiments.g11_m7_confirmatory \
-  --config configs/g11_m7_confirmatory_v1.yaml \
+  --config configs/g11_m7_confirmatory_v2.yaml \
   --preflight \
   --output /path/outside/worktree/g11_m7_preflight.json
 ```
