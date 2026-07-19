@@ -14,6 +14,7 @@ import json
 import math
 import subprocess
 import time
+from collections.abc import Mapping
 from dataclasses import asdict, replace
 from pathlib import Path
 from statistics import geometric_mean
@@ -27,6 +28,8 @@ from src.path_integral import (
     DiscreteBarrierHitTask,
     DownsideExcursionTask,
     FixedFinestGridTarget,
+    LevelBatch,
+    MLMCCheckpoint,
     MLMCHierarchy,
     MLMCPreparedRun,
     RBergomiMLMCSampler,
@@ -42,6 +45,62 @@ from src.physics_engine import RBergomiSimulator
 M7Method = Literal["raw_defensive", "dcs_mgi"]
 M7Engine = Literal["reference", "fft"]
 METHODS: tuple[M7Method, ...] = ("raw_defensive", "dcs_mgi")
+
+
+class _TrackingSampler:
+    """Retain spent work and seed evidence even when pilot preparation is censored."""
+
+    def __init__(self, sampler: RBergomiMLMCSampler) -> None:
+        self.sampler = sampler
+        self.calls: list[dict[str, Any]] = []
+
+    def __call__(
+        self,
+        level: int,
+        role: Literal["pilot", "final"],
+        count: int,
+        seeds: Mapping[str, int],
+    ) -> LevelBatch:
+        batch = self.sampler(level, role, count, seeds)
+        self.calls.append(
+            {
+                "level": level,
+                "role": role,
+                "count": count,
+                "seeds": {key: int(value) for key, value in sorted(seeds.items())},
+                "work_units": batch.work_units,
+                "wall_seconds": batch.wall_seconds,
+            }
+        )
+        return batch
+
+    @property
+    def work_units(self) -> float:
+        return math.fsum(float(call["work_units"]) for call in self.calls)
+
+    @property
+    def wall_seconds(self) -> float:
+        return math.fsum(float(call["wall_seconds"]) for call in self.calls)
+
+    @property
+    def seed_evidence_sha256(self) -> str:
+        payload = [
+            {
+                "level": call["level"],
+                "role": call["role"],
+                "count": call["count"],
+                "seeds": call["seeds"],
+            }
+            for call in self.calls
+        ]
+        return hashlib.sha256(
+            json.dumps(
+                payload,
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=True,
+            ).encode("ascii")
+        ).hexdigest()
 
 
 def _sha256(path: Path) -> str:
@@ -325,6 +384,7 @@ def _method_result(
     task_item: dict[str, Any],
     replicate: int,
     method: M7Method,
+    checkpoint_path: Path | None = None,
 ) -> dict[str, Any]:
     process_cpu_started = time.process_time()
     model = context["model"]
@@ -367,7 +427,7 @@ def _method_result(
     if engine_text not in {"reference", "fft"}:
         raise ValueError("M7 engine must be reference or fft")
     engine = cast(M7Engine, engine_text)
-    sampler = RBergomiMLMCSampler(
+    base_sampler = RBergomiMLMCSampler(
         simulator,
         controls,
         weights,
@@ -380,21 +440,54 @@ def _method_result(
             engine=engine,
         ),
     )
+    sampler = _TrackingSampler(base_sampler)
     preparation_started = time.perf_counter()
-    prepared = prepare_mlmc(
-        hierarchy,
-        sampler,
-        protocol=protocol,
-        regime=str(context["name"]),
-        task=str(task_item["id"]),
-        sampling_variance_target=rmse**2,
-        pilot_samples=int(sampling["pilot_samples"]),
-        minimum_final_samples=int(sampling["minimum_final_samples"]),
-        chunk_size=int(sampling["chunk_size"]),
-        allocation_safety_factor=float(sampling["allocation_safety_factor"]),
-        minimum_pilot_nonzero=int(sampling["minimum_pilot_nonzero"]),
-        maximum_pilot_samples=int(sampling["maximum_pilot_samples"]),
-    )
+    try:
+        prepared = prepare_mlmc(
+            hierarchy,
+            sampler,
+            protocol=protocol,
+            regime=str(context["name"]),
+            task=str(task_item["id"]),
+            sampling_variance_target=rmse**2,
+            pilot_samples=int(sampling["pilot_samples"]),
+            minimum_final_samples=int(sampling["minimum_final_samples"]),
+            chunk_size=int(sampling["chunk_size"]),
+            allocation_safety_factor=float(sampling["allocation_safety_factor"]),
+            minimum_pilot_nonzero=int(sampling["minimum_pilot_nonzero"]),
+            maximum_pilot_samples=int(sampling["maximum_pilot_samples"]),
+        )
+    except ValueError as error:
+        if method != "raw_defensive" or "pilot reached its cap" not in str(error):
+            raise
+        return {
+            "estimate": None,
+            "empirical_sampling_variance": None,
+            "design_sampling_variance": None,
+            "standard_error": None,
+            "confidence_interval_95": None,
+            "target_attained": False,
+            "allocation_capped": False,
+            "pilot_resource_censored": True,
+            "resource_censored": True,
+            "censor_stage": "pilot",
+            "censor_reason": str(error),
+            "total_work_units": sampler.work_units,
+            "total_wall_seconds": sampler.wall_seconds,
+            "process_cpu_seconds": time.process_time() - process_cpu_started,
+            "preparation_orchestration_seconds": time.perf_counter()
+            - preparation_started,
+            "resumed_from_checkpoint": False,
+            "recovery_pilot_work_units": 0.0,
+            "recovery_pilot_wall_seconds": 0.0,
+            "pilot": None,
+            "uncapped_final_counts": None,
+            "allocations": None,
+            "levels": None,
+            "seed_ledger_sha256": None,
+            "seed_evidence_kind": "attempted_batch_seed_manifest",
+            "seed_evidence_sha256": sampler.seed_evidence_sha256,
+        }
     preparation_seconds = time.perf_counter() - preparation_started
     uncapped_counts = tuple(item.final_count for item in prepared.allocations)
     allocation_capped = False
@@ -403,7 +496,36 @@ def _method_result(
             prepared,
             int(config["resource_limits"]["raw_max_final_samples_per_level"]),
         )
-    result = execute_mlmc(prepared, sampler)
+    checkpoint = None
+    recovery_work_units = 0.0
+    recovery_wall_seconds = 0.0
+    resumed_from_checkpoint = False
+    if checkpoint_path is not None and checkpoint_path.exists():
+        checkpoint, recovery_work_units, recovery_wall_seconds = _load_method_checkpoint(
+            checkpoint_path
+        )
+        recovery_work_units += prepared.work.total_work_units
+        recovery_wall_seconds += prepared.work.total_wall_seconds
+        resumed_from_checkpoint = True
+    checkpoint_interval = int(config["resource_limits"]["checkpoint_interval_chunks"])
+    while True:
+        result = execute_mlmc(
+            prepared,
+            sampler,
+            checkpoint=checkpoint,
+            maximum_chunks=checkpoint_interval if checkpoint_path is not None else None,
+        )
+        if result.complete:
+            break
+        if result.checkpoint is None or checkpoint_path is None:
+            raise AssertionError("incomplete M7 result must expose a checkpoint path")
+        checkpoint = result.checkpoint
+        _save_method_checkpoint(
+            checkpoint_path,
+            checkpoint,
+            recovery_work_units=recovery_work_units,
+            recovery_wall_seconds=recovery_wall_seconds,
+        )
     if not result.complete:
         raise AssertionError("uninterrupted M7 method execution must complete")
     target_attained = bool(
@@ -418,16 +540,26 @@ def _method_result(
         "confidence_interval_95": result.confidence_interval_95,
         "target_attained": target_attained,
         "allocation_capped": allocation_capped,
+        "pilot_resource_censored": False,
         "resource_censored": allocation_capped and not target_attained,
-        "total_work_units": result.work.total_work_units,
-        "total_wall_seconds": result.work.total_wall_seconds,
+        "censor_stage": "final_allocation"
+        if allocation_capped and not target_attained
+        else None,
+        "censor_reason": None,
+        "total_work_units": result.work.total_work_units + recovery_work_units,
+        "total_wall_seconds": result.work.total_wall_seconds + recovery_wall_seconds,
         "process_cpu_seconds": time.process_time() - process_cpu_started,
         "preparation_orchestration_seconds": preparation_seconds,
+        "resumed_from_checkpoint": resumed_from_checkpoint,
+        "recovery_pilot_work_units": recovery_work_units,
+        "recovery_pilot_wall_seconds": recovery_wall_seconds,
         "pilot": [asdict(item) for item in result.pilot],
         "uncapped_final_counts": list(uncapped_counts),
         "allocations": [asdict(item) for item in result.allocations],
         "levels": [asdict(item) for item in result.levels],
         "seed_ledger_sha256": result.seed_ledger_hash,
+        "seed_evidence_kind": "complete_mlmc_seed_ledger",
+        "seed_evidence_sha256": result.seed_ledger_hash,
     }
 
 
@@ -445,6 +577,54 @@ def _write_progress(
             "config_sha256": config_hash,
             "cells": cells,
             "failures": failures,
+        },
+    )
+
+
+def _method_checkpoint_path(
+    progress_path: Path,
+    *,
+    config_hash: str,
+    regime: str,
+    task: str,
+    replicate: int,
+    method: str,
+) -> Path:
+    identity = f"{config_hash}|{regime}|{task}|{replicate}|{method}"
+    token = hashlib.sha256(identity.encode("ascii")).hexdigest()[:24]
+    return progress_path.with_name(f"{progress_path.name}.{token}.checkpoint.json")
+
+
+def _load_method_checkpoint(
+    path: Path,
+) -> tuple[MLMCCheckpoint, float, float]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict) or payload.get("schema") != "npi.g11.m7-method-checkpoint.v1":
+        raise ValueError("unsupported M7 method checkpoint")
+    raw_checkpoint = payload.get("checkpoint")
+    if not isinstance(raw_checkpoint, dict):
+        raise ValueError("M7 method checkpoint has no MLMC state")
+    return (
+        MLMCCheckpoint.from_dict(raw_checkpoint),
+        float(payload["recovery_work_units"]),
+        float(payload["recovery_wall_seconds"]),
+    )
+
+
+def _save_method_checkpoint(
+    path: Path,
+    checkpoint: MLMCCheckpoint,
+    *,
+    recovery_work_units: float,
+    recovery_wall_seconds: float,
+) -> None:
+    _atomic_json(
+        path,
+        {
+            "schema": "npi.g11.m7-method-checkpoint.v1",
+            "checkpoint": checkpoint.to_dict(),
+            "recovery_work_units": recovery_work_units,
+            "recovery_wall_seconds": recovery_wall_seconds,
         },
     )
 
@@ -670,6 +850,18 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
                 for method in METHODS:
                     if method in cell["methods"]:
                         continue
+                    method_checkpoint = (
+                        _method_checkpoint_path(
+                            progress_path,
+                            config_hash=config_hash,
+                            regime=str(context["name"]),
+                            task=str(task_item["id"]),
+                            replicate=replicate,
+                            method=method,
+                        )
+                        if progress_path is not None
+                        else None
+                    )
                     try:
                         cell["methods"][method] = _method_result(
                             config=config,
@@ -677,6 +869,7 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
                             task_item=task_item,
                             replicate=replicate,
                             method=method,
+                            checkpoint_path=method_checkpoint,
                         )
                     except Exception as error:
                         failures.append(
@@ -704,6 +897,8 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
                             cells=cells,
                             failures=failures,
                         )
+                    if method_checkpoint is not None and method_checkpoint.exists():
+                        method_checkpoint.unlink()
                 raw = cell["methods"]["raw_defensive"]
                 dcs = cell["methods"]["dcs_mgi"]
                 allocated_ratio = (
@@ -723,8 +918,10 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
                 cell["wall_ratio_raw_over_dcs"] = (
                     float(raw["total_wall_seconds"]) / float(dcs["total_wall_seconds"])
                 )
-                cell["paired_estimate_difference"] = float(dcs["estimate"]) - float(
-                    raw["estimate"]
+                cell["paired_estimate_difference"] = (
+                    float(dcs["estimate"]) - float(raw["estimate"])
+                    if dcs["estimate"] is not None and raw["estimate"] is not None
+                    else None
                 )
                 process_cpu = math.fsum(
                     float(method_result["process_cpu_seconds"])
@@ -746,7 +943,8 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
             "task": cell["task"],
             "replicate": cell["replicate"],
             "method": method,
-            "seed_ledger_sha256": result["seed_ledger_sha256"],
+            "seed_evidence_kind": result["seed_evidence_kind"],
+            "seed_evidence_sha256": result["seed_evidence_sha256"],
         }
         for cell in cells
         for method, result in sorted(cell.get("methods", {}).items())
@@ -784,7 +982,13 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
         "cells": cells,
         "failures": failures,
         "gates": gates,
-        "seed_ledger_sha256": aggregate_seed_hash,
+        "seed_ledger_sha256": aggregate_seed_hash
+        if all(
+            item["seed_evidence_kind"] == "complete_mlmc_seed_ledger"
+            for item in seed_manifest
+        )
+        else None,
+        "seed_evidence_sha256": aggregate_seed_hash,
         "seed_manifest_entries": len(seed_manifest),
         "work_ledger": {
             "measured_method_wall_seconds": method_wall_seconds,
@@ -815,18 +1019,13 @@ def main() -> None:
         )
         result = run(arguments.config, progress_path=progress)
     _atomic_json(arguments.output, result)
-    print(
-        json.dumps(
-            result.get(
-                "gates",
-                {
-                    "expected_cell_count": result["expected_cell_count"],
-                    "random_seeds_allocated": result["random_seeds_allocated"],
-                },
-            ),
-            sort_keys=True,
-        )
-    )
+    printable = result.get("gates")
+    if printable is None:
+        printable = {
+            "expected_cell_count": result["expected_cell_count"],
+            "random_seeds_allocated": result["random_seeds_allocated"],
+        }
+    print(json.dumps(printable, sort_keys=True))
 
 
 if __name__ == "__main__":

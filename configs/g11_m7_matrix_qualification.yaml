@@ -1,5 +1,5 @@
 schema_version: 1
-protocol_id: g11-m7-local-qualification-v1
+protocol_id: g11-m7-matrix-qualification-v1
 run_class: qualification
 frozen: false
 estimand: finite_grid
@@ -25,28 +25,42 @@ proposal:
     - [[4.0, -10.0]]
 selection: {minimum_excursion_exclusion_fraction: 0.01}
 regimes:
+  - name: low_h007
+    calibration_config:
+      {path: configs/g11_rarity_calibration_low_h.yaml, canonical_sha256: e3a70666882447c8ade58cc337f10f3e76b31ac47993c9f5b2b514587c369a0a, generation_sha256: 54b26af17d0bb0748193ae0932259f0ba6321cd10536dcc9b9874065e59cde0f}
+    calibration_result:
+      {path: results/g11_rarity_calibration_low_h_v1_2026-07-19.json, canonical_sha256: e37492bab97e72311036db30e43b39ff4a4d2bca804cdd4c38046f007fe33735}
+    included_tasks: [terminal, barrier]
+    target_probabilities: [1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6]
   - name: primary_h012
     calibration_config:
       {path: configs/g11_rarity_calibration.yaml, canonical_sha256: 1f6335e8250bf1bbd36e8b0e24f97fa4ef545de4e36c0e33f728f8aa2ab282dd, generation_sha256: ef211cc9197361bc3aeabcf51a4e71bf4d4a96ac4361ca0afbd855a0ca377a84}
     calibration_result:
       {path: results/g11_rarity_calibration_v1_2026-07-19.json, canonical_sha256: a60e29538c6da1ff1e89557f96c41e82de473f752337d6144d7f0e57430ba259}
-    included_tasks: [terminal]
-    target_probabilities: [1.0e-3]
+    included_tasks: [terminal, barrier, excursion]
+    target_probabilities: [1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6]
+  - name: high_h030
+    calibration_config:
+      {path: configs/g11_rarity_calibration_high_h.yaml, canonical_sha256: 064bddb3069370999f176890b6a3b42c54e3f5c0baf52a7eaa54e5f739907d88, generation_sha256: 5dfc8c27ad6c4d4f0503cf2a22ead8c79eb8f1508ad50d236469d561ec4aa67f}
+    calibration_result:
+      {path: results/g11_rarity_calibration_high_h_v1_2026-07-19.json, canonical_sha256: 054fdc6ca1b22da94bec7b74384e7e6efaf4bfd151d1b551f21e0a85ba4d63cb}
+    included_tasks: [terminal, barrier, excursion]
+    target_probabilities: [1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6]
 sampling:
-  relative_rmse_target: 0.20
+  relative_rmse_target: 1.00
   repetitions: 1
-  pilot_samples: 128
-  minimum_final_samples: 128
-  chunk_size: 4096
-  allocation_safety_factor: 4.0
-  minimum_pilot_nonzero: 0
-  maximum_pilot_samples: 128
+  pilot_samples: 64
+  minimum_final_samples: 32
+  chunk_size: 1024
+  allocation_safety_factor: 1.0
+  minimum_pilot_nonzero: 16
+  maximum_pilot_samples: 64
   engine: fft
 resource_limits:
   torch_threads: 8
   checkpoint_interval_chunks: 8
-  total_cpu_hours: 1.0
-  raw_max_final_samples_per_level: 1024
+  total_cpu_hours: 10.0
+  raw_max_final_samples_per_level: 128
 gates:
   minimum_dcs_target_attainment_fraction: 0.0
   minimum_matched_target_cells: 0

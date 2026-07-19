@@ -20,7 +20,7 @@ finite-grid rBergomi adapter, exact adjacent-level coupling, seed ledger,
 checkpoint/resume logic, rate study, rarity calibration, and artifact audit have all
 passed their declared development gates. The M7 local protocol, resource-censoring
 semantics, and seed-free preflight are also implemented and qualified. The full test
-suite currently passes **321/321 tests**.
+suite currently passes **324/324 tests**.
 
 This repository is **not yet a finished journal submission**. In particular, the M7
 640-cell confirmatory run has not started, and the present estimator targets a declared
@@ -235,7 +235,7 @@ seed:
 
 ```bash
 python -m experiments.g11_m7_confirmatory \
-  --config configs/g11_m7_confirmatory_v2.yaml \
+  --config configs/g11_m7_confirmatory_v3.yaml \
   --preflight \
   --output /path/outside/worktree/g11_m7_preflight.json
 ```

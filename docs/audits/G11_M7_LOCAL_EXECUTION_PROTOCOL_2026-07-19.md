@@ -121,14 +121,24 @@ detached-worktree preflight because raw JSON byte hashes were not portable acros
 line-ending normalization. No confirmatory seed was allocated. V1 is retained as a
 negative provenance artifact rather than silently moving its tag.
 
-V2 replaces raw JSON/YAML byte hashes with canonical parsed-content SHA-256 values
+V2 replaced raw JSON/YAML byte hashes with canonical parsed-content SHA-256 values
 while retaining each calibration config's original generation-byte hash for linkage
-to the existing result. The executable protocol ID is `g11-m7-confirmatory-v2` and is
-pinned by the Git tag `g11-m7-confirmatory-v2-freeze`, avoiding the circular
-impossibility of embedding a commit hash inside the commit it identifies.
+to the existing result. Its preflight passed with zero allocated seeds. A final
+pre-execution audit then found that a raw pilot exhausting its nonzero-event cap would
+raise an exception instead of becoming a resource-censored baseline cell. V2 is also
+retained and was never executed beyond preflight.
+
+V3 records spent pilot work and attempted-batch seed evidence when that raw-only cap
+is reached, classifies the method as pilot-stage resource-censored, and continues with
+DCS. Unexpected DCS pilot failures still abort. Final sampling writes an atomic MLMC
+checkpoint every 64 chunks; a resumed run includes recomputed-pilot work and wall time
+instead of hiding recovery cost. The executable protocol ID is
+`g11-m7-confirmatory-v3` and is pinned by the Git tag
+`g11-m7-confirmatory-v3-freeze`, avoiding the circular impossibility of embedding a
+commit hash inside the commit it identifies.
 
 The qualification protocol ID is `g11-m7-local-qualification-v1`; the confirmatory ID
-is `g11-m7-confirmatory-v2`. Because the full protocol identifier is part of every
+is `g11-m7-confirmatory-v3`. Because the full protocol identifier is part of every
 canonical seed key, qualification and confirmatory streams are disjoint.
 
 Confirmatory execution additionally requires:
@@ -138,7 +148,7 @@ Confirmatory execution additionally requires:
 - eight PyTorch threads; and
 - output/progress paths outside the clean source worktree.
 
-## 8. Qualification result
+## 8. Qualification results
 
 The one-cell qualification completed successfully in its non-confirmatory namespace:
 
@@ -152,6 +162,23 @@ The one-cell qualification completed successfully in its non-confirmatory namesp
 
 This validates orchestration semantics only. It is not rare-event performance
 evidence and must not appear in a paper result table.
+
+A second qualification used the complete 32-cell regime/task/rarity matrix with a
+coarse, deliberately censoring budget:
+
+- all 32 cells completed;
+- no unexpected failure occurred;
+- all 32 raw pilots reached the deliberately tiny qualification cap and were recorded
+  as pilot-stage censored rather than exceptions;
+- DCS continued in every cell;
+- all 64 method seed-evidence entries were hashed; and
+- no stale method-checkpoint file remained after completion.
+
+Its DCS target-attainment fraction was 62.5% under a 64-path pilot and safety factor
+one. This is expected for the intentionally coarse branch-coverage protocol and is not
+an M7 performance observation. The confirmatory protocol retains the independently
+declared 1,024-path pilot, 32-nonzero requirement, 65,536 pilot cap, and safety factor
+four.
 
 ## 9. Operational rules for the notebook run
 
@@ -168,6 +195,6 @@ evidence and must not appear in a paper result table.
 
 ## 10. Current decision
 
-The local environment and M7 orchestration passed the 321-test full suite and focused
+The local environment and M7 orchestration passed the 324-test full suite and focused
 Ruff/mypy checks. The protocol is ready for its dedicated commit and freeze tag.
 Confirmatory execution begins only from a clean worktree at that tag.
