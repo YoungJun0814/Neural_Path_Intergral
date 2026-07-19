@@ -1,225 +1,326 @@
-# DriftNet: Neural Importance Sampling for Rare Downside Events
+# DCS-MGI-MLMC for Rare Events under Rough Volatility
 
-> Research prototype for controlled-SDE importance sampling in quantitative finance.
+[![CI](https://github.com/YoungJun0814/Neural_Path_Intergral/actions/workflows/ci.yml/badge.svg)](https://github.com/YoungJun0814/Neural_Path_Intergral/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Research status](https://img.shields.io/badge/status-development-orange.svg)](#research-status)
 
-## Completed G9 research track: MGVS
+> A research implementation of exact finite-grid rare-event estimation using
+> defensive importance sampling, Gaussian control-span marginalization, and
+> multilevel Monte Carlo (MLMC) for rough Bergomi and Gaussian Volterra models.
 
-The active track is **Monotone Gaussian Volterra Smoothing (MGVS)**: an exact
-finite-grid conditional Monte Carlo estimator for downside hit-and-occupation
-events under kappa=1 BLP rBergomi, combined with deterministic two-driver
-importance sampling, exact adjacent-grid coupling, and an FFT Volterra engine.
-The implementation rejects path-dependent controls because the current analytic
-smoothing proof requires a deterministic time-only proposal.
+## Research status
 
-See [`MONOTONE_GAUSSIAN_VOLTERRA_SMOOTHING_PLAN_V9.md`](MONOTONE_GAUSSIAN_VOLTERRA_SMOOTHING_PLAN_V9.md)
-and [`MGVS_THEORETICAL_TECHNICAL_AUDIT_V1.md`](MGVS_THEORETICAL_TECHNICAL_AUDIT_V1.md).
-The final 12-core/6-stress headline hypothesis did not pass; see the
-[`G9 frozen falsification report`](G9_FROZEN_FALSIFICATION_REPORT_2026-07-18.md).
+The active method is **DCS-MGI-MLMC**:
 
-## Completed G10 research track: DCS-MGI
+> **D**efensive **C**ontrol-**S**pan **M**arginalized **G**aussian **I**ntegration
+> embedded in **M**ulti**l**evel **M**onte **C**arlo.
 
-G10 integrates the complete deterministic price-control span of a natural/CEM
-defensive mixture. Its bounded outer likelihood, exact single-grid estimator, and
-exact adjacent-grid correction passed all finite-grid audits. The frozen suite
-improved single-level work by `1.335x` in aggregate and in `12/12` core regimes, while
-correction work improved by `2.395x`. The predeclared `2x` single-level headline still
-failed. The unbiased rank-two extension also failed its development work gate and was
-stopped. See
-[`CONTROL_SPAN_MARGINALIZED_GAUSSIAN_PLAN_V10.md`](CONTROL_SPAN_MARGINALIZED_GAUSSIAN_PLAN_V10.md)
-and the
-[`G10 final audit`](G10_CONTROL_SPAN_FALSIFICATION_REPORT_2026-07-19.md).
+The M0--M6 development implementation is complete. The generic Gaussian identities,
+finite-grid rBergomi adapter, exact adjacent-level coupling, seed ledger,
+checkpoint/resume logic, rate study, rarity calibration, and artifact audit have all
+passed their declared development gates. The full test suite currently passes
+**316/316 tests**.
 
-## Active G11 research track: correction-focused DCS-MGI-MLMC
+This repository is **not yet a finished journal submission**. In particular, the M7
+confirmatory protocol has not been frozen or run, and the present estimator targets a
+declared finest discrete grid rather than a continuously monitored event. Development
+results must not be quoted as untouched confirmatory evidence.
 
-G11 promotes the validated G10 adjacent correction into a complete MLMC estimator.
-The plan separates finite-grid exactness, conditional variance-rate theorems, and
-training-inclusive end-to-end work into independent falsification gates. It also
-requires a generic Gaussian-mixture theorem, a centralized seed ledger, published
-baseline reproduction, untouched CPU validation, and an independent second
-environment. The M0--M6 core, six-level rate study, and `10^-3`--`10^-6`
-rare-event development are implemented; confirmatory M7+ evidence is not yet frozen.
-See the
-[`correction-focused DCS-MGI-MLMC V11 plan`](CORRECTION_FOCUSED_DCS_MGI_MLMC_PLAN_V11.md)
-and the
-[`G11 implementation/error audit`](docs/audits/G11_IMPLEMENTATION_AND_ERROR_AUDIT_2026-07-19.md).
+Start with:
 
-[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
+- [V11 research and implementation plan](CORRECTION_FOCUSED_DCS_MGI_MLMC_PLAN_V11.md)
+- [G11 implementation and error audit](docs/audits/G11_IMPLEMENTATION_AND_ERROR_AUDIT_2026-07-19.md)
+- [Theorem statements](docs/theory/G11_THEOREMS.md) and [proof audit](docs/theory/G11_PROOF_AUDIT.md)
+- [M7 freeze-readiness review](docs/audits/G11_M7_FREEZE_READINESS_2026-07-19.md)
+- [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
-## 📉 Project Overview
-**DriftNet** studies neural changes of measure for rare-event simulation in
-quantitative finance. The controller steers stochastic-volatility paths toward
-a target event, while a Girsanov likelihood ratio is used to recover
-expectations under the chosen base measure.
+## Why this problem matters
 
-The project is being rebuilt toward publication-grade validation. Earlier
-notebooks reported large increases in the *frequency* of controlled crash paths;
-that frequency ratio is not a variance-reduction factor or computational
-speedup. Current claims are limited to results produced by the tested experiment
-pipeline. See [`RESEARCH_CHARTER.md`](RESEARCH_CHARTER.md) and
-[`PUBLICATION_GRADE_RESEARCH_PLAN.md`](PUBLICATION_GRADE_RESEARCH_PLAN.md).
+Rare downside probabilities under rough volatility can be too expensive for ordinary
+Monte Carlo. Importance sampling can make the event appear more often, but that alone
+does not guarantee an accurate or efficient estimator: the likelihood ratio can have
+heavy tails, discontinuous path events can create slowly decaying MLMC corrections,
+and proposal-training cost can erase an apparent speedup.
 
-The implementation-aligned equations are in
-[`docs/mathematical_specification.md`](docs/mathematical_specification.md).
-The current G2 gate decision is recorded in
-[`docs/phase_reviews/G2_SMOKE_EXECUTION_2026-07-13.md`](docs/phase_reviews/G2_SMOKE_EXECUTION_2026-07-13.md).
+This project addresses those failure modes with four constraints:
 
-For a Korean explanation of the current architecture and completed work, see
-[`docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md`](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md).
-The ranked next-generation model candidates, mathematical constraints, and
-selection gates are documented in
-[`PATH_INTEGRAL_MODEL_CANDIDATES_AND_SELECTION.md`](PATH_INTEGRAL_MODEL_CANDIDATES_AND_SELECTION.md).
-The post-G5 archive of non-selected theorem, tensor-network, CEM, and quantum
-research directions is
-[`RESEARCH_DIRECTION_BACKLOG_POST_G5_2026-07-16.md`](RESEARCH_DIRECTION_BACKLOG_POST_G5_2026-07-16.md).
-The active path-functional spectral Doob--Volterra plan is
-[`PATH_INTEGRAL_RESEARCH_PLAN_V6.md`](PATH_INTEGRAL_RESEARCH_PLAN_V6.md).
-Its completed M0/G0/G3 implementation, theoretical audit, and falsification
-decision are recorded in
-[`docs/phase_reviews/G6_SDV_PATH_FUNCTIONAL_FALSIFICATION_2026-07-16.md`](docs/phase_reviews/G6_SDV_PATH_FUNCTIONAL_FALSIFICATION_2026-07-16.md).
-The exact adjacent-grid controlled-MLMC theory contract is
-[`CONTROLLED_MULTILEVEL_VOLTERRA_PLAN_V7.md`](CONTROLLED_MULTILEVEL_VOLTERRA_PLAN_V7.md).
-Its completed implementation, post-implementation theory audit, and negative
-end-to-end work decision are recorded in
-[`docs/phase_reviews/G7_CONTROLLED_MLMC_FALSIFICATION_2026-07-17.md`](docs/phase_reviews/G7_CONTROLLED_MLMC_FALSIFICATION_2026-07-17.md).
-The exact coarse-conditioned Volterra bridge branching contract is
-[`BOUNDARY_AWARE_VOLTERRA_BRANCHING_PLAN_V8.md`](BOUNDARY_AWARE_VOLTERRA_BRANCHING_PLAN_V8.md).
-Its finite-grid exactness passed and its correction-level work improved, but
-the end-to-end hypothesis was falsified; see
-[`docs/phase_reviews/G8_VOLTERRA_BRIDGE_BRANCHING_FALSIFICATION_2026-07-17.md`](docs/phase_reviews/G8_VOLTERRA_BRIDGE_BRANCHING_FALSIFICATION_2026-07-17.md).
-The completed G9 top-journal falsification contract is the bias-free monotone
-Gaussian smoothing plan in
-[`MONOTONE_GAUSSIAN_VOLTERRA_SMOOTHING_PLAN_V9.md`](MONOTONE_GAUSSIAN_VOLTERRA_SMOOTHING_PLAN_V9.md).
-The preceding executed neural stop-gate plan is
-[`PATH_INTEGRAL_RESEARCH_PLAN_V5.md`](PATH_INTEGRAL_RESEARCH_PLAN_V5.md).
-The latest sealed confirmatory review is
-[`docs/phase_reviews/G2_V3_CONFIRMATORY_REVIEW_2026-07-13.md`](docs/phase_reviews/G2_V3_CONFIRMATORY_REVIEW_2026-07-13.md).
-The frozen two-driver Heston feedback gate is reviewed in
-[`docs/phase_reviews/G1_TWO_DRIVER_FEEDBACK_CONFIRMATORY_2026-07-14.md`](docs/phase_reviews/G1_TWO_DRIVER_FEEDBACK_CONFIRMATORY_2026-07-14.md).
-The controlled finite-grid rBergomi BLP law gate is reviewed in
-[`docs/phase_reviews/G2_CONTROLLED_RBERGOMI_LAW_2026-07-14.md`](docs/phase_reviews/G2_CONTROLLED_RBERGOMI_LAW_2026-07-14.md).
-The first training-matched VFO memory ablation and its required pivot are reviewed in
-[`docs/phase_reviews/G3_VFO_MATCHED_ABLATION_2026-07-14.md`](docs/phase_reviews/G3_VFO_MATCHED_ABLATION_2026-07-14.md).
-The final path-dependent VFO pivot and the resulting Plan-v3 stop decision are
-documented in
-[`docs/phase_reviews/G3_VFO_PATH_PIVOT_FINAL_2026-07-14.md`](docs/phase_reviews/G3_VFO_PATH_PIVOT_FINAL_2026-07-14.md).
-The exact-mixture implementation, theoretical errata, Gaussian oracle, rBergomi
-development results, and strong-CEM falsification are reviewed in
-[`docs/phase_reviews/G4_EXACT_MIXTURE_FALSIFICATION_2026-07-15.md`](docs/phase_reviews/G4_EXACT_MIXTURE_FALSIFICATION_2026-07-15.md).
-The final CEM-anchored residual pilot, statistical correction, and neural-search stop
-decision are reviewed in
-[`docs/phase_reviews/G5_CEM_ANCHORED_RESIDUAL_2026-07-15.md`](docs/phase_reviews/G5_CEM_ANCHORED_RESIDUAL_2026-07-15.md).
+1. retain an exact balance-mixture likelihood and ordinary, non-self-normalized sample
+   means;
+2. include a positive-weight natural component so the defensive likelihood is
+   pathwise bounded;
+3. analytically integrate the Gaussian coordinate that drives the event and proposal
+   control span; and
+4. couple fine and coarse paths with the same fine proposal, label, control,
+   likelihood, and Gaussian coordinate.
 
-Run the non-publication G2 smoke pipeline with:
-
-```bash
-python -m experiments.g2_heston_benchmark --smoke --quiet \
-  --output results/g2_heston_score_gradient_smoke_2026-07-13.json \
-  --checkpoint-dir results/checkpoints/g2_smoke
-```
-
-Omit `--smoke` only for the frozen full evaluation. Evaluation seeds must not
-be used for tuning after the full result has been inspected.
-
-Run the separate non-publication time-step refinement with:
-
-```bash
-python -m experiments.heston_tail_refinement --smoke --quiet \
-  --output results/heston_tail_refinement_smoke_2026-07-13.json
-```
-
-## 🚀 Research Components
-| Component | Description | Status |
-| :--- | :--- | :--- |
-| **Controlled Heston Model** | Applies adapted Brownian drift controls with the correlated-variance Girsanov correction. | Targeted tests available |
-| **Rough Volatility** | Simulates controlled non-Markovian rBergomi dynamics on a validated finite grid. | Exact-law gate passed |
-| **Importance Sampling** | Uses exact component replay and marginal balance-mixture likelihoods. | Gaussian and rBergomi gates passed |
-| **Time-piecewise CEM** | Four equal-time two-driver shifts for a hit-plus-occupation event. | Current practical winner; G0 passed |
-| **SDV-PIS** | Causal SOE lift, desirability head, and conditional-moment residual around piecewise CEM. | Exact-law checks passed; G3 efficiency claim falsified |
-| **Controlled adjacent-grid MLMC** | Exact BLP fine/coarse coupling, correction-CEM, and defensive mixture. | Exactness passed; G7 total-work claim falsified |
-| **Conditional Volterra bridge branching** | Exact BLP coarse-conditioned fine bridges with coarse-only adaptive branch counts. | Exactness and correction-level gain passed; G8 end-to-end work claim falsified |
-| **Monotone Gaussian Volterra smoothing** | Analytically integrates one price-only Gaussian direction, including the exact controlled likelihood. | Exactness and MLMC correction gain passed; G9 end-to-end work claim falsified |
-| **Earlier neural VFO / Mixture / Residual** | Tested memory and feedback refinements against matched strong baselines. | Core claims falsified and stopped |
-
-## 🧠 Model Architecture
-The core system is built on a **Neural SDE (Stochastic Differential Equation)** formulation:
-
-$$ dS_t = \mu(S_t, v_t) dt + \sigma(S_t, v_t) dW_t + \mathbf{u_{\theta}(S_t)} dt $$
+## Method at a glance
 
 ```mermaid
-graph LR
-    A[Market State S, v, t] -->|Input| B(DriftNet Controller)
-    B -->|Control u| C[SDE Solver]
-    D[Brownian Motion dW] --> C
-    C -->|Next State| E[New Market State]
-    E -->|Feedback| A
-    E -->|Target| F{Crash?}
-    style B fill:#c44569,stroke:#333,stroke-width:2px,color:#fff
-    style F fill:#546de5,stroke:#333,stroke-width:2px,color:#fff
+flowchart LR
+    A["Target law: rBergomi / Gaussian Volterra"] --> B["Defensive mixture of deterministic Gaussian shifts"]
+    B --> C["Exact balance-mixture likelihood"]
+    C --> D["Decompose X = UZ + R"]
+    D --> E["Convert path event to a scalar threshold in Z"]
+    E --> F["Integrate Z analytically: DCS-MGI"]
+    F --> G["Shared fine/coarse MLMC correction"]
+    G --> H["Probability estimate, uncertainty, work and provenance"]
 ```
 
-*   **`DriftNet` ($u_\theta$)**: A neural controller that observes the market state $(S_t, v_t, t)$ and applies a "nudge" to the drift term to steer the path toward a crash target.
-*   **`VolNet`**: Models the stochastic volatility surface to ensure realistic market texture even under stress.
-*   **`NeuralSDESimulator`**: A differentiable simulator compatible with PyTorch's autograd for training via feedback control.
+At MLMC level \(\ell\), the standardized Gaussian input under the target law is
 
-## 📊 Legacy Exploratory Results
+\[
+X_\ell \sim P_\ell = \mathcal N(0,I).
+\]
 
-The figures below are retained for research history. They were generated by
-the exploratory notebooks and are not publication-grade estimator benchmarks.
+The proposal is a defensive mixture of deterministic shifts,
 
-### Training Progress
-Neural SDE training on S&P 500 historical data:
+\[
+Q_\ell = \sum_j \pi_{\ell,j}\,\mathcal N(m_{\ell,j},I),
+\qquad m_{\ell,0}=0,\quad \pi_{\ell,0}=\delta_\ell>0,
+\]
 
-![Training Progress](img/training_progress.png)
+with exact balance likelihood
 
-> **Figure 1 (legacy):** An exploratory training-loss curve. Publication
-> results will report the exact objective, independent evaluation error, and
-> uncertainty across seeds.
+\[
+L_\ell(x)
+=
+\left[
+\sum_j \pi_{\ell,j}
+\exp\!\left(m_{\ell,j}^{\mathsf T}x-	frac12\lVert m_{\ell,j}\rVert^2\right)
+\right]^{-1}.
+\]
 
-### AI Crash Generation
-Generated crash paths vs. baseline market simulation:
+An orthonormal matrix \(U_\ell\) isolates the event-driving control span:
 
-![Crash Paths](img/crash_paths.png)
+\[
+X_\ell = U_\ell Z_\ell + R_\ell.
+\]
 
-> **Figure 2 (legacy exploratory result):** Comparison of standard Monte Carlo
-> paths (blue) and controlled paths (orange). A higher controlled event rate
-> only shows that the proposal reaches the target more often; estimator
-> efficiency must be established from likelihood-weighted variance and total
-> compute.
+For the implemented terminal, discrete-barrier, and hit-plus-occupation tasks, the
+hard event is an exact scalar threshold event in \(Z_\ell\) conditional on the
+residual \(R_\ell\). Integrating this coordinate analytically gives a
+Rao--Blackwellized estimator with a bounded residual likelihood. Adjacent fine and
+coarse quantities are evaluated inside one fine-level probability space, preserving
+the finite-grid telescoping identity.
 
-### XAI: Feature Attribution
-Integrated Gradients analysis revealing crash drivers:
+### What “path integral” and “neural” mean here
 
-![XAI Attribution](img/xai_attribution.png)
+The current contribution is a **controlled path-measure estimator**, not a quantum
+Feynman path integral. Quantum terminology is not used as a mathematical claim.
 
-> **Figure 3 (legacy exploratory result):** Integrated gradients for one
-> selected controller state. This is not evidence that volatility has a stable
-> population-level percentage contribution to market crashes.
+Likewise, the current rare-event proposal uses a fixed three-component deterministic
+control schedule. A neural network could later amortize proposal generation across
+tasks and parameters, but it is not part of the present exactness theorem and is not
+the core G11 contribution. Earlier neural-controller experiments remain in the
+repository as falsified or historical research tracks.
 
-## 📂 Repository Structure
+## Mathematical guarantees and boundaries
+
+| Result | Current status | Exact scope |
+|---|---|---|
+| Gaussian-mixture control-span marginalization | Proved and oracle-tested | Finite-dimensional identity-covariance Gaussian shifts |
+| Rao--Blackwell identity under the proposal | Proved and tested | Uses the derived proposal conditional law |
+| Defensive likelihood bound | Proved and tested | Requires a positive-weight zero-mean mixture component; bound \(\le 1/\delta\) |
+| MLMC telescoping | Proved and tested | Exact for a declared finest finite grid and normalized fine-to-coarse map |
+| Scalar-threshold representation | Pathwise tested | Terminal, discrete barrier, and implemented hit-plus-occupation tasks |
+| DCS correction rate | Conditional upper bound | \(O(h^{2r})\) if the coupled threshold error is \(O(h^r)\) in \(L^2\) |
+| MLMC complexity | Conditional corollary | Requires separate bias, variance, and cost exponents |
+
+The project does **not** currently claim:
+
+- unbiased estimation of a continuously monitored barrier probability;
+- a universal rough-Bergomi convergence-rate theorem;
+- an empirically proven exponent equality rather than an upper bound;
+- a neural-architecture contribution;
+- a matched-RMSE speedup in cells where the baseline exhausted its resource budget;
+- that conditional smoothing, common-likelihood MLMC, occupation-time importance
+  sampling, or preprocessing-inclusive work accounting is new by itself.
+
+## Development evidence
+
+All numbers below are development evidence generated before M7 confirmatory freeze.
+
+### Rate study
+
+The M4 study used roughness values \(H\in\{0.07,0.12,0.30\}\), three event tasks,
+12 independent seed clusters, 8,192 paths per level, and six adjacent levels. All
+nine regime/task cells passed the declared common-window and rate-consistency gates.
+
+| \(H\) | Threshold \(L^2\) exponent | Raw correction exponent | DCS correction exponent |
+|---:|---:|---:|---:|
+| 0.07 | 0.081--0.088 | 0.015--0.022 | 0.070--0.072 |
+| 0.12 | 0.207--0.239 | 0.089--0.093 | 0.201--0.231 |
+| 0.30 | 0.591--0.749 | 0.273--0.331 | 0.584--0.753 |
+
+These observations are compatible with the conditional \(O(h^{2r})\) upper-bound
+mechanism; they are not a universal or confirmatory exponent claim.
+
+### Rare-event study
+
+For the primary \(H=0.12\) regime, terminal, barrier, and non-degenerate
+hit-plus-occupation events were calibrated at probabilities from \(10^{-3}\) through
+\(10^{-6}\) on a fixed 128-step grid. All 12 independent validation estimates met the
+declared probability and precision gates.
+
+In the 12-cell rare-MLMC development matrix:
+
+- DCS reached the empirical sampling-variance target in **11/12 cells**;
+- raw defensive MLMC reached it in **3/12 cells**;
+- the three cells where both methods reached matched RMSE had a geometric
+  operation-work ratio of **43.85x** in favor of DCS; and
+- the **4.29x** all-cell allocated-work ratio is diagnostic only, because it includes
+  baseline cells that missed the target.
+
+The 43.85x result is therefore not yet a general headline speedup. Confirmatory work
+must predeclare how baseline resource censoring is reported.
+
+Machine-readable outputs are stored under [`results/`](results/), including the
+[strict artifact audit](results/g11_artifact_audit_v1_2026-07-19.json),
+[rate audit](results/g11_threshold_rate_audit_v1_2026-07-19.json), and
+[rare-MLMC development result](results/g11_rare_mlmc_development_v1_2026-07-19.json).
+
+## Installation
+
+Python 3.10 or 3.11 is recommended.
+
+```bash
+git clone https://github.com/YoungJun0814/Neural_Path_Intergral.git
+cd Neural_Path_Intergral
+python -m venv .venv
 ```
+
+Activate the environment, then install the project and development dependencies:
+
+```bash
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+```
+
+On Windows PowerShell, activation is typically:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+## Reproducing the implemented checks
+
+Run the complete unit and integration test suite:
+
+```bash
+python -m pytest -q
+```
+
+Run a fast Gaussian-oracle smoke check without overwriting the tracked result:
+
+```bash
+python -m experiments.g11_gaussian_oracle \
+  --config configs/g11_gaussian_oracle.yaml \
+  --smoke \
+  --output results/g11_gaussian_oracle_local_smoke.json
+```
+
+Run the strict audit over the committed G11 artifacts:
+
+```bash
+python -m experiments.g11_artifact_audit \
+  --manifest configs/g11_artifact_manifest.yaml \
+  --output results/g11_artifact_audit_local.json
+```
+
+The larger rate, rarity-calibration, and rare-MLMC experiments are intentionally
+configuration driven:
+
+```bash
+python -m experiments.g11_threshold_rate_pilot \
+  --config configs/g11_threshold_rate_pilot.yaml \
+  --output results/g11_threshold_rate_local.json
+
+python -m experiments.g11_rarity_calibration \
+  --config configs/g11_rarity_calibration.yaml \
+  --output results/g11_rarity_calibration_local.json
+
+python -m experiments.g11_mlmc_development \
+  --config configs/g11_rare_mlmc_development.yaml \
+  --output results/g11_rare_mlmc_development_local.json \
+  --progress results/g11_rare_mlmc_development_local.progress.json
+```
+
+These full configurations can be computationally expensive. They are development
+protocols, not permission to inspect or tune against the future untouched M7 seed
+namespace.
+
+## Repository map
+
+```text
 .
-├── notebooks/                  # Core Analysis & Experiments
-│   ├── 01_Data_Loader.ipynb        # Data preprocessing
-│   ├── 02_Neural_SDE_Training.ipynb# Training the DriftNet controller
-│   ├── 03_AI_Crash_Generator.ipynb # Legacy rare-downside scenarios
-│   └── 04_XAI_Explainability.ipynb # XAI Analysis (Integrated Gradients)
-├── src/                        # Source Code
-│   ├── neural_engine.py            # DriftNet & VolNet definitions
-│   ├── physics_engine.py           # Heston/Bates market physics
-│   └── ...
-└── README.md
+|-- src/path_integral/            # Estimators, Gaussian identities, rBergomi and MLMC engines
+|-- experiments/                  # Reproducible G11 experiment entry points
+|-- configs/                      # Versioned experiment and artifact manifests
+|-- tests/                        # Mathematical, numerical and provenance tests
+|-- docs/theory/                  # Theorems and proof-level audit
+|-- docs/audits/                  # Implementation, error and freeze-readiness audits
+|-- docs/literature/              # Novelty boundary and baseline scope
+|-- results/                      # Machine-readable development artifacts
+|-- notebooks/                    # Earlier exploratory analyses
+`-- CORRECTION_FOCUSED_DCS_MGI_MLMC_PLAN_V11.md
 ```
 
-## 🛠️ Usage
-1.  **Install Dependencies:**
-    ```bash
-    pip install torch numpy matplotlib pandas
-    ```
-2.  **Train the Controller:**
-    Run `02_Neural_SDE_Training.ipynb` to train DriftNet on historical S&P 500 data.
-3.  **Generate Crashes:**
-    Run `03_AI_Crash_Generator.ipynb` to produce thousands of synthetic crash scenarios.
+Key implementation modules:
 
----
-*Research on structure-aware neural importance sampling in quantitative finance.*
+- [`gaussian_span_marginalization.py`](src/path_integral/gaussian_span_marginalization.py): generic control-span identities;
+- [`rbergomi_dcs_mlmc.py`](src/path_integral/rbergomi_dcs_mlmc.py): rBergomi DCS adapter and threshold construction;
+- [`rbergomi_mlmc_sampler.py`](src/path_integral/rbergomi_mlmc_sampler.py): coupled raw/DCS MLMC sampling;
+- [`mlmc.py`](src/path_integral/mlmc.py): independent pilot/final allocation and checkpointing;
+- [`seed_ledger.py`](src/path_integral/seed_ledger.py): role-separated deterministic seeds;
+- [`provenance.py`](src/path_integral/provenance.py): configuration and artifact provenance;
+- [`stable_gaussian.py`](src/path_integral/stable_gaussian.py): audited Gaussian tail numerics.
+
+## Research history
+
+The repository preserves failed hypotheses because they constrain the current claims
+and prevent selective reporting.
+
+| Track | Main idea | Outcome |
+|---|---|---|
+| G7 | Controlled adjacent-grid MLMC | Exactness passed; total-work claim falsified |
+| G8 | Coarse-conditioned Volterra bridge branching | Correction gain passed; end-to-end claim falsified |
+| G9 | Monotone Gaussian Volterra smoothing | Exactness/correction gain passed; frozen headline failed |
+| G10 | Control-span marginalized Gaussian integration | Finite-grid audits passed; 2x single-level headline failed |
+| G11 | Correction-focused DCS-MGI-MLMC | M0--M6 passed; M7 confirmatory freeze pending |
+
+Earlier neural VFO, mixture, and residual-controller tracks were tested against strong
+baselines and stopped when their gates failed. See the phase reviews under
+[`docs/phase_reviews/`](docs/phase_reviews/) and the
+[post-G5 research backlog](RESEARCH_DIRECTION_BACKLOG_POST_G5_2026-07-16.md).
+
+## What remains before a journal claim
+
+The next publication-critical steps are:
+
+1. freeze the confirmatory task matrix, repetition count, raw-baseline resource cap,
+   and total compute budget before seeing any confirmatory result;
+2. create an untouched seed namespace pinned to exact source and configuration hashes;
+3. run the frozen CPU study and a second independent environment reproduction;
+4. report matched cells and resource-censored baseline cells separately, with no
+   fabricated speedup for failures;
+5. add a continuous-time weak-bias study or keep every headline explicitly
+   finite-grid;
+6. obtain independent review of the conditional rate/complexity arguments and update
+   the primary-source novelty matrix; and
+7. add a neural amortized proposal generator only if it reduces total calibration
+   cost under an independently frozen gate.
+
+Until those items are complete, the defensible description is **PhD-level research
+prototype and strong working-paper core**, not a top-journal-ready final manuscript.
+
+## Research integrity
+
+- Evaluation seeds are never used for tuning after a frozen result is inspected.
+- Pilot samples are independent of final MLMC samples.
+- Raw estimators use ordinary means; self-normalization is prohibited.
+- Proposal-calibration, pilot, failed-run, and final-sampling work must be accounted
+  for in end-to-end comparisons.
+- Negative gates and resource failures remain visible in the repository.
+
+This code is for research and reproducibility. It is not investment advice, a trading
+system, or a production risk engine.
