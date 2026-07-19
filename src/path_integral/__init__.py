@@ -60,6 +60,20 @@ from .gaussian_smoothing import (
     stable_normal_cdf_difference,
     validate_positive_unit_direction,
 )
+from .gaussian_span_marginalization import (
+    GaussianMixtureSample,
+    GaussianMixtureShiftSpec,
+    MarginalizedFunctionEvaluation,
+    MarginalLikelihoodEvaluation,
+    OrthonormalControlSpan,
+    build_orthonormal_control_span,
+    component_log_q_over_p,
+    control_span_from_vectors,
+    evaluate_marginal_likelihood,
+    evaluate_marginalized_function,
+    linear_threshold_conditional_probability,
+    sample_gaussian_mixture,
+)
 from .heston_oracle import (
     HestonLogDesirabilityGradient,
     HestonOracleControl,
@@ -75,9 +89,39 @@ from .mixture import (
     sample_mixture_labels,
     selected_component_log_p_over_q,
 )
-from .path_functionals import DownsideExcursionTask
+from .mlmc import (
+    ContinuousTarget,
+    FixedFinestGridTarget,
+    LevelAllocation,
+    LevelBatch,
+    LevelEstimate,
+    LevelPilotStatistics,
+    MLMCCheckpoint,
+    MLMCHierarchy,
+    MLMCPreparedRun,
+    MLMCResult,
+    OnlineMoments,
+    WorkLedger,
+    WorkLedgerEntry,
+    execute_mlmc,
+    load_mlmc_checkpoint,
+    prepare_mlmc,
+    run_mlmc,
+    save_mlmc_checkpoint,
+)
+from .path_functionals import (
+    DiscreteBarrierHitTask,
+    DownsideExcursionTask,
+    TerminalThresholdTask,
+)
 from .pice import ConstantPICEFit, fit_constant_pice, reconstruct_candidate_increments
 from .potentials import terminal_left_tail_potential
+from .rate_analysis import (
+    CorrectionRateObservation,
+    RateWindowAnalysis,
+    correction_rate_observation,
+    identify_rate_window,
+)
 from .rbergomi_branching import (
     BranchedCoupledRBergomiPaths,
     ConditionalVolterraBridgeCoefficients,
@@ -97,6 +141,13 @@ from .rbergomi_coupling import (
     adjacent_local_gaussian_coefficients,
     simulate_coupled_rbergomi_adjacent,
 )
+from .rbergomi_dcs_mlmc import (
+    RBergomiDCSAdjacentEvaluation,
+    RBergomiDCSLevelEvaluation,
+    evaluate_rbergomi_dcs_adjacent,
+    evaluate_rbergomi_dcs_level,
+    scalar_task_threshold,
+)
 from .rbergomi_fft import (
     AdjacentRBergomiFFTInnovations,
     BLPFFTKernel,
@@ -110,6 +161,10 @@ from .rbergomi_mixture import (
     RBergomiMixtureSample,
     replay_rbergomi_control_on_target_paths,
     simulate_rbergomi_mixture,
+)
+from .rbergomi_mlmc_sampler import (
+    RBergomiMLMCSampler,
+    RBergomiMLMCSamplerConfig,
 )
 from .rbergomi_multilevel import (
     CoupledRBergomiMixtureSample,
@@ -126,6 +181,7 @@ from .rbergomi_smoothing import (
     simulate_smoothed_adjacent_rbergomi,
     simulate_smoothed_rbergomi,
 )
+from .seed_ledger import SeedKey, SeedLedger, SeedRecord, derive_seed
 
 __all__ = [
     "ConstantPICEFit",
@@ -135,11 +191,18 @@ __all__ = [
     "ControlSpanMarginalizedEstimate",
     "PositiveRankTwoSubspace",
     "DownsideExcursionTask",
+    "DiscreteBarrierHitTask",
     "GaussianExcursionOracle",
     "GaussianExcursionSample",
     "GaussianExcursionSpec",
+    "GaussianMixtureSample",
+    "GaussianMixtureShiftSpec",
     "LeanRBergomiControl",
     "RBergomiMixtureSample",
+    "RBergomiMLMCSampler",
+    "RBergomiMLMCSamplerConfig",
+    "RBergomiDCSAdjacentEvaluation",
+    "RBergomiDCSLevelEvaluation",
     "AdjacentLocalGaussianCoefficients",
     "BranchedCoupledRBergomiPaths",
     "ConditionalVolterraBridgeCoefficients",
@@ -152,14 +215,21 @@ __all__ = [
     "RBergomiTaskMode",
     "SpectralDoobVolterraControl",
     "TimePiecewiseTwoDriverControl",
+    "TerminalThresholdTask",
     "TiltedDivergenceDiagnostics",
     "VFOBranchDiagnostics",
     "VolterraFollmerOperator",
     "HestonLogDesirabilityGradient",
     "HestonOracleControl",
     "HestonOracleNumerics",
+    "MarginalizedFunctionEvaluation",
+    "MarginalLikelihoodEvaluation",
+    "OrthonormalControlSpan",
     "brownian_log_likelihood",
     "build_gaussian_excursion_oracle",
+    "build_orthonormal_control_span",
+    "component_log_q_over_p",
+    "control_span_from_vectors",
     "fit_constant_pice",
     "gaussian_exponential_tilt_log_normalizer",
     "gaussian_exponential_tilt_optimal_control",
@@ -185,6 +255,12 @@ __all__ = [
     "gaussian_symmetric_mixture_second_moment",
     "gaussian_two_tail_probability",
     "log_mixture_q_over_p",
+    "linear_threshold_conditional_probability",
+    "evaluate_marginal_likelihood",
+    "evaluate_marginalized_function",
+    "evaluate_rbergomi_dcs_adjacent",
+    "evaluate_rbergomi_dcs_level",
+    "sample_gaussian_mixture",
     "sample_mixture_labels",
     "selected_component_log_p_over_q",
     "simulate_gaussian_excursion",
@@ -223,6 +299,7 @@ __all__ = [
     "positive_exponential_direction",
     "positive_rank_two_subspace",
     "rank_one_price_control_span",
+    "scalar_task_threshold",
     "scaled_normal_cdf",
     "scaled_normal_cdf_difference",
     "signed_log_normal_cdf_difference",
@@ -232,4 +309,30 @@ __all__ = [
     "simulate_smoothed_rbergomi",
     "stable_normal_cdf_difference",
     "validate_positive_unit_direction",
+    "ContinuousTarget",
+    "FixedFinestGridTarget",
+    "LevelAllocation",
+    "LevelBatch",
+    "LevelEstimate",
+    "LevelPilotStatistics",
+    "MLMCCheckpoint",
+    "MLMCHierarchy",
+    "MLMCPreparedRun",
+    "MLMCResult",
+    "OnlineMoments",
+    "SeedKey",
+    "SeedLedger",
+    "SeedRecord",
+    "WorkLedger",
+    "WorkLedgerEntry",
+    "derive_seed",
+    "execute_mlmc",
+    "load_mlmc_checkpoint",
+    "prepare_mlmc",
+    "run_mlmc",
+    "save_mlmc_checkpoint",
+    "CorrectionRateObservation",
+    "RateWindowAnalysis",
+    "correction_rate_observation",
+    "identify_rate_window",
 ]

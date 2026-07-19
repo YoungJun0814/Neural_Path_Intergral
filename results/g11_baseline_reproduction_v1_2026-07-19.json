@@ -1,0 +1,65 @@
+{
+  "config_sha256": "c4c1aa120363422e6768b9ca7c1b48d536bfb3c5737d1e0d601802d86c9fea8b",
+  "dirty_worktree": true,
+  "environment": {
+    "cuda": "12.8",
+    "deterministic_algorithms": false,
+    "dtype": "torch.float64",
+    "os": "Windows-11-10.0.26200-SP0",
+    "packages": {
+      "PyYAML": "6.0.3",
+      "numpy": "2.1.3",
+      "scipy": "1.15.3"
+    },
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "python": "3.13.5",
+    "pytorch": "2.9.1+cu128",
+    "torch_threads": 16
+  },
+  "gates": {
+    "all_analytic_means_within_z_gate": true,
+    "conditional_smoothing_zero_variance": true,
+    "independent_scipy_specialization": true
+  },
+  "maximum_absolute_z": 1.3814425645169723,
+  "maximum_scipy_specialization_error": 4.440892098500626e-16,
+  "methods": {
+    "crude_mc": {
+      "mean": 0.001276,
+      "variance": 0.0012743769215082614,
+      "z_score": -1.0350323547805258
+    },
+    "defensive_mixture_is": {
+      "mean": 0.0013559069786600027,
+      "variance": 8.213689893401405e-06,
+      "z_score": 1.048332932283873
+    },
+    "natural_conditional_smoothing": {
+      "mean": 0.0013498980316301035,
+      "variance": 0.0,
+      "z_score": 0.0
+    },
+    "single_shift_is": {
+      "mean": 0.0013567796803260535,
+      "variance": 6.203822149596695e-06,
+      "z_score": 1.3814425645169723
+    }
+  },
+  "passed": true,
+  "paths": 250000,
+  "protocol_id": "g11-baseline-reproduction-v1",
+  "schema": "npi.g11.baseline-reproduction.v1",
+  "seed_count": 8,
+  "seed_ledger_sha256": "1ce40ab2829d695c98e2d4fd4d13a7f26120c2e043d2a59e5a95ee7c719712c2",
+  "smoke": false,
+  "source_commit": "38cbc7e79395df589a328844c473848f0d4a2bda",
+  "truth": 0.0013498980316301035,
+  "work_ledger": {
+    "audit_seconds": 0.0,
+    "calibration_seconds": 0.0,
+    "compilation_seconds": 0.0,
+    "online_seconds": 0.37322819999826606,
+    "pilot_seconds": 0.0,
+    "warmup_seconds": 0.0
+  }
+}

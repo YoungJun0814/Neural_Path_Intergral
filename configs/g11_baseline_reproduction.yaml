@@ -1,0 +1,12 @@
+schema_version: 1
+protocol_id: g11-baseline-reproduction-v1
+frozen: false
+gaussian:
+  dimension: 3
+  threshold: -3.0
+  shift: -3.0
+  defensive_weight: 0.20
+  paths: 250000
+gates:
+  maximum_absolute_z: 4.0
+  maximum_scipy_specialization_error: 1.0e-12

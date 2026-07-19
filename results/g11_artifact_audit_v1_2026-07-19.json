@@ -1,0 +1,128 @@
+{
+  "aggregate_artifacts": [
+    {
+      "failures": [],
+      "result": "results\\g11_threshold_rate_audit_v1_2026-07-19.json",
+      "result_sha256": "67e9b932a4551219a404c5578f4cf5a54d1c0b4d3da4fe8c73ece29d02a20da7"
+    }
+  ],
+  "artifacts": [
+    {
+      "config": "configs\\g11_gaussian_oracle.yaml",
+      "config_sha256": "74841cfbce88295b34d1e9f40236af53b95387527bafd51d8b212108dc666498",
+      "expected_pass": true,
+      "failures": [],
+      "observed_failed_gates": [],
+      "result": "results\\g11_gaussian_oracle_v1_2026-07-19.json",
+      "result_sha256": "907cc714a8ef048bcd0a049f193f8038d2fc8c6e8e009ddf6e7120be7f19461f"
+    },
+    {
+      "config": "configs\\g11_baseline_reproduction.yaml",
+      "config_sha256": "c4c1aa120363422e6768b9ca7c1b48d536bfb3c5737d1e0d601802d86c9fea8b",
+      "expected_pass": true,
+      "failures": [],
+      "observed_failed_gates": [],
+      "result": "results\\g11_baseline_reproduction_v1_2026-07-19.json",
+      "result_sha256": "7bc03f43f4283039a53d99fc05285f029533a03f6eeb73ec6328f639f1091905"
+    },
+    {
+      "config": "configs\\g11_threshold_rate_low_h.yaml",
+      "config_sha256": "a3884fe3eddce141ca9686b8f3f110faabe8f9ab52281275e19efc43514dadac",
+      "expected_pass": true,
+      "failures": [],
+      "observed_failed_gates": [],
+      "result": "results\\g11_threshold_rate_low_h_v1_2026-07-19.json",
+      "result_sha256": "5c278971f6bca186c7be4b422c5a3ac9adc95fb73cd747c6ed988f1bd684995a"
+    },
+    {
+      "config": "configs\\g11_threshold_rate_pilot.yaml",
+      "config_sha256": "ab7e628a4e71e385070b43d82507ecc753391ab8ac85adf03720f819ff1e7757",
+      "expected_pass": true,
+      "failures": [],
+      "observed_failed_gates": [],
+      "result": "results\\g11_threshold_rate_pilot_v1_2026-07-19.json",
+      "result_sha256": "13ec0ad901f01aed6abd13ed58082abe90999fe683927da6ec033740a39ac9e6"
+    },
+    {
+      "config": "configs\\g11_threshold_rate_high_h.yaml",
+      "config_sha256": "e7f238344dbd92c2909c0ac01705cee6ba53e2d0e6288ac5ec40118569a8a751",
+      "expected_pass": true,
+      "failures": [],
+      "observed_failed_gates": [],
+      "result": "results\\g11_threshold_rate_high_h_v1_2026-07-19.json",
+      "result_sha256": "2291fee289e2c377a2bcec58d909a11e77972fcc31fee091601a2cb3873cb4f9"
+    },
+    {
+      "config": "configs\\g11_mlmc_development.yaml",
+      "config_sha256": "318f2a0d9de04115b721c4f422e6139bc340543d066046f7cde9d8aba77ddbea",
+      "expected_pass": true,
+      "failures": [],
+      "observed_failed_gates": [],
+      "result": "results\\g11_mlmc_development_v1_2026-07-19.json",
+      "result_sha256": "86065228de70f41ebd45c57e51b64f736946c0f4e0308963db93dafe3140ae4d"
+    },
+    {
+      "config": "configs\\g11_rarity_calibration.yaml",
+      "config_sha256": "ef211cc9197361bc3aeabcf51a4e71bf4d4a96ac4361ca0afbd855a0ca377a84",
+      "expected_pass": true,
+      "failures": [],
+      "observed_failed_gates": [],
+      "result": "results\\g11_rarity_calibration_v1_2026-07-19.json",
+      "result_sha256": "d5a9909b5c984dcb56cb149aa8930109f3023a3a70da5e8291718f3f57ecd967"
+    },
+    {
+      "config": "configs\\g11_rarity_calibration_low_h.yaml",
+      "config_sha256": "54b26af17d0bb0748193ae0932259f0ba6321cd10536dcc9b9874065e59cde0f",
+      "expected_pass": false,
+      "failures": [],
+      "observed_failed_gates": [
+        "excursion_is_non_degenerate"
+      ],
+      "result": "results\\g11_rarity_calibration_low_h_v1_2026-07-19.json",
+      "result_sha256": "86f5a9cc850de0251cbdec526d4ad380a2f5937464a5766b600a51f645a15bee"
+    },
+    {
+      "config": "configs\\g11_rarity_calibration_high_h.yaml",
+      "config_sha256": "5dfc8c27ad6c4d4f0503cf2a22ead8c79eb8f1508ad50d236469d561ec4aa67f",
+      "expected_pass": true,
+      "failures": [],
+      "observed_failed_gates": [],
+      "result": "results\\g11_rarity_calibration_high_h_v1_2026-07-19.json",
+      "result_sha256": "2fd745d5e49f9ae9d67ed7ac2ea76d6f2061a2ab4e3d5ccb962b68134cfd7a57"
+    },
+    {
+      "config": "configs\\g11_rare_mlmc_development.yaml",
+      "config_sha256": "ade6de8b87841d38ee8ff0a1c661bc089a59c7946b373efe3785f9f2e4e6c3b7",
+      "expected_pass": true,
+      "failures": [],
+      "observed_failed_gates": [],
+      "result": "results\\g11_rare_mlmc_development_v1_2026-07-19.json",
+      "result_sha256": "77a795120dbb61a4a196ba55ed6f6f30254bfc8430dadabc04824c01cf1f4d00"
+    }
+  ],
+  "dirty_worktree": true,
+  "environment": {
+    "cuda": "12.8",
+    "deterministic_algorithms": false,
+    "dtype": "not_applicable",
+    "os": "Windows-11-10.0.26200-SP0",
+    "packages": {
+      "PyYAML": "6.0.3",
+      "numpy": "2.1.3",
+      "scipy": "1.15.3"
+    },
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "python": "3.13.5",
+    "pytorch": "2.9.1+cu128",
+    "torch_threads": 16
+  },
+  "failures": [],
+  "manifest_sha256": "e6f3a6681df44b7cd5526beca7091e1e9cce6fc09494d45c4d51f5447d41bd84",
+  "passed": true,
+  "protocol_id": "g11-development-artifact-audit-v1",
+  "schema": "npi.g11.artifact-audit.v1",
+  "source_commit": "38cbc7e79395df589a328844c473848f0d4a2bda",
+  "work_ledger": {
+    "audit_seconds": 0.1954832999908831
+  }
+}

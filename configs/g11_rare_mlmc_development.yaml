@@ -1,0 +1,51 @@
+schema_version: 1
+protocol_id: g11-rare-mlmc-development-v1
+frozen: false
+estimand: finite_grid
+input_artifacts:
+  - path: results/g11_rarity_calibration_v1_2026-07-19.json
+    sha256: d5a9909b5c984dcb56cb149aa8930109f3023a3a70da5e8291718f3f57ecd967
+model: {H: 0.12, eta: 1.1, xi: 0.04, rho: -0.6, spot: 100.0, maturity: 0.25}
+hierarchy: {coarsest_steps: 8, finest_level: 4, refinement: 2}
+proposal:
+  natural_weights: [0.10, 0.20]
+  non_natural_weight_ratios: [0.3333333333333333, 0.6666666666666667]
+  controls:
+    - [[0.0, 0.0]]
+    - [[2.0, -4.0]]
+    - [[4.0, -10.0]]
+  declared_calibration_paths: 0
+tasks:
+  terminal_1e3: {kind: terminal, level: 61.46864736315105, target_probability: 1.0e-3}
+  terminal_1e6: {kind: terminal, level: 33.129205436217885, target_probability: 1.0e-6}
+  barrier_1e3: {kind: barrier, barrier: 58.77859488223061, target_probability: 1.0e-3}
+  barrier_1e6: {kind: barrier, barrier: 31.608875450673575, target_probability: 1.0e-6}
+  excursion_1e3:
+    kind: hit_plus_occupation
+    hit_barrier: 60.46414314537669
+    stress_level: 85.0
+    minimum_occupation: 0.125
+    hit_scale: 3.0
+    occupation_scale: 0.02
+    target_probability: 1.0e-3
+  excursion_1e6:
+    kind: hit_plus_occupation
+    hit_barrier: 31.608875450673575
+    stress_level: 85.0
+    minimum_occupation: 0.125
+    hit_scale: 3.0
+    occupation_scale: 0.02
+    target_probability: 1.0e-6
+sampling:
+  relative_rmse_targets: [0.20]
+  repetitions: 1
+  pilot_samples: 1024
+  minimum_final_samples: 128
+  chunk_size: 4096
+  allocation_safety_factor: 4.0
+  minimum_pilot_nonzero: 32
+  maximum_pilot_samples: 65536
+  engine: fft
+gates:
+  minimum_geometric_work_ratio: 1.25
+  minimum_target_attainment_fraction: 0.90

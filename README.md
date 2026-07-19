@@ -29,6 +29,20 @@ stopped. See
 and the
 [`G10 final audit`](G10_CONTROL_SPAN_FALSIFICATION_REPORT_2026-07-19.md).
 
+## Active G11 research track: correction-focused DCS-MGI-MLMC
+
+G11 promotes the validated G10 adjacent correction into a complete MLMC estimator.
+The plan separates finite-grid exactness, conditional variance-rate theorems, and
+training-inclusive end-to-end work into independent falsification gates. It also
+requires a generic Gaussian-mixture theorem, a centralized seed ledger, published
+baseline reproduction, untouched CPU validation, and an independent second
+environment. The M0--M6 core, six-level rate study, and `10^-3`--`10^-6`
+rare-event development are implemented; confirmatory M7+ evidence is not yet frozen.
+See the
+[`correction-focused DCS-MGI-MLMC V11 plan`](CORRECTION_FOCUSED_DCS_MGI_MLMC_PLAN_V11.md)
+and the
+[`G11 implementation/error audit`](docs/audits/G11_IMPLEMENTATION_AND_ERROR_AUDIT_2026-07-19.md).
+
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
 

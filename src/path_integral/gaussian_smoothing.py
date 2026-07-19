@@ -8,6 +8,18 @@ from dataclasses import dataclass
 import torch
 
 from src.path_integral.path_functionals import DownsideExcursionTask
+from src.path_integral.stable_gaussian import (
+    scaled_normal_cdf as _scaled_normal_cdf,
+)
+from src.path_integral.stable_gaussian import (
+    scaled_normal_cdf_difference as _scaled_normal_cdf_difference,
+)
+from src.path_integral.stable_gaussian import (
+    signed_log_normal_cdf_difference as _signed_log_normal_cdf_difference,
+)
+from src.path_integral.stable_gaussian import (
+    stable_normal_cdf_difference as _stable_normal_cdf_difference,
+)
 
 
 @dataclass(frozen=True)
@@ -203,55 +215,16 @@ def signed_log_normal_cdf_difference(
     left: torch.Tensor,
     right: torch.Tensor,
 ) -> tuple[torch.Tensor, torch.Tensor]:
-    """Return sign and log-absolute value of ``Phi(left) - Phi(right)``.
-
-    Tail-specific log-CDF/survival representations prevent cancellation when
-    both arguments are large with the same sign.
-    """
-    if left.shape != right.shape:
-        raise ValueError("left and right must have identical shapes")
-    if (
-        left.device != right.device
-        or left.dtype != right.dtype
-        or not left.is_floating_point()
-        or bool(torch.isnan(left).any())
-        or bool(torch.isnan(right).any())
-    ):
-        raise ValueError("left and right must be matching floating tensors without NaNs")
-    high = torch.maximum(left, right)
-    low = torch.minimum(left, right)
-    equal = left == right
-    sign = torch.where(equal, torch.zeros_like(left), torch.sign(left - right))
-    log_abs = torch.full_like(left, -math.inf)
-
-    negative = (high <= 0.0) & ~equal
-    if bool(negative.any()):
-        log_high = torch.special.log_ndtr(high[negative])
-        log_low = torch.special.log_ndtr(low[negative])
-        log_abs[negative] = log_high + torch.log(-torch.expm1(log_low - log_high))
-
-    positive = (low >= 0.0) & ~equal
-    if bool(positive.any()):
-        log_survival_low = torch.special.log_ndtr(-low[positive])
-        log_survival_high = torch.special.log_ndtr(-high[positive])
-        log_abs[positive] = log_survival_low + torch.log(
-            -torch.expm1(log_survival_high - log_survival_low)
-        )
-
-    central = (low < 0.0) & (high > 0.0) & ~equal
-    if bool(central.any()):
-        difference = torch.special.ndtr(high[central]) - torch.special.ndtr(low[central])
-        log_abs[central] = torch.log(difference)
-    return sign, log_abs
+    """Compatibility wrapper for the audited G11 stable implementation."""
+    return _signed_log_normal_cdf_difference(left, right)
 
 
 def stable_normal_cdf_difference(
     left: torch.Tensor,
     right: torch.Tensor,
 ) -> torch.Tensor:
-    """Return a stable signed value of ``Phi(left) - Phi(right)``."""
-    sign, log_abs = signed_log_normal_cdf_difference(left, right)
-    return sign * torch.exp(log_abs)
+    """Compatibility wrapper for the audited G11 stable implementation."""
+    return _stable_normal_cdf_difference(left, right)
 
 
 def scaled_normal_cdf_difference(
@@ -259,40 +232,13 @@ def scaled_normal_cdf_difference(
     left: torch.Tensor,
     right: torch.Tensor,
 ) -> torch.Tensor:
-    """Return ``exp(log_scale) * (Phi(left) - Phi(right))`` stably."""
-    if log_scale.shape != left.shape:
-        raise ValueError("log_scale and CDF arguments must have identical shapes")
-    if (
-        log_scale.device != left.device
-        or log_scale.dtype != left.dtype
-        or not log_scale.is_floating_point()
-        or not torch.isfinite(log_scale).all()
-    ):
-        raise ValueError("log_scale must be a finite floating tensor matching the arguments")
-    sign, log_abs = signed_log_normal_cdf_difference(left, right)
-    result = sign * torch.exp(log_scale + log_abs)
-    if not torch.isfinite(result).all():
-        raise FloatingPointError("scaled Gaussian CDF difference became nonfinite")
-    return result
+    """Compatibility wrapper for the audited G11 stable implementation."""
+    return _scaled_normal_cdf_difference(log_scale, left, right)
 
 
 def scaled_normal_cdf(
     log_scale: torch.Tensor,
     argument: torch.Tensor,
 ) -> torch.Tensor:
-    """Return ``exp(log_scale) * Phi(argument)`` in the log domain."""
-    if log_scale.shape != argument.shape:
-        raise ValueError("log_scale and argument must have identical shapes")
-    if (
-        log_scale.device != argument.device
-        or log_scale.dtype != argument.dtype
-        or not log_scale.is_floating_point()
-        or not argument.is_floating_point()
-        or not torch.isfinite(log_scale).all()
-        or bool(torch.isnan(argument).any())
-    ):
-        raise ValueError("log_scale and argument must be matching floating tensors")
-    result = torch.exp(log_scale + torch.special.log_ndtr(argument))
-    if not torch.isfinite(result).all():
-        raise FloatingPointError("scaled Gaussian CDF became nonfinite")
-    return result
+    """Compatibility wrapper for the audited G11 stable implementation."""
+    return _scaled_normal_cdf(log_scale, argument)

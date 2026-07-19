@@ -1,0 +1,29 @@
+schema_version: 1
+protocol_id: g11-rarity-calibration-high-h-v1
+frozen: false
+estimand: finite_grid
+model: {H: 0.30, eta: 0.8, xi: 0.04, rho: -0.4, spot: 100.0, maturity: 0.25}
+finest_steps: 128
+proposal:
+  weights: [0.10, 0.30, 0.60]
+  controls:
+    - [[0.0, 0.0]]
+    - [[2.0, -4.0]]
+    - [[4.0, -10.0]]
+tasks:
+  terminal: {kind: terminal}
+  barrier: {kind: barrier}
+  excursion:
+    kind: hit_plus_occupation
+    stress_level: 85.0
+    minimum_occupation: 0.125
+    hit_scale: 3.0
+    occupation_scale: 0.02
+target_probabilities: [1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6]
+sampling: {calibration_paths: 524288, validation_paths: 262144, batch_size: 4096, engine: fft}
+gates:
+  probability_band_lower_factor: 0.50
+  probability_band_upper_factor: 2.00
+  maximum_relative_standard_error: 0.30
+  maximum_normalization_z: 4.0
+  minimum_excursion_exclusion_fraction: 0.01

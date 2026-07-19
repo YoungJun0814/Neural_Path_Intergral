@@ -1,0 +1,22 @@
+schema_version: 1
+protocol_id: g11-gaussian-span-oracle-v1
+frozen: false
+
+factorization:
+  cases: 500
+  batch_size: 64
+  dimensions: [2, 3, 7, 32]
+  components: [1, 2, 5]
+  maximum_rank: 2
+
+analytic:
+  cases: 12
+  paths_per_case: 100000
+
+gates:
+  minimum_factorization_cases: 500
+  maximum_density_reconstruction_error: 1.0e-11
+  maximum_defensive_bound_violation: 1.0e-12
+  maximum_mean_z: 4.0
+  maximum_paired_mean_z: 4.0
+  maximum_outer_normalization_z: 4.0

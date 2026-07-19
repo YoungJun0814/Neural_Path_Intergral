@@ -1,0 +1,37 @@
+schema_version: 1
+protocol_id: g11-development-artifact-audit-v1
+artifacts:
+  - config: configs/g11_gaussian_oracle.yaml
+    result: results/g11_gaussian_oracle_v1_2026-07-19.json
+    config_hash_field: protocol_sha256
+  - config: configs/g11_baseline_reproduction.yaml
+    result: results/g11_baseline_reproduction_v1_2026-07-19.json
+    config_hash_field: config_sha256
+  - config: configs/g11_threshold_rate_low_h.yaml
+    result: results/g11_threshold_rate_low_h_v1_2026-07-19.json
+    config_hash_field: config_sha256
+  - config: configs/g11_threshold_rate_pilot.yaml
+    result: results/g11_threshold_rate_pilot_v1_2026-07-19.json
+    config_hash_field: config_sha256
+  - config: configs/g11_threshold_rate_high_h.yaml
+    result: results/g11_threshold_rate_high_h_v1_2026-07-19.json
+    config_hash_field: config_sha256
+  - config: configs/g11_mlmc_development.yaml
+    result: results/g11_mlmc_development_v1_2026-07-19.json
+    config_hash_field: config_sha256
+  - config: configs/g11_rarity_calibration.yaml
+    result: results/g11_rarity_calibration_v1_2026-07-19.json
+    config_hash_field: config_sha256
+  - config: configs/g11_rarity_calibration_low_h.yaml
+    result: results/g11_rarity_calibration_low_h_v1_2026-07-19.json
+    config_hash_field: config_sha256
+    expected_pass: false
+    expected_failed_gates: [excursion_is_non_degenerate]
+  - config: configs/g11_rarity_calibration_high_h.yaml
+    result: results/g11_rarity_calibration_high_h_v1_2026-07-19.json
+    config_hash_field: config_sha256
+  - config: configs/g11_rare_mlmc_development.yaml
+    result: results/g11_rare_mlmc_development_v1_2026-07-19.json
+    config_hash_field: config_sha256
+aggregate_artifacts:
+  - results/g11_threshold_rate_audit_v1_2026-07-19.json

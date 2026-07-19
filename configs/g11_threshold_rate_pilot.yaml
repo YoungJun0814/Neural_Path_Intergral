@@ -1,0 +1,53 @@
+schema_version: 1
+protocol_id: g11-threshold-rate-pilot-v1
+frozen: false
+estimand: finite_grid
+
+model:
+  H: 0.12
+  eta: 1.1
+  xi: 0.04
+  rho: -0.6
+  spot: 100.0
+  maturity: 0.25
+
+hierarchy:
+  coarsest_steps: 8
+  adjacent_levels: [1, 2, 3, 4, 5, 6]
+
+proposal:
+  weights: [0.20, 0.80]
+  controls:
+    - [[0.0, 0.0], [0.0, 0.0]]
+    - [[-0.40, -1.20], [-0.25, -0.70]]
+
+tasks:
+  terminal:
+    kind: terminal
+    level: 94.0
+  barrier:
+    kind: barrier
+    barrier: 90.0
+  excursion:
+    kind: hit_plus_occupation
+    hit_barrier: 90.0
+    stress_level: 96.0
+    minimum_occupation: 0.03125
+    hit_scale: 3.0
+    occupation_scale: 0.02
+
+sampling:
+  replicates: 12
+  paths_per_level: 8192
+  engine: fft
+
+analysis:
+  bootstrap_repetitions: 2000
+  minimum_levels: 4
+  endpoint_slope_margin: 0.15
+  maximum_variance_cv: 0.20
+  bootstrap_seed_namespace: rate_bootstrap
+
+gates:
+  threshold_l2_lower_bound_positive: true
+  dcs_compatible_with_2r_margin: 0.25

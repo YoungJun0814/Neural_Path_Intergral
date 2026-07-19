@@ -8,6 +8,47 @@ from dataclasses import dataclass
 import torch
 
 
+def _validate_finite_spot(spot: torch.Tensor, step_dt: float) -> None:
+    if spot.ndim != 2 or spot.shape[1] < 2:
+        raise ValueError("spot must have shape (paths, steps + 1)")
+    if not spot.is_floating_point() or not torch.isfinite(spot).all():
+        raise ValueError("spot paths must be finite floating-point tensors")
+    if bool((spot <= 0.0).any()):
+        raise ValueError("spot paths must be strictly positive")
+    if not math.isfinite(step_dt) or step_dt <= 0.0:
+        raise ValueError("step_dt must be finite and positive")
+
+
+@dataclass(frozen=True)
+class TerminalThresholdTask:
+    """A finite-grid terminal downside event ``S_T <= level``."""
+
+    level: float
+
+    def __post_init__(self) -> None:
+        if not math.isfinite(self.level) or self.level <= 0.0:
+            raise ValueError("terminal level must be finite and positive")
+
+    def hard_event(self, spot: torch.Tensor, step_dt: float) -> torch.Tensor:
+        _validate_finite_spot(spot, step_dt)
+        return spot[:, -1] <= self.level
+
+
+@dataclass(frozen=True)
+class DiscreteBarrierHitTask:
+    """A right-endpoint finite-grid downside barrier event."""
+
+    barrier: float
+
+    def __post_init__(self) -> None:
+        if not math.isfinite(self.barrier) or self.barrier <= 0.0:
+            raise ValueError("barrier must be finite and positive")
+
+    def hard_event(self, spot: torch.Tensor, step_dt: float) -> torch.Tensor:
+        _validate_finite_spot(spot, step_dt)
+        return torch.amin(spot, dim=1) <= self.barrier
+
+
 @dataclass(frozen=True)
 class DownsideExcursionTask:
     """Barrier-hit plus stress-occupation event on a right-endpoint grid."""
@@ -33,12 +74,7 @@ class DownsideExcursionTask:
 
     @staticmethod
     def _validate_spot(spot: torch.Tensor, step_dt: float) -> None:
-        if spot.ndim != 2 or spot.shape[1] < 2:
-            raise ValueError("spot must have shape (paths, steps + 1)")
-        if not spot.is_floating_point() or not torch.isfinite(spot).all():
-            raise ValueError("spot paths must be finite floating-point tensors")
-        if not math.isfinite(step_dt) or step_dt <= 0.0:
-            raise ValueError("step_dt must be finite and positive")
+        _validate_finite_spot(spot, step_dt)
 
     def prefix_state(
         self, spot: torch.Tensor, step_dt: float
