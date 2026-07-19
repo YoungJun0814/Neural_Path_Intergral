@@ -18,13 +18,14 @@ The active method is **DCS-MGI-MLMC**:
 The M0--M6 development implementation is complete. The generic Gaussian identities,
 finite-grid rBergomi adapter, exact adjacent-level coupling, seed ledger,
 checkpoint/resume logic, rate study, rarity calibration, and artifact audit have all
-passed their declared development gates. The full test suite currently passes
-**316/316 tests**.
+passed their declared development gates. The M7 local protocol, resource-censoring
+semantics, and seed-free preflight are also implemented and qualified. The full test
+suite currently passes **321/321 tests**.
 
 This repository is **not yet a finished journal submission**. In particular, the M7
-confirmatory protocol has not been frozen or run, and the present estimator targets a
-declared finest discrete grid rather than a continuously monitored event. Development
-results must not be quoted as untouched confirmatory evidence.
+640-cell confirmatory run has not started, and the present estimator targets a declared
+finest discrete grid rather than a continuously monitored event. Development and
+qualification results must not be quoted as untouched confirmatory evidence.
 
 Start with:
 
@@ -32,6 +33,7 @@ Start with:
 - [G11 implementation and error audit](docs/audits/G11_IMPLEMENTATION_AND_ERROR_AUDIT_2026-07-19.md)
 - [Theorem statements](docs/theory/G11_THEOREMS.md) and [proof audit](docs/theory/G11_PROOF_AUDIT.md)
 - [M7 freeze-readiness review](docs/audits/G11_M7_FREEZE_READINESS_2026-07-19.md)
+- [M7 local execution and resource protocol](docs/audits/G11_M7_LOCAL_EXECUTION_PROTOCOL_2026-07-19.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
 ## Why this problem matters
@@ -227,6 +229,17 @@ python -m experiments.g11_artifact_audit \
   --output results/g11_artifact_audit_local.json
 ```
 
+After checking out the frozen M7 tag in a clean worktree and setting all BLAS thread
+variables to eight, validate the confirmatory protocol without allocating a random
+seed:
+
+```bash
+python -m experiments.g11_m7_confirmatory \
+  --config configs/g11_m7_confirmatory_v1.yaml \
+  --preflight \
+  --output /path/outside/worktree/g11_m7_preflight.json
+```
+
 The larger rate, rarity-calibration, and rare-MLMC experiments are intentionally
 configuration driven:
 
@@ -297,10 +310,10 @@ baselines and stopped when their gates failed. See the phase reviews under
 
 The next publication-critical steps are:
 
-1. freeze the confirmatory task matrix, repetition count, raw-baseline resource cap,
-   and total compute budget before seeing any confirmatory result;
-2. create an untouched seed namespace pinned to exact source and configuration hashes;
-3. run the frozen CPU study and a second independent environment reproduction;
+1. run the frozen 20-cluster CPU study without changing its 640-cell task matrix,
+   raw-baseline resource cap, or 512 process-CPU-hour budget;
+2. preserve its untouched seed namespace and exact source/configuration hashes;
+3. run a second independent environment reproduction;
 4. report matched cells and resource-censored baseline cells separately, with no
    fabricated speedup for failures;
 5. add a continuous-time weak-bias study or keep every headline explicitly

@@ -1,0 +1,53 @@
+schema_version: 1
+protocol_id: g11-m7-local-qualification-v1
+run_class: qualification
+frozen: false
+estimand: finite_grid
+core_source_commit: e358a562df9637eeaa6db5826307471bf5c6e2ce
+required_git_tag: null
+core_source_manifest:
+  - {path: src/path_integral/gaussian_span_marginalization.py, sha256: 68d211680e7a476ea81baa4268a35e307203eb613e18ddd91ab5d52d87b72667}
+  - {path: src/path_integral/stable_gaussian.py, sha256: 0543f33709836d086e765f285470e5b1c964ca2b9fb4c56a31c683ef0513bba6}
+  - {path: src/path_integral/mlmc.py, sha256: 86414721b37162e7b5e352f6ab895609bb2696f6626e27ab92b7ba863ec6fe3a}
+  - {path: src/path_integral/seed_ledger.py, sha256: 8a4078cdfb127188e0fdedfc289db846260d5b770e106a3ae91ab6d86cb7a63f}
+  - {path: src/path_integral/rbergomi_dcs_mlmc.py, sha256: ce34cf47abb9966b8ca3dc1e8ab4c6ddee6f348aef84a119f8749d6f12e40b9e}
+  - {path: src/path_integral/rbergomi_mlmc_sampler.py, sha256: ada57bb632176f6ef61728e6524053ac07ee33f2213fc4ca8c27f9887b955a72}
+  - {path: src/path_integral/rbergomi_fft.py, sha256: 2a132b7ad4e7571edfb3ba658874d3d96341b3fc6f05c25b335ffdde77ad83b6}
+  - {path: src/path_integral/rbergomi_mixture.py, sha256: 0849430a654781c1fea531a8fcbf50f1c56ed7e8bdd8e0ad706653f6a801c05c}
+  - {path: src/path_integral/rbergomi_multilevel.py, sha256: 4cd6b62a0f6f2873ef9900807bad1e272b08e14b8fe1c21cde00e6942e965ed1}
+  - {path: src/physics_engine.py, sha256: c8dc77cd05562eebc09024c89d1ab21645b655642c3bc4c20ada762cd266cba2}
+hierarchy: {coarsest_steps: 8, finest_level: 4, refinement: 2}
+proposal:
+  weights: [0.10, 0.30, 0.60]
+  controls:
+    - [[0.0, 0.0]]
+    - [[2.0, -4.0]]
+    - [[4.0, -10.0]]
+selection: {minimum_excursion_exclusion_fraction: 0.01}
+regimes:
+  - name: primary_h012
+    calibration_config:
+      {path: configs/g11_rarity_calibration.yaml, sha256: ef211cc9197361bc3aeabcf51a4e71bf4d4a96ac4361ca0afbd855a0ca377a84}
+    calibration_result:
+      {path: results/g11_rarity_calibration_v1_2026-07-19.json, sha256: d5a9909b5c984dcb56cb149aa8930109f3023a3a70da5e8291718f3f57ecd967}
+    included_tasks: [terminal]
+    target_probabilities: [1.0e-3]
+sampling:
+  relative_rmse_target: 0.20
+  repetitions: 1
+  pilot_samples: 128
+  minimum_final_samples: 128
+  chunk_size: 4096
+  allocation_safety_factor: 4.0
+  minimum_pilot_nonzero: 0
+  maximum_pilot_samples: 128
+  engine: fft
+resource_limits:
+  torch_threads: 8
+  total_cpu_hours: 1.0
+  raw_max_final_samples_per_level: 1024
+gates:
+  minimum_dcs_target_attainment_fraction: 0.0
+  minimum_matched_target_cells: 0
+  minimum_geometric_work_ratio: 0.0
+  minimum_seed_clusters_for_uncertainty: 1

@@ -1,5 +1,10 @@
 # G11 M7 Freeze Readiness Decision
 
+> Historical pre-freeze checkpoint. The resource choices and executable protocol are
+> superseded by
+> [`G11_M7_LOCAL_EXECUTION_PROTOCOL_2026-07-19.md`](G11_M7_LOCAL_EXECUTION_PROTOCOL_2026-07-19.md).
+> No confirmatory M7 seed had been executed when that successor protocol was prepared.
+
 Date: 2026-07-19
 Decision: **not frozen**; development checkpoint is ready to commit
 
