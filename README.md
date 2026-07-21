@@ -1,4 +1,4 @@
-# DCS-MGI-MLMC for Rare Events under Rough Volatility
+# Hybrid DCS-MGI for Rare Events under Rough Volatility
 
 [![CI](https://github.com/YoungJun0814/Neural_Path_Intergral/actions/workflows/ci.yml/badge.svg)](https://github.com/YoungJun0814/Neural_Path_Intergral/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
@@ -10,10 +10,11 @@
 
 ## Research status
 
-The active method is **DCS-MGI-MLMC**:
+The active method is **Hybrid DCS-MGI**:
 
 > **D**efensive **C**ontrol-**S**pan **M**arginalized **G**aussian **I**ntegration
-> embedded in **M**ulti**l**evel **M**onte **C**arlo.
+> with a preprocessing-inclusive choice between single-level importance sampling
+> and every admissible multilevel start.
 
 The M0--M6 development implementation is complete. The generic Gaussian identities,
 finite-grid rBergomi adapter, exact adjacent-level coupling, seed ledger,
@@ -22,15 +23,18 @@ passed their declared development gates. The 640-cell M7 V3 run completed and it
 artifact passes an independent integrity audit. Its strict frozen headline is
 **failed**, because one recovered Windows checkpoint `PermissionError` remains in the
 predeclared no-failure gate; it must not be relabelled as a passed untouched
-confirmation. The full test suite currently passes **351/351 tests**.
+confirmation. The frozen V4 one-factor crossover qualification subsequently passed
+all of its declared gates and its independent audit. The full test suite currently
+passes **353/353 tests**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finest discrete grid rather than a continuously monitored event,
 M7 lacks the strongest single-level comparator in its frozen matrix, and its three
 regimes changed H, eta, and rho together. V4 therefore adds margin-localized threshold
 theory, single-level/MLMC crossover logic, strong baselines, and one-factor-at-a-time
-qualification. Development, recovered, and qualification evidence must not be quoted
-as untouched confirmation.
+qualification. V4 selects DCS-SLIS in 90/135 seed-runs and an earlier multilevel start
+in 45/135, so neither endpoint is uniformly preferred. Development, recovered, and
+qualification evidence must not be quoted as untouched confirmation.
 
 Start with:
 
@@ -42,6 +46,8 @@ Start with:
 - [M7 V3 confirmatory decision](docs/audits/G11_M7_CONFIRMATORY_DECISION_2026-07-22.md)
 - [V4 threshold-stability theory](docs/theory/G11_MARGIN_LOCALIZED_THRESHOLD_STABILITY.md)
 - [V4 crossover qualification protocol](docs/plans/G11_V4_PAPER_EXTENSION_PROTOCOL_2026-07-22.md)
+- [V4 crossover qualification decision](docs/audits/G11_V4_CROSSOVER_QUALIFICATION_DECISION_2026-07-22.md)
+- [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
 ## Why this problem matters
@@ -72,8 +78,9 @@ flowchart LR
     C --> D["Decompose X = UZ + R"]
     D --> E["Convert path event to a scalar threshold in Z"]
     E --> F["Integrate Z analytically: DCS-MGI"]
-    F --> G["Shared fine/coarse MLMC correction"]
-    G --> H["Probability estimate, uncertainty, work and provenance"]
+    F --> G["Profile DCS-SLIS and coupled corrections"]
+    G --> H["Choose the minimum-total-work start level"]
+    H --> I["Probability estimate, uncertainty, work and provenance"]
 ```
 
 At MLMC level \(\ell\), the standardized Gaussian input under the target law is
@@ -135,6 +142,7 @@ repository as falsified or historical research tracks.
 | Scalar-threshold representation | Pathwise tested | Terminal, discrete barrier, and implemented hit-plus-occupation tasks |
 | DCS correction rate | Conditional upper bound | \(O(h^{2r})\) if the coupled threshold error is \(O(h^r)\) in \(L^2\) |
 | MLMC complexity | Conditional corollary | Requires separate bias, variance, and cost exponents |
+| SLIS/MLMC crossover | Exact finite-profile calculation | Includes profiling/training work and the finest single level as a legal endpoint |
 
 The project does **not** currently claim:
 
@@ -199,6 +207,22 @@ and several hard matched groups favored raw. Also, the prior regime labels do no
 identify an H effect because eta and rho changed with H. See the
 [decision report](docs/audits/G11_M7_CONFIRMATORY_DECISION_2026-07-22.md) and
 [machine-readable independent audit](results/g11_m7_result_audit_v1_2026-07-22.json).
+
+### V4 crossover qualification
+
+The clean frozen V4 run completed 27 one-factor-at-a-time cells and 135 independent
+seed-runs. All 135 full-hierarchy DCS estimates were within four combined standard
+errors of their independent references. At every evaluated RMSE, the profiled
+minimum-work start was the finest DCS single level in 90 runs, full MLMC in 13, and an
+intermediate start in 32. The H=0.30 OAT regime accounted for all 13 full-MLMC
+selections; other regimes mostly selected DCS-SLIS. Training-inclusive CEM comparisons
+on four base cells favored the selected DCS construction by 1.47x--1.89x at 20%
+relative RMSE.
+
+These are qualification profiles, not achieved-RMSE allocations. See the
+[V4 decision report](docs/audits/G11_V4_CROSSOVER_QUALIFICATION_DECISION_2026-07-22.md),
+[frozen result](results/g11_v4_crossover_qualification_v1_2026-07-22.json), and
+[independent audit](results/g11_v4_crossover_audit_v1_2026-07-22.json).
 
 Machine-readable outputs are stored under [`results/`](results/), including the
 [strict artifact audit](results/g11_artifact_audit_v1_2026-07-19.json),
@@ -282,6 +306,15 @@ python -m experiments.g11_mlmc_development \
   --progress results/g11_rare_mlmc_development_local.progress.json
 ```
 
+Audit the committed V4 qualification artifact:
+
+```bash
+python -m experiments.g11_v4_crossover_audit \
+  --config configs/g11_v4_crossover_qualification.yaml \
+  --result results/g11_v4_crossover_qualification_v1_2026-07-22.json \
+  --output results/g11_v4_crossover_audit_local.json
+```
+
 These full configurations can be computationally expensive. They are development
 protocols, not permission to inspect or tune against the future untouched M7 seed
 namespace.
@@ -310,6 +343,8 @@ Key implementation modules:
 - [`mlmc.py`](src/path_integral/mlmc.py): independent pilot/final allocation and checkpointing;
 - [`seed_ledger.py`](src/path_integral/seed_ledger.py): role-separated deterministic seeds;
 - [`provenance.py`](src/path_integral/provenance.py): configuration and artifact provenance;
+- [`threshold_stability.py`](src/path_integral/threshold_stability.py): localized threshold and moment bounds;
+- [`multilevel_crossover.py`](src/path_integral/multilevel_crossover.py): preprocessing-inclusive SLIS/MLMC choice;
 - [`stable_gaussian.py`](src/path_integral/stable_gaussian.py): audited Gaussian tail numerics.
 
 ## Research history
@@ -324,7 +359,7 @@ and prevent selective reporting.
 | G9 | Monotone Gaussian Volterra smoothing | Exactness/correction gain passed; frozen headline failed |
 | G10 | Control-span marginalized Gaussian integration | Finite-grid audits passed; 2x single-level headline failed |
 | G11 M7 V3 | Correction-focused DCS-MGI-MLMC | 640 cells complete; performance sub-gates pass; strict headline fails on one recovered I/O incident |
-| G11 V4 | Margin-localized threshold stability plus SLIS/MLMC crossover | Theory and qualification protocol implemented; frozen OAT execution is the next artifact |
+| G11 V4 | Margin-localized Hybrid DCS-MGI | 27-cell frozen OAT qualification and independent audit pass; 90/135 SLIS, 45/135 multilevel |
 
 Earlier neural VFO, mixture, and residual-controller tracks were tested against strong
 baselines and stopped when their gates failed. See the phase reviews under
@@ -335,8 +370,8 @@ baselines and stopped when their gates failed. See the phase reviews under
 
 The next publication-critical steps are:
 
-1. execute and audit the frozen V4 OAT crossover qualification;
-2. use a strong DCS-SLIS and task-tuned SLIS baseline on every future headline cell;
+1. freeze and execute actual achieved-RMSE allocations using the qualified hybrid;
+2. use a strong task-tuned SLIS baseline on every future headline cell;
 3. prove model-level coefficient, mesh-enrichment, and small-active-slope bounds, or
    keep the V4 rate theorem explicitly conditional;
 4. freeze a new untouched achieved-RMSE seed namespace after qualification;

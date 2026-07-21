@@ -1,0 +1,772 @@
+{
+  "audit_limitations": [
+    "V3 operation work and sampler wall time survive checkpoints, but process CPU and orchestration time spent after the last successful checkpoint are not fully recoverable across an external interruption"
+  ],
+  "config_sha256": "f7b4d1150b531b91f70fb04479601bd924a5ba85507bd55e9a16df914b159fe6",
+  "diagnostics": {
+    "by": {
+      "regime": {
+        "high_h030": {
+          "allocated_work_ratio_geometric_mean": 13.986811348669157,
+          "allocated_work_ratio_quantiles": {
+            "p50": 11.066405552940468,
+            "p90": 45.65703040542796,
+            "p99": 223.42717452401715
+          },
+          "allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 15691.0,
+              "p50": 366.5,
+              "p90": 2396.9000000000015,
+              "p99": 7388.449999999997
+            },
+            "raw_defensive": {
+              "maximum": 3073489.0,
+              "p50": 12401.5,
+              "p90": 88107.10000000012,
+              "p99": 597900.8199999995
+            }
+          },
+          "cell_count": 240,
+          "dcs_correction_variance_exponent": {
+            "count": 240,
+            "median": 0.6223341442452865,
+            "p10": -0.034383929034674666,
+            "p90": 1.2755076243410162
+          },
+          "dcs_target_attainment_fraction": 0.9833333333333333,
+          "matched_count": 171,
+          "matched_work_ratio_geometric_mean": 15.175417861524968,
+          "raw_allocation_capped_count": 0,
+          "raw_correction_variance_exponent": {
+            "count": 240,
+            "median": 0.6690583453619491,
+            "p10": -0.3534950365109383,
+            "p90": 2.315475276281305
+          },
+          "raw_pilot_censored_count": 0,
+          "raw_resource_censored_count": 0,
+          "raw_target_attainment_fraction": 0.725,
+          "recovery_pilot_work_units": 0.0,
+          "resumed_method_count": 0,
+          "uncapped_allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 15691.0,
+              "p50": 366.5,
+              "p90": 2396.9000000000015,
+              "p99": 7388.449999999997
+            },
+            "raw_defensive": {
+              "maximum": 3073489.0,
+              "p50": 12401.5,
+              "p90": 88107.10000000012,
+              "p99": 597900.8199999995
+            }
+          }
+        },
+        "low_h007": {
+          "allocated_work_ratio_geometric_mean": 3.3506841189841574,
+          "allocated_work_ratio_quantiles": {
+            "p50": 4.2375877823888874,
+            "p90": 60.63089640819506,
+            "p99": 198.77525139009987
+          },
+          "allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 31874693.0,
+              "p50": 24836.0,
+              "p90": 305025.5000000003,
+              "p99": 2255175.9599999953
+            },
+            "raw_defensive": {
+              "maximum": 10000000.0,
+              "p50": 39322.0,
+              "p90": 1004621.8000000006,
+              "p99": 10000000.0
+            }
+          },
+          "cell_count": 160,
+          "dcs_correction_variance_exponent": {
+            "count": 160,
+            "median": 0.6682106699568441,
+            "p10": 0.20045833328687873,
+            "p90": 1.1206926491562386
+          },
+          "dcs_target_attainment_fraction": 0.78125,
+          "matched_count": 18,
+          "matched_work_ratio_geometric_mean": 29.208556994611946,
+          "raw_allocation_capped_count": 9,
+          "raw_correction_variance_exponent": {
+            "count": 159,
+            "median": 0.49303753306638465,
+            "p10": -0.6097730438825155,
+            "p90": 3.729192115528444
+          },
+          "raw_pilot_censored_count": 0,
+          "raw_resource_censored_count": 9,
+          "raw_target_attainment_fraction": 0.1125,
+          "recovery_pilot_work_units": 1564672.0,
+          "resumed_method_count": 1,
+          "uncapped_allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 31874693.0,
+              "p50": 24836.0,
+              "p90": 305025.5000000003,
+              "p99": 2255175.9599999953
+            },
+            "raw_defensive": {
+              "maximum": 690388637.0,
+              "p50": 39322.0,
+              "p90": 1004621.8000000006,
+              "p99": 23510646.21999993
+            }
+          }
+        },
+        "primary_h012": {
+          "allocated_work_ratio_geometric_mean": 8.258408905460126,
+          "allocated_work_ratio_quantiles": {
+            "p50": 11.116090159772046,
+            "p90": 90.49455254070726,
+            "p99": 729.0782965842578
+          },
+          "allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 5757028.0,
+              "p50": 5858.0,
+              "p90": 50631.30000000007,
+              "p99": 259452.6199999999
+            },
+            "raw_defensive": {
+              "maximum": 10000000.0,
+              "p50": 31204.0,
+              "p90": 431618.10000000085,
+              "p99": 9569204.469999995
+            }
+          },
+          "cell_count": 240,
+          "dcs_correction_variance_exponent": {
+            "count": 240,
+            "median": 0.3872595160434139,
+            "p10": -0.12826262902666866,
+            "p90": 0.7662330880575736
+          },
+          "dcs_target_attainment_fraction": 0.9333333333333333,
+          "matched_count": 65,
+          "matched_work_ratio_geometric_mean": 17.62924108905044,
+          "raw_allocation_capped_count": 11,
+          "raw_correction_variance_exponent": {
+            "count": 240,
+            "median": 0.30465923787119176,
+            "p10": -1.1323587067525391,
+            "p90": 3.0562104666028964
+          },
+          "raw_pilot_censored_count": 0,
+          "raw_resource_censored_count": 8,
+          "raw_target_attainment_fraction": 0.2833333333333333,
+          "recovery_pilot_work_units": 2940928.0,
+          "resumed_method_count": 1,
+          "uncapped_allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 5757028.0,
+              "p50": 5858.0,
+              "p90": 50631.30000000007,
+              "p99": 259452.6199999999
+            },
+            "raw_defensive": {
+              "maximum": 423919028.0,
+              "p50": 31204.0,
+              "p90": 431618.10000000085,
+              "p99": 9575970.03999999
+            }
+          }
+        }
+      },
+      "target_probability": {
+        "1e-03": {
+          "allocated_work_ratio_geometric_mean": 14.557289568944368,
+          "allocated_work_ratio_quantiles": {
+            "p50": 11.434970527163197,
+            "p90": 53.120103570650045,
+            "p99": 375.8574769207406
+          },
+          "allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 40399.0,
+              "p50": 912.0,
+              "p90": 6269.800000000001,
+              "p99": 16774.65999999999
+            },
+            "raw_defensive": {
+              "maximum": 6102313.0,
+              "p50": 24903.0,
+              "p90": 191498.40000000023,
+              "p99": 1623750.0499999984
+            }
+          },
+          "cell_count": 160,
+          "dcs_correction_variance_exponent": {
+            "count": 160,
+            "median": 0.41884732201011876,
+            "p10": -0.03345649668482348,
+            "p90": 0.9426312840328859
+          },
+          "dcs_target_attainment_fraction": 0.98125,
+          "matched_count": 117,
+          "matched_work_ratio_geometric_mean": 17.597021179268502,
+          "raw_allocation_capped_count": 0,
+          "raw_correction_variance_exponent": {
+            "count": 160,
+            "median": 0.26891897176476653,
+            "p10": -0.2902383677921535,
+            "p90": 1.11937276815885
+          },
+          "raw_pilot_censored_count": 0,
+          "raw_resource_censored_count": 0,
+          "raw_target_attainment_fraction": 0.7375,
+          "recovery_pilot_work_units": 0.0,
+          "resumed_method_count": 0,
+          "uncapped_allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 40399.0,
+              "p50": 912.0,
+              "p90": 6269.800000000001,
+              "p99": 16774.65999999999
+            },
+            "raw_defensive": {
+              "maximum": 6102313.0,
+              "p50": 24903.0,
+              "p90": 191498.40000000023,
+              "p99": 1623750.0499999984
+            }
+          }
+        },
+        "1e-04": {
+          "allocated_work_ratio_geometric_mean": 11.7797435941933,
+          "allocated_work_ratio_quantiles": {
+            "p50": 11.311797958592516,
+            "p90": 52.02110007148031,
+            "p99": 228.8161922988901
+          },
+          "allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 211308.0,
+              "p50": 2161.5,
+              "p90": 19198.600000000002,
+              "p99": 71028.36999999994
+            },
+            "raw_defensive": {
+              "maximum": 5638783.0,
+              "p50": 25371.5,
+              "p90": 291002.50000000006,
+              "p99": 2835805.55
+            }
+          },
+          "cell_count": 160,
+          "dcs_correction_variance_exponent": {
+            "count": 160,
+            "median": 0.48793104309876634,
+            "p10": -0.03680639095961592,
+            "p90": 1.0251806286256948
+          },
+          "dcs_target_attainment_fraction": 0.98125,
+          "matched_count": 66,
+          "matched_work_ratio_geometric_mean": 16.525739400071974,
+          "raw_allocation_capped_count": 0,
+          "raw_correction_variance_exponent": {
+            "count": 160,
+            "median": 0.33048466076423666,
+            "p10": -0.6523886132489751,
+            "p90": 1.640552747571535
+          },
+          "raw_pilot_censored_count": 0,
+          "raw_resource_censored_count": 0,
+          "raw_target_attainment_fraction": 0.41875,
+          "recovery_pilot_work_units": 0.0,
+          "resumed_method_count": 0,
+          "uncapped_allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 211308.0,
+              "p50": 2161.5,
+              "p90": 19198.600000000002,
+              "p99": 71028.36999999994
+            },
+            "raw_defensive": {
+              "maximum": 5638783.0,
+              "p50": 25371.5,
+              "p90": 291002.50000000006,
+              "p99": 2835805.55
+            }
+          }
+        },
+        "1e-05": {
+          "allocated_work_ratio_geometric_mean": 8.698732643392697,
+          "allocated_work_ratio_quantiles": {
+            "p50": 13.570433119135213,
+            "p90": 88.97783267007324,
+            "p99": 623.7824355582691
+          },
+          "allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 8922013.0,
+              "p50": 6095.5,
+              "p90": 78225.20000000001,
+              "p99": 352070.29
+            },
+            "raw_defensive": {
+              "maximum": 10000000.0,
+              "p50": 24886.0,
+              "p90": 487010.20000000024,
+              "p99": 10000000.0
+            }
+          },
+          "cell_count": 160,
+          "dcs_correction_variance_exponent": {
+            "count": 160,
+            "median": 0.5728770441437557,
+            "p10": -0.025259326698924764,
+            "p90": 1.104632692688144
+          },
+          "dcs_target_attainment_fraction": 0.93125,
+          "matched_count": 40,
+          "matched_work_ratio_geometric_mean": 21.008658894957495,
+          "raw_allocation_capped_count": 8,
+          "raw_correction_variance_exponent": {
+            "count": 160,
+            "median": 0.7226008326299004,
+            "p10": -1.125912449902005,
+            "p90": 3.6832619070840265
+          },
+          "raw_pilot_censored_count": 0,
+          "raw_resource_censored_count": 6,
+          "raw_target_attainment_fraction": 0.25625,
+          "recovery_pilot_work_units": 2940928.0,
+          "resumed_method_count": 1,
+          "uncapped_allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 8922013.0,
+              "p50": 6095.5,
+              "p90": 78225.20000000001,
+              "p99": 352070.29
+            },
+            "raw_defensive": {
+              "maximum": 690388637.0,
+              "p50": 24886.0,
+              "p90": 487010.20000000024,
+              "p99": 14243150.56999999
+            }
+          }
+        },
+        "1e-06": {
+          "allocated_work_ratio_geometric_mean": 2.78858441488484,
+          "allocated_work_ratio_quantiles": {
+            "p50": 4.229065482927944,
+            "p90": 81.5491076553543,
+            "p99": 258.92930888548665
+          },
+          "allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 31874693.0,
+              "p50": 18973.0,
+              "p90": 295684.10000000003,
+              "p99": 2255175.9599999953
+            },
+            "raw_defensive": {
+              "maximum": 10000000.0,
+              "p50": 12133.0,
+              "p90": 547677.8000000002,
+              "p99": 10000000.0
+            }
+          },
+          "cell_count": 160,
+          "dcs_correction_variance_exponent": {
+            "count": 160,
+            "median": 0.6191194091650749,
+            "p10": -0.05241204761329953,
+            "p90": 1.3485839666858352
+          },
+          "dcs_target_attainment_fraction": 0.7625,
+          "matched_count": 31,
+          "matched_work_ratio_geometric_mean": 9.527597601959165,
+          "raw_allocation_capped_count": 12,
+          "raw_correction_variance_exponent": {
+            "count": 159,
+            "median": 0.9559270352286692,
+            "p10": -1.651463601979322,
+            "p90": 5.292620274755377
+          },
+          "raw_pilot_censored_count": 0,
+          "raw_resource_censored_count": 11,
+          "raw_target_attainment_fraction": 0.2125,
+          "recovery_pilot_work_units": 1564672.0,
+          "resumed_method_count": 1,
+          "uncapped_allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 31874693.0,
+              "p50": 18973.0,
+              "p90": 295684.10000000003,
+              "p99": 2255175.9599999953
+            },
+            "raw_defensive": {
+              "maximum": 423919028.0,
+              "p50": 12133.0,
+              "p90": 547677.8000000002,
+              "p99": 21997573.989999987
+            }
+          }
+        }
+      },
+      "task_family": {
+        "barrier": {
+          "allocated_work_ratio_geometric_mean": 6.548010050905912,
+          "allocated_work_ratio_quantiles": {
+            "p50": 9.436484278274776,
+            "p90": 47.51426857482146,
+            "p99": 239.23490344617426
+          },
+          "allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 8290156.0,
+              "p50": 3974.0,
+              "p90": 87239.40000000002,
+              "p99": 982432.2799999989
+            },
+            "raw_defensive": {
+              "maximum": 10000000.0,
+              "p50": 18507.0,
+              "p90": 325352.3000000003,
+              "p99": 7083246.229999983
+            }
+          },
+          "cell_count": 240,
+          "dcs_correction_variance_exponent": {
+            "count": 240,
+            "median": 0.46642470220664944,
+            "p10": -0.09715602298758301,
+            "p90": 1.1655836766135288
+          },
+          "dcs_target_attainment_fraction": 0.8708333333333333,
+          "matched_count": 81,
+          "matched_work_ratio_geometric_mean": 12.937874962034957,
+          "raw_allocation_capped_count": 9,
+          "raw_correction_variance_exponent": {
+            "count": 240,
+            "median": 0.43211013665516895,
+            "p10": -1.0187451060682595,
+            "p90": 2.8843363828702175
+          },
+          "raw_pilot_censored_count": 0,
+          "raw_resource_censored_count": 8,
+          "raw_target_attainment_fraction": 0.35,
+          "recovery_pilot_work_units": 2940928.0,
+          "resumed_method_count": 1,
+          "uncapped_allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 8290156.0,
+              "p50": 3974.0,
+              "p90": 87239.40000000002,
+              "p99": 982432.2799999989
+            },
+            "raw_defensive": {
+              "maximum": 690388637.0,
+              "p50": 18507.0,
+              "p90": 325352.3000000003,
+              "p99": 7083246.229999983
+            }
+          }
+        },
+        "excursion": {
+          "allocated_work_ratio_geometric_mean": 9.954771446301566,
+          "allocated_work_ratio_quantiles": {
+            "p50": 9.997597012202956,
+            "p90": 76.82974656551885,
+            "p99": 631.9035888293876
+          },
+          "allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 5757028.0,
+              "p50": 1666.5,
+              "p90": 22129.4,
+              "p99": 149027.7699999999
+            },
+            "raw_defensive": {
+              "maximum": 10000000.0,
+              "p50": 20038.0,
+              "p90": 224048.30000000002,
+              "p99": 4041776.019999991
+            }
+          },
+          "cell_count": 160,
+          "dcs_correction_variance_exponent": {
+            "count": 160,
+            "median": 0.47673631665314065,
+            "p10": -0.13776792627025972,
+            "p90": 1.0317455461150293
+          },
+          "dcs_target_attainment_fraction": 0.925,
+          "matched_count": 83,
+          "matched_work_ratio_geometric_mean": 15.87104264514001,
+          "raw_allocation_capped_count": 2,
+          "raw_correction_variance_exponent": {
+            "count": 160,
+            "median": 0.4488375039987054,
+            "p10": -0.7922058040385794,
+            "p90": 2.754735251414047
+          },
+          "raw_pilot_censored_count": 0,
+          "raw_resource_censored_count": 1,
+          "raw_target_attainment_fraction": 0.53125,
+          "recovery_pilot_work_units": 0.0,
+          "resumed_method_count": 0,
+          "uncapped_allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 5757028.0,
+              "p50": 1666.5,
+              "p90": 22129.4,
+              "p99": 149027.7699999999
+            },
+            "raw_defensive": {
+              "maximum": 62510202.0,
+              "p50": 20038.0,
+              "p90": 224048.30000000002,
+              "p99": 4041776.019999991
+            }
+          }
+        },
+        "terminal": {
+          "allocated_work_ratio_geometric_mean": 8.53572782404641,
+          "allocated_work_ratio_quantiles": {
+            "p50": 11.380018475853987,
+            "p90": 63.96620042131622,
+            "p99": 383.3710188390328
+          },
+          "allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 31874693.0,
+              "p50": 3359.0,
+              "p90": 105685.60000000017,
+              "p99": 1215855.4999999984
+            },
+            "raw_defensive": {
+              "maximum": 10000000.0,
+              "p50": 26325.0,
+              "p90": 473117.70000000106,
+              "p99": 10000000.0
+            }
+          },
+          "cell_count": 240,
+          "dcs_correction_variance_exponent": {
+            "count": 240,
+            "median": 0.5729628606861958,
+            "p10": 0.20984039391246703,
+            "p90": 1.093231298474595
+          },
+          "dcs_target_attainment_fraction": 0.95,
+          "matched_count": 90,
+          "matched_work_ratio_geometric_mean": 21.35134288129016,
+          "raw_allocation_capped_count": 9,
+          "raw_correction_variance_exponent": {
+            "count": 239,
+            "median": 0.5145036243531174,
+            "p10": -0.38601227571362606,
+            "p90": 2.699116714948345
+          },
+          "raw_pilot_censored_count": 0,
+          "raw_resource_censored_count": 8,
+          "raw_target_attainment_fraction": 0.37916666666666665,
+          "recovery_pilot_work_units": 1564672.0,
+          "resumed_method_count": 1,
+          "uncapped_allocation_final_count_quantiles": {
+            "dcs_mgi": {
+              "maximum": 31874693.0,
+              "p50": 3359.0,
+              "p90": 105685.60000000017,
+              "p99": 1215855.4999999984
+            },
+            "raw_defensive": {
+              "maximum": 293157163.0,
+              "p50": 26325.0,
+              "p90": 473117.70000000106,
+              "p99": 14573313.40999997
+            }
+          }
+        }
+      }
+    },
+    "overall": {
+      "allocated_work_ratio_geometric_mean": 8.03089659992614,
+      "allocated_work_ratio_quantiles": {
+        "p50": 10.366639462422256,
+        "p90": 58.733275262912066,
+        "p99": 408.1730333104635
+      },
+      "allocation_final_count_quantiles": {
+        "dcs_mgi": {
+          "maximum": 31874693.0,
+          "p50": 2966.0,
+          "p90": 74365.79999999993,
+          "p99": 910126.7499999974
+        },
+        "raw_defensive": {
+          "maximum": 10000000.0,
+          "p50": 22080.5,
+          "p90": 356024.69999999995,
+          "p99": 8973607.179999858
+        }
+      },
+      "cell_count": 640,
+      "dcs_correction_variance_exponent": {
+        "count": 640,
+        "median": 0.5192963000643955,
+        "p10": -0.036806390959615895,
+        "p90": 1.1021693851781504
+      },
+      "dcs_target_attainment_fraction": 0.9140625,
+      "matched_count": 254,
+      "matched_work_ratio_geometric_mean": 16.51773409774499,
+      "raw_allocation_capped_count": 20,
+      "raw_correction_variance_exponent": {
+        "count": 639,
+        "median": 0.46697018647401906,
+        "p10": -0.7282627000128624,
+        "p90": 2.8174259635673202
+      },
+      "raw_pilot_censored_count": 0,
+      "raw_resource_censored_count": 17,
+      "raw_target_attainment_fraction": 0.40625,
+      "recovery_pilot_work_units": 4505600.0,
+      "resumed_method_count": 2,
+      "uncapped_allocation_final_count_quantiles": {
+        "dcs_mgi": {
+          "maximum": 31874693.0,
+          "p50": 2966.0,
+          "p90": 74365.79999999993,
+          "p99": 910126.7499999974
+        },
+        "raw_defensive": {
+          "maximum": 690388637.0,
+          "p50": 22080.5,
+          "p90": 356024.69999999995,
+          "p99": 8973607.179999858
+        }
+      }
+    }
+  },
+  "dirty_worktree": false,
+  "environment": {
+    "cuda": "12.8",
+    "deterministic_algorithms": false,
+    "dtype": "not_applicable",
+    "os": "Windows-11-10.0.26200-SP0",
+    "packages": {
+      "PyYAML": "6.0.3",
+      "numpy": "2.1.3",
+      "scipy": "1.15.3"
+    },
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "python": "3.13.5",
+    "pytorch": "2.9.1+cu128",
+    "torch_threads": 8
+  },
+  "execution_incidents": [
+    {
+      "message": "[WinError 5] \uc561\uc138\uc2a4\uac00 \uac70\ubd80\ub418\uc5c8\uc2b5\ub2c8\ub2e4: 'C:\\\\Users\\\\Jun\\\\Desktop\\\\Thesis\\\\Projects\\\\Neural_Path_Integral_m7_outputs\\\\g11_m7_confirmatory_v3_2026-07-19.progress.json.060b4140e2d2ef0c91a77c8b.checkpoint.json.tmp' -> 'C:\\\\Users\\\\Jun\\\\Desktop\\\\Thesis\\\\Projects\\\\Neural_Path_Integral_m7_outputs\\\\g11_m7_confirmatory_v3_2026-07-19.progress.json.060b4140e2d2ef0c91a77c8b.checkpoint.json'",
+      "method": "dcs_mgi",
+      "regime": "low_h007",
+      "replicate": 15,
+      "task": "terminal_1e6",
+      "type": "PermissionError"
+    }
+  ],
+  "expected_cell_count": 640,
+  "independent_gates": {
+    "dcs_target_attainment_at_least_threshold": true,
+    "dcs_target_attainment_fraction": 0.9140625,
+    "matched_geometric_work_ratio": 16.51773409774499,
+    "matched_geometric_work_ratio_above_threshold": true,
+    "matched_target_cell_count": 254,
+    "matched_target_cells_at_least_minimum": true,
+    "no_unexpected_failures": false,
+    "one_sided_95_cluster_lower_bound": 14.699187814314003,
+    "one_sided_95_cluster_lower_bound_above_one": true,
+    "performance_headline_passed": false,
+    "protocol_complete": true,
+    "raw_target_attainment_fraction": 0.40625,
+    "resource_censored_cell_count": 11,
+    "seed_cluster_count": 20,
+    "seed_clusters_at_least_minimum": true
+  },
+  "independent_summary": {
+    "censored_geometric_work_ratio_lower_bound": 66.5820463167507,
+    "cluster_uncertainty": {
+      "cluster_count": 20,
+      "cluster_geometric_ratios": [
+        13.687893070491098,
+        16.625819245973652,
+        13.946782121923144,
+        11.22923398929851,
+        16.147983321642496,
+        17.77942605138066,
+        20.183535974432804,
+        27.286841777066734,
+        12.90439493679759,
+        18.772705170554975,
+        9.302335900640697,
+        20.831873249884072,
+        15.231626513625814,
+        12.238834965535334,
+        33.293479321283556,
+        17.59297725412784,
+        26.128528755115703,
+        13.96322941242316,
+        16.66491562215147,
+        13.926107664570825
+      ],
+      "one_sided_95_lower_bound": 14.699187814314003
+    },
+    "complete_cell_count": 640,
+    "dcs_target_attainment_fraction": 0.9140625,
+    "expected_cell_count": 640,
+    "matched_cell_count": 254,
+    "matched_geometric_work_ratio": 16.51773409774499,
+    "raw_target_attainment_fraction": 0.40625,
+    "resource_censored_cell_count": 11
+  },
+  "integrity_failures": [],
+  "integrity_passed": true,
+  "observed_cell_count": 640,
+  "performance_subgates_excluding_recovered_operational_events_passed": true,
+  "protocol_id": "g11-m7-confirmatory-v3",
+  "recovered_operational_incident_count": 1,
+  "reference_consistency": {
+    "by_method": {
+      "dcs_mgi": {
+        "comparison_count": 640,
+        "maximum_absolute_z": 3.3001096936873973,
+        "mean_signed_estimate_difference": -2.681465965771376e-06,
+        "mean_signed_z": 0.03795437580519413,
+        "median_absolute_z": 0.6872888308508428,
+        "p95_absolute_z": 2.0537785529966923,
+        "within_independent_95_interval_fraction": 0.9375
+      },
+      "raw_defensive": {
+        "comparison_count": 640,
+        "maximum_absolute_z": 21.161473601588828,
+        "mean_signed_estimate_difference": -3.822157642038137e-06,
+        "mean_signed_z": -0.5003037782582218,
+        "median_absolute_z": 0.8626524717773028,
+        "p95_absolute_z": 2.5492066478870883,
+        "within_independent_95_interval_fraction": 0.8890625
+      }
+    },
+    "reference_count": 36
+  },
+  "result": "results\\g11_m7_confirmatory_v3_2026-07-22.json",
+  "result_sha256": "d0165cc9bdc3d961a103b3c0f5c51155747ae638ca68becad59e1059fc0e8ca4",
+  "schema": "npi.g11.m7-result-audit.v1",
+  "scientific_gate_passed": false,
+  "source_commit": "b97f64cd4ed95ef5f550cba1f94148f0f0cf70d2",
+  "unresolved_execution_incident_count": 0,
+  "work_ledger": {
+    "audit_seconds": 29.99732500000391
+  }
+}
