@@ -29,6 +29,8 @@ environment.
 |---|---:|
 | Frozen source clean | yes |
 | Result SHA-256 | `eedc353d325e5f7396c0112e16847867e8eaee370ea7fe1657a1f6aa2c5f1ba7` |
+| Independent-audit source | `5bfaa219e22a4f554311cd80601514a3bbcd6ef0`, clean |
+| Independent-audit SHA-256 | `703d26d90d6dce1bb92681b9418d8da34f3fac39b62ca5be4723e2d468ed1afc` |
 | Cells / independent seed-runs | 27 / 135 |
 | Profile paths per method and level | 8,192 |
 | Relative-RMSE targets | 10%, 20%, 30% |

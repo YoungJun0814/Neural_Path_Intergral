@@ -1,0 +1,179 @@
+{
+  "config_sha256": "7d1fad2e62714536dc151fb3be35a61a0c25efa96a16ca94cebac23d05ec7232",
+  "diagnostics": {
+    "by_regime_at_rmse_020": {
+      "base": {
+        "dcs_slis_count": 15,
+        "full_mlmc_count": 0,
+        "run_count": 20,
+        "start_level_counts": {
+          "3": 5,
+          "4": 15
+        }
+      },
+      "oat_eta080": {
+        "dcs_slis_count": 14,
+        "full_mlmc_count": 0,
+        "run_count": 20,
+        "start_level_counts": {
+          "2": 1,
+          "3": 5,
+          "4": 14
+        }
+      },
+      "oat_eta140": {
+        "dcs_slis_count": 16,
+        "full_mlmc_count": 0,
+        "run_count": 20,
+        "start_level_counts": {
+          "2": 1,
+          "3": 3,
+          "4": 16
+        }
+      },
+      "oat_h007": {
+        "dcs_slis_count": 17,
+        "full_mlmc_count": 0,
+        "run_count": 20,
+        "start_level_counts": {
+          "3": 3,
+          "4": 17
+        }
+      },
+      "oat_h030": {
+        "dcs_slis_count": 1,
+        "full_mlmc_count": 13,
+        "run_count": 20,
+        "start_level_counts": {
+          "0": 13,
+          "1": 4,
+          "2": 2,
+          "4": 1
+        }
+      },
+      "oat_rho_m030": {
+        "dcs_slis_count": 15,
+        "full_mlmc_count": 0,
+        "run_count": 20,
+        "start_level_counts": {
+          "3": 5,
+          "4": 15
+        }
+      },
+      "oat_rho_m085": {
+        "dcs_slis_count": 12,
+        "full_mlmc_count": 0,
+        "run_count": 15,
+        "start_level_counts": {
+          "3": 3,
+          "4": 12
+        }
+      }
+    },
+    "cem_over_best_dcs": {
+      "barrier_1e-04": {
+        "0.10": 1.449226068058328,
+        "0.20": 1.4700696200804377,
+        "0.30": 1.4742010381538089
+      },
+      "barrier_1e-06": {
+        "0.10": 1.3824619368170463,
+        "0.20": 1.812812157416964,
+        "0.30": 1.9434505127572546
+      },
+      "terminal_1e-04": {
+        "0.10": 1.4563620165347368,
+        "0.20": 1.4720730125540689,
+        "0.30": 1.4751113666921258
+      },
+      "terminal_1e-06": {
+        "0.10": 1.5494754960522705,
+        "0.20": 1.8941532120284605,
+        "0.30": 1.985661385896346
+      }
+    }
+  },
+  "dirty_worktree": false,
+  "environment": {
+    "cuda": "12.8",
+    "deterministic_algorithms": false,
+    "dtype": "not_applicable",
+    "os": "Windows-11-10.0.26200-SP0",
+    "packages": {
+      "PyYAML": "6.0.3",
+      "numpy": "2.1.3",
+      "scipy": "1.15.3"
+    },
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "python": "3.13.5",
+    "pytorch": "2.9.1+cu128",
+    "torch_threads": 16
+  },
+  "independent_gates": {
+    "all_reference_comparisons_within_fraction": true,
+    "complete_cell_matrix": true,
+    "minimum_repetitions": true,
+    "multiple_rmse_targets": true,
+    "parameter_separated": true,
+    "qualification_passed": true
+  },
+  "independent_summary": {
+    "cell_count": 27,
+    "dcs_optimal_start_level_counts": {
+      "0.10": {
+        "0": 13,
+        "1": 4,
+        "2": 4,
+        "3": 24,
+        "4": 90
+      },
+      "0.20": {
+        "0": 13,
+        "1": 4,
+        "2": 4,
+        "3": 24,
+        "4": 90
+      },
+      "0.30": {
+        "0": 13,
+        "1": 4,
+        "2": 4,
+        "3": 24,
+        "4": 90
+      }
+    },
+    "decision_counts": {
+      "0.10": {
+        "dcs_mlmc_or_slis": 135
+      },
+      "0.20": {
+        "dcs_mlmc_or_slis": 135
+      },
+      "0.30": {
+        "dcs_mlmc_or_slis": 135
+      }
+    },
+    "reference_comparison_count": 135,
+    "reference_maximum_absolute_z": 2.465815874691157,
+    "reference_median_absolute_z": 0.6362191076839012,
+    "reference_within_4_se_fraction": 1.0,
+    "run_count": 135
+  },
+  "integrity_failures": [],
+  "integrity_passed": true,
+  "limitations": [
+    "fixed-size profiles predict continuous-allocation work but do not execute the requested RMSE",
+    "CEM is trained and compared only on four base cells",
+    "operation work is an FFT proxy and must be accompanied by hardware wall-time evidence",
+    "the estimand is the fixed 128-step grid rather than continuous monitoring"
+  ],
+  "protocol_id": "g11-v4-crossover-qualification-v1",
+  "qualification_gate_passed": true,
+  "result": "results\\g11_v4_crossover_qualification_v1_2026-07-22.json",
+  "result_sha256": "eedc353d325e5f7396c0112e16847867e8eaee370ea7fe1657a1f6aa2c5f1ba7",
+  "schema": "npi.g11.v4-crossover-audit.v1",
+  "source_commit": "5bfaa219e22a4f554311cd80601514a3bbcd6ef0",
+  "work_ledger": {
+    "audit_seconds": 0.36594369998783804
+  }
+}
