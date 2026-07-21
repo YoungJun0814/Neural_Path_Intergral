@@ -4,14 +4,21 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from typing import TypeAlias
 
 import torch
 
-from src.path_integral import DownsideExcursionTask, TimePiecewiseTwoDriverControl
+from src.path_integral import (
+    DiscreteBarrierHitTask,
+    DownsideExcursionTask,
+    TerminalThresholdTask,
+    TimePiecewiseTwoDriverControl,
+)
 from src.path_integral.rbergomi_fft import simulate_rbergomi_fft
 from src.physics_engine import RBergomiSimulator
 
 PiecewiseValues = tuple[tuple[float, float], ...]
+PiecewiseCEMTask: TypeAlias = TerminalThresholdTask | DiscreteBarrierHitTask | DownsideExcursionTask
 
 
 @dataclass(frozen=True)
@@ -61,7 +68,7 @@ def _segment_sufficient_statistics(
 
 def fit_rbergomi_piecewise_cem(
     simulator: RBergomiSimulator,
-    task: DownsideExcursionTask,
+    task: PiecewiseCEMTask,
     *,
     spot: float,
     maturity: float,

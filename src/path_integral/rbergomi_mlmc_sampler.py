@@ -23,7 +23,7 @@ from src.path_integral.rbergomi_mixture import (
 from src.path_integral.rbergomi_multilevel import simulate_coupled_rbergomi_mixture
 from src.physics_engine import RBergomiSimulator
 
-CorrectionMethod = Literal["raw_defensive", "dcs_mgi"]
+CorrectionMethod = Literal["raw", "raw_defensive", "dcs_mgi"]
 SimulationEngine = Literal["reference", "fft"]
 
 
@@ -37,6 +37,7 @@ class RBergomiMLMCSamplerConfig:
     method: CorrectionMethod
     engine: SimulationEngine = "fft"
     dtype: torch.dtype = torch.float64
+    require_natural_component: bool = True
 
     def __post_init__(self) -> None:
         if not math.isfinite(self.spot) or self.spot <= 0.0:
@@ -45,8 +46,10 @@ class RBergomiMLMCSamplerConfig:
             raise ValueError("maturity must be finite and positive")
         if self.coarsest_steps < 2 or self.coarsest_steps % 2:
             raise ValueError("coarsest_steps must be an even integer at least two")
-        if self.method not in ("raw_defensive", "dcs_mgi"):
+        if self.method not in ("raw", "raw_defensive", "dcs_mgi"):
             raise ValueError("unsupported correction method")
+        if self.method == "dcs_mgi" and not self.require_natural_component:
+            raise ValueError("DCS evidence requires a defensive natural component")
         if self.engine not in ("reference", "fft"):
             raise ValueError("unsupported simulation engine")
         if self.dtype != torch.float64:
@@ -120,13 +123,12 @@ class RBergomiMLMCSampler:
                 label_generator=label_generator,
                 engine=self.config.engine,
             )
-            self._validate_natural_component(sample.all_expert_controls)
-            evaluation = evaluate_rbergomi_dcs_level(
-                sample, task=self.task, rho=self.simulator.rho
-            )
+            if self.config.require_natural_component:
+                self._validate_natural_component(sample.all_expert_controls)
+            evaluation = evaluate_rbergomi_dcs_level(sample, task=self.task, rho=self.simulator.rho)
             values = (
                 evaluation.raw_contribution
-                if self.config.method == "raw_defensive"
+                if self.config.method in {"raw", "raw_defensive"}
                 else evaluation.marginalized_contribution
             )
         else:
@@ -142,13 +144,14 @@ class RBergomiMLMCSampler:
                 label_generator=label_generator,
                 engine=self.config.engine,
             )
-            self._validate_natural_component(sample.all_expert_controls)
+            if self.config.require_natural_component:
+                self._validate_natural_component(sample.all_expert_controls)
             evaluation = evaluate_rbergomi_dcs_adjacent(
                 sample, task=self.task, rho=self.simulator.rho
             )
             values = (
                 evaluation.raw_correction
-                if self.config.method == "raw_defensive"
+                if self.config.method in {"raw", "raw_defensive"}
                 else evaluation.marginalized_correction
             )
         elapsed = time.perf_counter() - start

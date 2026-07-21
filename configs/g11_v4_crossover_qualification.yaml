@@ -1,0 +1,89 @@
+schema_version: 1
+protocol_id: g11-v4-crossover-qualification-v1
+run_class: qualification
+frozen: true
+required_git_tag: g11-v4-crossover-qualification-v1-freeze
+estimand: finite_grid
+hierarchy: {coarsest_steps: 8, finest_level: 4, refinement: 2}
+proposal:
+  weights: [0.10, 0.30, 0.60]
+  controls:
+    - [[0.0, 0.0]]
+    - [[2.0, -4.0]]
+    - [[4.0, -10.0]]
+relative_rmse_targets: [0.10, 0.20, 0.30]
+sampling: {paths_per_profile: 8192, repetitions: 5, engine: fft}
+cem:
+  initial_control: [[2.0, -4.0], [4.0, -10.0]]
+  paths_per_iteration: 16384
+  maximum_iterations: 6
+  elite_quantile: 0.90
+  smoothing: 0.70
+  minimum_elite_paths: 128
+  control_bound: 12.0
+  target_level_repetitions: 2
+regimes:
+  - name: base
+    changed_parameter: base
+    calibration_config: {path: configs/g11_rarity_calibration.yaml, sha256: ef211cc9197361bc3aeabcf51a4e71bf4d4a96ac4361ca0afbd855a0ca377a84}
+    calibration_result: {path: results/g11_rarity_calibration_v1_2026-07-19.json, sha256: 353d46ce7502bd0730ef8add0b3ac442e2eccc513cf6fb62b0c26bb960fb1c38}
+    selections:
+      - {task: terminal, target_probability: 1.0e-4, cem_enabled: true}
+      - {task: terminal, target_probability: 1.0e-6, cem_enabled: true}
+      - {task: barrier, target_probability: 1.0e-4, cem_enabled: true}
+      - {task: barrier, target_probability: 1.0e-6, cem_enabled: true}
+  - name: oat_h007
+    changed_parameter: H
+    calibration_config: {path: configs/g11_rarity_calibration_oat_h007.yaml, sha256: 780e1a12ba34ed6a2008bcfa4d73b70a39109b5454cd81ab5154fb585accb395}
+    calibration_result: {path: results/g11_rarity_calibration_oat_h007_v1_2026-07-22.json, sha256: 351abc6c7ca9bdb1fcec45c28c2e8510c5b1837e444df0008b8c7f690523ba27}
+    selections:
+      - {task: terminal, target_probability: 1.0e-4}
+      - {task: terminal, target_probability: 1.0e-6}
+      - {task: barrier, target_probability: 1.0e-4}
+      - {task: barrier, target_probability: 1.0e-6}
+  - name: oat_h030
+    changed_parameter: H
+    calibration_config: {path: configs/g11_rarity_calibration_oat_h030.yaml, sha256: b9f02d104185654b1b1d10ad2dc1c878c56295d5f08f01b62b190bd6b54cbe1a}
+    calibration_result: {path: results/g11_rarity_calibration_oat_h030_v1_2026-07-22.json, sha256: 5ac4db7231ac14b11856f0e5fd1c17293ae0c3ed08b3eaa5fa5a7cac4b7f9db2}
+    selections:
+      - {task: terminal, target_probability: 1.0e-4}
+      - {task: terminal, target_probability: 1.0e-6}
+      - {task: barrier, target_probability: 1.0e-4}
+      - {task: barrier, target_probability: 1.0e-6}
+  - name: oat_eta080
+    changed_parameter: eta
+    calibration_config: {path: configs/g11_rarity_calibration_oat_eta080.yaml, sha256: 32eecce139f1700f533d19e5530fbdcef2f54144b2a84a79ffdc13e87c408dd8}
+    calibration_result: {path: results/g11_rarity_calibration_oat_eta080_v1_2026-07-22.json, sha256: a0247f2f78c7b08f78a53868449fd4a9dfa3f82157f2755d43ecb8363186d7f8}
+    selections:
+      - {task: terminal, target_probability: 1.0e-4}
+      - {task: terminal, target_probability: 1.0e-6}
+      - {task: barrier, target_probability: 1.0e-4}
+      - {task: barrier, target_probability: 1.0e-6}
+  - name: oat_eta140
+    changed_parameter: eta
+    calibration_config: {path: configs/g11_rarity_calibration_oat_eta140.yaml, sha256: 221a32f02613fc56bd0d32ad21c706ccda91300c077b1ce946a20892ed8cf863}
+    calibration_result: {path: results/g11_rarity_calibration_oat_eta140_v1_2026-07-22.json, sha256: fa06d41e6a74affdc421b76fcff9dfab568278f2c6fcfe7bcd8320bab3af60c9}
+    selections:
+      - {task: terminal, target_probability: 1.0e-4}
+      - {task: terminal, target_probability: 1.0e-6}
+      - {task: barrier, target_probability: 1.0e-4}
+      - {task: barrier, target_probability: 1.0e-6}
+  - name: oat_rho_m030
+    changed_parameter: rho
+    calibration_config: {path: configs/g11_rarity_calibration_oat_rho_m030.yaml, sha256: 0dbfe0c5938ef598726c0e1814e0033c2880a3fdff2fd2c7a05b2acd26218c70}
+    calibration_result: {path: results/g11_rarity_calibration_oat_rho_m030_v1_2026-07-22.json, sha256: 4e4f1e6a60680d7b66f0b126ea56e0ba7642457a8e2f9f7e8fcfb03fc8fa5a4c}
+    selections:
+      - {task: terminal, target_probability: 1.0e-4}
+      - {task: terminal, target_probability: 1.0e-6}
+      - {task: barrier, target_probability: 1.0e-4}
+      - {task: barrier, target_probability: 1.0e-6}
+  - name: oat_rho_m085
+    changed_parameter: rho
+    calibration_config: {path: configs/g11_rarity_calibration_oat_rho_m085.yaml, sha256: e996d54d43e8968ab8c0fedf8b48bb0d3280b0560f3fe68dc0e81bfa3e321946}
+    calibration_result: {path: results/g11_rarity_calibration_oat_rho_m085_v1_2026-07-22.json, sha256: b58556c50dbdfcc3bd8006a262e67a437727d2c4bfa103c3b284456082109bc1}
+    selections:
+      - {task: terminal, target_probability: 1.0e-4}
+      - {task: terminal, target_probability: 1.0e-6}
+      - {task: barrier, target_probability: 1.0e-4}
+gates:
+  minimum_reference_within_4_se_fraction: 0.95

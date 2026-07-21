@@ -293,6 +293,13 @@ identity under those conditions. It does not prove a continuously monitored even
 
 ## 9. T11-6: correction second-moment upper bounds
 
+> V4 refinement: the global threshold-rate assumption below remains correct but is
+> too coarse for the M7 failure pattern. The margin-localized replacement in
+> [`G11_MARGIN_LOCALIZED_THRESHOLD_STABILITY.md`](G11_MARGIN_LOCALIZED_THRESHOLD_STABILITY.md)
+> derives a good-event coefficient/mesh bound and retains the small-slope bad-event
+> probability explicitly. It does not retroactively turn the conditional model rate
+> into a proved rBergomi rate.
+
 ### Assumptions
 
 Let `A_f` and `A_c` be finite almost surely. Let `delta` be a common lower bound on
@@ -450,7 +457,8 @@ therefore authorized to proceed to Gaussian oracle testing.
 
 Still open and not authorized as a claim:
 
-1. a rough-Bergomi `L2` threshold rate;
+1. model-level bounds for the V4 coefficient, mesh-enrichment, and active-slope
+   bad-event terms, sufficient to imply a rough-Bergomi `L2` threshold rate;
 2. a matching lower bound for raw or marginalized corrections;
 3. a continuous-time hit-plus-occupation bias rate;
 4. an asymptotic complexity improvement in the intended rough regime;

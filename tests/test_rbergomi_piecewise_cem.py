@@ -8,6 +8,7 @@ import torch
 
 from src.path_integral import (
     DownsideExcursionTask,
+    TerminalThresholdTask,
     TimePiecewiseTwoDriverControl,
     brownian_log_likelihood,
 )
@@ -33,9 +34,7 @@ def _task() -> DownsideExcursionTask:
 
 
 def test_piecewise_proposal_has_exact_augmented_likelihood() -> None:
-    control = TimePiecewiseTwoDriverControl(
-        ((0.4, -0.3), (-0.7, 0.2)), maturity=0.25
-    )
+    control = TimePiecewiseTwoDriverControl(((0.4, -0.3), (-0.7, 0.2)), maturity=0.25)
     torch.manual_seed(2601)
     result = _simulator().simulate_controlled_two_driver(
         S0=100.0,
@@ -91,3 +90,21 @@ def test_piecewise_cem_produces_finite_downside_control_and_history() -> None:
         simulator.rho * first + perpendicular * second for first, second in result.control
     ]
     assert sum(spot_drifts) < 0.0
+
+
+def test_piecewise_cem_accepts_terminal_threshold_task() -> None:
+    result = fit_rbergomi_piecewise_cem(
+        _simulator(),
+        TerminalThresholdTask(95.0),
+        spot=100.0,
+        maturity=0.25,
+        dt=1.0 / 8.0,
+        initial_control=((0.0, -0.5),),
+        num_paths=256,
+        seed=2603,
+        max_iterations=1,
+        min_elite_paths=16,
+        target_level_repetitions=1,
+    )
+    assert len(result.history) == 1
+    assert all(math.isfinite(value) for pair in result.control for value in pair)

@@ -1,0 +1,178 @@
+{
+  "calibration_paths": 524288,
+  "cells": [
+    {
+      "calibrated_threshold": 64.87870801923847,
+      "occupation_exclusion_fraction": null,
+      "precision_passed": true,
+      "probability_band_passed": true,
+      "relative_standard_error": 0.0037756072509752747,
+      "target_probability": 0.001,
+      "task": "terminal",
+      "validation_estimate": 0.0009922955754489396,
+      "validation_standard_error": 3.7465183697756993e-06
+    },
+    {
+      "calibrated_threshold": 55.35407731370933,
+      "occupation_exclusion_fraction": null,
+      "precision_passed": true,
+      "probability_band_passed": true,
+      "relative_standard_error": 0.006277602945551448,
+      "target_probability": 0.0001,
+      "task": "terminal",
+      "validation_estimate": 9.761115347484058e-05,
+      "validation_standard_error": 6.127640645723337e-07
+    },
+    {
+      "calibrated_threshold": 46.72288793281622,
+      "occupation_exclusion_fraction": null,
+      "precision_passed": true,
+      "probability_band_passed": true,
+      "relative_standard_error": 0.010992676943052013,
+      "target_probability": 1e-05,
+      "task": "terminal",
+      "validation_estimate": 9.79012454706646e-06,
+      "validation_standard_error": 1.07619676378145e-07
+    },
+    {
+      "calibrated_threshold": 38.555657586781,
+      "occupation_exclusion_fraction": null,
+      "precision_passed": true,
+      "probability_band_passed": true,
+      "relative_standard_error": 0.020788513546101728,
+      "target_probability": 1e-06,
+      "task": "terminal",
+      "validation_estimate": 8.87792529690823e-07,
+      "validation_standard_error": 1.8455887029605595e-08
+    },
+    {
+      "calibrated_threshold": 62.5812443916516,
+      "occupation_exclusion_fraction": null,
+      "precision_passed": true,
+      "probability_band_passed": true,
+      "relative_standard_error": 0.005588068384150632,
+      "target_probability": 0.001,
+      "task": "barrier",
+      "validation_estimate": 0.0009838954220848471,
+      "validation_standard_error": 5.498074901462876e-06
+    },
+    {
+      "calibrated_threshold": 53.119595038268734,
+      "occupation_exclusion_fraction": null,
+      "precision_passed": true,
+      "probability_band_passed": true,
+      "relative_standard_error": 0.008330003386325485,
+      "target_probability": 0.0001,
+      "task": "barrier",
+      "validation_estimate": 9.045547732529106e-05,
+      "validation_standard_error": 7.534944324313625e-07
+    },
+    {
+      "calibrated_threshold": 44.62556414146421,
+      "occupation_exclusion_fraction": null,
+      "precision_passed": true,
+      "probability_band_passed": true,
+      "relative_standard_error": 0.014405981985551562,
+      "target_probability": 1e-05,
+      "task": "barrier",
+      "validation_estimate": 8.70104411542069e-06,
+      "validation_standard_error": 1.2534708478223988e-07
+    },
+    {
+      "calibrated_threshold": 36.653752926350165,
+      "occupation_exclusion_fraction": null,
+      "precision_passed": true,
+      "probability_band_passed": true,
+      "relative_standard_error": 0.02914786216503614,
+      "target_probability": 1e-06,
+      "task": "barrier",
+      "validation_estimate": 7.808804345952276e-07,
+      "validation_standard_error": 2.2760995274955212e-08
+    },
+    {
+      "calibrated_threshold": 64.35189148039419,
+      "occupation_exclusion_fraction": 0.3214578090841203,
+      "precision_passed": true,
+      "probability_band_passed": true,
+      "relative_standard_error": 0.006973294810977537,
+      "target_probability": 0.001,
+      "task": "excursion",
+      "validation_estimate": 0.001010699037521946,
+      "validation_standard_error": 7.047902353811777e-06
+    },
+    {
+      "calibrated_threshold": 54.277798027424495,
+      "occupation_exclusion_fraction": 0.2708427846723173,
+      "precision_passed": true,
+      "probability_band_passed": true,
+      "relative_standard_error": 0.008674662267080297,
+      "target_probability": 0.0001,
+      "task": "excursion",
+      "validation_estimate": 9.507757756938293e-05,
+      "validation_standard_error": 8.247658745865261e-07
+    },
+    {
+      "calibrated_threshold": 44.97768341920283,
+      "occupation_exclusion_fraction": 0.2899979877646928,
+      "precision_passed": true,
+      "probability_band_passed": true,
+      "relative_standard_error": 0.01383078434453963,
+      "target_probability": 1e-05,
+      "task": "excursion",
+      "validation_estimate": 7.956682280719282e-06,
+      "validation_standard_error": 1.1004715672264812e-07
+    },
+    {
+      "calibrated_threshold": 37.65054355705821,
+      "occupation_exclusion_fraction": 0.14757838086741865,
+      "precision_passed": true,
+      "probability_band_passed": true,
+      "relative_standard_error": 0.025360480815722373,
+      "target_probability": 1e-06,
+      "task": "excursion",
+      "validation_estimate": 9.160093607560421e-07,
+      "validation_standard_error": 2.323043782047572e-08
+    }
+  ],
+  "config_sha256": "0dbfe0c5938ef598726c0e1814e0033c2880a3fdff2fd2c7a05b2acd26218c70",
+  "continuous_time_claim": false,
+  "dirty_worktree": true,
+  "environment": {
+    "cuda": "12.8",
+    "deterministic_algorithms": false,
+    "dtype": "torch.float64",
+    "os": "Windows-11-10.0.26200-SP0",
+    "packages": {
+      "PyYAML": "6.0.3",
+      "numpy": "2.1.3",
+      "scipy": "1.15.3"
+    },
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "python": "3.13.5",
+    "pytorch": "2.9.1+cu128",
+    "torch_threads": 8
+  },
+  "estimand": "fixed 128-step finite-grid probability",
+  "gates": {
+    "all_probability_bands": true,
+    "all_relative_standard_errors": true,
+    "calibration_validation_seed_roles_disjoint": true,
+    "excursion_is_non_degenerate": true,
+    "likelihood_normalization": true
+  },
+  "normalization_z": -0.19932265073923852,
+  "passed": true,
+  "protocol_id": "g11-rarity-calibration-oat-rho-m030-v1",
+  "schema": "npi.g11.rarity-calibration.v1",
+  "seed_count": 384,
+  "seed_ledger_sha256": "a46c4b18c93e299ec0209cb40ca99513f69b8ce58664cb6fa8bd4850af3cadb7",
+  "smoke": false,
+  "source_commit": "41bf58cfcc89732014a3d1c20a533edb2bd7339b",
+  "validation_paths": 262144,
+  "work_ledger": {
+    "audit_seconds": 0.0,
+    "calibration_and_validation_seconds": 72.50296429998707,
+    "compilation_seconds": 0.0,
+    "warmup_seconds": 0.0
+  }
+}

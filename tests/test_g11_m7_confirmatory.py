@@ -2,20 +2,25 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
 import torch
 
 from experiments.g11_m7_confirmatory import (
+    _atomic_json,
     _load_config,
     _load_method_checkpoint,
+    _load_method_result_cache,
     _load_regimes,
     _method_result,
     _save_method_checkpoint,
+    _save_method_result_cache,
+    _unlink_with_retry,
+    _write_progress,
     cap_raw_allocation,
     expected_cell_count,
-    preflight,
     summarize,
 )
 from src.path_integral.mlmc import (
@@ -35,6 +40,129 @@ ROOT = Path(__file__).resolve().parents[1]
 def _config(name: str):
     config, _ = _load_config(ROOT / "configs" / name)
     return config
+
+
+def test_atomic_json_retries_a_transient_replace_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import experiments.g11_m7_confirmatory as runner
+
+    target = tmp_path / "artifact.json"
+    target.write_text('{"old":true}', encoding="utf-8")
+    real_replace = runner.os.replace
+    attempts = 0
+
+    def flaky_replace(source: Path, destination: Path) -> None:
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise PermissionError("simulated Windows sharing violation")
+        real_replace(source, destination)
+
+    monkeypatch.setattr(runner.os, "replace", flaky_replace)
+    _atomic_json(target, {"new": True}, initial_retry_seconds=0.0)
+    assert attempts == 2
+    assert target.read_text(encoding="utf-8") == '{"new":true}'
+    assert list(tmp_path.glob("*.tmp")) == []
+
+
+def test_atomic_json_preserves_valid_temporary_after_exhausted_retries(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import experiments.g11_m7_confirmatory as runner
+
+    target = tmp_path / "artifact.json"
+
+    def locked_replace(source: Path, destination: Path) -> None:
+        raise PermissionError("simulated persistent sharing violation")
+
+    monkeypatch.setattr(runner.os, "replace", locked_replace)
+    with pytest.raises(PermissionError):
+        _atomic_json(
+            target,
+            {"recoverable": True},
+            replace_attempts=2,
+            initial_retry_seconds=0.0,
+        )
+    temporaries = list(tmp_path.glob("*.tmp"))
+    assert len(temporaries) == 1
+    assert json.loads(temporaries[0].read_text(encoding="utf-8")) == {"recoverable": True}
+
+
+def test_unlink_retries_a_transient_sharing_violation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    target = tmp_path / "checkpoint.json"
+    target.write_text("{}", encoding="utf-8")
+    real_unlink = Path.unlink
+    attempts = 0
+
+    def flaky_unlink(path: Path, *, missing_ok: bool = False) -> None:
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise PermissionError("simulated Windows sharing violation")
+        real_unlink(path, missing_ok=missing_ok)
+
+    monkeypatch.setattr(Path, "unlink", flaky_unlink)
+    _unlink_with_retry(target, initial_retry_seconds=0.0)
+    assert attempts == 2
+    assert not target.exists()
+
+
+def test_progress_counts_only_cells_with_complete_derived_fields(tmp_path: Path) -> None:
+    path = tmp_path / "progress.json"
+    methods = {"raw_defensive": {}, "dcs_mgi": {}}
+    incomplete = {"methods": methods}
+    complete = {
+        "methods": methods,
+        "allocated_work_ratio_raw_over_dcs": 2.0,
+        "matched_work_ratio_raw_over_dcs": 2.0,
+        "censored_work_ratio_lower_bound": None,
+        "wall_ratio_raw_over_dcs": 2.0,
+        "paired_estimate_difference": 0.0,
+    }
+    _write_progress(
+        path,
+        config_hash="a" * 64,
+        cells=[incomplete, complete],
+        failures=[],
+    )
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload["schema"] == "npi.g11.m7-progress.v2"
+    assert payload["complete_method_count"] == 4
+    assert payload["complete_cell_count"] == 1
+
+
+def test_method_result_cache_rejects_a_different_cell_identity(tmp_path: Path) -> None:
+    path = tmp_path / "method-result.json"
+    _save_method_result_cache(
+        path,
+        config_hash="a" * 64,
+        regime="base",
+        task="terminal_1e4",
+        replicate=3,
+        method="dcs_mgi",
+        result={"estimate": 1e-4},
+    )
+    restored = _load_method_result_cache(
+        path,
+        config_hash="a" * 64,
+        regime="base",
+        task="terminal_1e4",
+        replicate=3,
+        method="dcs_mgi",
+    )
+    assert restored == {"estimate": 1e-4}
+    with pytest.raises(ValueError, match="does not match"):
+        _load_method_result_cache(
+            path,
+            config_hash="a" * 64,
+            regime="base",
+            task="terminal_1e4",
+            replicate=4,
+            method="dcs_mgi",
+        )
 
 
 def test_frozen_protocol_selects_640_declared_cells_and_excludes_low_h_excursion() -> None:
@@ -71,11 +199,20 @@ def test_matrix_qualification_matches_all_32_frozen_task_cells() -> None:
     }
 
 
-def test_qualification_preflight_allocates_no_random_seed() -> None:
+def test_qualification_preflight_allocates_no_random_seed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import experiments.g11_m7_confirmatory as runner
+
+    monkeypatch.setattr(
+        runner,
+        "_verify_source",
+        lambda config: [dict(item) for item in config["core_source_manifest"]],
+    )
     previous = torch.get_num_threads()
     try:
         torch.set_num_threads(8)
-        result = preflight(ROOT / "configs" / "g11_m7_local_qualification.yaml")
+        result = runner.preflight(ROOT / "configs" / "g11_m7_local_qualification.yaml")
     finally:
         torch.set_num_threads(previous)
     assert result["expected_cell_count"] == 1
@@ -149,11 +286,15 @@ def test_method_checkpoint_wrapper_preserves_resume_costs(tmp_path: Path) -> Non
         checkpoint,
         recovery_work_units=123.0,
         recovery_wall_seconds=4.5,
+        cumulative_process_cpu_seconds=6.25,
+        cumulative_orchestration_seconds=7.5,
     )
-    restored, work, wall = _load_method_checkpoint(path)
+    restored, work, wall, process_cpu, orchestration = _load_method_checkpoint(path)
     assert restored == checkpoint
     assert work == 123.0
     assert wall == 4.5
+    assert process_cpu == 6.25
+    assert orchestration == 7.5
 
 
 def test_summary_never_counts_censored_baseline_as_matched_speedup() -> None:

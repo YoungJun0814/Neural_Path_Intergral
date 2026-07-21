@@ -9,9 +9,11 @@ missed.  DCS allocations are never truncated.
 from __future__ import annotations
 
 import argparse
+import errno
 import hashlib
 import json
 import math
+import os
 import subprocess
 import time
 from collections.abc import Mapping
@@ -118,14 +120,69 @@ def _canonical_sha256(payload: dict[str, Any]) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
-def _atomic_json(path: Path, payload: dict[str, Any]) -> None:
+def _atomic_json(
+    path: Path,
+    payload: dict[str, Any],
+    *,
+    replace_attempts: int = 10,
+    initial_retry_seconds: float = 0.025,
+) -> None:
+    """Durably publish JSON, retrying transient Windows sharing violations."""
+
+    if replace_attempts < 1:
+        raise ValueError("replace_attempts must be positive")
+    if initial_retry_seconds < 0.0:
+        raise ValueError("initial_retry_seconds must be nonnegative")
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(
-        json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False),
-        encoding="utf-8",
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.{time.time_ns()}.tmp")
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False).encode(
+        "utf-8"
     )
-    temporary.replace(path)
+    temporary_ready = False
+    published = False
+    try:
+        with temporary.open("xb") as handle:
+            handle.write(encoded)
+            handle.flush()
+            os.fsync(handle.fileno())
+        temporary_ready = True
+        for attempt in range(replace_attempts):
+            try:
+                os.replace(temporary, path)
+                published = True
+                break
+            except OSError as error:
+                transient = isinstance(error, PermissionError) or error.errno in {
+                    errno.EACCES,
+                    errno.EBUSY,
+                    errno.EPERM,
+                }
+                if not transient or attempt + 1 == replace_attempts:
+                    raise
+                time.sleep(min(initial_retry_seconds * (2**attempt), 1.0))
+        else:  # pragma: no cover - the final attempt either succeeds or raises
+            raise AssertionError("atomic JSON replacement loop terminated unexpectedly")
+    finally:
+        if published or not temporary_ready:
+            temporary.unlink(missing_ok=True)
+
+
+def _unlink_with_retry(
+    path: Path, *, attempts: int = 10, initial_retry_seconds: float = 0.025
+) -> None:
+    for attempt in range(attempts):
+        try:
+            path.unlink(missing_ok=True)
+            return
+        except OSError as error:
+            transient = isinstance(error, PermissionError) or error.errno in {
+                errno.EACCES,
+                errno.EBUSY,
+                errno.EPERM,
+            }
+            if not transient or attempt + 1 == attempts:
+                raise
+            time.sleep(min(initial_retry_seconds * (2**attempt), 1.0))
 
 
 def _load_config(path: Path) -> tuple[dict[str, Any], str]:
@@ -235,12 +292,8 @@ def _load_regimes(
     minimum_exclusion = float(config["selection"]["minimum_excursion_exclusion_fraction"])
 
     for declaration in config["regimes"]:
-        calibration_config, config_hash = _verified_yaml(
-            declaration["calibration_config"]
-        )
-        calibration_result, result_hash = _verified_payload(
-            declaration["calibration_result"]
-        )
+        calibration_config, config_hash = _verified_yaml(declaration["calibration_config"])
+        calibration_result, result_hash = _verified_payload(declaration["calibration_result"])
         inputs.extend(
             (
                 {
@@ -273,15 +326,15 @@ def _load_regimes(
         ):
             if gates.get(gate) is not True:
                 raise ValueError(f"required calibration gate failed: {gate}")
-        if [float(value) for value in calibration_config["proposal"]["weights"]] != expected_weights:
+        if [
+            float(value) for value in calibration_config["proposal"]["weights"]
+        ] != expected_weights:
             raise ValueError("regime proposal weights differ from the frozen proposal")
         if calibration_config["proposal"]["controls"] != expected_controls:
             raise ValueError("regime controls differ from the frozen proposal")
         if int(calibration_config["finest_steps"]) != int(
             config["hierarchy"]["coarsest_steps"]
-        ) * int(config["hierarchy"]["refinement"]) ** int(
-            config["hierarchy"]["finest_level"]
-        ):
+        ) * int(config["hierarchy"]["refinement"]) ** int(config["hierarchy"]["finest_level"]):
             raise ValueError("calibration grid differs from the frozen MLMC grid")
 
         cells = calibration_result.get("cells")
@@ -306,9 +359,10 @@ def _load_regimes(
                 if len(matches) != 1:
                     raise ValueError("selected calibration cell is missing or duplicated")
                 cell = matches[0]
-                if cell.get("probability_band_passed") is not True or cell.get(
-                    "precision_passed"
-                ) is not True:
+                if (
+                    cell.get("probability_band_passed") is not True
+                    or cell.get("precision_passed") is not True
+                ):
                     raise ValueError("selected calibration cell failed its gates")
                 threshold = float(cell["calibrated_threshold"])
                 if task_name == "terminal":
@@ -373,7 +427,9 @@ def cap_raw_allocation(
     return (
         replace(prepared, allocations=allocations),
         uncapped,
-        any(after.final_count < before for after, before in zip(allocations, uncapped, strict=True)),
+        any(
+            after.final_count < before for after, before in zip(allocations, uncapped, strict=True)
+        ),
     )
 
 
@@ -387,6 +443,7 @@ def _method_result(
     checkpoint_path: Path | None = None,
 ) -> dict[str, Any]:
     process_cpu_started = time.process_time()
+    orchestration_started = time.perf_counter()
     model = context["model"]
     proposal = config["proposal"]
     sampling = config["sampling"]
@@ -401,10 +458,7 @@ def _method_result(
     maturity = float(model["maturity"])
     controls = tuple(
         TimePiecewiseTwoDriverControl(
-            tuple(
-                (float(segment[0]), float(segment[1]))
-                for segment in schedule
-            ),
+            tuple((float(segment[0]), float(segment[1])) for segment in schedule),
             maturity=maturity,
         )
         for schedule in proposal["controls"]
@@ -416,12 +470,9 @@ def _method_result(
         FixedFinestGridTarget(int(hierarchy_specification["finest_level"])),
     )
     task = _event_task(task_item["specification"])
-    rmse = float(task_item["target_probability"]) * float(
-        sampling["relative_rmse_target"]
-    )
+    rmse = float(task_item["target_probability"]) * float(sampling["relative_rmse_target"])
     protocol = (
-        f"{config['protocol_id']}:regime={context['name']}:"
-        f"task={task_item['id']}:rep={replicate}"
+        f"{config['protocol_id']}:regime={context['name']}:task={task_item['id']}:rep={replicate}"
     )
     engine_text = str(sampling["engine"])
     if engine_text not in {"reference", "fft"}:
@@ -475,11 +526,13 @@ def _method_result(
             "total_work_units": sampler.work_units,
             "total_wall_seconds": sampler.wall_seconds,
             "process_cpu_seconds": time.process_time() - process_cpu_started,
-            "preparation_orchestration_seconds": time.perf_counter()
-            - preparation_started,
+            "total_orchestration_seconds": time.perf_counter() - orchestration_started,
+            "preparation_orchestration_seconds": time.perf_counter() - preparation_started,
             "resumed_from_checkpoint": False,
             "recovery_pilot_work_units": 0.0,
             "recovery_pilot_wall_seconds": 0.0,
+            "recovery_process_cpu_seconds": 0.0,
+            "recovery_orchestration_seconds": 0.0,
             "pilot": None,
             "uncapped_final_counts": None,
             "allocations": None,
@@ -499,11 +552,17 @@ def _method_result(
     checkpoint = None
     recovery_work_units = 0.0
     recovery_wall_seconds = 0.0
+    recovery_process_cpu_seconds = 0.0
+    recovery_orchestration_seconds = 0.0
     resumed_from_checkpoint = False
     if checkpoint_path is not None and checkpoint_path.exists():
-        checkpoint, recovery_work_units, recovery_wall_seconds = _load_method_checkpoint(
-            checkpoint_path
-        )
+        (
+            checkpoint,
+            recovery_work_units,
+            recovery_wall_seconds,
+            recovery_process_cpu_seconds,
+            recovery_orchestration_seconds,
+        ) = _load_method_checkpoint(checkpoint_path)
         recovery_work_units += prepared.work.total_work_units
         recovery_wall_seconds += prepared.work.total_wall_seconds
         resumed_from_checkpoint = True
@@ -525,6 +584,12 @@ def _method_result(
             checkpoint,
             recovery_work_units=recovery_work_units,
             recovery_wall_seconds=recovery_wall_seconds,
+            cumulative_process_cpu_seconds=recovery_process_cpu_seconds
+            + time.process_time()
+            - process_cpu_started,
+            cumulative_orchestration_seconds=recovery_orchestration_seconds
+            + time.perf_counter()
+            - orchestration_started,
         )
     if not result.complete:
         raise AssertionError("uninterrupted M7 method execution must complete")
@@ -542,17 +607,22 @@ def _method_result(
         "allocation_capped": allocation_capped,
         "pilot_resource_censored": False,
         "resource_censored": allocation_capped and not target_attained,
-        "censor_stage": "final_allocation"
-        if allocation_capped and not target_attained
-        else None,
+        "censor_stage": "final_allocation" if allocation_capped and not target_attained else None,
         "censor_reason": None,
         "total_work_units": result.work.total_work_units + recovery_work_units,
         "total_wall_seconds": result.work.total_wall_seconds + recovery_wall_seconds,
-        "process_cpu_seconds": time.process_time() - process_cpu_started,
+        "process_cpu_seconds": recovery_process_cpu_seconds
+        + time.process_time()
+        - process_cpu_started,
+        "total_orchestration_seconds": recovery_orchestration_seconds
+        + time.perf_counter()
+        - orchestration_started,
         "preparation_orchestration_seconds": preparation_seconds,
         "resumed_from_checkpoint": resumed_from_checkpoint,
         "recovery_pilot_work_units": recovery_work_units,
         "recovery_pilot_wall_seconds": recovery_wall_seconds,
+        "recovery_process_cpu_seconds": recovery_process_cpu_seconds,
+        "recovery_orchestration_seconds": recovery_orchestration_seconds,
         "pilot": [asdict(item) for item in result.pilot],
         "uncapped_final_counts": list(uncapped_counts),
         "allocations": [asdict(item) for item in result.allocations],
@@ -569,14 +639,34 @@ def _write_progress(
     config_hash: str,
     cells: list[dict[str, Any]],
     failures: list[dict[str, Any]],
+    operational_events: list[dict[str, Any]] | None = None,
 ) -> None:
+    complete_method_count = sum(len(cell.get("methods", {})) for cell in cells)
+    complete_cell_count = sum(
+        set(cell.get("methods", {})) == set(METHODS)
+        and all(
+            field in cell
+            for field in (
+                "allocated_work_ratio_raw_over_dcs",
+                "matched_work_ratio_raw_over_dcs",
+                "censored_work_ratio_lower_bound",
+                "wall_ratio_raw_over_dcs",
+                "paired_estimate_difference",
+            )
+        )
+        for cell in cells
+    )
     _atomic_json(
         path,
         {
-            "schema": "npi.g11.m7-progress.v1",
+            "schema": "npi.g11.m7-progress.v2",
             "config_sha256": config_hash,
+            "complete_method_count": complete_method_count,
+            "complete_cell_count": complete_cell_count,
+            "updated_unix_ns": time.time_ns(),
             "cells": cells,
             "failures": failures,
+            "operational_events": operational_events or [],
         },
     )
 
@@ -595,11 +685,80 @@ def _method_checkpoint_path(
     return progress_path.with_name(f"{progress_path.name}.{token}.checkpoint.json")
 
 
+def _method_result_cache_path(
+    progress_path: Path,
+    *,
+    config_hash: str,
+    regime: str,
+    task: str,
+    replicate: int,
+    method: str,
+) -> Path:
+    identity = f"{config_hash}|{regime}|{task}|{replicate}|{method}"
+    token = hashlib.sha256(identity.encode("ascii")).hexdigest()[:24]
+    return progress_path.with_name(f"{progress_path.name}.{token}.method-result.json")
+
+
+def _save_method_result_cache(
+    path: Path,
+    *,
+    config_hash: str,
+    regime: str,
+    task: str,
+    replicate: int,
+    method: str,
+    result: dict[str, Any],
+) -> None:
+    _atomic_json(
+        path,
+        {
+            "schema": "npi.g11.m7-method-result-cache.v1",
+            "config_sha256": config_hash,
+            "regime": regime,
+            "task": task,
+            "replicate": replicate,
+            "method": method,
+            "result": result,
+        },
+    )
+
+
+def _load_method_result_cache(
+    path: Path,
+    *,
+    config_hash: str,
+    regime: str,
+    task: str,
+    replicate: int,
+    method: str,
+) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    expected = {
+        "schema": "npi.g11.m7-method-result-cache.v1",
+        "config_sha256": config_hash,
+        "regime": regime,
+        "task": task,
+        "replicate": replicate,
+        "method": method,
+    }
+    if not isinstance(payload, dict) or any(
+        payload.get(field) != value for field, value in expected.items()
+    ):
+        raise ValueError("M7 method-result cache does not match the requested cell")
+    result = payload.get("result")
+    if not isinstance(result, dict):
+        raise ValueError("M7 method-result cache has no method payload")
+    return result
+
+
 def _load_method_checkpoint(
     path: Path,
-) -> tuple[MLMCCheckpoint, float, float]:
+) -> tuple[MLMCCheckpoint, float, float, float, float]:
     payload = json.loads(path.read_text(encoding="utf-8"))
-    if not isinstance(payload, dict) or payload.get("schema") != "npi.g11.m7-method-checkpoint.v1":
+    if not isinstance(payload, dict) or payload.get("schema") not in {
+        "npi.g11.m7-method-checkpoint.v1",
+        "npi.g11.m7-method-checkpoint.v2",
+    }:
         raise ValueError("unsupported M7 method checkpoint")
     raw_checkpoint = payload.get("checkpoint")
     if not isinstance(raw_checkpoint, dict):
@@ -608,6 +767,8 @@ def _load_method_checkpoint(
         MLMCCheckpoint.from_dict(raw_checkpoint),
         float(payload["recovery_work_units"]),
         float(payload["recovery_wall_seconds"]),
+        float(payload.get("cumulative_process_cpu_seconds", 0.0)),
+        float(payload.get("cumulative_orchestration_seconds", 0.0)),
     )
 
 
@@ -617,14 +778,18 @@ def _save_method_checkpoint(
     *,
     recovery_work_units: float,
     recovery_wall_seconds: float,
+    cumulative_process_cpu_seconds: float,
+    cumulative_orchestration_seconds: float,
 ) -> None:
     _atomic_json(
         path,
         {
-            "schema": "npi.g11.m7-method-checkpoint.v1",
+            "schema": "npi.g11.m7-method-checkpoint.v2",
             "checkpoint": checkpoint.to_dict(),
             "recovery_work_units": recovery_work_units,
             "recovery_wall_seconds": recovery_wall_seconds,
+            "cumulative_process_cpu_seconds": cumulative_process_cpu_seconds,
+            "cumulative_orchestration_seconds": cumulative_orchestration_seconds,
         },
     )
 
@@ -641,9 +806,7 @@ def _cluster_lower_bound(cells: list[dict[str, Any]]) -> dict[str, Any]:
                 float(cell["matched_work_ratio_raw_over_dcs"])
             )
     cluster_ratios = [
-        geometric_mean(ratios)
-        for _, ratios in sorted(by_replicate.items())
-        if ratios
+        geometric_mean(ratios) for _, ratios in sorted(by_replicate.items()) if ratios
     ]
     if len(cluster_ratios) < 2:
         return {
@@ -691,16 +854,12 @@ def summarize(
         else 0.0
     )
     matched_ratio = (
-        geometric_mean(
-            float(cell["matched_work_ratio_raw_over_dcs"]) for cell in matched
-        )
+        geometric_mean(float(cell["matched_work_ratio_raw_over_dcs"]) for cell in matched)
         if matched
         else None
     )
     censored_lower_bound = (
-        geometric_mean(
-            float(cell["censored_work_ratio_lower_bound"]) for cell in censored
-        )
+        geometric_mean(float(cell["censored_work_ratio_lower_bound"]) for cell in censored)
         if censored
         else None
     )
@@ -725,9 +884,7 @@ def summarize(
         "seed_clusters_at_least_minimum": cluster["cluster_count"]
         >= int(limits["minimum_seed_clusters_for_uncertainty"]),
         "one_sided_95_cluster_lower_bound": cluster["one_sided_95_lower_bound"],
-        "one_sided_95_cluster_lower_bound_above_one": cluster[
-            "one_sided_95_lower_bound"
-        ]
+        "one_sided_95_cluster_lower_bound_above_one": cluster["one_sided_95_lower_bound"]
         is not None
         and cluster["one_sided_95_lower_bound"] > 1.0,
     }
@@ -761,9 +918,7 @@ def preflight(config_path: Path) -> dict[str, Any]:
     source_manifest = _verify_source(config)
     target_threads = int(config["resource_limits"]["torch_threads"])
     if torch.get_num_threads() != target_threads:
-        raise ValueError(
-            f"expected torch_threads={target_threads}, got {torch.get_num_threads()}"
-        )
+        raise ValueError(f"expected torch_threads={target_threads}, got {torch.get_num_threads()}")
     contexts, inputs = _load_regimes(config)
     namespace_payload = {
         "protocol_id": config["protocol_id"],
@@ -771,8 +926,7 @@ def preflight(config_path: Path) -> dict[str, Any]:
         "streams": ["proposal", "labels"],
         "regimes": [context["name"] for context in contexts],
         "task_ids": {
-            context["name"]: [task["id"] for task in context["tasks"]]
-            for context in contexts
+            context["name"]: [task["id"] for task in context["tasks"]] for context in contexts
         },
         "repetitions": int(config["sampling"]["repetitions"]),
     }
@@ -808,25 +962,24 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
     source_manifest = _verify_source(config)
     target_threads = int(config["resource_limits"]["torch_threads"])
     if torch.get_num_threads() != target_threads:
-        raise ValueError(
-            f"expected torch_threads={target_threads}, got {torch.get_num_threads()}"
-        )
+        raise ValueError(f"expected torch_threads={target_threads}, got {torch.get_num_threads()}")
     contexts, inputs = _load_regimes(config)
     cells: list[dict[str, Any]] = []
     failures: list[dict[str, Any]] = []
+    operational_events: list[dict[str, Any]] = []
     if progress_path is not None and progress_path.exists():
         progress = json.loads(progress_path.read_text(encoding="utf-8"))
         if (
-            progress.get("schema") != "npi.g11.m7-progress.v1"
+            progress.get("schema") not in {"npi.g11.m7-progress.v1", "npi.g11.m7-progress.v2"}
             or progress.get("config_sha256") != config_hash
         ):
             raise ValueError("M7 progress file does not match the config")
         cells = list(progress["cells"])
         failures = list(progress["failures"])
+        operational_events = list(progress.get("operational_events", []))
 
     cell_by_key = {
-        (str(cell["regime"]), str(cell["task"]), int(cell["replicate"])): cell
-        for cell in cells
+        (str(cell["regime"]), str(cell["task"]), int(cell["replicate"])): cell for cell in cells
     }
     budget_cpu_hours = float(config["resource_limits"]["total_cpu_hours"])
     budget_exhausted = False
@@ -848,8 +1001,6 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
                     cells.append(cell)
                     cell_by_key[key] = cell
                 for method in METHODS:
-                    if method in cell["methods"]:
-                        continue
                     method_checkpoint = (
                         _method_checkpoint_path(
                             progress_path,
@@ -862,32 +1013,74 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
                         if progress_path is not None
                         else None
                     )
-                    try:
-                        cell["methods"][method] = _method_result(
-                            config=config,
-                            context=context,
-                            task_item=task_item,
+                    method_cache = (
+                        _method_result_cache_path(
+                            progress_path,
+                            config_hash=config_hash,
+                            regime=str(context["name"]),
+                            task=str(task_item["id"]),
                             replicate=replicate,
                             method=method,
-                            checkpoint_path=method_checkpoint,
                         )
+                        if progress_path is not None
+                        else None
+                    )
+                    if method in cell["methods"]:
+                        if method_checkpoint is not None:
+                            _unlink_with_retry(method_checkpoint)
+                        if method_cache is not None:
+                            _unlink_with_retry(method_cache)
+                        continue
+                    try:
+                        if method_cache is not None and method_cache.exists():
+                            method_result = _load_method_result_cache(
+                                method_cache,
+                                config_hash=config_hash,
+                                regime=str(context["name"]),
+                                task=str(task_item["id"]),
+                                replicate=replicate,
+                                method=method,
+                            )
+                        else:
+                            method_result = _method_result(
+                                config=config,
+                                context=context,
+                                task_item=task_item,
+                                replicate=replicate,
+                                method=method,
+                                checkpoint_path=method_checkpoint,
+                            )
+                            if method_cache is not None:
+                                _save_method_result_cache(
+                                    method_cache,
+                                    config_hash=config_hash,
+                                    regime=str(context["name"]),
+                                    task=str(task_item["id"]),
+                                    replicate=replicate,
+                                    method=method,
+                                    result=method_result,
+                                )
+                        cell["methods"][method] = method_result
                     except Exception as error:
-                        failures.append(
-                            {
-                                "regime": context["name"],
-                                "task": task_item["id"],
-                                "replicate": replicate,
-                                "method": method,
-                                "type": type(error).__name__,
-                                "message": str(error),
-                            }
-                        )
+                        event = {
+                            "regime": context["name"],
+                            "task": task_item["id"],
+                            "replicate": replicate,
+                            "method": method,
+                            "type": type(error).__name__,
+                            "message": str(error),
+                        }
+                        if isinstance(error, OSError):
+                            operational_events.append(event)
+                        else:
+                            failures.append(event)
                         if progress_path is not None:
                             _write_progress(
                                 progress_path,
                                 config_hash=config_hash,
                                 cells=cells,
                                 failures=failures,
+                                operational_events=operational_events,
                             )
                         raise
                     if progress_path is not None:
@@ -896,33 +1089,38 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
                             config_hash=config_hash,
                             cells=cells,
                             failures=failures,
+                            operational_events=operational_events,
                         )
                     if method_checkpoint is not None and method_checkpoint.exists():
-                        method_checkpoint.unlink()
+                        _unlink_with_retry(method_checkpoint)
+                    if method_cache is not None:
+                        _unlink_with_retry(method_cache)
                 raw = cell["methods"]["raw_defensive"]
                 dcs = cell["methods"]["dcs_mgi"]
-                allocated_ratio = (
-                    float(raw["total_work_units"]) / float(dcs["total_work_units"])
-                )
+                allocated_ratio = float(raw["total_work_units"]) / float(dcs["total_work_units"])
                 cell["allocated_work_ratio_raw_over_dcs"] = allocated_ratio
                 cell["matched_work_ratio_raw_over_dcs"] = (
-                    allocated_ratio
-                    if raw["target_attained"] and dcs["target_attained"]
-                    else None
+                    allocated_ratio if raw["target_attained"] and dcs["target_attained"] else None
                 )
                 cell["censored_work_ratio_lower_bound"] = (
-                    allocated_ratio
-                    if raw["resource_censored"] and dcs["target_attained"]
-                    else None
+                    allocated_ratio if raw["resource_censored"] and dcs["target_attained"] else None
                 )
-                cell["wall_ratio_raw_over_dcs"] = (
-                    float(raw["total_wall_seconds"]) / float(dcs["total_wall_seconds"])
+                cell["wall_ratio_raw_over_dcs"] = float(raw["total_wall_seconds"]) / float(
+                    dcs["total_wall_seconds"]
                 )
                 cell["paired_estimate_difference"] = (
                     float(dcs["estimate"]) - float(raw["estimate"])
                     if dcs["estimate"] is not None and raw["estimate"] is not None
                     else None
                 )
+                if progress_path is not None:
+                    _write_progress(
+                        progress_path,
+                        config_hash=config_hash,
+                        cells=cells,
+                        failures=failures,
+                        operational_events=operational_events,
+                    )
                 process_cpu = math.fsum(
                     float(method_result["process_cpu_seconds"])
                     for completed in cells
@@ -950,9 +1148,9 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
         for method, result in sorted(cell.get("methods", {}).items())
     ]
     aggregate_seed_hash = hashlib.sha256(
-        json.dumps(
-            seed_manifest, sort_keys=True, separators=(",", ":"), ensure_ascii=True
-        ).encode("ascii")
+        json.dumps(seed_manifest, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode(
+            "ascii"
+        )
     ).hexdigest()
     method_wall_seconds = math.fsum(
         float(method["total_wall_seconds"])
@@ -961,6 +1159,16 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
     )
     process_cpu_seconds = math.fsum(
         float(method["process_cpu_seconds"])
+        for cell in cells
+        for method in cell.get("methods", {}).values()
+    )
+    method_orchestration_seconds = math.fsum(
+        float(method.get("total_orchestration_seconds", 0.0))
+        for cell in cells
+        for method in cell.get("methods", {}).values()
+    )
+    recovery_process_cpu_seconds = math.fsum(
+        float(method.get("recovery_process_cpu_seconds", 0.0))
         for cell in cells
         for method in cell.get("methods", {}).values()
     )
@@ -981,12 +1189,10 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
         "summary": summary,
         "cells": cells,
         "failures": failures,
+        "operational_events": operational_events,
         "gates": gates,
         "seed_ledger_sha256": aggregate_seed_hash
-        if all(
-            item["seed_evidence_kind"] == "complete_mlmc_seed_ledger"
-            for item in seed_manifest
-        )
+        if all(item["seed_evidence_kind"] == "complete_mlmc_seed_ledger" for item in seed_manifest)
         else None,
         "seed_evidence_sha256": aggregate_seed_hash,
         "seed_manifest_entries": len(seed_manifest),
@@ -994,8 +1200,12 @@ def run(config_path: Path, *, progress_path: Path | None = None) -> dict[str, An
             "measured_method_wall_seconds": method_wall_seconds,
             "measured_process_cpu_seconds": process_cpu_seconds,
             "measured_process_cpu_hours": process_cpu_seconds / 3600.0,
+            "measured_method_orchestration_seconds": method_orchestration_seconds,
+            "recovery_process_cpu_seconds": recovery_process_cpu_seconds,
             "current_process_orchestration_seconds": time.perf_counter() - started,
             "resumable_cell_progress_used": progress_path is not None,
+            "durable_method_result_cache_used": progress_path is not None,
+            "operational_event_count": len(operational_events),
         },
         "environment": runtime_provenance(dtype="torch.float64"),
         **source_provenance(),

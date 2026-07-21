@@ -109,6 +109,13 @@ from .mlmc import (
     run_mlmc,
     save_mlmc_checkpoint,
 )
+from .multilevel_crossover import (
+    MultilevelCrossoverDecision,
+    TotalWorkCrossoverDecision,
+    evaluate_multilevel_crossover,
+    evaluate_total_work_crossover,
+    optimal_sampling_work_coefficient,
+)
 from .path_functionals import (
     DiscreteBarrierHitTask,
     DownsideExcursionTask,
@@ -182,6 +189,16 @@ from .rbergomi_smoothing import (
     simulate_smoothed_rbergomi,
 )
 from .seed_ledger import SeedKey, SeedLedger, SeedRecord, derive_seed
+from .threshold_stability import (
+    NORMAL_DENSITY_MAXIMUM,
+    AggregateThresholdStability,
+    DefensiveMomentBounds,
+    RatioCandidateStability,
+    aggregate_threshold_stability,
+    combine_common_and_mesh_defect,
+    defensive_moment_upper_bounds,
+    ratio_candidate_stability,
+)
 
 __all__ = [
     "ConstantPICEFit",
@@ -319,6 +336,12 @@ __all__ = [
     "MLMCHierarchy",
     "MLMCPreparedRun",
     "MLMCResult",
+    "MultilevelCrossoverDecision",
+    "TotalWorkCrossoverDecision",
+    "AggregateThresholdStability",
+    "DefensiveMomentBounds",
+    "RatioCandidateStability",
+    "NORMAL_DENSITY_MAXIMUM",
     "OnlineMoments",
     "SeedKey",
     "SeedLedger",
@@ -329,6 +352,13 @@ __all__ = [
     "execute_mlmc",
     "load_mlmc_checkpoint",
     "prepare_mlmc",
+    "evaluate_multilevel_crossover",
+    "evaluate_total_work_crossover",
+    "aggregate_threshold_stability",
+    "combine_common_and_mesh_defect",
+    "defensive_moment_upper_bounds",
+    "optimal_sampling_work_coefficient",
+    "ratio_candidate_stability",
     "run_mlmc",
     "save_mlmc_checkpoint",
     "CorrectionRateObservation",

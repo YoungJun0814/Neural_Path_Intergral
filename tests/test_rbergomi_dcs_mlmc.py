@@ -29,9 +29,7 @@ def _simulator() -> RBergomiSimulator:
 def _controls() -> tuple[TimePiecewiseTwoDriverControl, TimePiecewiseTwoDriverControl]:
     return (
         TimePiecewiseTwoDriverControl(((0.0, 0.0), (0.0, 0.0)), maturity=0.25),
-        TimePiecewiseTwoDriverControl(
-            ((-0.4, -1.2), (-0.25, -0.7)), maturity=0.25
-        ),
+        TimePiecewiseTwoDriverControl(((-0.4, -1.2), (-0.25, -0.7)), maturity=0.25),
     )
 
 
@@ -103,12 +101,8 @@ def test_all_supported_tasks_have_exact_scalar_thresholds(task) -> None:
 
 def test_generic_single_adapter_is_numerically_identical_to_g10_downside() -> None:
     simulator, sample = _single_sample(8192)
-    legacy = evaluate_control_span_marginalized_mixture(
-        sample, task=_downside(), rho=simulator.rho
-    )
-    generic = evaluate_rbergomi_dcs_level(
-        sample, task=_downside(), rho=simulator.rho
-    )
+    legacy = evaluate_control_span_marginalized_mixture(sample, task=_downside(), rho=simulator.rho)
+    generic = evaluate_rbergomi_dcs_level(sample, task=_downside(), rho=simulator.rho)
     assert torch.equal(generic.hard_event, legacy.hard_event)
     assert torch.allclose(generic.threshold, legacy.threshold, atol=0.0, rtol=0.0)
     assert torch.allclose(
@@ -158,16 +152,10 @@ def test_generic_adjacent_adapter_is_numerically_identical_to_g10_downside() -> 
     legacy = evaluate_control_span_marginalized_adjacent_mixture(
         sample, task=_downside(), rho=simulator.rho
     )
-    generic = evaluate_rbergomi_dcs_adjacent(
-        sample, task=_downside(), rho=simulator.rho
-    )
+    generic = evaluate_rbergomi_dcs_adjacent(sample, task=_downside(), rho=simulator.rho)
     assert torch.allclose(generic.fine.threshold, legacy.fine_threshold, atol=0.0, rtol=0.0)
-    assert torch.allclose(
-        generic.coarse.threshold, legacy.coarse_threshold, atol=0.0, rtol=0.0
-    )
-    assert torch.allclose(
-        generic.raw_correction, legacy.raw_correction, atol=3e-15, rtol=0.0
-    )
+    assert torch.allclose(generic.coarse.threshold, legacy.coarse_threshold, atol=0.0, rtol=0.0)
+    assert torch.allclose(generic.raw_correction, legacy.raw_correction, atol=3e-15, rtol=0.0)
     assert torch.allclose(
         generic.marginalized_correction,
         legacy.marginalized_correction,
@@ -185,6 +173,14 @@ def test_task_types_reject_invalid_parameters_and_paths() -> None:
         TerminalThresholdTask(level=90.0).hard_event(
             torch.tensor([[100.0, 0.0]], dtype=torch.float64), 0.1
         )
+
+
+def test_terminal_and_barrier_cem_scores_have_exact_event_sign() -> None:
+    spot = torch.tensor([[100.0, 95.0, 89.0], [100.0, 101.0, 102.0]], dtype=torch.float64)
+    terminal = TerminalThresholdTask(level=90.0)
+    barrier = DiscreteBarrierHitTask(barrier=90.0)
+    assert torch.equal(terminal.score(spot, 0.1) >= 0.0, terminal.hard_event(spot, 0.1))
+    assert torch.equal(barrier.score(spot, 0.1) >= 0.0, barrier.hard_event(spot, 0.1))
 
 
 def test_adapter_rejects_degenerate_price_correlation() -> None:

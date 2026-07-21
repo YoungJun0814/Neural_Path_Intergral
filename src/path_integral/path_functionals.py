@@ -33,6 +33,12 @@ class TerminalThresholdTask:
         _validate_finite_spot(spot, step_dt)
         return spot[:, -1] <= self.level
 
+    def score(self, spot: torch.Tensor, step_dt: float) -> torch.Tensor:
+        """Dimensionless CEM score whose nonnegative set is the hard event."""
+
+        _validate_finite_spot(spot, step_dt)
+        return math.log(self.level) - torch.log(spot[:, -1])
+
 
 @dataclass(frozen=True)
 class DiscreteBarrierHitTask:
@@ -47,6 +53,12 @@ class DiscreteBarrierHitTask:
     def hard_event(self, spot: torch.Tensor, step_dt: float) -> torch.Tensor:
         _validate_finite_spot(spot, step_dt)
         return torch.amin(spot, dim=1) <= self.barrier
+
+    def score(self, spot: torch.Tensor, step_dt: float) -> torch.Tensor:
+        """Dimensionless CEM score whose nonnegative set is the hard event."""
+
+        _validate_finite_spot(spot, step_dt)
+        return math.log(self.barrier) - torch.log(torch.amin(spot, dim=1))
 
 
 @dataclass(frozen=True)
@@ -103,16 +115,12 @@ class DownsideExcursionTask:
         """Return a bounded training payoff; final estimators use ``hard_event``."""
         running_minimum, occupation, _hit = self.prefix_state(spot, step_dt)
         hit_margin = (self.hit_barrier - running_minimum[:, -1]) / self.hit_scale
-        occupation_margin = (
-            occupation[:, -1] - self.minimum_occupation
-        ) / self.occupation_scale
+        occupation_margin = (occupation[:, -1] - self.minimum_occupation) / self.occupation_scale
         return torch.sigmoid(hit_margin) * torch.sigmoid(occupation_margin)
 
     def score(self, spot: torch.Tensor, step_dt: float) -> torch.Tensor:
         """A monotone CEM level score whose nonnegative set is the hard event."""
         running_minimum, occupation, _hit = self.prefix_state(spot, step_dt)
         hit_margin = (self.hit_barrier - running_minimum[:, -1]) / self.hit_scale
-        occupation_margin = (
-            occupation[:, -1] - self.minimum_occupation
-        ) / self.occupation_scale
+        occupation_margin = (occupation[:, -1] - self.minimum_occupation) / self.occupation_scale
         return torch.minimum(hit_margin, occupation_margin)

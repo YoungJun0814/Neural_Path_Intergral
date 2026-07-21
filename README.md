@@ -18,14 +18,19 @@ The active method is **DCS-MGI-MLMC**:
 The M0--M6 development implementation is complete. The generic Gaussian identities,
 finite-grid rBergomi adapter, exact adjacent-level coupling, seed ledger,
 checkpoint/resume logic, rate study, rarity calibration, and artifact audit have all
-passed their declared development gates. The M7 local protocol, resource-censoring
-semantics, and seed-free preflight are also implemented and qualified. The full test
-suite currently passes **324/324 tests**.
+passed their declared development gates. The 640-cell M7 V3 run completed and its
+artifact passes an independent integrity audit. Its strict frozen headline is
+**failed**, because one recovered Windows checkpoint `PermissionError` remains in the
+predeclared no-failure gate; it must not be relabelled as a passed untouched
+confirmation. The full test suite currently passes **351/351 tests**.
 
-This repository is **not yet a finished journal submission**. In particular, the M7
-640-cell confirmatory run has not started, and the present estimator targets a declared
-finest discrete grid rather than a continuously monitored event. Development and
-qualification results must not be quoted as untouched confirmatory evidence.
+This repository is **not yet a finished journal submission**. The present estimator
+targets a declared finest discrete grid rather than a continuously monitored event,
+M7 lacks the strongest single-level comparator in its frozen matrix, and its three
+regimes changed H, eta, and rho together. V4 therefore adds margin-localized threshold
+theory, single-level/MLMC crossover logic, strong baselines, and one-factor-at-a-time
+qualification. Development, recovered, and qualification evidence must not be quoted
+as untouched confirmation.
 
 Start with:
 
@@ -34,6 +39,9 @@ Start with:
 - [Theorem statements](docs/theory/G11_THEOREMS.md) and [proof audit](docs/theory/G11_PROOF_AUDIT.md)
 - [M7 freeze-readiness review](docs/audits/G11_M7_FREEZE_READINESS_2026-07-19.md)
 - [M7 local execution and resource protocol](docs/audits/G11_M7_LOCAL_EXECUTION_PROTOCOL_2026-07-19.md)
+- [M7 V3 confirmatory decision](docs/audits/G11_M7_CONFIRMATORY_DECISION_2026-07-22.md)
+- [V4 threshold-stability theory](docs/theory/G11_MARGIN_LOCALIZED_THRESHOLD_STABILITY.md)
+- [V4 crossover qualification protocol](docs/plans/G11_V4_PAPER_EXTENSION_PROTOCOL_2026-07-22.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
 ## Why this problem matters
@@ -88,7 +96,7 @@ L_\ell(x)
 =
 \left[
 \sum_j \pi_{\ell,j}
-\exp\!\left(m_{\ell,j}^{\mathsf T}x-	frac12\lVert m_{\ell,j}\rVert^2\right)
+\exp\!\left(m_{\ell,j}^{\mathsf T}x-\tfrac12\lVert m_{\ell,j}\rVert^2\right)
 \right]^{-1}.
 \]
 
@@ -175,6 +183,22 @@ In the 12-cell rare-MLMC development matrix:
 
 The 43.85x result is therefore not yet a general headline speedup. Confirmatory work
 must predeclare how baseline resource censoring is reported.
+
+### M7 V3 recovered evidence and strict decision
+
+M7 V3 completed all 640 cells across 20 seed clusters. DCS attained its requested
+empirical RMSE in 91.41% of cells; 254 matched-RMSE cells had a 16.52x geometric
+raw/DCS operation-work ratio and a one-sided cluster lower bound of 14.70x. The strict
+headline nevertheless failed because one checkpoint sharing violation was serialized
+as an unexpected execution failure. The run was manually recovered from a validated
+temporary checkpoint, so these numbers are recovered evidence rather than a passed
+untouched confirmation.
+
+Performance was not uniform. DCS attainment fell to 76.25% at probability `1e-6`,
+and several hard matched groups favored raw. Also, the prior regime labels do not
+identify an H effect because eta and rho changed with H. See the
+[decision report](docs/audits/G11_M7_CONFIRMATORY_DECISION_2026-07-22.md) and
+[machine-readable independent audit](results/g11_m7_result_audit_v1_2026-07-22.json).
 
 Machine-readable outputs are stored under [`results/`](results/), including the
 [strict artifact audit](results/g11_artifact_audit_v1_2026-07-19.json),
@@ -299,7 +323,8 @@ and prevent selective reporting.
 | G8 | Coarse-conditioned Volterra bridge branching | Correction gain passed; end-to-end claim falsified |
 | G9 | Monotone Gaussian Volterra smoothing | Exactness/correction gain passed; frozen headline failed |
 | G10 | Control-span marginalized Gaussian integration | Finite-grid audits passed; 2x single-level headline failed |
-| G11 | Correction-focused DCS-MGI-MLMC | M0--M6 passed; M7 confirmatory freeze pending |
+| G11 M7 V3 | Correction-focused DCS-MGI-MLMC | 640 cells complete; performance sub-gates pass; strict headline fails on one recovered I/O incident |
+| G11 V4 | Margin-localized threshold stability plus SLIS/MLMC crossover | Theory and qualification protocol implemented; frozen OAT execution is the next artifact |
 
 Earlier neural VFO, mixture, and residual-controller tracks were tested against strong
 baselines and stopped when their gates failed. See the phase reviews under
@@ -310,16 +335,14 @@ baselines and stopped when their gates failed. See the phase reviews under
 
 The next publication-critical steps are:
 
-1. run the frozen 20-cluster CPU study without changing its 640-cell task matrix,
-   raw-baseline resource cap, or 512 process-CPU-hour budget;
-2. preserve its untouched seed namespace and exact source/configuration hashes;
-3. run a second independent environment reproduction;
-4. report matched cells and resource-censored baseline cells separately, with no
-   fabricated speedup for failures;
-5. add a continuous-time weak-bias study or keep every headline explicitly
-   finite-grid;
-6. obtain independent review of the conditional rate/complexity arguments and update
-   the primary-source novelty matrix; and
+1. execute and audit the frozen V4 OAT crossover qualification;
+2. use a strong DCS-SLIS and task-tuned SLIS baseline on every future headline cell;
+3. prove model-level coefficient, mesh-enrichment, and small-active-slope bounds, or
+   keep the V4 rate theorem explicitly conditional;
+4. freeze a new untouched achieved-RMSE seed namespace after qualification;
+5. run a second independent environment reproduction;
+6. add a continuous-time weak-bias study or keep every headline explicitly
+   finite-grid; and
 7. add a neural amortized proposal generator only if it reduces total calibration
    cost under an independently frozen gate.
 

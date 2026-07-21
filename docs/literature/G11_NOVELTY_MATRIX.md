@@ -1,7 +1,8 @@
 # G11 Novelty Matrix
 
-Date: 2026-07-19
-Status: initial primary-source audit complete; must be updated before submission
+Date: 2026-07-22
+Status: primary-source audit updated through the full 2026 v2 occupation-time MLIS
+paper; external expert review and citation update remain required before submission
 
 ## 1. Candidate novelty after audit
 
@@ -97,8 +98,15 @@ Non-overlap candidate:
 - G11 targets non-Markovian Gaussian Volterra dynamics and a hit-plus-occupation
   event, with no finite-dimensional HJB assumption.
 
-This non-overlap is provisional until the full 2025 paper's likelihood formulas and
-theorems are compared line by line with T11-1--T11-6.
+The 2026 v2 paper's estimator equations and complexity propositions were reviewed.
+Its fine HJB control is reused on the coarse path, coarse increments are aggregated
+from the fine increments, and one fine likelihood weights the fine-minus-coarse
+observable. It also gives an explicit MLIS-versus-SLIS work condition. Consequently
+common likelihood, shared-control coupling, and the crossover condition are confirmed
+prior art rather than provisional novelty.
+
+Required baseline action: compare DCS-MLMC against DCS-SLIS on the same finest-grid
+estimand and proposal, and against task-tuned SLIS with all training cost included.
 
 ### 3.3 Multiple importance sampling
 
@@ -166,16 +174,14 @@ Allowed only as candidate language before external review:
 
 ## 6. Remaining literature actions before submission
 
-1. Compare every equation defining the 2025 common-likelihood MLIS estimator with
-   T11-1--T11-4.
-2. Review citations of the 2024 SIAM numerical-smoothing paper through the submission
+1. Review citations of the 2024 SIAM numerical-smoothing paper through the submission
    cutoff date.
-3. Search specifically for Gaussian-mixture Rao--Blackwellization and marginal
+2. Search specifically for Gaussian-mixture Rao--Blackwellization and marginal
    importance sampling over proposal parameters/subspaces.
-4. Review adaptive importance-sampled MLMC for diffusions and statistical Romberg.
-5. Search rough-volatility barrier, occupation, and rare-event simulation papers.
-6. Ask an external expert to challenge the novelty statement before journal targeting.
-7. Record search strings, databases, dates, inclusion criteria, and excluded near
+3. Review adaptive importance-sampled MLMC for diffusions and statistical Romberg.
+4. Search rough-volatility barrier, occupation, and rare-event simulation papers.
+5. Ask an external expert to challenge the novelty statement before journal targeting.
+6. Record search strings, databases, dates, inclusion criteria, and excluded near
    matches in a reproducible literature appendix.
 
 ## 7. M0 novelty decision

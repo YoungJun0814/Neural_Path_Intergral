@@ -19,9 +19,7 @@ from src.physics_engine import RBergomiSimulator
 
 
 def _sampler(method: str, engine: str = "fft") -> RBergomiMLMCSampler:
-    simulator = RBergomiSimulator(
-        H=0.15, eta=0.8, xi=0.04, rho=-0.55, device="cpu"
-    )
+    simulator = RBergomiSimulator(H=0.15, eta=0.8, xi=0.04, rho=-0.55, device="cpu")
     controls = (
         TimePiecewiseTwoDriverControl(((0.0, 0.0),), maturity=0.25),
         TimePiecewiseTwoDriverControl(((-0.25, -0.8),), maturity=0.25),
@@ -90,3 +88,38 @@ def test_sampler_rejects_float32_evidence_and_missing_streams() -> None:
     sampler = _sampler("dcs_mgi")
     with pytest.raises(ValueError, match="proposal and label"):
         sampler(0, "pilot", 16, {"proposal": 1})
+
+
+def test_raw_single_shift_baseline_can_explicitly_drop_defensive_component() -> None:
+    simulator = RBergomiSimulator(H=0.15, eta=0.8, xi=0.04, rho=-0.55, device="cpu")
+    shifted = TimePiecewiseTwoDriverControl(((-0.25, -0.8),), maturity=0.25)
+    sampler = RBergomiMLMCSampler(
+        simulator,
+        (shifted,),
+        torch.ones(1, dtype=torch.float64),
+        TerminalThresholdTask(100.0),
+        RBergomiMLMCSamplerConfig(
+            spot=100.0,
+            maturity=0.25,
+            coarsest_steps=4,
+            method="raw",
+            require_natural_component=False,
+        ),
+    )
+    values = sampler(
+        0,
+        "pilot",
+        64,
+        {"proposal": 123_456, "labels": 789_012},
+    ).values
+    assert values.shape == (64,)
+    assert torch.isfinite(values).all()
+
+    with pytest.raises(ValueError, match="defensive natural"):
+        RBergomiMLMCSamplerConfig(
+            spot=100.0,
+            maturity=0.25,
+            coarsest_steps=4,
+            method="dcs_mgi",
+            require_natural_component=False,
+        )

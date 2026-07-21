@@ -143,6 +143,14 @@ Required response: prove easier terminal/barrier corollaries first and treat
 hit-plus-occupation rates empirically unless a rigorous denominator/order-statistic
 argument is completed.
 
+Post-M7 V4 response: the deterministic part is now decomposed in
+[`G11_MARGIN_LOCALIZED_THRESHOLD_STABILITY.md`](G11_MARGIN_LOCALIZED_THRESHOLD_STABILITY.md).
+It introduces a denominator-margin good event, retains the complementary bad-event
+probability, and separates common-grid coefficient error from mesh/rank enrichment.
+This closes the earlier algebraic gap but does **not** close the model-level
+rough-Volterra rate. Terminal remains the first proof target; barrier active-time
+localization and occupation rank change remain open.
+
 ### 5.2 Full likelihood boundedness does not imply good variance
 
 The defensive component guarantees finite moments but can still leave a probability
