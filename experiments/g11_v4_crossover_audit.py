@@ -576,8 +576,8 @@ def main() -> None:
     arguments = parser.parse_args()
     audit = run(arguments.config, arguments.result)
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
-    arguments.output.write_text(
-        json.dumps(audit, indent=2, sort_keys=True, allow_nan=False), encoding="utf-8"
+    arguments.output.write_bytes(
+        json.dumps(audit, indent=2, sort_keys=True, allow_nan=False).encode("utf-8")
     )
     print(
         json.dumps(
