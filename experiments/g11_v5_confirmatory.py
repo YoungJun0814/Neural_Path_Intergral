@@ -5,8 +5,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 from dataclasses import asdict
 from pathlib import Path
+from statistics import NormalDist
 from typing import Any
 
 import torch
@@ -47,9 +49,12 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _verify_formal_preflight(config: dict[str, Any], *, smoke: bool) -> None:
+def _verify_formal_preflight(config: dict[str, Any], *, smoke: bool) -> dict[str, bool]:
     if smoke:
-        return
+        return {"development_smoke": True}
+    run_class = config.get("run_class")
+    if run_class not in {"qualification", "untouched-confirmatory"}:
+        raise ValueError("non-smoke run_class must be qualification or untouched-confirmatory")
     if not bool(config.get("frozen")):
         raise ValueError("non-smoke confirmation requires a frozen config")
     provenance = source_provenance()
@@ -64,9 +69,204 @@ def _verify_formal_preflight(config: dict[str, Any], *, smoke: bool) -> None:
         payload = json.loads(path.read_text(encoding="utf-8"))
         if not bool(payload.get(item["required_gate"])):
             raise ValueError("a required qualification gate is not satisfied")
-    registry = Path(config["final_seed_registry"])
-    if registry.exists():
-        raise ValueError("the frozen final seed namespace has already been instantiated")
+    if run_class == "untouched-confirmatory":
+        registry_value = config.get("final_seed_registry")
+        if not registry_value:
+            raise ValueError("untouched confirmation requires a final seed registry")
+        registry = Path(registry_value)
+        if registry.exists():
+            raise ValueError("the frozen final seed namespace has already been instantiated")
+    elif config.get("final_seed_registry"):
+        raise ValueError("qualification must not instantiate the final seed namespace")
+    return {
+        "frozen_config": True,
+        "clean_source": True,
+        "source_commit_match": True,
+        "qualification_inputs_passed": True,
+        "run_class_valid": True,
+    }
+
+
+def _cell_reference(
+    config: dict[str, Any],
+    *,
+    model_id: str,
+    task_name: str,
+    task_spec: dict[str, Any],
+    smoke: bool,
+) -> dict[str, float]:
+    """Resolve a model/task-specific reference; formal runs forbid task fallbacks."""
+
+    references = config.get("references", {})
+    model_references = references.get(model_id, {}) if isinstance(references, dict) else {}
+    reference = (
+        model_references.get(task_name, {}) if isinstance(model_references, dict) else {}
+    )
+    if isinstance(reference, dict) and {
+        "probability",
+        "standard_error",
+    }.issubset(reference):
+        probability = float(reference["probability"])
+        standard_error = float(reference["standard_error"])
+    elif smoke and {"reference_probability", "reference_standard_error"}.issubset(task_spec):
+        probability = float(task_spec["reference_probability"])
+        standard_error = float(task_spec["reference_standard_error"])
+    else:
+        raise ValueError(f"missing qualified reference for {model_id}:{task_name}")
+    if not (0.0 < probability < 1.0) or not (
+        math.isfinite(standard_error) and standard_error >= 0.0
+    ):
+        raise ValueError(f"invalid qualified reference for {model_id}:{task_name}")
+    return {"probability": probability, "standard_error": standard_error}
+
+
+def _linear_quantile(sorted_values: list[float], probability: float) -> float | None:
+    if not sorted_values:
+        return None
+    position = (len(sorted_values) - 1) * probability
+    lower = math.floor(position)
+    upper = math.ceil(position)
+    if lower == upper:
+        return sorted_values[lower]
+    return sorted_values[lower] + (position - lower) * (
+        sorted_values[upper] - sorted_values[lower]
+    )
+
+
+def _aggregate_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Compute across-cluster accuracy, coverage, work, and selection summaries."""
+
+    grouped: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for record in records:
+        grouped.setdefault((record["model_id"], record["task_name"]), []).append(record)
+    summaries: list[dict[str, Any]] = []
+    critical = NormalDist().inv_cdf(0.975)
+    for (model_id, task_name), group in sorted(grouped.items()):
+        completed = [
+            record
+            for record in group
+            if record["result"]["complete"] and not record["result"]["resource_censored"]
+        ]
+        reference = group[0]["reference"]
+        probability = float(reference["probability"])
+        reference_se = float(reference["standard_error"])
+        estimates = [float(record["result"]["estimate"]) for record in completed]
+        squared_errors = [(estimate - probability) ** 2 for estimate in estimates]
+        empirical_rmse = math.sqrt(math.fsum(squared_errors) / len(squared_errors)) if (
+            squared_errors
+        ) else None
+        requested_relative = float(group[0]["result"]["requested_relative_sampling_rmse"])
+        coverage = []
+        bounded_coverage = []
+        work = []
+        selected_counts: dict[str, int] = {}
+        empirical_attainment = []
+        for record in completed:
+            result = record["result"]
+            combined_radius = critical * math.sqrt(
+                float(result["empirical_sampling_variance"]) + reference_se**2
+            )
+            coverage.append(abs(float(result["estimate"]) - probability) <= combined_radius)
+            bounded = result["bounded_confidence_interval"]
+            bounded_coverage.append(float(bounded[0]) <= probability <= float(bounded[1]))
+            work.append(
+                math.fsum(float(item["work_units"]) for item in result["work"]["entries"])
+            )
+            candidate = str(result["selected_candidate"])
+            selected_counts[candidate] = selected_counts.get(candidate, 0) + 1
+            empirical_attainment.append(bool(result["empirical_target_attained"]))
+        work.sort()
+
+        summaries.append(
+            {
+                "model_id": model_id,
+                "task_name": task_name,
+                "clusters_planned": len(group),
+                "clusters_complete": len(completed),
+                "resource_censored": len(group) - len(completed),
+                "reference": reference,
+                "requested_relative_sampling_rmse": requested_relative,
+                "empirical_rmse_against_reference": empirical_rmse,
+                "empirical_relative_rmse_against_reference": (
+                    empirical_rmse / probability if empirical_rmse is not None else None
+                ),
+                "empirical_target_attainment_fraction": (
+                    sum(empirical_attainment) / len(empirical_attainment)
+                    if empirical_attainment
+                    else None
+                ),
+                "combined_asymptotic_95_coverage": (
+                    sum(coverage) / len(coverage) if coverage else None
+                ),
+                "bounded_interval_coverage": (
+                    sum(bounded_coverage) / len(bounded_coverage)
+                    if bounded_coverage
+                    else None
+                ),
+                "work_units_median": _linear_quantile(work, 0.5),
+                "work_units_p90": _linear_quantile(work, 0.9),
+                "selected_candidate_counts": selected_counts,
+            }
+        )
+    return summaries
+
+
+def _qualification_gates(
+    records: list[dict[str, Any]],
+    aggregates: list[dict[str, Any]],
+    *,
+    expected_records: int,
+    expected_cells: int,
+    thresholds: dict[str, Any],
+) -> dict[str, bool]:
+    """Evaluate full-run gates without allowing censoring or vacuous truth."""
+
+    complete_matrix = len(records) == expected_records and expected_records > 0
+    complete_aggregates = len(aggregates) == expected_cells and expected_cells > 0
+    no_censoring = complete_matrix and all(
+        not record["result"]["resource_censored"] for record in records
+    )
+    all_complete = complete_matrix and all(record["result"]["complete"] for record in records)
+    return {
+        "complete_cluster_matrix": complete_matrix and complete_aggregates,
+        "no_resource_censoring": no_censoring,
+        "all_runs_complete": all_complete,
+        "all_design_targets_attained": all_complete
+        and all(record["result"]["design_target_attained"] for record in records),
+        "minimum_empirical_target_attainment": complete_aggregates
+        and all(
+            isinstance(summary["empirical_target_attainment_fraction"], (int, float))
+            and summary["empirical_target_attainment_fraction"]
+            >= float(thresholds["minimum_empirical_target_attainment"])
+            for summary in aggregates
+        ),
+        "across_cluster_relative_rmse": complete_aggregates
+        and all(
+            isinstance(summary["empirical_relative_rmse_against_reference"], (int, float))
+            and summary["empirical_relative_rmse_against_reference"]
+            <= summary["requested_relative_sampling_rmse"]
+            * float(thresholds["maximum_relative_rmse_ratio"])
+            for summary in aggregates
+        ),
+        "minimum_combined_asymptotic_coverage": complete_aggregates
+        and all(
+            isinstance(summary["combined_asymptotic_95_coverage"], (int, float))
+            and summary["combined_asymptotic_95_coverage"]
+            >= float(thresholds["minimum_combined_asymptotic_coverage"])
+            for summary in aggregates
+        ),
+        "selection_frozen_before_final": complete_matrix
+        and all(
+            record["selection"]["stopped"]
+            and record["selection"]["frozen_decision"] is not None
+            for record in records
+        ),
+        "no_final_samples_reused_from_selection": complete_matrix
+        and all(record["seed_role_audit"]["selection_final_disjoint"] for record in records),
+        "all_preparation_hashes_unique": complete_matrix
+        and len({record["preparation"]["preparation_hash"] for record in records})
+        == len(records),
+    }
 
 
 def _task(specification: dict[str, Any]):
@@ -89,7 +289,8 @@ def _json_safe(value: Any) -> Any:
 
 def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
     config, config_hash = _load(config_path)
-    _verify_formal_preflight(config, smoke=smoke)
+    preflight = _verify_formal_preflight(config, smoke=smoke)
+    run_class = "development-smoke" if smoke else str(config["run_class"])
     common = config["model_common"]
     selection_config = config["selection"]
     looks = tuple(int(value) for value in selection_config["looks"])
@@ -127,6 +328,14 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
         weights = torch.tensor(config["proposal"]["weights"], dtype=torch.float64)
         for task_name, task_spec in task_items:
             task = _task(task_spec)
+            reference = _cell_reference(
+                config,
+                model_id=model_id,
+                task_name=task_name,
+                task_spec=task_spec,
+                smoke=smoke,
+            )
+            nominal_probability = float(reference["probability"])
             for cluster in range(clusters):
                 sampler = RBergomiHybridTermSampler(
                     simulator,
@@ -182,7 +391,7 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
                         candidate_profiles=candidate_profiles,
                         preprocessing_work=preprocessing,
                         sampling_variance_target=(
-                            float(task_spec["nominal_probability"])
+                            nominal_probability
                             * (
                                 max(
                                     float(config["sampling"]["relative_sampling_rmse"]),
@@ -213,7 +422,7 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
                 selected_ids = candidate_profiles[selected]
                 target = HybridTarget(
                     target_id=f"{model_id}:{task_name}:L{finest_level}",
-                    nominal_probability=float(task_spec["nominal_probability"]),
+                    nominal_probability=nominal_probability,
                     relative_sampling_rmse=(
                         max(float(config["sampling"]["relative_sampling_rmse"]), 0.50)
                         if smoke
@@ -257,14 +466,33 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
                 result = execute_hybrid_run(
                     prepared,
                     sampler,
-                    reference_probability=float(task_spec["reference_probability"]),
-                    reference_standard_error=float(task_spec["reference_standard_error"]),
+                    reference_probability=nominal_probability,
+                    reference_standard_error=float(reference["standard_error"]),
                 )
+                selection_seeds = {
+                    record.seed for record in cell_ledger.records if record.key.role == "selection"
+                }
+                final_seeds = {
+                    record.seed for record in cell_ledger.records if record.key.role == "final"
+                }
+                unexpected_seed_roles = sorted(
+                    {record.key.role for record in cell_ledger.records}
+                    - {"selection", "final"}
+                )
+                serialized_task = {
+                    **task_spec,
+                    "nominal_probability": nominal_probability,
+                    "reference_probability": nominal_probability,
+                    "reference_standard_error": float(reference["standard_error"]),
+                }
                 records.append(
                     {
                         "cell_id": f"{model_id}:{task_name}:cluster-{cluster}",
+                        "model_id": model_id,
+                        "task_name": task_name,
                         "model": model,
-                        "task": task_spec,
+                        "task": serialized_task,
+                        "reference": reference,
                         "finest_level": finest_level,
                         "selection": _json_safe(asdict(state)),
                         "preparation": {
@@ -276,38 +504,59 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
                             "censoring_reason": prepared.censoring_reason,
                         },
                         "result": _json_safe(asdict(result)),
+                        "seed_role_audit": {
+                            "selection_seed_count": len(selection_seeds),
+                            "final_seed_count": len(final_seeds),
+                            "selection_final_disjoint": selection_seeds.isdisjoint(final_seeds)
+                            and not unexpected_seed_roles,
+                            "unexpected_roles": unexpected_seed_roles,
+                        },
                     }
                 )
                 for seed_record in cell_ledger.records:
                     master_ledger.allocate(seed_record.key)
-    gates = {
-        "all_runs_complete_or_resource_censored": all(
-            record["result"]["complete"] or record["result"]["resource_censored"]
-            for record in records
-        ),
-        "all_design_targets_attained_if_feasible": all(
-            record["result"]["resource_censored"] or record["result"]["design_target_attained"]
-            for record in records
-        ),
-        "selection_frozen_before_final": True,
-        "no_final_samples_reused_from_selection": True,
-        "all_preparation_hashes_unique": len(
-            {record["preparation"]["preparation_hash"] for record in records}
-        )
-        == len(records),
+    aggregates = _aggregate_records(records)
+    thresholds = config.get(
+        "qualification_gates",
+        {
+            "minimum_empirical_target_attainment": 0.0,
+            "maximum_relative_rmse_ratio": 10.0,
+            "minimum_combined_asymptotic_coverage": 0.0,
+        },
+    )
+    gates = _qualification_gates(
+        records,
+        aggregates,
+        expected_records=len(model_specs) * len(task_items) * clusters,
+        expected_cells=len(model_specs) * len(task_items),
+        thresholds=thresholds,
+    )
+    provenance = source_provenance()
+    formal_readiness = {
+        "frozen_config": bool(config.get("frozen")) and not smoke,
+        "clean_source": not bool(provenance["dirty_worktree"]),
+        "source_commit_match": smoke
+        or provenance["source_commit"] == config.get("source_commit"),
+        "qualification_inputs_passed": bool(preflight),
+        "non_smoke": not smoke,
     }
+    protocol_complete = all(gates.values()) and (smoke or all(formal_readiness.values()))
     return {
         "schema": "npi.g11.v5-confirmatory.v1",
         "protocol_id": config["protocol_id"],
         "config_sha256": config_hash,
         "smoke": smoke,
-        "run_class": "development-smoke" if smoke else "untouched-confirmatory",
+        "run_class": run_class,
         "records": records,
+        "aggregates": aggregates,
         "gates": gates,
-        "protocol_complete": all(gates.values()),
+        "formal_readiness": formal_readiness,
+        "protocol_complete": protocol_complete,
+        "qualification_passed": run_class == "qualification" and protocol_complete,
         "seed_ledger_sha256": master_ledger.sha256,
+        "seed_ledger": master_ledger.to_dict(),
         "environment": runtime_provenance(dtype="torch.float64"),
-        **source_provenance(),
+        **provenance,
     }
 
 
