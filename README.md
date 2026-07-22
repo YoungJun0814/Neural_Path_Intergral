@@ -20,12 +20,13 @@ The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
 pilot-frozen achieved-RMSE allocation, resource censoring, durable resume, fresh CEM
 baseline contracts, independent references, and an independent result audit. Its
-development smoke checks pass. The frozen 4,000-record selector passes. The first
-full achieved-RMSE qualification correctly failed because its initially qualified
-G5 inputs used 32 rather than 128 steps. New matched 128-step baseline (120 records)
-and reference (8 cells) v2 protocols now pass, so G6 must be rerun under a new seed
-namespace. Terminal and barrier model-level rates remain conditional, and there is
-no untouched V5 confirmation or Linux reproduction.
+development smoke checks pass. The frozen 4,000-record selector and matched 128-step
+G5 baseline/reference protocols pass. G6 V2 then passes all numerical accuracy and
+independent-audit gates, but fails the full training-inclusive efficiency gate: all
+120 runs select DCS-SLIS, selection consumes about 90% of work, and crude/CEM are
+cheaper in these 25%--28% moderate-event cells. The study must be redesigned around
+genuinely rare cells before untouched confirmation. Model-level rates also remain
+conditional, and there is no Linux reproduction.
 
 The earlier 640-cell M7 V3 run completed and passes its integrity audit, but its
 strict frozen headline **failed** because one recovered Windows checkpoint
@@ -33,7 +34,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **404/404 tests on 2026-07-22**.
+The complete local regression suite passed **406/406 tests on 2026-07-22**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finest discrete grid rather than a continuously monitored event,
@@ -65,6 +66,7 @@ Start with:
 - [V5 reference qualification decision](docs/audits/G11_V5_REFERENCE_QUALIFICATION_DECISION_2026-07-22.md)
 - [V5 achieved-RMSE V1 failure decision](docs/audits/G11_V5_ACHIEVED_RMSE_QUALIFICATION_V1_FAILURE_2026-07-22.md)
 - [V5 matched 128-step G5 decision](docs/audits/G11_V5_MATCHED_128_G5_QUALIFICATION_DECISION_2026-07-22.md)
+- [V5 achieved-RMSE V2 decision](docs/audits/G11_V5_ACHIEVED_RMSE_QUALIFICATION_V2_DECISION_2026-07-22.md)
 - [V5 reproducible literature search](docs/literature/G11_V5_SEARCH_LOG.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)

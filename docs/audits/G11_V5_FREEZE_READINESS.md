@@ -38,8 +38,9 @@ may be called untouched confirmatory evidence.
 | selector oracle | frozen 4,000-record run: coverage 0.99875, invalid elimination 0, median regret 1.0, p90 about 1.2012 | formal G4 pass |
 | fresh CEM baselines | frozen 128-step 120-record v2 run; 120/120 fits and all gates pass | formal matched-primary pass |
 | references | frozen 128-step 8-cell v2 run; all SE, cross-check, and oracle gates pass | formal matched-primary pass |
-| end-to-end hybrid | two cells complete, design targets pass | one cluster and relaxed smoke RMSE |
-| independent audit | end-to-end smoke artifact passes | not a formal-result audit |
+| end-to-end hybrid | matched 128-step V2: 120/120 complete, accuracy gates pass | internal qualification pass; full efficiency fail |
+| independent audit | V2 arithmetic, aggregates, work, and seed ledger pass | formal result-audit pass |
+| efficiency audit | selection 90%+ of work; crude and CEM cheaper in all six cells | G6 performance fail |
 | power forecast | 20 clusters exceeds conservative required count 13 at hardest RMSE | based on V4 profile data, not V5 achieved-RMSE data |
 
 The selector qualification was produced from clean source commit `a49c51a` using a
@@ -52,12 +53,14 @@ inputs to a frozen confirmation.
 1. Prove the terminal inverse-slope/coefficient assumptions or explicitly demote the
    model-level terminal rate to a conditional theorem.
 2. Prove or demote the barrier early-active and mesh-enrichment moment rate.
-3. Run a new V5 achieved-RMSE v2 qualification with matched 128-step inputs and
-   update power/resource forecasts from V5, not V4 profiles.
-4. Perform the final literature cutoff search and external novelty challenge.
-5. Freeze source/config/input hashes and register a never-used final seed namespace.
-6. Execute 20 clusters per primary cell from a clean detached worktree.
-7. Reproduce the frozen artifact on Linux and run the independent result audit.
+3. Redesign V3 around genuinely rare cells and a bounded profiling-work fraction;
+   V2 accuracy passed but full efficiency failed.
+4. Run actual matched achieved-target baselines and update power/resource forecasts
+   from V3, not V4 profiles.
+5. Perform the final literature cutoff search and external novelty challenge.
+6. Freeze source/config/input hashes and register a never-used final seed namespace.
+7. Execute the untouched primary matrix from a clean detached worktree.
+8. Reproduce the frozen artifact on Linux and run the independent result audit.
 
 ## 4. Claim ceiling before these blockers clear
 
@@ -77,6 +80,7 @@ Not allowed now:
 ## 5. Next executable gate
 
 The full non-final threshold diagnostic did not immediately falsify the G2--G3
-mechanism, but it did not prove it. The matched 128-step baseline and reference v2
-qualifications have passed. Freeze G6 V2 with their exact model/task references,
-canonical hashes, and a new qualification seed namespace.
+mechanism, but it did not prove it. Matched G5 and G6 numerical accuracy now pass,
+but G6 efficiency fails because the cells are not rare and profiling dominates.
+Freeze nothing further until a predeclared rare-event V3 redesign passes actual
+matched-baseline and selection-work gates.

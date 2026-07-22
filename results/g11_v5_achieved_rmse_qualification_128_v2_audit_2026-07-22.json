@@ -1,0 +1,157 @@
+{
+  "config_path": "configs\\g11_v5_achieved_rmse_qualification_128_v2.yaml",
+  "config_sha256": "e6fa0f114edf5e7e76b1a062280df81d3b20bb629fa1e94c9b3262eb29e0f301",
+  "failures": [],
+  "independence_note": "The audit reimplements arithmetic and gates and does not import the confirmatory runner or production summary functions.",
+  "passed": true,
+  "recomputed_aggregates": [
+    {
+      "bounded_interval_coverage": 1.0,
+      "clusters_complete": 20,
+      "clusters_planned": 20,
+      "combined_asymptotic_95_coverage": 1.0,
+      "empirical_relative_rmse_against_reference": 0.029490961882883113,
+      "empirical_rmse_against_reference": 0.008268002087959875,
+      "empirical_target_attainment_fraction": 1.0,
+      "model_id": "h005",
+      "reference": {
+        "probability": 0.2803571521605308,
+        "standard_error": 0.0025183746675365264
+      },
+      "requested_relative_sampling_rmse": 0.1,
+      "resource_censored": 0,
+      "selected_candidate_counts": {
+        "start_4": 20
+      },
+      "task_name": "barrier",
+      "work_units_median": 13537280.0,
+      "work_units_p90": 13544537.6
+    },
+    {
+      "bounded_interval_coverage": 1.0,
+      "clusters_complete": 20,
+      "clusters_planned": 20,
+      "combined_asymptotic_95_coverage": 0.95,
+      "empirical_relative_rmse_against_reference": 0.03130005198351368,
+      "empirical_rmse_against_reference": 0.007987800244062558,
+      "empirical_target_attainment_fraction": 1.0,
+      "model_id": "h005",
+      "reference": {
+        "probability": 0.2552008619113438,
+        "standard_error": 0.0023763353223973343
+      },
+      "requested_relative_sampling_rmse": 0.1,
+      "resource_censored": 0,
+      "selected_candidate_counts": {
+        "start_4": 20
+      },
+      "task_name": "terminal",
+      "work_units_median": 13706624.0,
+      "work_units_p90": 13714060.8
+    },
+    {
+      "bounded_interval_coverage": 1.0,
+      "clusters_complete": 20,
+      "clusters_planned": 20,
+      "combined_asymptotic_95_coverage": 0.95,
+      "empirical_relative_rmse_against_reference": 0.029519136682478537,
+      "empirical_rmse_against_reference": 0.008234826972171259,
+      "empirical_target_attainment_fraction": 1.0,
+      "model_id": "h012",
+      "reference": {
+        "probability": 0.27896571165846956,
+        "standard_error": 0.002526943059922059
+      },
+      "requested_relative_sampling_rmse": 0.1,
+      "resource_censored": 0,
+      "selected_candidate_counts": {
+        "start_4": 20
+      },
+      "task_name": "barrier",
+      "work_units_median": 13544000.0,
+      "work_units_p90": 13553766.4
+    },
+    {
+      "bounded_interval_coverage": 1.0,
+      "clusters_complete": 20,
+      "clusters_planned": 20,
+      "combined_asymptotic_95_coverage": 0.95,
+      "empirical_relative_rmse_against_reference": 0.03395444132442664,
+      "empirical_rmse_against_reference": 0.00849472326553903,
+      "empirical_target_attainment_fraction": 1.0,
+      "model_id": "h012",
+      "reference": {
+        "probability": 0.2501800334269665,
+        "standard_error": 0.00231871674753145
+      },
+      "requested_relative_sampling_rmse": 0.1,
+      "resource_censored": 0,
+      "selected_candidate_counts": {
+        "start_4": 20
+      },
+      "task_name": "terminal",
+      "work_units_median": 13743808.0,
+      "work_units_p90": 13750707.2
+    },
+    {
+      "bounded_interval_coverage": 1.0,
+      "clusters_complete": 20,
+      "clusters_planned": 20,
+      "combined_asymptotic_95_coverage": 0.95,
+      "empirical_relative_rmse_against_reference": 0.03901015418807646,
+      "empirical_rmse_against_reference": 0.010968696505685945,
+      "empirical_target_attainment_fraction": 1.0,
+      "model_id": "h030",
+      "reference": {
+        "probability": 0.2811754204508771,
+        "standard_error": 0.002486043817422118
+      },
+      "requested_relative_sampling_rmse": 0.1,
+      "resource_censored": 0,
+      "selected_candidate_counts": {
+        "start_4": 20
+      },
+      "task_name": "barrier",
+      "work_units_median": 13519808.0,
+      "work_units_p90": 13525721.6
+    },
+    {
+      "bounded_interval_coverage": 1.0,
+      "clusters_complete": 20,
+      "clusters_planned": 20,
+      "combined_asymptotic_95_coverage": 0.85,
+      "empirical_relative_rmse_against_reference": 0.040731057262812904,
+      "empirical_rmse_against_reference": 0.010433211137510423,
+      "empirical_target_attainment_fraction": 1.0,
+      "model_id": "h030",
+      "reference": {
+        "probability": 0.25614879255874,
+        "standard_error": 0.0022613852648974324
+      },
+      "requested_relative_sampling_rmse": 0.1,
+      "resource_censored": 0,
+      "selected_candidate_counts": {
+        "start_4": 20
+      },
+      "task_name": "terminal",
+      "work_units_median": 13680640.0,
+      "work_units_p90": 13688793.6
+    }
+  ],
+  "recomputed_gates": {
+    "across_cluster_relative_rmse": true,
+    "all_design_targets_attained": true,
+    "all_preparation_hashes_unique": true,
+    "all_runs_complete": true,
+    "complete_cluster_matrix": true,
+    "minimum_combined_asymptotic_coverage": true,
+    "minimum_empirical_target_attainment": true,
+    "no_final_samples_reused_from_selection": true,
+    "no_resource_censoring": true,
+    "selection_frozen_before_final": true
+  },
+  "record_count": 120,
+  "result_path": "results\\g11_v5_achieved_rmse_qualification_128_v2_2026-07-22.json",
+  "result_sha256": "a0b940d589df3791b3c7d47723ff05a6646a4c5769e491a7cb65cf9b4e159b5a",
+  "schema": "npi.g11.v5-result-audit.v1"
+}

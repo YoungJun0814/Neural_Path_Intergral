@@ -1,0 +1,4509 @@
+{
+  "aggregates": [
+    {
+      "clusters": 20,
+      "methods": {
+        "crude_mc": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.017081487034991596,
+          "p10_baseline_to_hybrid_work_ratio": 0.016934493832142523,
+          "p90_baseline_to_hybrid_work_ratio": 0.01715828589754363
+        },
+        "defensive_cem_mixture": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.5525009457670611,
+          "p10_baseline_to_hybrid_work_ratio": 0.5522596052488333,
+          "p90_baseline_to_hybrid_work_ratio": 0.5527406190975923
+        },
+        "pure_cem_slis": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.552342406303941,
+          "p10_baseline_to_hybrid_work_ratio": 0.5518817813379372,
+          "p90_baseline_to_hybrid_work_ratio": 0.5527908389859938
+        }
+      },
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "selection_work_fraction_median": 0.9173978819969743,
+      "task_name": "barrier"
+    },
+    {
+      "clusters": 20,
+      "methods": {
+        "crude_mc": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.019083630951918545,
+          "p10_baseline_to_hybrid_work_ratio": 0.018819220729841338,
+          "p90_baseline_to_hybrid_work_ratio": 0.01928297225581011
+        },
+        "defensive_cem_mixture": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.5453628593109212,
+          "p10_baseline_to_hybrid_work_ratio": 0.5449904656896962,
+          "p90_baseline_to_hybrid_work_ratio": 0.545762443507507
+        },
+        "pure_cem_slis": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.5446260155009804,
+          "p10_baseline_to_hybrid_work_ratio": 0.5443984993612813,
+          "p90_baseline_to_hybrid_work_ratio": 0.5449661548119296
+        }
+      },
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "selection_work_fraction_median": 0.9060635208202983,
+      "task_name": "terminal"
+    },
+    {
+      "clusters": 20,
+      "methods": {
+        "crude_mc": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.017186024851821913,
+          "p10_baseline_to_hybrid_work_ratio": 0.017067136433562242,
+          "p90_baseline_to_hybrid_work_ratio": 0.01733105531280303
+        },
+        "defensive_cem_mixture": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.5516679176423214,
+          "p10_baseline_to_hybrid_work_ratio": 0.5513222369401852,
+          "p90_baseline_to_hybrid_work_ratio": 0.5520330230771716
+        },
+        "pure_cem_slis": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.5516211774169199,
+          "p10_baseline_to_hybrid_work_ratio": 0.551145919679876,
+          "p90_baseline_to_hybrid_work_ratio": 0.5519796561858092
+        }
+      },
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "selection_work_fraction_median": 0.9169427062601792,
+      "task_name": "barrier"
+    },
+    {
+      "clusters": 20,
+      "methods": {
+        "crude_mc": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.019227546136799566,
+          "p10_baseline_to_hybrid_work_ratio": 0.01908134034025192,
+          "p90_baseline_to_hybrid_work_ratio": 0.019434607583955394
+        },
+        "defensive_cem_mixture": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.5430185657960116,
+          "p10_baseline_to_hybrid_work_ratio": 0.5427166718801307,
+          "p90_baseline_to_hybrid_work_ratio": 0.54332771596231
+        },
+        "pure_cem_slis": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.5424057152079595,
+          "p10_baseline_to_hybrid_work_ratio": 0.5421335719659154,
+          "p90_baseline_to_hybrid_work_ratio": 0.5426427380462724
+        }
+      },
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "selection_work_fraction_median": 0.9036121585222711,
+      "task_name": "terminal"
+    },
+    {
+      "clusters": 20,
+      "methods": {
+        "crude_mc": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.017070416084725416,
+          "p10_baseline_to_hybrid_work_ratio": 0.01689886434729505,
+          "p90_baseline_to_hybrid_work_ratio": 0.01717694044359971
+        },
+        "defensive_cem_mixture": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.5520620783550299,
+          "p10_baseline_to_hybrid_work_ratio": 0.551769036053079,
+          "p90_baseline_to_hybrid_work_ratio": 0.5522575642117152
+        },
+        "pure_cem_slis": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.5515752243466481,
+          "p10_baseline_to_hybrid_work_ratio": 0.551151370951185,
+          "p90_baseline_to_hybrid_work_ratio": 0.5519567138471538
+        }
+      },
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "selection_work_fraction_median": 0.9185834601820186,
+      "task_name": "barrier"
+    },
+    {
+      "clusters": 20,
+      "methods": {
+        "crude_mc": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.018808484935858412,
+          "p10_baseline_to_hybrid_work_ratio": 0.018714806901793505,
+          "p90_baseline_to_hybrid_work_ratio": 0.01906218399341904
+        },
+        "defensive_cem_mixture": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.5449101796407185,
+          "p10_baseline_to_hybrid_work_ratio": 0.5445856092734375,
+          "p90_baseline_to_hybrid_work_ratio": 0.545210130200843
+        },
+        "pure_cem_slis": {
+          "hybrid_cheaper_fraction": 0.0,
+          "median_baseline_to_hybrid_work_ratio": 0.5449101796407185,
+          "p10_baseline_to_hybrid_work_ratio": 0.5445856092734375,
+          "p90_baseline_to_hybrid_work_ratio": 0.545210130200843
+        }
+      },
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "selection_work_fraction_median": 0.9077844311377246,
+      "task_name": "terminal"
+    }
+  ],
+  "baseline_input": {
+    "canonical_json_sha256": "b065694cbd871f1aa88a09041a6dfe2ce77ecc2fb9bb1c3397a28f420855c115",
+    "path": "C:\\Users\\Jun\\Desktop\\Thesis\\Projects\\Neural_Path_Integral\\results\\g11_v5_baseline_qualification_128_v2_2026-07-22.json"
+  },
+  "dirty_worktree": false,
+  "g6_efficiency_passed": false,
+  "gates": {
+    "all_cells_rare_at_most_5_percent": false,
+    "complete_matched_matrix": true,
+    "hybrid_median_work_beats_crude_all_cells": false,
+    "hybrid_median_work_beats_defensive_cem_all_cells": false,
+    "hybrid_median_work_beats_pure_cem_all_cells": false
+  },
+  "hybrid_input": {
+    "canonical_json_sha256": "a0b6103e8421b8c0e7c8e8b1500db1eddfab9cbc136b32925f7faca1c8e74e87",
+    "path": "C:\\Users\\Jun\\Desktop\\Thesis\\Projects\\Neural_Path_Integral\\results\\g11_v5_achieved_rmse_qualification_128_v2_2026-07-22.json"
+  },
+  "minimum_final_samples": 128,
+  "projection_scope": "Held-out baseline variances projected to the hybrid sampling-variance target; CEM training work is included and no performance claim is made from this audit alone.",
+  "records": [
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.018709231258060295,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 256256.0,
+          "required_samples": 286,
+          "training_work": 0.0,
+          "variance_source": 0.18622305646001192
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5457077173242622,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7474432.0,
+          "required_samples": 150,
+          "training_work": 7340032.0,
+          "variance_source": 0.09754270573670638
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5449227146141338,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7463680.0,
+          "required_samples": 138,
+          "training_work": 7340032.0,
+          "variance_source": 0.0896089470901023
+        }
+      },
+      "cluster": 0,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13696768.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.018831441782261454,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 258048.0,
+          "required_samples": 288,
+          "training_work": 0.0,
+          "variance_source": 0.1870834424164912
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5456541030311522,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7477120.0,
+          "required_samples": 153,
+          "training_work": 7340032.0,
+          "variance_source": 0.09910579055689564
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5445425248703937,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7461888.0,
+          "required_samples": 136,
+          "training_work": 7340032.0,
+          "variance_source": 0.08793140152438984
+        }
+      },
+      "cluster": 1,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13703040.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01910048311887341,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 261632.0,
+          "required_samples": 292,
+          "training_work": 0.0,
+          "variance_source": 0.1897195106911032
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5457374337697289,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7475328.0,
+          "required_samples": 151,
+          "training_work": 7340032.0,
+          "variance_source": 0.09776540788414885
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5449524824086793,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7464576.0,
+          "required_samples": 139,
+          "training_work": 7340032.0,
+          "variance_source": 0.09001668986087163
+        }
+      },
+      "cluster": 2,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13697664.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019078020142058446,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 261632.0,
+          "required_samples": 292,
+          "training_work": 0.0,
+          "variance_source": 0.1897195106911032
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5448996163861899,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7472640.0,
+          "required_samples": 148,
+          "training_work": 7340032.0,
+          "variance_source": 0.09589857904683143
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5443769309028459,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7465472.0,
+          "required_samples": 140,
+          "training_work": 7340032.0,
+          "variance_source": 0.09061860458858562
+        }
+      },
+      "cluster": 3,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13713792.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019087997161080658,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 261632.0,
+          "required_samples": 292,
+          "training_work": 0.0,
+          "variance_source": 0.18980940370734908
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5453153161566262,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7474432.0,
+          "required_samples": 150,
+          "training_work": 7340032.0,
+          "variance_source": 0.09764705069412637
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5449230970368779,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7469056.0,
+          "required_samples": 144,
+          "training_work": 7340032.0,
+          "variance_source": 0.09317669297936984
+        }
+      },
+      "cluster": 4,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13706624.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.0190792666990255,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 261632.0,
+          "required_samples": 292,
+          "training_work": 0.0,
+          "variance_source": 0.19016830517914912
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5450005600567525,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7473536.0,
+          "required_samples": 149,
+          "training_work": 7340032.0,
+          "variance_source": 0.09684680390358895
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5446085203300601,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7468160.0,
+          "required_samples": 143,
+          "training_work": 7340032.0,
+          "variance_source": 0.09281823362680137
+        }
+      },
+      "cluster": 5,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13712896.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019084254556319093,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 261632.0,
+          "required_samples": 292,
+          "training_work": 0.0,
+          "variance_source": 0.1895995490216135
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5452737526142815,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7475328.0,
+          "required_samples": 151,
+          "training_work": 7340032.0,
+          "variance_source": 0.09828458076095054
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5444241111443083,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7463680.0,
+          "required_samples": 138,
+          "training_work": 7340032.0,
+          "variance_source": 0.08946792655766732
+        }
+      },
+      "cluster": 6,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13709312.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019086749463068448,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 261632.0,
+          "required_samples": 292,
+          "training_work": 0.0,
+          "variance_source": 0.18983935314402697
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5452143057241573,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7473536.0,
+          "required_samples": 149,
+          "training_work": 7340032.0,
+          "variance_source": 0.09679998888849589
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5445606499206275,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7464576.0,
+          "required_samples": 139,
+          "training_work": 7340032.0,
+          "variance_source": 0.09045914944967592
+        }
+      },
+      "cluster": 7,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13707520.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01922250658496946,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 263424.0,
+          "required_samples": 294,
+          "training_work": 0.0,
+          "variance_source": 0.1910015693668742
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5455530440305617,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7476224.0,
+          "required_samples": 152,
+          "training_work": 7340032.0,
+          "variance_source": 0.09850900215610377
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5448992172759709,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7467264.0,
+          "required_samples": 142,
+          "training_work": 7340032.0,
+          "variance_source": 0.09228519311062541
+        }
+      },
+      "cluster": 8,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13703936.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019202418497023532,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 263424.0,
+          "required_samples": 294,
+          "training_work": 0.0,
+          "variance_source": 0.1908532006250286
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.544786981917256,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7473536.0,
+          "required_samples": 149,
+          "training_work": 7340032.0,
+          "variance_source": 0.09644910162511548
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5442644671282214,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7466368.0,
+          "required_samples": 141,
+          "training_work": 7340032.0,
+          "variance_source": 0.09154633578247282
+        }
+      },
+      "cluster": 9,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13718272.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019284106720954774,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 264320.0,
+          "required_samples": 295,
+          "training_work": 0.0,
+          "variance_source": 0.19177008405721632
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5455767955697917,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7478016.0,
+          "required_samples": 154,
+          "training_work": 7340032.0,
+          "variance_source": 0.1002741267986486
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.544596247770421,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7464576.0,
+          "required_samples": 139,
+          "training_work": 7340032.0,
+          "variance_source": 0.0903641215119559
+        }
+      },
+      "cluster": 10,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13706624.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.0194662187383352,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 267008.0,
+          "required_samples": 298,
+          "training_work": 0.0,
+          "variance_source": 0.1937851830439232
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5450541246733855,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7476224.0,
+          "required_samples": 152,
+          "training_work": 7340032.0,
+          "variance_source": 0.09884973092379606
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.544400895856663,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7467264.0,
+          "required_samples": 142,
+          "training_work": 7340032.0,
+          "variance_source": 0.09188585060049675
+        }
+      },
+      "cluster": 11,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13716480.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019037561098701857,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 260736.0,
+          "required_samples": 291,
+          "training_work": 0.0,
+          "variance_source": 0.1890582462039061
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5457434181627866,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7474432.0,
+          "required_samples": 150,
+          "training_work": 7340032.0,
+          "variance_source": 0.09765060698682322
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5448929429247003,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7462784.0,
+          "required_samples": 137,
+          "training_work": 7340032.0,
+          "variance_source": 0.08906406327014986
+        }
+      },
+      "cluster": 12,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13695872.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019083007347517996,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 261632.0,
+          "required_samples": 292,
+          "training_work": 0.0,
+          "variance_source": 0.18992915674784838
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5453034702318156,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7476224.0,
+          "required_samples": 152,
+          "training_work": 7340032.0,
+          "variance_source": 0.09853038063412778
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5447806481127055,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7469056.0,
+          "required_samples": 144,
+          "training_work": 7340032.0,
+          "variance_source": 0.09329073086098448
+        }
+      },
+      "cluster": 13,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13710208.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019021383882715473,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 260736.0,
+          "required_samples": 291,
+          "training_work": 0.0,
+          "variance_source": 0.18944942928645547
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5454104024652162,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7476224.0,
+          "required_samples": 152,
+          "training_work": 7340032.0,
+          "variance_source": 0.09876682373692532
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5446260155009804,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7465472.0,
+          "required_samples": 140,
+          "training_work": 7340032.0,
+          "variance_source": 0.09105019641413194
+        }
+      },
+      "cluster": 14,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13707520.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01922250658496946,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 263424.0,
+          "required_samples": 294,
+          "training_work": 0.0,
+          "variance_source": 0.1908532006250286
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5452915133287254,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7472640.0,
+          "required_samples": 148,
+          "training_work": 7340032.0,
+          "variance_source": 0.09634409191125616
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5448992172759709,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7467264.0,
+          "required_samples": 142,
+          "training_work": 7340032.0,
+          "variance_source": 0.09186158167829307
+        }
+      },
+      "cluster": 15,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13703936.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01897213992654137,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 259840.0,
+          "required_samples": 290,
+          "training_work": 0.0,
+          "variance_source": 0.18830243180335562
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.545939681679268,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7477120.0,
+          "required_samples": 153,
+          "training_work": 7340032.0,
+          "variance_source": 0.09904478431945088
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5450892064411816,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7465472.0,
+          "required_samples": 140,
+          "training_work": 7340032.0,
+          "variance_source": 0.0911289302778841
+        }
+      },
+      "cluster": 16,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13695872.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01896965789203181,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 259840.0,
+          "required_samples": 290,
+          "training_work": 0.0,
+          "variance_source": 0.18872626159738753
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5459336716099913,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7478016.0,
+          "required_samples": 154,
+          "training_work": 7340032.0,
+          "variance_source": 0.09997987825227365
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5452141328623625,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7468160.0,
+          "required_samples": 143,
+          "training_work": 7340032.0,
+          "variance_source": 0.09264527903451986
+        }
+      },
+      "cluster": 17,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13697664.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01869822264147419,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 256256.0,
+          "required_samples": 286,
+          "training_work": 0.0,
+          "variance_source": 0.18613052577724432
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5455173766449672,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7476224.0,
+          "required_samples": 152,
+          "training_work": 7340032.0,
+          "variance_source": 0.09843024120748863
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5446020790331468,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7463680.0,
+          "required_samples": 138,
+          "training_work": 7340032.0,
+          "variance_source": 0.08965768471528296
+        }
+      },
+      "cluster": 18,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13704832.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01928284620412737,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 264320.0,
+          "required_samples": 295,
+          "training_work": 0.0,
+          "variance_source": 0.19150462974553462
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5452143057241573,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7473536.0,
+          "required_samples": 149,
+          "training_work": 7340032.0,
+          "variance_source": 0.09680493311270322
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5446260155009804,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7465472.0,
+          "required_samples": 140,
+          "training_work": 7340032.0,
+          "variance_source": 0.09060430587657088
+        }
+      },
+      "cluster": 19,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13707520.0,
+      "model_id": "h005",
+      "reference_probability": 0.2552008619113438,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017142586989409986,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.20353933717496794
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5523354765506808,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7477120.0,
+          "required_samples": 153,
+          "training_work": 7340032.0,
+          "variance_source": 0.11955849172021966
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5530635400907715,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7486976.0,
+          "required_samples": 164,
+          "training_work": 7340032.0,
+          "variance_source": 0.12814959327969214
+        }
+      },
+      "cluster": 0,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13537280.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017208774583963693,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232960.0,
+          "required_samples": 260,
+          "training_work": 0.0,
+          "variance_source": 0.203985650468235
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.552732602118003,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7482496.0,
+          "required_samples": 159,
+          "training_work": 7340032.0,
+          "variance_source": 0.12438065403974287
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5523354765506808,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7477120.0,
+          "required_samples": 153,
+          "training_work": 7340032.0,
+          "variance_source": 0.11950902673514419
+        }
+      },
+      "cluster": 1,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13537280.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017140318036568535,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.20279953877494963
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5523285495490385,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7478016.0,
+          "required_samples": 154,
+          "training_work": 7340032.0,
+          "variance_source": 0.12059139984789895
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5524609072172746,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7479808.0,
+          "required_samples": 156,
+          "training_work": 7340032.0,
+          "variance_source": 0.12219613247247009
+        }
+      },
+      "cluster": 2,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13539072.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017082052494679593,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 231168.0,
+          "required_samples": 258,
+          "training_work": 0.0,
+          "variance_source": 0.20266681720738533
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5527169543627335,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7479808.0,
+          "required_samples": 156,
+          "training_work": 7340032.0,
+          "variance_source": 0.12184563168827608
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5531142113974935,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7485184.0,
+          "required_samples": 162,
+          "training_work": 7340032.0,
+          "variance_source": 0.12712301052238012
+        }
+      },
+      "cluster": 3,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13532800.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.016941781534214457,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 229376.0,
+          "required_samples": 256,
+          "training_work": 0.0,
+          "variance_source": 0.20119458575581395
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5522623707149205,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7477120.0,
+          "required_samples": 153,
+          "training_work": 7340032.0,
+          "variance_source": 0.11949314132249296
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5525932648855106,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7481600.0,
+          "required_samples": 158,
+          "training_work": 7340032.0,
+          "variance_source": 0.12393721236440056
+        }
+      },
+      "cluster": 4,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13539072.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01715166881101945,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.20327579405385918
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5526280935442367,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7477120.0,
+          "required_samples": 153,
+          "training_work": 7340032.0,
+          "variance_source": 0.1198176626580897
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5527605388632407,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7478912.0,
+          "required_samples": 155,
+          "training_work": 7340032.0,
+          "variance_source": 0.12123368113840699
+        }
+      },
+      "cluster": 5,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13530112.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01701133773982771,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 230272.0,
+          "required_samples": 257,
+          "training_work": 0.0,
+          "variance_source": 0.20186657600842908
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5525044206783732,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7478912.0,
+          "required_samples": 155,
+          "training_work": 7340032.0,
+          "variance_source": 0.1213017672560324
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5521072688245251,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7473536.0,
+          "required_samples": 149,
+          "training_work": 7340032.0,
+          "variance_source": 0.11688216410596812
+        }
+      },
+      "cluster": 6,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13536384.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.016942902795768055,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 229376.0,
+          "required_samples": 256,
+          "training_work": 0.0,
+          "variance_source": 0.20054509390450467
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.552431287641703,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7478912.0,
+          "required_samples": 155,
+          "training_work": 7340032.0,
+          "variance_source": 0.12122643132681309
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5522327379995651,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7476224.0,
+          "required_samples": 152,
+          "training_work": 7340032.0,
+          "variance_source": 0.11910752906145146
+        }
+      },
+      "cluster": 7,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13538176.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.016868904513495122,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 228480.0,
+          "required_samples": 255,
+          "training_work": 0.0,
+          "variance_source": 0.19980928553392807
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5523739321085658,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7481600.0,
+          "required_samples": 158,
+          "training_work": 7340032.0,
+          "variance_source": 0.12369542851528031
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5518447115748091,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7474432.0,
+          "required_samples": 150,
+          "training_work": 7340032.0,
+          "variance_source": 0.1171334557647203
+        }
+      },
+      "cluster": 8,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13544448.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.0170147164529187,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 230272.0,
+          "required_samples": 257,
+          "training_work": 0.0,
+          "variance_source": 0.20183978581074893
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5526141565467408,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7478912.0,
+          "required_samples": 155,
+          "training_work": 7340032.0,
+          "variance_source": 0.12156214215133598
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.551885900200507,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7469056.0,
+          "required_samples": 144,
+          "training_work": 7340032.0,
+          "variance_source": 0.11290935283909427
+        }
+      },
+      "cluster": 9,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13533696.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017141452437905963,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.2031965858223368
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.552497470855749,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7479808.0,
+          "required_samples": 156,
+          "training_work": 7340032.0,
+          "variance_source": 0.12217068941712167
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5522327379995651,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7476224.0,
+          "required_samples": 152,
+          "training_work": 7340032.0,
+          "variance_source": 0.11877552566334659
+        }
+      },
+      "cluster": 10,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13538176.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.016868904513495122,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 228480.0,
+          "required_samples": 255,
+          "training_work": 0.0,
+          "variance_source": 0.20013698206959005
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.552506237242005,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7483392.0,
+          "required_samples": 160,
+          "training_work": 7340032.0,
+          "variance_source": 0.1250219143279601
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5516462538746504,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7471744.0,
+          "required_samples": 147,
+          "training_work": 7340032.0,
+          "variance_source": 0.11507458504729197
+        }
+      },
+      "cluster": 11,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13544448.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017132381429367908,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.2029055819103644
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5521389489997448,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7478912.0,
+          "required_samples": 155,
+          "training_work": 7340032.0,
+          "variance_source": 0.12119174778686054
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5526019863356737,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7485184.0,
+          "required_samples": 162,
+          "training_work": 7340032.0,
+          "variance_source": 0.1270923622933777
+        }
+      },
+      "cluster": 12,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13545344.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01701696967403848,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 230272.0,
+          "required_samples": 257,
+          "training_work": 0.0,
+          "variance_source": 0.2014639406845129
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5528197657920128,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7480704.0,
+          "required_samples": 157,
+          "training_work": 7340032.0,
+          "variance_source": 0.12275878545569432
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5524886963431015,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7476224.0,
+          "required_samples": 152,
+          "training_work": 7340032.0,
+          "variance_source": 0.11926162346619412
+        }
+      },
+      "cluster": 13,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13531904.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.0169485113305338,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 229376.0,
+          "required_samples": 256,
+          "training_work": 0.0,
+          "variance_source": 0.20059938214822529
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5522831309348163,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7474432.0,
+          "required_samples": 150,
+          "training_work": 7340032.0,
+          "variance_source": 0.1178506106861972
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5523493360572013,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7475328.0,
+          "required_samples": 151,
+          "training_work": 7340032.0,
+          "variance_source": 0.1181247441998558
+        }
+      },
+      "cluster": 14,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13533696.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.0170809215753036,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 231168.0,
+          "required_samples": 258,
+          "training_work": 0.0,
+          "variance_source": 0.20248069406930966
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5528127719138956,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7481600.0,
+          "required_samples": 158,
+          "training_work": 7340032.0,
+          "variance_source": 0.12383445967385077
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5522169258124314,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7473536.0,
+          "required_samples": 149,
+          "training_work": 7340032.0,
+          "variance_source": 0.11679971315725066
+        }
+      },
+      "cluster": 15,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13533696.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.0171973920438439,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232960.0,
+          "required_samples": 260,
+          "training_work": 0.0,
+          "variance_source": 0.2039594563533846
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.552234716054049,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7480704.0,
+          "required_samples": 157,
+          "training_work": 7340032.0,
+          "variance_source": 0.12269828372252266
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5523008598696022,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7481600.0,
+          "required_samples": 158,
+          "training_work": 7340032.0,
+          "variance_source": 0.12407963967460764
+        }
+      },
+      "cluster": 16,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13546240.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017153940770176932,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.20293207406662966
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5527012962437317,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7477120.0,
+          "required_samples": 153,
+          "training_work": 7340032.0,
+          "variance_source": 0.12013240474056923
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5524363705175513,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7473536.0,
+          "required_samples": 149,
+          "training_work": 7340032.0,
+          "variance_source": 0.11703441712539772
+        }
+      },
+      "cluster": 17,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13528320.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017082052494679593,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 231168.0,
+          "required_samples": 258,
+          "training_work": 0.0,
+          "variance_source": 0.20229420583050076
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5525845353511468,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7478016.0,
+          "required_samples": 154,
+          "training_work": 7340032.0,
+          "variance_source": 0.12071265577525948
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5527169543627335,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7479808.0,
+          "required_samples": 156,
+          "training_work": 7340032.0,
+          "variance_source": 0.12225873249851354
+        }
+      },
+      "cluster": 18,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13532800.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01707639939485628,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 231168.0,
+          "required_samples": 258,
+          "training_work": 0.0,
+          "variance_source": 0.20218747719983177
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5523354765506808,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7477120.0,
+          "required_samples": 153,
+          "training_work": 7340032.0,
+          "variance_source": 0.11947465275424946
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5521369137670197,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7474432.0,
+          "required_samples": 150,
+          "training_work": 7340032.0,
+          "variance_source": 0.1172591519198734
+        }
+      },
+      "cluster": 19,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13537280.0,
+      "model_id": "h005",
+      "reference_probability": 0.2803571521605308,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01929523951426656,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 265216.0,
+          "required_samples": 296,
+          "training_work": 0.0,
+          "variance_source": 0.1850149269572022
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5428741711986889,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7461888.0,
+          "required_samples": 136,
+          "training_work": 7340032.0,
+          "variance_source": 0.08505456591041724
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5423526782388438,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07649278240928235
+        }
+      },
+      "cluster": 0,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13745152.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019370527728085868,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 266112.0,
+          "required_samples": 297,
+          "training_work": 0.0,
+          "variance_source": 0.1853257841529234
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5432226446034586,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7462784.0,
+          "required_samples": 137,
+          "training_work": 7340032.0,
+          "variance_source": 0.08545989717297113
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5426356589147286,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07679124482635503
+        }
+      },
+      "cluster": 1,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13737984.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01962373102356338,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 269696.0,
+          "required_samples": 301,
+          "training_work": 0.0,
+          "variance_source": 0.18824176547335653
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5430753469311725,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7463680.0,
+          "required_samples": 138,
+          "training_work": 7340032.0,
+          "variance_source": 0.08625839872783138
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5424233957343765,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07604270610799958
+        }
+      },
+      "cluster": 2,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13743360.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01918737996233381,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 263424.0,
+          "required_samples": 294,
+          "training_work": 0.0,
+          "variance_source": 0.18395243911729192
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5435771690689739,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7462784.0,
+          "required_samples": 137,
+          "training_work": 7340032.0,
+          "variance_source": 0.08539148595166829
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5429898002946167,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07859552126620134
+        }
+      },
+      "cluster": 3,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13729024.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019105906901787626,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 262528.0,
+          "required_samples": 293,
+          "training_work": 0.0,
+          "variance_source": 0.18326035714779612
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5432467931699411,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7464576.0,
+          "required_samples": 139,
+          "training_work": 7340032.0,
+          "variance_source": 0.0865132661028043
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5425295065627067,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07589345743140895
+        }
+      },
+      "cluster": 4,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13740672.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019357902381794818,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 266112.0,
+          "required_samples": 297,
+          "training_work": 0.0,
+          "variance_source": 0.1857906728773729
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5429989385277193,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7464576.0,
+          "required_samples": 139,
+          "training_work": 7340032.0,
+          "variance_source": 0.08651569127686387
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5422819791802455,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07705721995130627
+        }
+      },
+      "cluster": 5,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13746944.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01915487714072971,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 263424.0,
+          "required_samples": 294,
+          "training_work": 0.0,
+          "variance_source": 0.1835124405765027
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5427215189873418,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7463680.0,
+          "required_samples": 138,
+          "training_work": 7340032.0,
+          "variance_source": 0.0859727238161155
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5420699925539836,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07832432170711644
+        }
+      },
+      "cluster": 6,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13752320.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019434480831042995,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 267008.0,
+          "required_samples": 298,
+          "training_work": 0.0,
+          "variance_source": 0.18625388511886368
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5433176503470443,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7464576.0,
+          "required_samples": 139,
+          "training_work": 7340032.0,
+          "variance_source": 0.08669678992651685
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5426002701821401,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07742715491179503
+        }
+      },
+      "cluster": 7,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13738880.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019157373447768695,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 263424.0,
+          "required_samples": 294,
+          "training_work": 0.0,
+          "variance_source": 0.18395243911729192
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5428574088209558,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7464576.0,
+          "required_samples": 139,
+          "training_work": 7340032.0,
+          "variance_source": 0.08682060118959516
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5421406363450189,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07505181110220205
+        }
+      },
+      "cluster": 8,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13750528.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019354117986575933,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 266112.0,
+          "required_samples": 297,
+          "training_work": 0.0,
+          "variance_source": 0.18554294085332357
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5428927843305188,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7464576.0,
+          "required_samples": 139,
+          "training_work": 7340032.0,
+          "variance_source": 0.08679715177596535
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5421759651458308,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07520830658958225
+        }
+      },
+      "cluster": 9,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13749632.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019435748360166965,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 267008.0,
+          "required_samples": 298,
+          "training_work": 0.0,
+          "variance_source": 0.18606880140022242
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5434183064997018,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7465472.0,
+          "required_samples": 140,
+          "training_work": 7340032.0,
+          "variance_source": 0.08705350874535644
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5426356589147286,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07834920106330874
+        }
+      },
+      "cluster": 10,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13737984.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019296497387708725,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 265216.0,
+          "required_samples": 296,
+          "training_work": 0.0,
+          "variance_source": 0.18495266610563352
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5431051342466263,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7464576.0,
+          "required_samples": 139,
+          "training_work": 7340032.0,
+          "variance_source": 0.0864811947634576
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5423880346815426,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07623963787452387
+        }
+      },
+      "cluster": 11,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13744256.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01930278921577761,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 265216.0,
+          "required_samples": 296,
+          "training_work": 0.0,
+          "variance_source": 0.18523260523007842
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5430213709452032,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7460992.0,
+          "required_samples": 135,
+          "training_work": 7340032.0,
+          "variance_source": 0.08427104215827284
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5425648860651003,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07598331336409021
+        }
+      },
+      "cluster": 12,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13739776.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019039457505868326,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 261632.0,
+          "required_samples": 292,
+          "training_work": 0.0,
+          "variance_source": 0.18246952288099708
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5430157606468199,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7461888.0,
+          "required_samples": 136,
+          "training_work": 7340032.0,
+          "variance_source": 0.08496496247460707
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5424941316740564,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07648703591526654
+        }
+      },
+      "cluster": 13,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13741568.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019085993988516764,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 262528.0,
+          "required_samples": 293,
+          "training_work": 0.0,
+          "variance_source": 0.1833864584704324
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5424851806701966,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7461888.0,
+          "required_samples": 136,
+          "training_work": 7340032.0,
+          "variance_source": 0.08475350226439445
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5419640613804078,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07567580000897962
+        }
+      },
+      "cluster": 14,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13755008.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01917736735188326,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 263424.0,
+          "required_samples": 294,
+          "training_work": 0.0,
+          "variance_source": 0.18379546442959166
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5432935124960396,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7462784.0,
+          "required_samples": 137,
+          "training_work": 7340032.0,
+          "variance_source": 0.08518133374078089
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5427064502301657,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07802582197113897
+        }
+      },
+      "cluster": 15,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13736192.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019227546136799566,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 264320.0,
+          "required_samples": 295,
+          "training_work": 0.0,
+          "variance_source": 0.18457847510925007
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5426730479152312,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7460096.0,
+          "required_samples": 134,
+          "training_work": 7340032.0,
+          "variance_source": 0.08352304093027275
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5422819791802455,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.0764629358720884
+        }
+      },
+      "cluster": 16,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13746944.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019227546136799566,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 264320.0,
+          "required_samples": 295,
+          "training_work": 0.0,
+          "variance_source": 0.1842658296650396
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.542868582282724,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7462784.0,
+          "required_samples": 137,
+          "training_work": 7340032.0,
+          "variance_source": 0.0852785142789416
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5422819791802455,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.0774434787828662
+        }
+      },
+      "cluster": 17,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13746944.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.0190307713793585,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 261632.0,
+          "required_samples": 292,
+          "training_work": 0.0,
+          "variance_source": 0.18224725477033166
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5428332014338252,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7462784.0,
+          "required_samples": 137,
+          "training_work": 7340032.0,
+          "variance_source": 0.08532441630746679
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5422466365625437,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07766326008716815
+        }
+      },
+      "cluster": 18,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13747840.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01910964519976148,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 262528.0,
+          "required_samples": 293,
+          "training_work": 0.0,
+          "variance_source": 0.18297619328629525
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5432878652355396,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7463680.0,
+          "required_samples": 138,
+          "training_work": 7340032.0,
+          "variance_source": 0.08615295892005105
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5426356589147286,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07686737906821411
+        }
+      },
+      "cluster": 19,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13737984.0,
+      "model_id": "h012",
+      "reference_probability": 0.2501800334269665,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01706736221365389,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 231168.0,
+          "required_samples": 258,
+          "training_work": 0.0,
+          "variance_source": 0.20059938214822529
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.551381643607772,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7468160.0,
+          "required_samples": 143,
+          "training_work": 7340032.0,
+          "variance_source": 0.11072338833419511
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5512493384743328,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7466368.0,
+          "required_samples": 141,
+          "training_work": 7340032.0,
+          "variance_source": 0.10896986044631628
+        }
+      },
+      "cluster": 0,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13544448.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01713804968427421,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.200978565338308
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5516599236208266,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7469952.0,
+          "required_samples": 145,
+          "training_work": 7340032.0,
+          "variance_source": 0.11227645041111324
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5516599236208266,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7469952.0,
+          "required_samples": 145,
+          "training_work": 7340032.0,
+          "variance_source": 0.11210932693306043
+        }
+      },
+      "cluster": 1,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13540864.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017006834875828363,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 230272.0,
+          "required_samples": 257,
+          "training_work": 0.0,
+          "variance_source": 0.19931572895088467
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5518949527797998,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7472640.0,
+          "required_samples": 148,
+          "training_work": 7340032.0,
+          "variance_source": 0.11443104256994893
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5517626038702602,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7470848.0,
+          "required_samples": 146,
+          "training_work": 7340032.0,
+          "variance_source": 0.11329283216749009
+        }
+      },
+      "cluster": 2,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13539968.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.0172715326949074,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 233856.0,
+          "required_samples": 261,
+          "training_work": 0.0,
+          "variance_source": 0.203037968181337
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5520273016893393,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7474432.0,
+          "required_samples": 150,
+          "training_work": 7340032.0,
+          "variance_source": 0.11643722897435915
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5519611272345696,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7473536.0,
+          "required_samples": 149,
+          "training_work": 7340032.0,
+          "variance_source": 0.11568365240269853
+        }
+      },
+      "cluster": 3,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13539968.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017144856543037088,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.2013293563581056
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5522762090291832,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7475328.0,
+          "required_samples": 151,
+          "training_work": 7340032.0,
+          "variance_source": 0.11701452022423975
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5516804418134019,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7467264.0,
+          "required_samples": 142,
+          "training_work": 7340032.0,
+          "variance_source": 0.11011768153818208
+        }
+      },
+      "cluster": 4,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13535488.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017065104412737408,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 231168.0,
+          "required_samples": 258,
+          "training_work": 0.0,
+          "variance_source": 0.20062651509353255
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5517717093451763,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7474432.0,
+          "required_samples": 150,
+          "training_work": 7340032.0,
+          "variance_source": 0.11606115965523188
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.551176415005197,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7466368.0,
+          "required_samples": 141,
+          "training_work": 7340032.0,
+          "variance_source": 0.10897572481062204
+        }
+      },
+      "cluster": 5,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13546240.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017183752856090792,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232960.0,
+          "required_samples": 260,
+          "training_work": 0.0,
+          "variance_source": 0.20167888815292528
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5513341012519591,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7474432.0,
+          "required_samples": 150,
+          "training_work": 7340032.0,
+          "variance_source": 0.1162956726382272
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5508053703948487,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7467264.0,
+          "required_samples": 142,
+          "training_work": 7340032.0,
+          "variance_source": 0.10976178630456984
+        }
+      },
+      "cluster": 6,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13556992.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017261252409206,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 233856.0,
+          "required_samples": 261,
+          "training_work": 0.0,
+          "variance_source": 0.20264025054076634
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5516325913608707,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7473536.0,
+          "required_samples": 149,
+          "training_work": 7340032.0,
+          "variance_source": 0.1157233276998663
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5516325913608707,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7473536.0,
+          "required_samples": 149,
+          "training_work": 7340032.0,
+          "variance_source": 0.11578063376950559
+        }
+      },
+      "cluster": 7,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13548032.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01712784952433137,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.2013562881254578
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.551529980822099,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7472640.0,
+          "required_samples": 148,
+          "training_work": 7340032.0,
+          "variance_source": 0.1146515788956158
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.551529980822099,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7472640.0,
+          "required_samples": 148,
+          "training_work": 7340032.0,
+          "variance_source": 0.11465786651871596
+        }
+      },
+      "cluster": 8,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13548928.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01711766149895198,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.20108663515534395
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5510697358234039,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7470848.0,
+          "required_samples": 146,
+          "training_work": 7340032.0,
+          "variance_source": 0.11300508492760425
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5508714617519874,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7468160.0,
+          "required_samples": 143,
+          "training_work": 7340032.0,
+          "variance_source": 0.11058146187661438
+        }
+      },
+      "cluster": 9,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13556992.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01719170641855193,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232960.0,
+          "required_samples": 260,
+          "training_work": 0.0,
+          "variance_source": 0.20186657600842908
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5515892882444623,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7474432.0,
+          "required_samples": 150,
+          "training_work": 7340032.0,
+          "variance_source": 0.11628473212233154
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.551258678505644,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7469952.0,
+          "required_samples": 145,
+          "training_work": 7340032.0,
+          "variance_source": 0.1123789747655237
+        }
+      },
+      "cluster": 10,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13550720.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017075269223859994,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 231168.0,
+          "required_samples": 258,
+          "training_work": 0.0,
+          "variance_source": 0.20019149384437182
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5519680051433812,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7472640.0,
+          "required_samples": 148,
+          "training_work": 7340032.0,
+          "variance_source": 0.11502831987372844
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5519680051433812,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7472640.0,
+          "required_samples": 148,
+          "training_work": 7340032.0,
+          "variance_source": 0.11446248343403036
+        }
+      },
+      "cluster": 11,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13538176.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01733082600190885,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 234752.0,
+          "required_samples": 262,
+          "training_work": 0.0,
+          "variance_source": 0.20340765875235572
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.551675911663816,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7472640.0,
+          "required_samples": 148,
+          "training_work": 7340032.0,
+          "variance_source": 0.11468114569855076
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.551609763472969,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7471744.0,
+          "required_samples": 147,
+          "training_work": 7340032.0,
+          "variance_source": 0.11362573948927264
+        }
+      },
+      "cluster": 12,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13545344.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01727953694245829,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 233856.0,
+          "required_samples": 261,
+          "training_work": 0.0,
+          "variance_source": 0.2030644230824254
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5520845155676616,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7471744.0,
+          "required_samples": 147,
+          "training_work": 7340032.0,
+          "variance_source": 0.11431952163987863
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5520845155676616,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7471744.0,
+          "required_samples": 147,
+          "training_work": 7340032.0,
+          "variance_source": 0.11379496024853547
+        }
+      },
+      "cluster": 13,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13533696.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.0172715326949074,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 233856.0,
+          "required_samples": 261,
+          "training_work": 0.0,
+          "variance_source": 0.2030644230824254
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5518949527797998,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7472640.0,
+          "required_samples": 148,
+          "training_work": 7340032.0,
+          "variance_source": 0.11475163054276377
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5522258250536486,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7477120.0,
+          "required_samples": 153,
+          "training_work": 7340032.0,
+          "variance_source": 0.11864969379058389
+        }
+      },
+      "cluster": 14,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13539968.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017341149773071104,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 234752.0,
+          "required_samples": 262,
+          "training_work": 0.0,
+          "variance_source": 0.20348668815902918
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5519383509833585,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7471744.0,
+          "required_samples": 147,
+          "training_work": 7340032.0,
+          "variance_source": 0.11435528270547814
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5518059757942512,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7469952.0,
+          "required_samples": 145,
+          "training_work": 7340032.0,
+          "variance_source": 0.11238962894870755
+        }
+      },
+      "cluster": 15,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13537280.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01718829684755303,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232960.0,
+          "required_samples": 260,
+          "training_work": 0.0,
+          "variance_source": 0.20162519599203443
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5512154581342198,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7470848.0,
+          "required_samples": 146,
+          "training_work": 7340032.0,
+          "variance_source": 0.11344928469888872
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.551347675802278,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7472640.0,
+          "required_samples": 148,
+          "training_work": 7340032.0,
+          "variance_source": 0.11481844368251078
+        }
+      },
+      "cluster": 16,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13553408.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017131248228290655,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.20151772225782824
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.551705565529623,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7473536.0,
+          "required_samples": 149,
+          "training_work": 7340032.0,
+          "variance_source": 0.11567154470073543
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.55144099026741,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7469952.0,
+          "required_samples": 145,
+          "training_work": 7340032.0,
+          "variance_source": 0.11220698638457305
+        }
+      },
+      "cluster": 17,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13546240.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017333119110850684,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 234752.0,
+          "required_samples": 262,
+          "training_work": 0.0,
+          "variance_source": 0.20317016817642525
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5515504352181761,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7469952.0,
+          "required_samples": 145,
+          "training_work": 7340032.0,
+          "variance_source": 0.1125196315015644
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5518150629908609,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7473536.0,
+          "required_samples": 149,
+          "training_work": 7340032.0,
+          "variance_source": 0.11568325822354465
+        }
+      },
+      "cluster": 18,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13543552.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01720080522450831,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232960.0,
+          "required_samples": 260,
+          "training_work": 0.0,
+          "variance_source": 0.20157147402700207
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5516165921613473,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7470848.0,
+          "required_samples": 146,
+          "training_work": 7340032.0,
+          "variance_source": 0.11353749399963599
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.551484278275005,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7469056.0,
+          "required_samples": 144,
+          "training_work": 7340032.0,
+          "variance_source": 0.1120315145853042
+        }
+      },
+      "cluster": 19,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13543552.0,
+      "model_id": "h012",
+      "reference_probability": 0.27896571165846956,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.018877111502303458,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 258048.0,
+          "required_samples": 288,
+          "training_work": 0.0,
+          "variance_source": 0.18881689226613524
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.545338776733211,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.08092211107953867
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.545338776733211,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07042769170567705
+        }
+      },
+      "cluster": 0,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13669888.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.018788167849694656,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 257152.0,
+          "required_samples": 287,
+          "training_work": 0.0,
+          "variance_source": 0.1879988021119453
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5446604756427162,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.08020730318104342
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5446604756427162,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06869097224491513
+        }
+      },
+      "cluster": 1,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13686912.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.018739878874109574,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 256256.0,
+          "required_samples": 286,
+          "training_work": 0.0,
+          "variance_source": 0.1875724687700284
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5451601127013694,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.08002977326119559
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5451601127013694,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06952581478669792
+        }
+      },
+      "cluster": 2,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13674368.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.018796781437125747,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 257152.0,
+          "required_samples": 287,
+          "training_work": 0.0,
+          "variance_source": 0.1881203434009339
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5449101796407185,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07835169428454039
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5449101796407185,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.0693056777802757
+        }
+      },
+      "cluster": 3,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13680640.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01865357643758766,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 255360.0,
+          "required_samples": 285,
+          "training_work": 0.0,
+          "variance_source": 0.18662324784432605
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5445535296867695,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.080861864773128
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5445535296867695,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06949917143148436
+        }
+      },
+      "cluster": 4,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13689600.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.018927769461077843,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 258944.0,
+          "required_samples": 289,
+          "training_work": 0.0,
+          "variance_source": 0.18956953997665263
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5449101796407185,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.08036748394998974
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5449101796407185,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06868535117795407
+        }
+      },
+      "cluster": 5,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13680640.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019240118170599455,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 263424.0,
+          "required_samples": 294,
+          "training_work": 0.0,
+          "variance_source": 0.19276746475004577
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5444822557122022,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07971987845539012
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5444822557122022,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06966704563857888
+        }
+      },
+      "cluster": 6,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13691392.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01887216355875084,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 258048.0,
+          "required_samples": 288,
+          "training_work": 0.0,
+          "variance_source": 0.18848425196850394
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.545195836141691,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.08014148188990888
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.545195836141691,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06871067070964586
+        }
+      },
+      "cluster": 7,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13673472.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01898455984812352,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 259840.0,
+          "required_samples": 290,
+          "training_work": 0.0,
+          "variance_source": 0.19004879057178173
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5446604756427162,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.0803026476367535
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5446604756427162,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06983275526485905
+        }
+      },
+      "cluster": 8,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13686912.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.018799243912937698,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 257152.0,
+          "required_samples": 287,
+          "training_work": 0.0,
+          "variance_source": 0.18815071009559262
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5449815656990998,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07892670643959117
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5449815656990998,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06951848766382185
+        }
+      },
+      "cluster": 9,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13678848.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.018804170800651453,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 257152.0,
+          "required_samples": 287,
+          "training_work": 0.0,
+          "variance_source": 0.18821142113180392
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5451243939422303,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07986527558869091
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5451243939422303,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06877329605578023
+        }
+      },
+      "cluster": 10,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13675264.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01866579341317365,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 255360.0,
+          "required_samples": 285,
+          "training_work": 0.0,
+          "variance_source": 0.18646947710183576
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5449101796407185,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.08049319151245969
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5449101796407185,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06863000322053693
+        }
+      },
+      "cluster": 11,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13680640.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.018800475392807343,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 257152.0,
+          "required_samples": 287,
+          "training_work": 0.0,
+          "variance_source": 0.18796839816210972
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5450172657427077,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07990008585634395
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5450172657427077,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06930472438003626
+        }
+      },
+      "cluster": 12,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13677952.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019115487847076097,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 261632.0,
+          "required_samples": 292,
+          "training_work": 0.0,
+          "variance_source": 0.19144555793710516
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5446604756427162,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.08080537289584461
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5446604756427162,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06922668054730863
+        }
+      },
+      "cluster": 13,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13686912.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01881279907106537,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 257152.0,
+          "required_samples": 287,
+          "training_work": 0.0,
+          "variance_source": 0.18769442731699781
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.545374523593254,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.08026005768362536
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.545374523593254,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06979727309284416
+        }
+      },
+      "cluster": 14,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13668992.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.018924051224965155,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 258944.0,
+          "required_samples": 289,
+          "training_work": 0.0,
+          "variance_source": 0.1891185101779951
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5448031356114535,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.0792604609649521
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5448031356114535,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07000694293901241
+        }
+      },
+      "cluster": 15,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13683328.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.018862275449101795,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 258048.0,
+          "required_samples": 288,
+          "training_work": 0.0,
+          "variance_source": 0.18848425196850394
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5449101796407185,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07995187890041844
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5449101796407185,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07097574458969619
+        }
+      },
+      "cluster": 16,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13680640.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01872025284497349,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 256256.0,
+          "required_samples": 286,
+          "training_work": 0.0,
+          "variance_source": 0.18751144479033144
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5445891736719561,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.08066787383455756
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5445891736719561,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07052756510477297
+        }
+      },
+      "cluster": 17,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13688704.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01879431960633899,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 257152.0,
+          "required_samples": 287,
+          "training_work": 0.0,
+          "variance_source": 0.18830243180335562
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5448388122813255,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.07932442692146231
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5448388122813255,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06863815307145915
+        }
+      },
+      "cluster": 18,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13682432.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.019056261343012703,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 260736.0,
+          "required_samples": 291,
+          "training_work": 0.0,
+          "variance_source": 0.19028770056995056
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5448388122813255,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.0821592647570649
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5448388122813255,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.06908759025149722
+        }
+      },
+      "cluster": 19,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13682432.0,
+      "model_id": "h030",
+      "reference_probability": 0.25614879255874,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "terminal"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017167585175084748,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.20466408214092924
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5520803742211616,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7462784.0,
+          "required_samples": 137,
+          "training_work": 7340032.0,
+          "variance_source": 0.10813233982862178
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5519478059958715,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7460992.0,
+          "required_samples": 135,
+          "training_work": 7340032.0,
+          "variance_source": 0.10594827431695739
+        }
+      },
+      "cluster": 0,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13517568.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.016899088301286603,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 228480.0,
+          "required_samples": 255,
+          "training_work": 0.0,
+          "variance_source": 0.20122155477834303
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5521694263777254,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7465472.0,
+          "required_samples": 140,
+          "training_work": 7340032.0,
+          "variance_source": 0.10997381388078438
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5520368845086957,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7463680.0,
+          "required_samples": 138,
+          "training_work": 7340032.0,
+          "variance_source": 0.10896361339710596
+        }
+      },
+      "cluster": 1,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13520256.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.016958616055796877,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 229376.0,
+          "required_samples": 256,
+          "training_work": 0.0,
+          "variance_source": 0.20183978581074893
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5519499569410139,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7465472.0,
+          "required_samples": 140,
+          "training_work": 7340032.0,
+          "variance_source": 0.11025754076801857
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5511550218133985,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.10007232376801914
+        }
+      },
+      "cluster": 2,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13525632.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017163034629002025,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.2041165092769563
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5520003029327678,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7463680.0,
+          "required_samples": 138,
+          "training_work": 7340032.0,
+          "variance_source": 0.10837175167367136
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.552066569475737,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7464576.0,
+          "required_samples": 139,
+          "training_work": 7340032.0,
+          "variance_source": 0.109799633638908
+        }
+      },
+      "cluster": 3,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13521152.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017160760260487656,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.203985650468235
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5521921853702862,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7467264.0,
+          "required_samples": 142,
+          "training_work": 7340032.0,
+          "variance_source": 0.11221663732294503
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5516621232772982,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7460096.0,
+          "required_samples": 134,
+          "training_work": 7340032.0,
+          "variance_source": 0.1056481921346787
+        }
+      },
+      "cluster": 4,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13522944.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017209913666751772,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232960.0,
+          "required_samples": 260,
+          "training_work": 0.0,
+          "variance_source": 0.20507907500700995
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5515115410437529,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7465472.0,
+          "required_samples": 140,
+          "training_work": 7340032.0,
+          "variance_source": 0.11068148726834998
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5507172373360567,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.10006079482293538
+        }
+      },
+      "cluster": 5,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13536384.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01710016759300465,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 231168.0,
+          "required_samples": 258,
+          "training_work": 0.0,
+          "variance_source": 0.20377588892044154
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5520437824888982,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7462784.0,
+          "required_samples": 137,
+          "training_work": 7340032.0,
+          "variance_source": 0.10792576139356967
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5514472650147235,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.09857578974120666
+        }
+      },
+      "cluster": 6,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13518464.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01697210778046124,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 229376.0,
+          "required_samples": 256,
+          "training_work": 0.0,
+          "variance_source": 0.20229420583050076
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5521901785291471,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7462784.0,
+          "required_samples": 137,
+          "training_work": 7340032.0,
+          "variance_source": 0.10812983926489017
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5519249893450774,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7459200.0,
+          "required_samples": 133,
+          "training_work": 7340032.0,
+          "variance_source": 0.10438607099639326
+        }
+      },
+      "cluster": 7,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13514880.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01689684876137106,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 228480.0,
+          "required_samples": 255,
+          "training_work": 0.0,
+          "variance_source": 0.20127547047029504
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.551963726204788,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7463680.0,
+          "required_samples": 138,
+          "training_work": 7340032.0,
+          "variance_source": 0.10834696794670752
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5517649397487718,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7460992.0,
+          "required_samples": 135,
+          "training_work": 7340032.0,
+          "variance_source": 0.10619211989627261
+        }
+      },
+      "cluster": 8,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13522048.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01695973954685696,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 229376.0,
+          "required_samples": 256,
+          "training_work": 0.0,
+          "variance_source": 0.20213406817828503
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5517877761162954,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7462784.0,
+          "required_samples": 137,
+          "training_work": 7340032.0,
+          "variance_source": 0.10823155858625312
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5511915352728511,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.10114282355924603
+        }
+      },
+      "cluster": 9,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13524736.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01716530960045446,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.2040641881065739
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5518746449536073,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7460992.0,
+          "required_samples": 135,
+          "training_work": 7340032.0,
+          "variance_source": 0.10620590055108765
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5514769929937512,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7455616.0,
+          "required_samples": 129,
+          "training_work": 7340032.0,
+          "variance_source": 0.10145470886737375
+        }
+      },
+      "cluster": 10,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13519360.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017040664576446183,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 230272.0,
+          "required_samples": 257,
+          "training_work": 0.0,
+          "variance_source": 0.2024008152446038
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5523297117579639,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7463680.0,
+          "required_samples": 138,
+          "training_work": 7340032.0,
+          "variance_source": 0.1089203478746618
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5516666508795028,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.09906117450020667
+        }
+      },
+      "cluster": 11,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13513088.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01703953475155809,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 230272.0,
+          "required_samples": 257,
+          "training_work": 0.0,
+          "variance_source": 0.20293207406662966
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5522267896720908,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7462784.0,
+          "required_samples": 137,
+          "training_work": 7340032.0,
+          "variance_source": 0.10783190388640433
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.551630074447328,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.09972443017162691
+        }
+      },
+      "cluster": 12,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13513984.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01723615425411016,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232960.0,
+          "required_samples": 260,
+          "training_work": 0.0,
+          "variance_source": 0.20515667381489197
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5522198651412986,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7463680.0,
+          "required_samples": 138,
+          "training_work": 7340032.0,
+          "variance_source": 0.10834944230043111
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5516895219334798,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7456512.0,
+          "required_samples": 130,
+          "training_work": 7340032.0,
+          "variance_source": 0.10273906069112358
+        }
+      },
+      "cluster": 13,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13515776.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017160760260487656,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.20450796804781443
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5516621232772982,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7460096.0,
+          "required_samples": 134,
+          "training_work": 7340032.0,
+          "variance_source": 0.1058732965133961
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5512645767075571,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.10101820105735383
+        }
+      },
+      "cluster": 14,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13522944.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.016903569162586767,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 228480.0,
+          "required_samples": 255,
+          "training_work": 0.0,
+          "variance_source": 0.2014639406845129
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5522495478176876,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7464576.0,
+          "required_samples": 139,
+          "training_work": 7340032.0,
+          "variance_source": 0.10967471476128683
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5515203742459682,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.099265617650159
+        }
+      },
+      "cluster": 15,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13516672.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01683728065606682,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 227584.0,
+          "required_samples": 254,
+          "training_work": 0.0,
+          "variance_source": 0.20021873855520966
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5522495478176876,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7464576.0,
+          "required_samples": 139,
+          "training_work": 7340032.0,
+          "variance_source": 0.10982938774002152
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5515203742459682,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.09936303486246355
+        }
+      },
+      "cluster": 16,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13516672.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.016963110913376437,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 229376.0,
+          "required_samples": 256,
+          "training_work": 0.0,
+          "variance_source": 0.20226753484938656
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.551963726204788,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7463680.0,
+          "required_samples": 138,
+          "training_work": 7340032.0,
+          "variance_source": 0.10848815830232711
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5513011046847341,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.09874759429462326
+        }
+      },
+      "cluster": 17,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13522048.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.017156213331314583,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.2042993986656805
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.551780915250388,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7463680.0,
+          "required_samples": 138,
+          "training_work": 7340032.0,
+          "variance_source": 0.10895648425675454
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5511185131912638,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.0992219430312794
+        }
+      },
+      "cluster": 18,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13526528.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    },
+    {
+      "baseline_projections": {
+        "crude_mc": {
+          "baseline_to_hybrid_work_ratio": 0.01717327675213837,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 232064.0,
+          "required_samples": 259,
+          "training_work": 0.0,
+          "variance_source": 0.20440374296503044
+        },
+        "defensive_cem_mixture": {
+          "baseline_to_hybrid_work_ratio": 0.5523960178458099,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7464576.0,
+          "required_samples": 139,
+          "training_work": 7340032.0,
+          "variance_source": 0.1093638024652116
+        },
+        "pure_cem_slis": {
+          "baseline_to_hybrid_work_ratio": 0.5516666508795028,
+          "cost_per_sample": 896.0,
+          "projected_total_work": 7454720.0,
+          "required_samples": 128,
+          "training_work": 7340032.0,
+          "variance_source": 0.10075123321189425
+        }
+      },
+      "cluster": 19,
+      "hybrid_selected_candidate": "start_4",
+      "hybrid_selection_work": 12419072.0,
+      "hybrid_total_work": 13513088.0,
+      "model_id": "h030",
+      "reference_probability": 0.2811754204508771,
+      "requested_relative_sampling_rmse": 0.1,
+      "task_name": "barrier"
+    }
+  ],
+  "schema": "npi.g11.v5-g6-efficiency-audit.v1",
+  "source_commit": "fd709ce4d89e2fb313b004308de24f09cbcdd932"
+}
