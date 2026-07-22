@@ -32,9 +32,7 @@ from src.path_integral.stable_gaussian import (
     scaled_normal_cdf_difference,
 )
 
-RBergomiPathTask: TypeAlias = (
-    TerminalThresholdTask | DiscreteBarrierHitTask | DownsideExcursionTask
-)
+RBergomiPathTask: TypeAlias = TerminalThresholdTask | DiscreteBarrierHitTask | DownsideExcursionTask
 
 
 @dataclass(frozen=True)
@@ -123,18 +121,12 @@ def scalar_task_threshold(
             slope_tolerance=slope_tolerance,
         ).combined
     if isinstance(task, TerminalThresholdTask):
-        return (
-            math.log(task.level) - log_spot_intercept[:, -1]
-        ) / log_spot_slope[:, -1]
+        return (math.log(task.level) - log_spot_intercept[:, -1]) / log_spot_slope[:, -1]
     if isinstance(task, DiscreteBarrierHitTask):
-        candidates = (
-            math.log(task.barrier) - log_spot_intercept[:, 1:]
-        ) / monitoring_slope
+        candidates = (math.log(task.barrier) - log_spot_intercept[:, 1:]) / monitoring_slope
         threshold = torch.max(candidates, dim=1).values
         initially_hit = log_spot_intercept[:, 0] <= math.log(task.barrier)
-        return torch.where(
-            initially_hit, torch.full_like(threshold, math.inf), threshold
-        )
+        return torch.where(initially_hit, torch.full_like(threshold, math.inf), threshold)
     raise TypeError("unsupported rBergomi path task")
 
 
@@ -147,9 +139,7 @@ def _deterministic_schedules(
         raise ValueError("expert controls must have shape (paths, experts, steps, 2)")
     if all_expert_controls.shape[0] < 1 or all_expert_controls.shape[1] < 1:
         raise ValueError("expert controls require paths and experts")
-    if not all_expert_controls.is_floating_point() or not torch.isfinite(
-        all_expert_controls
-    ).all():
+    if not all_expert_controls.is_floating_point() or not torch.isfinite(all_expert_controls).all():
         raise ValueError("expert controls must be finite and floating point")
     schedules = all_expert_controls[0]
     error = float(torch.max(torch.abs(all_expert_controls - schedules.unsqueeze(0))))
@@ -171,9 +161,7 @@ def _generic_density(
         raise ValueError("target increments must have shape (paths, steps, 2)")
     if target_increments.shape[1:] != schedules.shape[1:]:
         raise ValueError("target increments and schedules use different grids")
-    price_shift_norm = float(
-        torch.linalg.vector_norm(math.sqrt(step_dt) * schedules[:, :, 1])
-    )
+    price_shift_norm = float(torch.linalg.vector_norm(math.sqrt(step_dt) * schedules[:, :, 1]))
     if price_shift_norm <= tolerance:
         direction = positive_flat_direction(
             schedules.shape[1], device=schedules.device, dtype=schedules.dtype
@@ -196,9 +184,7 @@ def _generic_density(
     )
     standardized_target = target_increments.reshape(target_increments.shape[0], dimension)
     standardized_target = standardized_target / math.sqrt(step_dt)
-    density = evaluate_marginal_likelihood(
-        standardized_target, spec, span, tolerance=tolerance
-    )
+    density = evaluate_marginal_likelihood(standardized_target, spec, span, tolerance=tolerance)
     return density, direction
 
 
@@ -258,21 +244,14 @@ def _level_evaluation(
         maximum_path_reconstruction_error=affine.maximum_path_reconstruction_error,
         maximum_legacy_component_density_error=float(
             torch.max(
-                torch.abs(
-                    density.full_component_log_q_over_p
-                    - legacy_component_log_q_over_p
-                )
+                torch.abs(density.full_component_log_q_over_p - legacy_component_log_q_over_p)
             )
         ),
         maximum_legacy_mixture_density_error=float(
-            torch.max(
-                torch.abs(density.full_log_q_over_p - legacy_mixture_log_q_over_p)
-            )
+            torch.max(torch.abs(density.full_log_q_over_p - legacy_mixture_log_q_over_p))
         ),
         maximum_legacy_full_likelihood_error=float(
-            torch.max(
-                torch.abs(density.full_log_likelihood - legacy_mixture_log_likelihood)
-            )
+            torch.max(torch.abs(density.full_log_likelihood - legacy_mixture_log_likelihood))
         ),
     )
 
@@ -289,9 +268,7 @@ def evaluate_rbergomi_dcs_level(
     target = sample.paths.target_brownian_increments
     if target is None:
         raise ValueError("target Brownian increments must be recorded")
-    schedules = _deterministic_schedules(
-        sample.all_expert_controls, tolerance=tolerance
-    )
+    schedules = _deterministic_schedules(sample.all_expert_controls, tolerance=tolerance)
     density, direction = _generic_density(
         target_increments=target,
         schedules=schedules,
@@ -328,9 +305,7 @@ def evaluate_rbergomi_dcs_adjacent(
     target = sample.paths.target_fine_brownian_increments
     if target is None:
         raise ValueError("target fine Brownian increments must be recorded")
-    schedules = _deterministic_schedules(
-        sample.all_expert_controls, tolerance=tolerance
-    )
+    schedules = _deterministic_schedules(sample.all_expert_controls, tolerance=tolerance)
     density, direction = _generic_density(
         target_increments=target,
         schedules=schedules,
@@ -338,30 +313,35 @@ def evaluate_rbergomi_dcs_adjacent(
         step_dt=sample.paths.fine.step_dt,
         tolerance=tolerance,
     )
-    common = {
-        "target_fine_increments": target,
-        "fine_step_dt": sample.paths.fine.step_dt,
-        "direction": direction,
-        "rho": rho,
-        "task": task,
-        "density": density,
-        "legacy_component_log_q_over_p": sample.component_log_q_over_p,
-        "legacy_mixture_log_q_over_p": sample.log_mixture_q_over_p,
-        "legacy_mixture_log_likelihood": sample.mixture_log_likelihood,
-    }
     fine = _level_evaluation(
         spot=sample.paths.fine.spot,
         variance=sample.paths.fine.variance,
         step_dt=sample.paths.fine.step_dt,
+        target_fine_increments=target,
+        fine_step_dt=sample.paths.fine.step_dt,
+        direction=direction,
+        rho=rho,
+        task=task,
+        density=density,
+        legacy_component_log_q_over_p=sample.component_log_q_over_p,
+        legacy_mixture_log_q_over_p=sample.log_mixture_q_over_p,
+        legacy_mixture_log_likelihood=sample.mixture_log_likelihood,
         coarse_from_fine_pairs=False,
-        **common,
     )
     coarse = _level_evaluation(
         spot=sample.paths.coarse.spot,
         variance=sample.paths.coarse.variance,
         step_dt=sample.paths.coarse.step_dt,
+        target_fine_increments=target,
+        fine_step_dt=sample.paths.fine.step_dt,
+        direction=direction,
+        rho=rho,
+        task=task,
+        density=density,
+        legacy_component_log_q_over_p=sample.component_log_q_over_p,
+        legacy_mixture_log_q_over_p=sample.log_mixture_q_over_p,
+        legacy_mixture_log_likelihood=sample.mixture_log_likelihood,
         coarse_from_fine_pairs=True,
-        **common,
     )
     coordinate_mismatch = float(torch.max(torch.abs(fine.coordinate - coarse.coordinate)))
     if coordinate_mismatch > tolerance:

@@ -17,6 +17,7 @@ from src.path_integral.mlmc import (
     execute_mlmc,
     load_mlmc_checkpoint,
     prepare_mlmc,
+    run_mlmc,
     save_mlmc_checkpoint,
 )
 
@@ -36,15 +37,9 @@ class GaussianTelescopingSampler:
     ) -> LevelBatch:
         del role
         generator = torch.Generator().manual_seed(seeds["proposal"])
-        mean = (
-            self.theta[0]
-            if level == 0
-            else self.theta[level] - self.theta[level - 1]
-        )
+        mean = self.theta[0] if level == 0 else self.theta[level] - self.theta[level - 1]
         scale = 0.8 * 2.0 ** (-0.6 * level)
-        values = mean + scale * torch.randn(
-            count, generator=generator, dtype=torch.float64
-        )
+        values = mean + scale * torch.randn(count, generator=generator, dtype=torch.float64)
         return LevelBatch(values, work_units=count * (2**level))
 
 
@@ -73,20 +68,11 @@ def test_integer_allocation_meets_design_target_and_pilots_are_discarded() -> No
     assert result.estimate == sum(item.mean for item in result.levels)
     assert all(
         item.count == allocation.final_count
-        for item, allocation in zip(
-            result.levels, prepared.allocations, strict=True
-        )
+        for item, allocation in zip(result.levels, prepared.allocations, strict=True)
     )
     assert {entry.role for entry in result.work.entries} == {"pilot", "final"}
-    assert (
-        sum(
-            entry.samples for entry in result.work.entries if entry.role == "pilot"
-        )
-        == 4 * 1024
-    )
-    assert len({record.seed for record in prepared.ledger.records}) == len(
-        prepared.ledger
-    )
+    assert sum(entry.samples for entry in result.work.entries if entry.role == "pilot") == 4 * 1024
+    assert len({record.seed for record in prepared.ledger.records}) == len(prepared.ledger)
 
 
 def test_checkpoint_resume_is_bitwise_identical_and_has_no_duplicate_samples(
@@ -102,16 +88,11 @@ def test_checkpoint_resume_is_bitwise_identical_and_has_no_duplicate_samples(
     resumed = execute_mlmc(prepared, sampler, checkpoint=restored)
     assert resumed.complete
     assert resumed.estimate == uninterrupted.estimate
-    assert (
-        resumed.empirical_sampling_variance
-        == uninterrupted.empirical_sampling_variance
-    )
+    assert resumed.empirical_sampling_variance == uninterrupted.empirical_sampling_variance
     assert resumed.seed_ledger_hash == uninterrupted.seed_ledger_hash
     assert resumed.levels == uninterrupted.levels
     assert resumed.work.entries == uninterrupted.work.entries
-    final_samples = sum(
-        entry.samples for entry in resumed.work.entries if entry.role == "final"
-    )
+    final_samples = sum(entry.samples for entry in resumed.work.entries if entry.role == "final")
     assert final_samples == sum(item.final_count for item in prepared.allocations)
 
 
@@ -128,6 +109,63 @@ def test_checkpoint_tampering_is_rejected(tmp_path: Path) -> None:
     checkpoint = load_mlmc_checkpoint(path)
     with pytest.raises(ValueError, match="does not match"):
         execute_mlmc(prepared, sampler, checkpoint=checkpoint)
+
+
+def test_checkpoint_loader_rejects_boolean_execution_offset(tmp_path: Path) -> None:
+    sampler, prepared = _prepared("g11-invalid-offset-test")
+    partial = execute_mlmc(prepared, sampler, maximum_chunks=1)
+    assert partial.checkpoint is not None
+    payload = partial.checkpoint.to_dict()
+    payload["next_offset"] = True
+    path = tmp_path / "boolean-offset.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="next_offset"):
+        load_mlmc_checkpoint(path)
+
+
+def test_checkpoint_loader_rejects_inconsistent_moment_count(tmp_path: Path) -> None:
+    sampler, prepared = _prepared("g11-invalid-moment-test")
+    partial = execute_mlmc(prepared, sampler, maximum_chunks=1)
+    assert partial.checkpoint is not None
+    payload = partial.checkpoint.to_dict()
+    raw_moments = payload["moments"]
+    assert isinstance(raw_moments, list)
+    assert isinstance(raw_moments[0], dict)
+    raw_moments[0]["count"] += 1
+    path = tmp_path / "inconsistent-moment.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="execution position"):
+        load_mlmc_checkpoint(path)
+
+
+def test_checkpoint_loader_rejects_inconsistent_final_work(tmp_path: Path) -> None:
+    sampler, prepared = _prepared("g11-invalid-work-test")
+    partial = execute_mlmc(prepared, sampler, maximum_chunks=1)
+    assert partial.checkpoint is not None
+    payload = partial.checkpoint.to_dict()
+    payload["work_entries"] = []
+    path = tmp_path / "inconsistent-final-work.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="final-work ledger"):
+        load_mlmc_checkpoint(path)
+
+
+def test_run_mlmc_wrapper_preserves_the_explicit_preparation_contract() -> None:
+    hierarchy = MLMCHierarchy(4, 2, FixedFinestGridTarget(0))
+    sampler = GaussianTelescopingSampler((0.1,))
+    result = run_mlmc(
+        hierarchy,
+        sampler,
+        protocol="g11-wrapper-test",
+        regime="gaussian",
+        task="linear",
+        sampling_variance_target=2e-2,
+        pilot_samples=64,
+        chunk_size=32,
+    )
+    assert result.complete
+    assert len(result.levels) == 1
+    assert result.levels[0].count == result.allocations[0].final_count
 
 
 def test_fixed_and_continuous_targets_cannot_be_silently_relabelled() -> None:

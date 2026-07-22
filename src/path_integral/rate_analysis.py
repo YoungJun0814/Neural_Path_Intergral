@@ -76,10 +76,7 @@ def correction_rate_observation(
         or threshold_difference.numel() < 2
     ):
         raise ValueError("diagnostic tensors must be matching vectors")
-    if any(
-        not item.is_floating_point() or not torch.isfinite(item).all()
-        for item in tensors
-    ):
+    if any(not item.is_floating_point() or not torch.isfinite(item).all() for item in tensors):
         raise ValueError("diagnostic tensors must be finite and floating")
     if not math.isfinite(zero_tolerance) or zero_tolerance < 0.0:
         raise ValueError("zero_tolerance must be finite and nonnegative")
@@ -148,17 +145,14 @@ def _aggregate(
     for level, items in grouped.items():
         total_paths = sum(item.paths for item in items)
         result[level] = {
-            metric: math.fsum(getattr(item, metric) * item.paths for item in items)
-            / total_paths
+            metric: math.fsum(getattr(item, metric) * item.paths for item in items) / total_paths
             for metric in _RATE_METRICS
         }
     return result
 
 
 def _exponent(levels: tuple[int, ...], values: Mapping[int, float]) -> float:
-    y = torch.tensor(
-        [math.log2(values[level]) for level in levels], dtype=torch.float64
-    )
+    y = torch.tensor([math.log2(values[level]) for level in levels], dtype=torch.float64)
     x = torch.tensor(levels, dtype=torch.float64)
     centered = x - torch.mean(x)
     slope = torch.sum(centered * (y - torch.mean(y))) / torch.sum(centered**2)
@@ -194,9 +188,7 @@ def _cluster_bootstrap_aggregates(
     generator = torch.Generator().manual_seed(seed)
     results: list[dict[int, dict[str, float]]] = []
     for _ in range(repetitions):
-        indices = torch.randint(
-            len(replicates), (len(replicates),), generator=generator
-        ).tolist()
+        indices = torch.randint(len(replicates), (len(replicates),), generator=generator).tolist()
         draw: list[CorrectionRateObservation] = []
         for index in indices:
             draw.extend(by_replicate[replicates[index]])
@@ -234,18 +226,16 @@ def identify_rate_window(
             {},
             bootstrap_repetitions,
         )
-    bootstraps = _cluster_bootstrap_aggregates(
-        data, bootstrap_repetitions, bootstrap_seed
-    )
+    bootstraps = _cluster_bootstrap_aggregates(data, bootstrap_repetitions, bootstrap_seed)
     level_cv: dict[str, float] = {}
     for metric in ("raw_variance", "dcs_variance"):
         for level in levels:
-            draws = torch.tensor(
+            variance_draws = torch.tensor(
                 [item[level][metric] for item in bootstraps], dtype=torch.float64
             )
-            mean = float(torch.mean(draws))
+            mean = float(torch.mean(variance_draws))
             level_cv[f"{metric}:L{level}"] = (
-                float(torch.std(draws, unbiased=True)) / mean if mean > 0.0 else math.inf
+                float(torch.std(variance_draws, unbiased=True)) / mean if mean > 0.0 else math.inf
             )
 
     candidates: list[tuple[int, ...]] = []
@@ -275,9 +265,7 @@ def identify_rate_window(
         )
     selected = candidates[0]
     exponents = {
-        metric: _exponent(
-            selected, {level: aggregate[level][metric] for level in selected}
-        )
+        metric: _exponent(selected, {level: aggregate[level][metric] for level in selected})
         for metric in _RATE_METRICS
     }
     draws_by_metric: dict[str, list[float]] = {metric: [] for metric in _RATE_METRICS}
@@ -287,8 +275,8 @@ def identify_rate_window(
             if all(value > 0.0 for value in values.values()):
                 draws_by_metric[metric].append(_exponent(selected, values))
     intervals: dict[str, tuple[float, float]] = {}
-    for metric, draws in draws_by_metric.items():
-        tensor = torch.tensor(draws, dtype=torch.float64)
+    for metric, exponent_draws in draws_by_metric.items():
+        tensor = torch.tensor(exponent_draws, dtype=torch.float64)
         intervals[metric] = (
             float(torch.quantile(tensor, 0.025)),
             float(torch.quantile(tensor, 0.975)),
@@ -317,8 +305,8 @@ def identify_rate_window(
     exponents["dcs_second_minus_raw_second"] = (
         exponents["dcs_second_moment"] - exponents["raw_second_moment"]
     )
-    for metric, draws in derived_draws.items():
-        tensor = torch.tensor(draws, dtype=torch.float64)
+    for metric, derived_exponent_draws in derived_draws.items():
+        tensor = torch.tensor(derived_exponent_draws, dtype=torch.float64)
         intervals[metric] = (
             float(torch.quantile(tensor, 0.025)),
             float(torch.quantile(tensor, 0.975)),

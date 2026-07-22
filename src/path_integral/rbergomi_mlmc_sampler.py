@@ -111,7 +111,7 @@ class RBergomiMLMCSampler:
         fine_steps = self.config.coarsest_steps * 2**level
         start = time.perf_counter()
         if level == 0:
-            sample = simulate_rbergomi_mixture(
+            level_sample = simulate_rbergomi_mixture(
                 self.simulator,
                 self.controls,
                 self.weights,
@@ -124,15 +124,17 @@ class RBergomiMLMCSampler:
                 engine=self.config.engine,
             )
             if self.config.require_natural_component:
-                self._validate_natural_component(sample.all_expert_controls)
-            evaluation = evaluate_rbergomi_dcs_level(sample, task=self.task, rho=self.simulator.rho)
+                self._validate_natural_component(level_sample.all_expert_controls)
+            level_evaluation = evaluate_rbergomi_dcs_level(
+                level_sample, task=self.task, rho=self.simulator.rho
+            )
             values = (
-                evaluation.raw_contribution
+                level_evaluation.raw_contribution
                 if self.config.method in {"raw", "raw_defensive"}
-                else evaluation.marginalized_contribution
+                else level_evaluation.marginalized_contribution
             )
         else:
-            sample = simulate_coupled_rbergomi_mixture(
+            coupled_sample = simulate_coupled_rbergomi_mixture(
                 self.simulator,
                 self.controls,
                 self.weights,
@@ -145,14 +147,14 @@ class RBergomiMLMCSampler:
                 engine=self.config.engine,
             )
             if self.config.require_natural_component:
-                self._validate_natural_component(sample.all_expert_controls)
-            evaluation = evaluate_rbergomi_dcs_adjacent(
-                sample, task=self.task, rho=self.simulator.rho
+                self._validate_natural_component(coupled_sample.all_expert_controls)
+            adjacent_evaluation = evaluate_rbergomi_dcs_adjacent(
+                coupled_sample, task=self.task, rho=self.simulator.rho
             )
             values = (
-                evaluation.raw_correction
+                adjacent_evaluation.raw_correction
                 if self.config.method in {"raw", "raw_defensive"}
-                else evaluation.marginalized_correction
+                else adjacent_evaluation.marginalized_correction
             )
         elapsed = time.perf_counter() - start
         if not torch.isfinite(values).all():

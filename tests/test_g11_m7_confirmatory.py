@@ -31,6 +31,7 @@ from src.path_integral.mlmc import (
     MLMCPreparedRun,
     OnlineMoments,
     WorkLedger,
+    WorkLedgerEntry,
 )
 from src.path_integral.seed_ledger import SeedLedger
 
@@ -278,7 +279,7 @@ def test_method_checkpoint_wrapper_preserves_resume_costs(tmp_path: Path) -> Non
         next_offset=2,
         moments=(OnlineMoments(2, 0.5, 0.25),),
         ledger_payload=SeedLedger().to_dict(),
-        work_entries=(),
+        work_entries=(WorkLedgerEntry("final", 0, 2, 2.0, 0.5),),
     )
     path = tmp_path / "method-checkpoint.json"
     _save_method_checkpoint(

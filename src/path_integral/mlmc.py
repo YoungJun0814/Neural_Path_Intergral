@@ -203,6 +203,67 @@ class WorkLedger:
         return math.fsum(entry.wall_seconds for entry in self.entries)
 
 
+def _checkpoint_text(value: object, field: str) -> str:
+    if not isinstance(value, str) or not value or value.strip() != value:
+        raise ValueError(f"checkpoint {field} must be a nonempty stripped string")
+    return value
+
+
+def _checkpoint_integer(value: object, field: str, *, minimum: int = 0) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
+        raise ValueError(f"checkpoint {field} must be an integer at least {minimum}")
+    return value
+
+
+def _checkpoint_real(
+    value: object,
+    field: str,
+    *,
+    minimum: float | None = None,
+) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(f"checkpoint {field} must be a finite real number")
+    result = float(value)
+    if not math.isfinite(result) or (minimum is not None and result < minimum):
+        raise ValueError(f"checkpoint {field} must be a finite real number")
+    return result
+
+
+def _checkpoint_moments(value: object) -> OnlineMoments:
+    if not isinstance(value, dict) or set(value) != {"count", "mean", "m2"}:
+        raise ValueError("invalid checkpoint moment record")
+    record: dict[str, object] = dict(value)
+    count = _checkpoint_integer(record["count"], "moment count")
+    mean = _checkpoint_real(record["mean"], "moment mean")
+    m2 = _checkpoint_real(record["m2"], "moment m2", minimum=0.0)
+    if count < 2 and m2 != 0.0:
+        raise ValueError("checkpoint moment m2 must be zero below two samples")
+    if count == 0 and mean != 0.0:
+        raise ValueError("checkpoint empty moment must have zero mean")
+    return OnlineMoments(count=count, mean=mean, m2=m2)
+
+
+def _checkpoint_work_entry(value: object) -> WorkLedgerEntry:
+    fields = {"role", "level", "samples", "work_units", "wall_seconds"}
+    if not isinstance(value, dict) or set(value) != fields:
+        raise ValueError("invalid checkpoint work-ledger record")
+    record: dict[str, object] = dict(value)
+    raw_level = record["level"]
+    level = None if raw_level is None else _checkpoint_integer(raw_level, "work-ledger level")
+    entry = WorkLedgerEntry(
+        role=_checkpoint_text(record["role"], "work-ledger role"),
+        level=level,
+        samples=_checkpoint_integer(record["samples"], "work-ledger samples"),
+        work_units=_checkpoint_real(record["work_units"], "work-ledger work units", minimum=0.0),
+        wall_seconds=_checkpoint_real(
+            record["wall_seconds"], "work-ledger wall seconds", minimum=0.0
+        ),
+    )
+    validator = WorkLedger.empty()
+    validator.add(entry)
+    return entry
+
+
 @dataclass(frozen=True)
 class MLMCPreparedRun:
     hierarchy: MLMCHierarchy
@@ -249,23 +310,91 @@ class MLMCCheckpoint:
     def from_dict(cls, payload: dict[str, object]) -> MLMCCheckpoint:
         if payload.get("schema") != "npi.g11.mlmc-checkpoint.v1":
             raise ValueError("unsupported MLMC checkpoint schema")
+        expected_fields = {
+            "schema",
+            "protocol",
+            "regime",
+            "task",
+            "allocations",
+            "next_level",
+            "next_offset",
+            "moments",
+            "ledger",
+            "work_entries",
+        }
+        if set(payload) != expected_fields:
+            raise ValueError("malformed MLMC checkpoint fields")
+
+        protocol = _checkpoint_text(payload["protocol"], "protocol")
+        regime = _checkpoint_text(payload["regime"], "regime")
+        task = _checkpoint_text(payload["task"], "task")
+        next_level = _checkpoint_integer(payload["next_level"], "next_level")
+        next_offset = _checkpoint_integer(payload["next_offset"], "next_offset")
+
+        raw_allocations = payload["allocations"]
+        if not isinstance(raw_allocations, list) or not raw_allocations:
+            raise ValueError("checkpoint allocations must be a nonempty list")
+        allocations = tuple(
+            _checkpoint_integer(item, "allocation", minimum=1) for item in raw_allocations
+        )
+
+        raw_moments = payload["moments"]
+        if not isinstance(raw_moments, list):
+            raise ValueError("checkpoint moments must be a list")
+        moments = tuple(_checkpoint_moments(item) for item in raw_moments)
+
+        raw_ledger = payload["ledger"]
+        if not isinstance(raw_ledger, dict):
+            raise ValueError("checkpoint ledger must be an object")
+        ledger_payload: dict[str, object] = dict(raw_ledger)
         try:
-            moments = tuple(OnlineMoments(**item) for item in payload["moments"])
-            work = tuple(WorkLedgerEntry(**item) for item in payload["work_entries"])
-            return cls(
-                schema=str(payload["schema"]),
-                protocol=str(payload["protocol"]),
-                regime=str(payload["regime"]),
-                task=str(payload["task"]),
-                allocations=tuple(int(item) for item in payload["allocations"]),
-                next_level=int(payload["next_level"]),
-                next_offset=int(payload["next_offset"]),
-                moments=moments,
-                ledger_payload=payload["ledger"],
-                work_entries=work,
-            )
+            SeedLedger.from_dict(ledger_payload)
         except (KeyError, TypeError, ValueError) as error:
-            raise ValueError("malformed MLMC checkpoint") from error
+            raise ValueError("invalid checkpoint seed ledger") from error
+
+        raw_work = payload["work_entries"]
+        if not isinstance(raw_work, list):
+            raise ValueError("checkpoint work entries must be a list")
+        work = tuple(_checkpoint_work_entry(item) for item in raw_work)
+
+        if len(moments) != len(allocations):
+            raise ValueError("checkpoint moments and allocations must have equal lengths")
+        if next_level > len(allocations):
+            raise ValueError("checkpoint next level exceeds its allocation hierarchy")
+        if next_level == len(allocations) and next_offset != 0:
+            raise ValueError("completed checkpoint level must have zero offset")
+        if next_level < len(allocations) and next_offset > allocations[next_level]:
+            raise ValueError("checkpoint offset exceeds its level allocation")
+        expected_moment_counts = tuple(
+            allocation if level < next_level else next_offset if level == next_level else 0
+            for level, allocation in enumerate(allocations)
+        )
+        if tuple(item.count for item in moments) != expected_moment_counts:
+            raise ValueError("checkpoint moments do not match its execution position")
+        if any(
+            entry.role == "final" and (entry.level is None or entry.level >= len(allocations))
+            for entry in work
+        ):
+            raise ValueError("checkpoint final-work level is outside its hierarchy")
+        final_work_counts = tuple(
+            sum(entry.samples for entry in work if entry.role == "final" and entry.level == level)
+            for level in range(len(allocations))
+        )
+        if final_work_counts != expected_moment_counts:
+            raise ValueError("checkpoint final-work ledger does not match its moments")
+
+        return cls(
+            schema="npi.g11.mlmc-checkpoint.v1",
+            protocol=protocol,
+            regime=regime,
+            task=task,
+            allocations=allocations,
+            next_level=next_level,
+            next_offset=next_offset,
+            moments=moments,
+            ledger_payload=ledger_payload,
+            work_entries=work,
+        )
 
 
 @dataclass(frozen=True)
@@ -290,10 +419,7 @@ def _validate_run_inputs(
     chunk_size: int,
     streams: tuple[str, ...],
 ) -> None:
-    if (
-        not math.isfinite(sampling_variance_target)
-        or sampling_variance_target <= 0.0
-    ):
+    if not math.isfinite(sampling_variance_target) or sampling_variance_target <= 0.0:
         raise ValueError("sampling_variance_target must be finite and positive")
     if pilot_samples < 2:
         raise ValueError("pilot_samples must be at least two")
@@ -317,9 +443,7 @@ def _batch_seeds(
     streams: tuple[str, ...],
 ) -> dict[str, int]:
     return {
-        stream: ledger.allocate(
-            SeedKey(protocol, role, regime, task, level, replicate, stream)
-        )
+        stream: ledger.allocate(SeedKey(protocol, role, regime, task, level, replicate, stream))
         for stream in streams
     }
 
@@ -343,9 +467,7 @@ def prepare_mlmc(
 ) -> MLMCPreparedRun:
     """Run discarded pilots and freeze an integer allocation for final samples."""
 
-    _validate_run_inputs(
-        sampling_variance_target, pilot_samples, chunk_size, streams
-    )
+    _validate_run_inputs(sampling_variance_target, pilot_samples, chunk_size, streams)
     if minimum_final_samples < 2:
         raise ValueError("minimum_final_samples must be at least two")
     if minimum_pilot_nonzero < 0:
@@ -390,11 +512,7 @@ def prepare_mlmc(
             moments.update(batch.values)
             nonzero += int(torch.count_nonzero(batch.values))
             pilot_work_units += batch.work_units
-            work.add(
-                WorkLedgerEntry(
-                    "pilot", level, count, batch.work_units, batch.wall_seconds
-                )
-            )
+            work.add(WorkLedgerEntry("pilot", level, count, batch.work_units, batch.wall_seconds))
             replicate += 1
         if nonzero < minimum_pilot_nonzero:
             raise ValueError(
@@ -404,13 +522,9 @@ def prepare_mlmc(
         if not math.isfinite(variance) or variance <= 0.0:
             raise ValueError("pilot variance must be finite and positive")
         cost = pilot_work_units / moments.count
-        pilots.append(
-            LevelPilotStatistics(level, moments.count, moments.mean, variance, cost)
-        )
+        pilots.append(LevelPilotStatistics(level, moments.count, moments.mean, variance, cost))
 
-    root_sum = math.fsum(
-        math.sqrt(item.variance * item.cost_per_sample) for item in pilots
-    )
+    root_sum = math.fsum(math.sqrt(item.variance * item.cost_per_sample) for item in pilots)
     allocations: list[LevelAllocation] = []
     for item in pilots:
         continuous = (
@@ -429,9 +543,7 @@ def prepare_mlmc(
                 item.cost_per_sample,
             )
         )
-    design_variance = math.fsum(
-        item.design_variance / item.final_count for item in allocations
-    )
+    design_variance = math.fsum(item.design_variance / item.final_count for item in allocations)
     if design_variance > sampling_variance_target / allocation_safety_factor + 1e-15:
         raise AssertionError("integer allocation failed its design variance target")
     return MLMCPreparedRun(
@@ -494,9 +606,7 @@ def execute_mlmc(
 
     if maximum_chunks is not None and maximum_chunks < 1:
         raise ValueError("maximum_chunks must be positive")
-    level, offset, moments, ledger, work = _initial_execution_state(
-        prepared, checkpoint
-    )
+    level, offset, moments, ledger, work = _initial_execution_state(prepared, checkpoint)
     chunks = 0
     while level < len(prepared.allocations):
         target = prepared.allocations[level].final_count
@@ -520,9 +630,7 @@ def execute_mlmc(
         if batch.values.numel() != count:
             raise ValueError("sampler returned the wrong final count")
         moments[level].update(batch.values)
-        work.add(
-            WorkLedgerEntry("final", level, count, batch.work_units, batch.wall_seconds)
-        )
+        work.add(WorkLedgerEntry("final", level, count, batch.work_units, batch.wall_seconds))
         offset += count
         chunks += 1
         if maximum_chunks is not None and chunks >= maximum_chunks:
@@ -577,8 +685,10 @@ def execute_mlmc(
     empirical = math.fsum(item.sampling_variance for item in estimates)
     estimate = math.fsum(item.mean for item in estimates)
     standard_error = math.sqrt(empirical)
-    interval = (estimate - 1.959963984540054 * standard_error,
-                estimate + 1.959963984540054 * standard_error)
+    interval = (
+        estimate - 1.959963984540054 * standard_error,
+        estimate + 1.959963984540054 * standard_error,
+    )
     return MLMCResult(
         True,
         estimate,
@@ -615,9 +725,36 @@ def load_mlmc_checkpoint(path: str | Path) -> MLMCCheckpoint:
 def run_mlmc(
     hierarchy: MLMCHierarchy,
     sampler: LevelSampler,
-    **kwargs: object,
+    *,
+    protocol: str,
+    regime: str,
+    task: str,
+    sampling_variance_target: float,
+    pilot_samples: int,
+    chunk_size: int = 4096,
+    minimum_final_samples: int = 2,
+    allocation_safety_factor: float = 1.0,
+    streams: tuple[str, ...] = ("proposal", "labels"),
+    initial_work_entries: tuple[WorkLedgerEntry, ...] = (),
+    minimum_pilot_nonzero: int = 0,
+    maximum_pilot_samples: int | None = None,
 ) -> MLMCResult:
     """Convenience wrapper for an uninterrupted pilot plus final MLMC run."""
 
-    prepared = prepare_mlmc(hierarchy, sampler, **kwargs)
+    prepared = prepare_mlmc(
+        hierarchy,
+        sampler,
+        protocol=protocol,
+        regime=regime,
+        task=task,
+        sampling_variance_target=sampling_variance_target,
+        pilot_samples=pilot_samples,
+        chunk_size=chunk_size,
+        minimum_final_samples=minimum_final_samples,
+        allocation_safety_factor=allocation_safety_factor,
+        streams=streams,
+        initial_work_entries=initial_work_entries,
+        minimum_pilot_nonzero=minimum_pilot_nonzero,
+        maximum_pilot_samples=maximum_pilot_samples,
+    )
     return execute_mlmc(prepared, sampler)
