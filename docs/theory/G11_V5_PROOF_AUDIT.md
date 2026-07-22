@@ -6,8 +6,9 @@ Audited sources:
 
 - `G11_V5_THEOREMS.md`
 - `G11_MARGIN_LOCALIZED_THRESHOLD_STABILITY.md`
-- V5 plan commit `6b6d2cb` plus the uncommitted implementation audit described
-  below; replace this phrase with the final implementation commit before freeze
+- V5 implementation commit `01dd315`
+- frozen selector protocol commit `a49c51a`
+- `G11_V5_SELECTOR_QUALIFICATION_DECISION_2026-07-22.md`
 
 ## 1. Audit decision
 
@@ -133,10 +134,12 @@ predeclared cumulative look. It rejects an unregistered optional look. A candida
 is eliminated only when its lower total-work bound exceeds the tolerated best upper
 bound. Zero observed corrections retain a positive variance upper bound.
 
-The 30-repetition-per-case smoke oracle (240 runs) showed simultaneous coverage
-`1.0`, no optimal-candidate elimination on a coverage event, median regret `1.0`,
-and 90th-percentile regret about `1.2012`. Because this was a smoke run on dirty
-development source, it is not the formal G4 qualification.
+The initial 30-repetition-per-case smoke oracle (240 runs) showed simultaneous
+coverage `1.0`, no optimal-candidate elimination on a coverage event, median regret
+`1.0`, and 90th-percentile regret about `1.2012`. It was subsequently supplemented
+by the frozen non-smoke G4 run: 4,000 records from clean commit `a49c51a`, coverage
+`0.99875`, zero invalid eliminations on the coverage event, median regret `1.0`, and
+90th-percentile regret about `1.2012`. All predeclared G4 gates passed.
 
 ### 6.3 Achieved-RMSE execution
 
@@ -159,10 +162,10 @@ consistency, not the 20-cluster primary performance claim.
 | G1 diagnostic instrumentation | development pass | pathwise tests and three-H smoke pass |
 | G2 terminal model-level theorem | not passed | inverse-slope and coefficient-rate obligations remain |
 | G3 barrier model-level theorem | not passed | early-active and mesh moment rate remains conditional |
-| G4 robust selector | smoke pass only | formal 500-repetition qualification not yet run |
+| G4 robust selector | formal pass | frozen 8-case x 500-repetition qualification passes every predeclared gate |
 | G5 baselines/references | smoke partial | fresh CEM/reference cross-check passes, target reference SE intentionally misses under smoke cap |
 | G6 qualification | not passed | full laptop qualification has not run |
 | G7--G10 | blocked by earlier gates | no freeze, untouched confirmation, Linux reproduction, or manuscript audit yet |
 
-It would be a technical and scientific error to mark V5 “submission complete” from
-the current smoke evidence.
+It would still be a technical and scientific error to mark V5 “submission complete”
+from the formal G4 result and the remaining smoke evidence.
