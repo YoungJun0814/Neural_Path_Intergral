@@ -1,0 +1,54 @@
+schema: npi.g11.v5-reference.config.v1
+protocol_id: g11-v5-reference-qualification-v1
+frozen: true
+estimand: finite_grid
+purpose: qualification
+
+model_common:
+  eta: 1.1
+  xi: 0.04
+  rho: -0.6
+  spot: 100.0
+  maturity: 0.25
+
+models:
+  - {id: h005, H: 0.05}
+  - {id: h012, H: 0.12}
+  - {id: h030, H: 0.30}
+  - {id: eta0_oracle, H: 0.12, eta: 0.0}
+
+grid:
+  steps: 32
+
+proposal:
+  weights: [0.20, 0.80]
+  controls:
+    - [[0.0, 0.0], [0.0, 0.0]]
+    - [[-0.40, -1.20], [-0.25, -0.70]]
+
+tasks:
+  terminal:
+    kind: terminal
+    level: 94.0
+    nominal_probability: 0.28
+  barrier:
+    kind: barrier
+    barrier: 90.0
+    nominal_probability: 0.24
+
+reference_contract:
+  minimum_relative_sampling_rmse: 0.10
+  se_fraction_of_requested: 0.10
+  maximum_combined_z_score: 4.0
+
+sampling:
+  pilot_samples: 4096
+  minimum_final_samples: 16384
+  maximum_final_samples: 2000000
+  chunk_size: 16384
+  allocation_safety_factor: 1.25
+  engine: fft
+
+eta_zero_oracle:
+  state_points: 1201
+  upper_standard_deviations: 8.0
