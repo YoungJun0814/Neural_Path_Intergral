@@ -75,6 +75,39 @@ def _summary(values: torch.Tensor, work_units: float) -> dict[str, Any]:
     }
 
 
+def _qualification_gates(
+    records: list[dict[str, Any]], *, expected_records: int
+) -> dict[str, bool]:
+    """Evaluate fail-closed baseline gates from serialized record content."""
+
+    finite = all(
+        math.isfinite(record[method]["estimate"])
+        and math.isfinite(record[method]["standard_error"])
+        for record in records
+        for method in ("pure_cem_slis", "defensive_cem_mixture", "crude_mc")
+    )
+    return {
+        "complete_cluster_matrix": len(records) == expected_records and expected_records > 0,
+        "all_estimators_finite": finite,
+        "all_cem_fits_converged": all(record["cem"]["converged"] for record in records),
+        "fresh_training_per_cluster": len({record["training_seed"] for record in records})
+        == len(records),
+        "training_and_evaluation_seeds_disjoint": all(
+            record["evaluation_seed_roles_are_disjoint"] for record in records
+        ),
+        "defensive_likelihood_bounds_hold": all(
+            record["defensive_cem_mixture"]["maximum_full_likelihood_bound_violation"]
+            <= 1e-12
+            for record in records
+        ),
+        "zero_hit_cases_use_exact_intervals": all(
+            not record["crude_mc"]["zero_hit_censored"]
+            or record["crude_mc"]["exact_binomial_interval"]["upper"] > 0.0
+            for record in records
+        ),
+    }
+
+
 def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
     config, config_hash = _load(config_path)
     sampling = config["sampling"]
@@ -232,6 +265,13 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
                     evaluation_paths,
                     confidence_level=float(sampling["confidence_level"]),
                 )
+                evaluation_seeds = {
+                    "pure_cem": pure_seed,
+                    "defensive_proposal": mixture_seeds["proposal"],
+                    "defensive_labels": mixture_seeds["labels"],
+                    "crude_mc": crude_seed,
+                }
+                all_cluster_seeds = [train_seed, *evaluation_seeds.values()]
                 operation_scale = steps * max(1.0, math.log2(steps))
                 training_work = training_paths * len(fit.history) * operation_scale
                 records.append(
@@ -240,7 +280,9 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
                         "task": task_name,
                         "cluster": cluster,
                         "training_seed": train_seed,
-                        "evaluation_seed_roles_are_disjoint": True,
+                        "evaluation_seeds": evaluation_seeds,
+                        "evaluation_seed_roles_are_disjoint": len(set(all_cluster_seeds))
+                        == len(all_cluster_seeds),
                         "cem": {
                             "converged": fit.converged,
                             "iterations": len(fit.history),
@@ -273,29 +315,10 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
                         },
                     }
                 )
-    finite = all(
-        math.isfinite(record[method]["estimate"])
-        and math.isfinite(record[method]["standard_error"])
-        for record in records
-        for method in ("pure_cem_slis", "defensive_cem_mixture", "crude_mc")
+    gates = _qualification_gates(
+        records,
+        expected_records=len(config["models"]) * len(config["tasks"]) * clusters,
     )
-    gates = {
-        "all_estimators_finite": finite,
-        "fresh_training_per_cluster": len({record["training_seed"] for record in records})
-        == len(records),
-        "training_and_evaluation_seeds_disjoint": all(
-            record["evaluation_seed_roles_are_disjoint"] for record in records
-        ),
-        "defensive_likelihood_bounds_hold": all(
-            record["defensive_cem_mixture"]["maximum_full_likelihood_bound_violation"] <= 1e-12
-            for record in records
-        ),
-        "zero_hit_cases_use_exact_intervals": all(
-            not record["crude_mc"]["zero_hit_censored"]
-            or record["crude_mc"]["exact_binomial_interval"]["upper"] > 0.0
-            for record in records
-        ),
-    }
     provenance = source_provenance()
     formal_readiness = {
         "frozen_config": bool(config.get("frozen")),
