@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import json
 from copy import deepcopy
 
 import pytest
 
 from experiments.g11_v5_confirmatory import (
     _aggregate_records,
+    _canonical_json,
     _cell_reference,
     _qualification_gates,
 )
@@ -59,6 +61,18 @@ def test_formal_reference_is_model_and_task_specific() -> None:
         smoke=False,
     )
     assert actual == {"probability": 0.2, "standard_error": 0.001}
+
+
+def test_canonical_input_hash_is_independent_of_json_whitespace(tmp_path) -> None:
+    compact = tmp_path / "compact.json"
+    pretty = tmp_path / "pretty.json"
+    payload = {"gate": True, "values": [1, 2, 3]}
+    compact.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
+    pretty.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    compact_payload, compact_hash = _canonical_json(compact)
+    pretty_payload, pretty_hash = _canonical_json(pretty)
+    assert compact_payload == pretty_payload == payload
+    assert compact_hash == pretty_hash
 
 
 def test_formal_reference_rejects_legacy_task_fallback() -> None:

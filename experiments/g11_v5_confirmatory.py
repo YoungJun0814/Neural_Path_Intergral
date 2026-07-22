@@ -45,8 +45,18 @@ def _load(path: Path) -> tuple[dict[str, Any], str]:
     return payload, hashlib.sha256(raw).hexdigest()
 
 
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def _canonical_json(path: Path) -> tuple[dict[str, Any], str]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("qualification input must contain a JSON object")
+    canonical = json.dumps(
+        payload,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+        allow_nan=False,
+    ).encode("ascii")
+    return payload, hashlib.sha256(canonical).hexdigest()
 
 
 def _verify_formal_preflight(config: dict[str, Any], *, smoke: bool) -> dict[str, bool]:
@@ -64,9 +74,9 @@ def _verify_formal_preflight(config: dict[str, Any], *, smoke: bool) -> dict[str
         raise ValueError("source commit does not match the frozen confirmation config")
     for item in config.get("qualification_inputs", []):
         path = Path(item["path"])
-        if _sha256(path) != item["sha256"]:
+        payload, canonical_hash = _canonical_json(path)
+        if canonical_hash != item["canonical_json_sha256"]:
             raise ValueError("qualification input hash mismatch")
-        payload = json.loads(path.read_text(encoding="utf-8"))
         if not bool(payload.get(item["required_gate"])):
             raise ValueError("a required qualification gate is not satisfied")
     if run_class == "untouched-confirmatory":
