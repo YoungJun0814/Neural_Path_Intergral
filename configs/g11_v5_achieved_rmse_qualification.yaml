@@ -1,0 +1,77 @@
+schema: npi.g11.v5-confirmatory.config.v1
+protocol_id: g11-v5-achieved-rmse-qualification-v1
+frozen: true
+estimand: finite_grid
+run_class: qualification
+source_commit: f7e323587a821769130e939639bc6ff0378b6d86
+
+qualification_inputs:
+  - path: results/g11_v5_selector_qualification_v1_2026-07-22.json
+    sha256: 0903f6698c7d67b49490e703ee2a37fb2849352bf5da24c027410dc02241cfbc
+    required_gate: qualification_passed
+  - path: results/g11_v5_baseline_qualification_v1_2026-07-22.json
+    sha256: f6fbd539121a92eafbba1abf41f834364467e61ec6e3e41bd5a4aee547029740
+    required_gate: baseline_qualified
+  - path: results/g11_v5_reference_qualification_v1_2026-07-22.json
+    sha256: a173ed5b10927c66c5717137418ea120b9a45383d00e3dcca4af6f020b85e49e
+    required_gate: reference_qualified
+
+model_common:
+  eta: 1.1
+  xi: 0.04
+  rho: -0.6
+  spot: 100.0
+  maturity: 0.25
+
+models:
+  - {id: h005, H: 0.05}
+  - {id: h012, H: 0.12}
+  - {id: h030, H: 0.30}
+
+hierarchy:
+  coarsest_steps: 8
+  finest_level: 4
+
+proposal:
+  weights: [0.20, 0.80]
+  controls:
+    - [[0.0, 0.0], [0.0, 0.0]]
+    - [[-0.40, -1.20], [-0.25, -0.70]]
+
+tasks:
+  terminal: {kind: terminal, level: 94.0}
+  barrier: {kind: barrier, barrier: 90.0}
+
+references:
+  h005:
+    terminal: {probability: 0.2533305162908623, standard_error: 0.0023403122830320047}
+    barrier: {probability: 0.2535928198388322, standard_error: 0.0021166844738450446}
+  h012:
+    terminal: {probability: 0.24136295796168497, standard_error: 0.0022360971297006546}
+    barrier: {probability: 0.2584606945250362, standard_error: 0.0021851841563106816}
+  h030:
+    terminal: {probability: 0.25162931814262374, standard_error: 0.0022173347488799815}
+    barrier: {probability: 0.26227844846357395, standard_error: 0.002131597060962892}
+
+selection:
+  looks: [64, 256, 1024, 4096]
+  familywise_alpha: 0.05
+  elimination_relative_tolerance: 0.0
+  practical_equivalence_relative_tolerance: 0.05
+
+sampling:
+  clusters: 20
+  relative_sampling_rmse: 0.10
+  confidence_level: 0.95
+  minimum_final_samples: 128
+  allocation_safety_factor: 1.0
+  operation_work_cap: 1.0e11
+  smoke_operation_work_cap: 1.0e9
+  chunk_size: 4096
+  smoke_chunk_size: 512
+  engine: fft
+
+qualification_gates:
+  minimum_empirical_target_attainment: 0.80
+  maximum_relative_rmse_ratio: 1.25
+  minimum_combined_asymptotic_coverage: 0.80
