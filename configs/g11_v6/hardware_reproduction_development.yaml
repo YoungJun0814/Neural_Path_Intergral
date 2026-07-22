@@ -1,0 +1,18 @@
+schema: npi.g11.v6-hardware-reproduction.config.v1
+protocol_id: g11-v6-hardware-reproduction-development-v1
+frozen: false
+expected_sha256:
+  canonical_confirmation: null
+  reproduction_baseline_config: null
+  reproduction_policy_config: null
+  manifest: null
+  reference: null
+  power: null
+  audit_config: null
+statistics:
+  maximum_effect_z_score: 3.0
+requirements:
+  require_linux_reproduction: true
+  require_different_operating_system: true
+  require_disjoint_seed_streams: true
+  require_both_scientific_gates: true

@@ -10,11 +10,19 @@
 
 ## Research status
 
-The active method is **Hybrid DCS-MGI**:
+The active research object is the **V6 routed DCS-MGI policy**:
 
-> **D**efensive **C**ontrol-**S**pan **M**arginalized **G**aussian **I**ntegration
-> with a preprocessing-inclusive choice between single-level importance sampling
-> and every admissible multilevel start.
+> a pilot-measurable choice among crude MC, DCS-SLIS, and budget-admissible Hybrid
+> **D**efensive **C**ontrol-**S**pan **M**arginalized **G**aussian **I**ntegration,
+> always followed by independent achieved-RMSE final samples.
+
+V6 now implements strict rare-cell manifests, reference separation, a target-leakage-
+free rarity router, profiling caps, matched crude/pure-CEM/defensive-CEM baselines,
+one achieved-RMSE execution contract, exact training-inclusive work ledgers, paired
+power planning, a fail-closed confirmation analyzer, an offline JSON-only auditor,
+outcome-blind freeze tooling, and a cross-platform reproduction audit. Development
+smoke and corruption tests pass. Full rare-cell qualification, untouched confirmation,
+and Linux reproduction have **not** yet been run.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -25,8 +33,10 @@ G5 baseline/reference protocols pass. G6 V2 then passes all numerical accuracy a
 independent-audit gates, but fails the full training-inclusive efficiency gate: all
 120 runs select DCS-SLIS, selection consumes about 90% of work, and crude/CEM are
 cheaper in these 25%--28% moderate-event cells. The study must be redesigned around
-genuinely rare cells before untouched confirmation. Model-level rates also remain
-conditional, and there is no Linux reproduction.
+genuinely rare cells before untouched confirmation. The terminal inverse-slope
+negative-moment obligation is now proved for the current positive piecewise direction
+family. Fine/coarse coefficient rates, weak bias, end-to-end complexity, and the
+barrier enrichment theorem remain open or conditional.
 
 The earlier 640-cell M7 V3 run completed and passes its integrity audit, but its
 strict frozen headline **failed** because one recovered Windows checkpoint
@@ -34,7 +44,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **406/406 tests on 2026-07-22**.
+The complete local regression suite passed **464/464 tests on 2026-07-23**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finest discrete grid rather than a continuously monitored event,
@@ -68,6 +78,9 @@ Start with:
 - [V5 matched 128-step G5 decision](docs/audits/G11_V5_MATCHED_128_G5_QUALIFICATION_DECISION_2026-07-22.md)
 - [V5 achieved-RMSE V2 decision](docs/audits/G11_V5_ACHIEVED_RMSE_QUALIFICATION_V2_DECISION_2026-07-22.md)
 - [V5 reproducible literature search](docs/literature/G11_V5_SEARCH_LOG.md)
+- [V6 dual-track PhD implementation plan](docs/plans/G11_V6_DUAL_TRACK_PHD_IMPLEMENTATION_PLAN_2026-07-23.md)
+- [V6 notation-to-code ledger](docs/theory/G11_V6_NOTATION_CODE_LEDGER.md)
+- [V6 terminal inverse-slope theorem](docs/theory/G11_V6_TERMINAL_SLOPE_THEOREM.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
@@ -168,6 +181,7 @@ repository as falsified or historical research tracks.
 | Pilot-selected estimator | Conditionally unbiased | Final samples are independent and pilots never enter final means |
 | Sequential work intervals | Finite-look familywise coverage | Defensive bounded observations only; not an anytime confidence sequence |
 | Achieved-RMSE allocation | Implemented and oracle-tested | Uses frozen upper variances, integer rounding, and pre-sampling resource censoring |
+| Terminal inverse-slope moments | Proved with an explicit upper bound | Target-law terminal rBergomi slope, positive unit direction, grid-scaled L1 mass bounded below |
 
 The project does **not** currently claim:
 
