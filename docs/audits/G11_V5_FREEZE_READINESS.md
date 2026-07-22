@@ -34,7 +34,7 @@ may be called untouched confirmatory evidence.
 
 | Artifact class | Development result | Formal status |
 |---|---|---|
-| threshold diagnostics | 3 H regimes, terminal/barrier exactness pass | smoke only |
+| threshold diagnostics | clean non-smoke 3-H run; exactness passes and rates remain descriptive | full development evidence, not G2--G3 proof |
 | selector oracle | frozen 4,000-record run: coverage 0.99875, invalid elimination 0, median regret 1.0, p90 about 1.2012 | formal G4 pass |
 | fresh CEM baselines | 12/12 smoke fits converged; all safety gates pass | smoke only |
 | references | independent methods and eta-zero oracles agree | target SE intentionally misses under smoke cap |
@@ -79,8 +79,9 @@ Not allowed now:
 
 ## 5. Next executable gate
 
-Run the non-final threshold diagnostic configuration at full paths/replicates to
-decide whether the G2--G3 assumptions are empirically falsified. In parallel, run
-full fresh-training baseline qualification and generate references that meet the
-declared standard-error contracts. The 20-cluster achieved-RMSE qualification must
-wait until those gates close and its V5-based resource forecast is updated.
+The full non-final threshold diagnostic did not immediately falsify the G2--G3
+mechanism, but it did not prove it. Run the now-frozen fresh-training baseline
+qualification and generate references that meet the declared standard-error
+contracts while the remaining theorem obligations are addressed. The 20-cluster
+achieved-RMSE qualification must wait until those gates close and its V5-based
+resource forecast is updated.

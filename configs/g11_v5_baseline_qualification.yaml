@@ -1,6 +1,6 @@
 schema: npi.g11.v5-baseline-qualification.config.v1
 protocol_id: g11-v5-baseline-qualification-v1
-frozen: false
+frozen: true
 estimand: finite_grid
 
 model_common:

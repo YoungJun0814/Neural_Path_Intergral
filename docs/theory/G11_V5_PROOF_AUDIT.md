@@ -122,10 +122,12 @@ fine-only monitoring defect. Initially hit paths retain `+inf` thresholds, recei
 active time zero, and are excluded from finite-threshold rate fits rather than being
 silently coerced to finite values.
 
-Development smoke evidence covered `H in {0.05,0.12,0.30}` with `eta` and `rho`
-held fixed. Every pathwise reconstruction, likelihood, and localized-bound gate
-passed. These observations are falsification evidence only; they do not discharge
-Sections 3.1--3.4.
+Development smoke evidence and a subsequent clean non-smoke run covered
+`H in {0.05,0.12,0.30}` with `eta` and `rho` held fixed. Every pathwise
+reconstruction, likelihood, and localized-bound gate passed. The non-smoke DCS
+second-moment exponents were approximately `0.044/0.217/0.591` for the terminal
+task and `0.047/0.225/0.694` for the barrier task as H increased. These observations
+are falsification evidence only; they do not discharge Sections 3.1--3.4.
 
 ### 6.2 Sequential crossover
 
@@ -159,7 +161,7 @@ consistency, not the 20-cluster primary performance claim.
 | Gate | Decision | Reason |
 |---|---|---|
 | G0 novelty/claim boundary | conditional pass | final database and expert search still required |
-| G1 diagnostic instrumentation | development pass | pathwise tests and three-H smoke pass |
+| G1 diagnostic instrumentation | full development pass | clean non-smoke three-H pathwise diagnostics pass; rates are descriptive |
 | G2 terminal model-level theorem | not passed | inverse-slope and coefficient-rate obligations remain |
 | G3 barrier model-level theorem | not passed | early-active and mesh moment rate remains conditional |
 | G4 robust selector | formal pass | frozen 8-case x 500-repetition qualification passes every predeclared gate |

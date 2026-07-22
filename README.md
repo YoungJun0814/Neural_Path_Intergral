@@ -59,6 +59,7 @@ Start with:
 - [V5 proof/implementation audit](docs/theory/G11_V5_PROOF_AUDIT.md)
 - [V5 freeze-readiness audit](docs/audits/G11_V5_FREEZE_READINESS.md)
 - [V5 selector qualification decision](docs/audits/G11_V5_SELECTOR_QUALIFICATION_DECISION_2026-07-22.md)
+- [V5 full threshold-diagnostic decision](docs/audits/G11_V5_THRESHOLD_DIAGNOSTIC_DECISION_2026-07-22.md)
 - [V5 reproducible literature search](docs/literature/G11_V5_SEARCH_LOG.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
