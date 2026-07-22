@@ -165,7 +165,7 @@ consistency, not the 20-cluster primary performance claim.
 | G2 terminal model-level theorem | not passed | inverse-slope and coefficient-rate obligations remain |
 | G3 barrier model-level theorem | not passed | early-active and mesh moment rate remains conditional |
 | G4 robust selector | formal pass | frozen 8-case x 500-repetition qualification passes every predeclared gate |
-| G5 baselines/references | baseline pass, reference pending | frozen 120-record CEM baseline passes; formal reference SE contract has not run |
+| G5 baselines/references | formal pass | frozen 120-record CEM baseline and 8-cell reference protocols pass |
 | G6 qualification | not passed | full laptop qualification has not run |
 | G7--G10 | blocked by earlier gates | no freeze, untouched confirmation, Linux reproduction, or manuscript audit yet |
 

@@ -63,4 +63,3 @@ trained, auditable comparators. It does not establish:
 - performance at rarities outside this baseline matrix;
 - the V5 achieved-RMSE result; or
 - any rough-Bergomi convergence theorem.
-

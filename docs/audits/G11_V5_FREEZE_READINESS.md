@@ -37,7 +37,7 @@ may be called untouched confirmatory evidence.
 | threshold diagnostics | clean non-smoke 3-H run; exactness passes and rates remain descriptive | full development evidence, not G2--G3 proof |
 | selector oracle | frozen 4,000-record run: coverage 0.99875, invalid elimination 0, median regret 1.0, p90 about 1.2012 | formal G4 pass |
 | fresh CEM baselines | frozen 120-record run; 120/120 fits converge and all fail-closed gates pass | formal baseline pass |
-| references | independent methods and eta-zero oracles agree | target SE intentionally misses under smoke cap |
+| references | frozen 8-cell run; all SE contracts, independent methods, and eta-zero oracles pass | formal reference pass |
 | end-to-end hybrid | two cells complete, design targets pass | one cluster and relaxed smoke RMSE |
 | independent audit | end-to-end smoke artifact passes | not a formal-result audit |
 | power forecast | 20 clusters exceeds conservative required count 13 at hardest RMSE | based on V4 profile data, not V5 achieved-RMSE data |
@@ -52,14 +52,12 @@ inputs to a frozen confirmation.
 1. Prove the terminal inverse-slope/coefficient assumptions or explicitly demote the
    model-level terminal rate to a conditional theorem.
 2. Prove or demote the barrier early-active and mesh-enrichment moment rate.
-3. Generate every reference with the declared SE contract; smoke references are
-   resource-censored and fail this gate by design.
-4. Run V5 achieved-RMSE qualification and update power/resource forecasts from V5,
+3. Run V5 achieved-RMSE qualification and update power/resource forecasts from V5,
    not V4 profiles.
-5. Perform the final literature cutoff search and external novelty challenge.
-6. Freeze source/config/input hashes and register a never-used final seed namespace.
-7. Execute 20 clusters per primary cell from a clean detached worktree.
-8. Reproduce the frozen artifact on Linux and run the independent result audit.
+4. Perform the final literature cutoff search and external novelty challenge.
+5. Freeze source/config/input hashes and register a never-used final seed namespace.
+6. Execute 20 clusters per primary cell from a clean detached worktree.
+7. Reproduce the frozen artifact on Linux and run the independent result audit.
 
 ## 4. Claim ceiling before these blockers clear
 
@@ -79,8 +77,7 @@ Not allowed now:
 ## 5. Next executable gate
 
 The full non-final threshold diagnostic did not immediately falsify the G2--G3
-mechanism, but it did not prove it. The frozen fresh-training baseline qualification
-has passed. Generate the now-predeclared reference qualification with its standard-
-error contracts while the remaining theorem obligations are addressed. The
-20-cluster achieved-RMSE qualification must wait until those gates close and its
-V5-based resource forecast is updated.
+mechanism, but it did not prove it. The frozen fresh-training baseline and reference
+qualifications have passed. Before G6, bind each model/task cell to its own qualified
+reference estimate and standard error, then run the 20-cluster achieved-RMSE
+qualification and update its V5-based power/resource forecast.

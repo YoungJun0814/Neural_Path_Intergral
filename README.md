@@ -20,12 +20,12 @@ The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
 pilot-frozen achieved-RMSE allocation, resource censoring, durable resume, fresh CEM
 baseline contracts, independent references, and an independent result audit. Its
-development smoke checks pass. The frozen 4,000-record selector qualification and
-the frozen 120-record fresh-CEM baseline qualification pass all their predeclared
+development smoke checks pass. The frozen 4,000-record selector, 120-record fresh-CEM
+baseline, and 8-cell finite-grid reference qualifications pass all their predeclared
 gates. This does **not** mean the complete V5 research protocol has passed: terminal
-and barrier model-level rates remain conditional, reference and achieved-RMSE
-qualifications have not run at full scale, and there is no untouched V5 confirmation
-or Linux reproduction.
+and barrier model-level rates remain conditional, achieved-RMSE qualification has
+not run at full scale, and there is no untouched V5 confirmation or Linux
+reproduction.
 
 The earlier 640-cell M7 V3 run completed and passes its integrity audit, but its
 strict frozen headline **failed** because one recovered Windows checkpoint
@@ -62,6 +62,7 @@ Start with:
 - [V5 selector qualification decision](docs/audits/G11_V5_SELECTOR_QUALIFICATION_DECISION_2026-07-22.md)
 - [V5 full threshold-diagnostic decision](docs/audits/G11_V5_THRESHOLD_DIAGNOSTIC_DECISION_2026-07-22.md)
 - [V5 baseline qualification decision](docs/audits/G11_V5_BASELINE_QUALIFICATION_DECISION_2026-07-22.md)
+- [V5 reference qualification decision](docs/audits/G11_V5_REFERENCE_QUALIFICATION_DECISION_2026-07-22.md)
 - [V5 reproducible literature search](docs/literature/G11_V5_SEARCH_LOG.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
