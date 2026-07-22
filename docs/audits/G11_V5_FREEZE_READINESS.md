@@ -2,12 +2,13 @@
 
 Date: 2026-07-22
 
-Decision: **not ready to freeze; G4 selector qualification passed**
+Decision: **not ready to freeze; G4/G5 and G6 accuracy pass, G6 efficiency fails**
 
-This is a fail-closed decision. The V5 implementation path is operational and its
-development smoke tests pass and formal selector gate G4 has passed. Theory gates
-G2--G3 and formal qualification gates G5--G6 are not complete. No current result
-may be called untouched confirmatory evidence.
+This is a fail-closed decision. The V5 implementation path is operational; formal
+selector and matched 128-step baseline/reference gates pass, and G6 V2 is accurate
+and independently auditable. Theory gates G2--G3 remain conditional and the full G6
+training-inclusive efficiency gate fails. No current result may be called untouched
+confirmatory evidence.
 
 ## 1. Completed implementation controls
 
