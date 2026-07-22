@@ -1,0 +1,94 @@
+schema: npi.g11.v5-selector-qualification.config.v1
+protocol_id: g11-v5-selector-qualification-v1
+frozen: false
+repetitions: 500
+
+selection:
+  looks: [64, 256, 1024, 4096]
+  familywise_alpha: 0.05
+  elimination_relative_tolerance: 0.0
+  practical_equivalence_relative_tolerance: 0.05
+
+cases:
+  - id: slis_clear
+    sampling_variance_target: 0.001
+    simpler_candidate: slis
+    profiles:
+      slis: {distribution: rademacher, variance: 0.02, absolute_bound: 0.1414213562373095, cost: 1.0}
+      intermediate: {distribution: rademacher, variance: 0.10, absolute_bound: 0.31622776601683794, cost: 1.0}
+      full: {distribution: rademacher, variance: 0.30, absolute_bound: 0.5477225575051661, cost: 1.0}
+    candidate_profiles: {slis: [slis], intermediate: [intermediate], full: [full]}
+    preprocessing_work: {slis: 0.0, intermediate: 0.0, full: 0.0}
+
+  - id: full_clear
+    sampling_variance_target: 0.001
+    simpler_candidate: slis
+    profiles:
+      slis: {distribution: rademacher, variance: 0.30, absolute_bound: 0.5477225575051661, cost: 1.0}
+      intermediate: {distribution: rademacher, variance: 0.10, absolute_bound: 0.31622776601683794, cost: 1.0}
+      full: {distribution: rademacher, variance: 0.02, absolute_bound: 0.1414213562373095, cost: 1.0}
+    candidate_profiles: {slis: [slis], intermediate: [intermediate], full: [full]}
+    preprocessing_work: {slis: 0.0, intermediate: 0.0, full: 0.0}
+
+  - id: intermediate_clear
+    sampling_variance_target: 0.001
+    simpler_candidate: slis
+    profiles:
+      slis: {distribution: rademacher, variance: 0.25, absolute_bound: 0.5, cost: 1.0}
+      intermediate: {distribution: rademacher, variance: 0.015, absolute_bound: 0.1224744871391589, cost: 1.0}
+      full: {distribution: rademacher, variance: 0.20, absolute_bound: 0.4472135954999579, cost: 1.0}
+    candidate_profiles: {slis: [slis], intermediate: [intermediate], full: [full]}
+    preprocessing_work: {slis: 0.0, intermediate: 0.0, full: 0.0}
+
+  - id: second_full_clear
+    sampling_variance_target: 0.001
+    simpler_candidate: slis
+    profiles:
+      slis: {distribution: rademacher, variance: 0.40, absolute_bound: 0.6324555320336759, cost: 1.0}
+      intermediate: {distribution: rademacher, variance: 0.12, absolute_bound: 0.34641016151377546, cost: 1.0}
+      full: {distribution: rademacher, variance: 0.01, absolute_bound: 0.1, cost: 1.0}
+    candidate_profiles: {slis: [slis], intermediate: [intermediate], full: [full]}
+    preprocessing_work: {slis: 0.0, intermediate: 0.0, full: 0.0}
+
+  - id: near_tie
+    efficiency_gate_eligible: false
+    sampling_variance_target: 0.001
+    simpler_candidate: slis
+    profiles:
+      slis: {distribution: rademacher, variance: 0.10, absolute_bound: 0.31622776601683794, cost: 1.0}
+      intermediate: {distribution: rademacher, variance: 0.102, absolute_bound: 0.31937438845342625, cost: 1.0}
+      full: {distribution: rademacher, variance: 0.105, absolute_bound: 0.324037034920393, cost: 1.0}
+    candidate_profiles: {slis: [slis], intermediate: [intermediate], full: [full]}
+    preprocessing_work: {slis: 0.0, intermediate: 0.0, full: 0.0}
+
+  - id: misleading_small_first_look
+    efficiency_gate_eligible: false
+    sampling_variance_target: 0.001
+    simpler_candidate: slis
+    profiles:
+      slis: {distribution: rademacher, variance: 0.08, absolute_bound: 0.282842712474619, cost: 1.0}
+      intermediate: {distribution: bernoulli, probability: 0.02, absolute_bound: 1.0, cost: 1.0}
+      full: {distribution: rademacher, variance: 0.20, absolute_bound: 0.4472135954999579, cost: 1.0}
+    candidate_profiles: {slis: [slis], intermediate: [intermediate], full: [full]}
+    preprocessing_work: {slis: 0.0, intermediate: 0.0, full: 0.0}
+
+  - id: zero_observed_correction
+    efficiency_gate_eligible: false
+    sampling_variance_target: 0.001
+    simpler_candidate: slis
+    profiles:
+      slis: {distribution: rademacher, variance: 0.0012, absolute_bound: 0.034641016151377546, cost: 1.0}
+      intermediate: {distribution: rademacher, variance: 0.002, absolute_bound: 0.044721359549995794, cost: 1.0}
+      full: {distribution: bernoulli, probability: 0.001, absolute_bound: 1.0, cost: 1.0}
+    candidate_profiles: {slis: [slis], intermediate: [intermediate], full: [full]}
+    preprocessing_work: {slis: 0.0, intermediate: 0.0, full: 0.0}
+
+  - id: preprocessing_reversal
+    sampling_variance_target: 0.001
+    simpler_candidate: slis
+    profiles:
+      slis: {distribution: rademacher, variance: 0.12, absolute_bound: 0.34641016151377546, cost: 1.0}
+      intermediate: {distribution: rademacher, variance: 0.20, absolute_bound: 0.4472135954999579, cost: 1.0}
+      full: {distribution: rademacher, variance: 0.04, absolute_bound: 0.2, cost: 1.0}
+    candidate_profiles: {slis: [slis], intermediate: [intermediate], full: [full]}
+    preprocessing_work: {slis: 0.0, intermediate: 0.0, full: 100.0}

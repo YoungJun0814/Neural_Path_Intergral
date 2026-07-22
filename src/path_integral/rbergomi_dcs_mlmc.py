@@ -42,6 +42,8 @@ class RBergomiDCSLevelEvaluation:
     """One finite-grid raw/marginalized event estimate and exactness diagnostics."""
 
     task_kind: str
+    log_spot_intercept: torch.Tensor
+    log_spot_slope: torch.Tensor
     threshold: torch.Tensor
     coordinate: torch.Tensor
     hard_event: torch.Tensor
@@ -244,6 +246,8 @@ def _level_evaluation(
         raise FloatingPointError("rBergomi DCS contribution became nonfinite")
     return RBergomiDCSLevelEvaluation(
         task_kind=_task_kind(task),
+        log_spot_intercept=affine.intercept,
+        log_spot_slope=affine.slope,
         threshold=threshold,
         coordinate=affine.coordinate,
         hard_event=hard_event,

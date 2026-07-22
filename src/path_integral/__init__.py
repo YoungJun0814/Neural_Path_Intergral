@@ -1,6 +1,12 @@
 """Path-integral control primitives and analytic verification oracles."""
 
 from .action import brownian_log_likelihood, log_tilted_weight, path_action
+from .black_scholes_oracles import (
+    BlackScholesDiscreteBarrierOracle,
+    black_scholes_continuous_lower_barrier_probability,
+    black_scholes_discrete_lower_barrier_probability,
+    black_scholes_left_digital_probability,
+)
 from .control_span_smoothing import (
     ControlSpanMarginalizedAdjacentEstimate,
     ControlSpanMarginalizedEstimate,
@@ -81,6 +87,18 @@ from .heston_oracle import (
     heston_log_desirability_gradient,
     heston_soft_left_tail_desirability,
     heston_soft_oracle_control,
+)
+from .hybrid_allocation import (
+    HybridCheckpoint,
+    HybridPreparedRun,
+    HybridResult,
+    HybridTarget,
+    HybridTermAllocation,
+    HybridTermEstimate,
+    execute_hybrid_run,
+    load_hybrid_checkpoint,
+    prepare_hybrid_run,
+    save_hybrid_checkpoint,
 )
 from .memory import SOEKernelBank, fit_positive_soe_kernel
 from .mixture import (
@@ -164,6 +182,11 @@ from .rbergomi_fft import (
     simulate_coupled_rbergomi_adjacent_fft,
     simulate_rbergomi_fft,
 )
+from .rbergomi_hybrid import (
+    RBergomiHybridTermSampler,
+    rbergomi_hybrid_candidate_profiles,
+    rbergomi_hybrid_profile_ids,
+)
 from .rbergomi_mixture import (
     RBergomiMixtureSample,
     replay_rbergomi_control_on_target_paths,
@@ -188,7 +211,40 @@ from .rbergomi_smoothing import (
     simulate_smoothed_adjacent_rbergomi,
     simulate_smoothed_rbergomi,
 )
+from .rbergomi_threshold_diagnostics import (
+    RBergomiThresholdCouplingDiagnostics,
+    evaluate_rbergomi_threshold_coupling,
+)
+from .robust_crossover import (
+    BoundedMomentInterval,
+    CandidateElimination,
+    CandidateWorkInterval,
+    CrossoverEliminationResult,
+    FrozenCrossoverDecision,
+    LevelProfileInterval,
+    SequentialCrossoverState,
+    advance_sequential_crossover,
+    candidate_work_intervals,
+    eliminate_dominated_candidates,
+    freeze_crossover_decision,
+    plug_in_relative_error_regret_bound,
+    update_profile_intervals,
+)
 from .seed_ledger import SeedKey, SeedLedger, SeedRecord, derive_seed
+from .statistical_gates import (
+    BinomialProbabilityInterval,
+    HeavyTailDiagnostics,
+    PairedLogWorkSummary,
+    PairedPowerForecast,
+    ReferenceAgreement,
+    conservative_bernoulli_variance_upper,
+    exact_binomial_probability_interval,
+    heavy_tail_diagnostics,
+    holm_rejections,
+    paired_log_work_summary,
+    paired_power_forecast,
+    reference_agreement,
+)
 from .threshold_stability import (
     NORMAL_DENSITY_MAXIMUM,
     AggregateThresholdStability,
@@ -220,6 +276,7 @@ __all__ = [
     "RBergomiMLMCSamplerConfig",
     "RBergomiDCSAdjacentEvaluation",
     "RBergomiDCSLevelEvaluation",
+    "RBergomiThresholdCouplingDiagnostics",
     "AdjacentLocalGaussianCoefficients",
     "BranchedCoupledRBergomiPaths",
     "ConditionalVolterraBridgeCoefficients",
@@ -277,6 +334,7 @@ __all__ = [
     "evaluate_marginalized_function",
     "evaluate_rbergomi_dcs_adjacent",
     "evaluate_rbergomi_dcs_level",
+    "evaluate_rbergomi_threshold_coupling",
     "sample_gaussian_mixture",
     "sample_mixture_labels",
     "selected_component_log_p_over_q",
@@ -365,4 +423,46 @@ __all__ = [
     "RateWindowAnalysis",
     "correction_rate_observation",
     "identify_rate_window",
+    "BoundedMomentInterval",
+    "CandidateElimination",
+    "CandidateWorkInterval",
+    "CrossoverEliminationResult",
+    "FrozenCrossoverDecision",
+    "LevelProfileInterval",
+    "SequentialCrossoverState",
+    "advance_sequential_crossover",
+    "candidate_work_intervals",
+    "eliminate_dominated_candidates",
+    "freeze_crossover_decision",
+    "plug_in_relative_error_regret_bound",
+    "update_profile_intervals",
+    "HybridCheckpoint",
+    "HybridPreparedRun",
+    "HybridResult",
+    "HybridTarget",
+    "HybridTermAllocation",
+    "HybridTermEstimate",
+    "execute_hybrid_run",
+    "load_hybrid_checkpoint",
+    "prepare_hybrid_run",
+    "save_hybrid_checkpoint",
+    "BinomialProbabilityInterval",
+    "HeavyTailDiagnostics",
+    "PairedLogWorkSummary",
+    "PairedPowerForecast",
+    "ReferenceAgreement",
+    "BlackScholesDiscreteBarrierOracle",
+    "black_scholes_continuous_lower_barrier_probability",
+    "black_scholes_discrete_lower_barrier_probability",
+    "black_scholes_left_digital_probability",
+    "RBergomiHybridTermSampler",
+    "rbergomi_hybrid_candidate_profiles",
+    "rbergomi_hybrid_profile_ids",
+    "conservative_bernoulli_variance_upper",
+    "exact_binomial_probability_interval",
+    "heavy_tail_diagnostics",
+    "holm_rejections",
+    "paired_log_work_summary",
+    "paired_power_forecast",
+    "reference_agreement",
 ]

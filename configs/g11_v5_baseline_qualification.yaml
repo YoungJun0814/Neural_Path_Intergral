@@ -1,0 +1,43 @@
+schema: npi.g11.v5-baseline-qualification.config.v1
+protocol_id: g11-v5-baseline-qualification-v1
+frozen: false
+estimand: finite_grid
+
+model_common:
+  eta: 1.1
+  xi: 0.04
+  rho: -0.6
+  spot: 100.0
+  maturity: 0.25
+
+models:
+  - {id: h005, H: 0.05}
+  - {id: h012, H: 0.12}
+  - {id: h030, H: 0.30}
+
+grid:
+  steps: 32
+
+tasks:
+  terminal: {kind: terminal, level: 94.0}
+  barrier: {kind: barrier, barrier: 90.0}
+
+training:
+  segments: 2
+  initial_control: [[0.0, 0.0], [0.0, 0.0]]
+  paths_per_iteration: 4096
+  maximum_iterations: 10
+  elite_quantile: 0.90
+  smoothing: 0.70
+  minimum_elite_paths: 64
+  control_bound: 8.0
+  target_level_repetitions: 2
+
+defensive_mixture:
+  natural_weight: 0.20
+
+sampling:
+  clusters: 20
+  evaluation_paths: 16384
+  confidence_level: 0.95
+  engine: fft

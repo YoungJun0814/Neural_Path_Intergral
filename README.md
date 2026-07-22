@@ -16,16 +16,22 @@ The active method is **Hybrid DCS-MGI**:
 > with a preprocessing-inclusive choice between single-level importance sampling
 > and every admissible multilevel start.
 
-The M0--M6 development implementation is complete. The generic Gaussian identities,
-finite-grid rBergomi adapter, exact adjacent-level coupling, seed ledger,
-checkpoint/resume logic, rate study, rarity calibration, and artifact audit have all
-passed their declared development gates. The 640-cell M7 V3 run completed and its
-artifact passes an independent integrity audit. Its strict frozen headline is
-**failed**, because one recovered Windows checkpoint `PermissionError` remains in the
-predeclared no-failure gate; it must not be relabelled as a passed untouched
-confirmation. The frozen V4 one-factor crossover qualification subsequently passed
-all of its declared gates and its independent audit. The full test suite currently
-passes **353/353 tests**.
+The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
+finite-look simultaneous variance intervals, an uncertainty-aware crossover,
+pilot-frozen achieved-RMSE allocation, resource censoring, durable resume, fresh CEM
+baseline contracts, independent references, and an independent result audit. Its
+development smoke checks pass. This does **not** mean the V5 research protocol has
+passed: terminal and barrier model-level rates remain conditional, formal selector
+and reference qualifications have not run, and there is no untouched V5
+confirmation or Linux reproduction.
+
+The earlier 640-cell M7 V3 run completed and passes its integrity audit, but its
+strict frozen headline **failed** because one recovered Windows checkpoint
+`PermissionError` violates the predeclared no-failure gate. The frozen V4
+one-factor crossover qualification later passed its declared gates and independent
+audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
+
+The complete local regression suite passed **393/393 tests on 2026-07-22**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finest discrete grid rather than a continuously monitored event,
@@ -47,6 +53,11 @@ Start with:
 - [V4 threshold-stability theory](docs/theory/G11_MARGIN_LOCALIZED_THRESHOLD_STABILITY.md)
 - [V4 crossover qualification protocol](docs/plans/G11_V4_PAPER_EXTENSION_PROTOCOL_2026-07-22.md)
 - [V4 crossover qualification decision](docs/audits/G11_V4_CROSSOVER_QUALIFICATION_DECISION_2026-07-22.md)
+- [V5 submission-grade implementation plan](docs/plans/G11_V5_SUBMISSION_GRADE_IMPLEMENTATION_PLAN_2026-07-22.md)
+- [V5 theorem and assumption ledger](docs/theory/G11_V5_THEOREMS.md)
+- [V5 proof/implementation audit](docs/theory/G11_V5_PROOF_AUDIT.md)
+- [V5 freeze-readiness audit](docs/audits/G11_V5_FREEZE_READINESS.md)
+- [V5 reproducible literature search](docs/literature/G11_V5_SEARCH_LOG.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
@@ -79,8 +90,9 @@ flowchart LR
     D --> E["Convert path event to a scalar threshold in Z"]
     E --> F["Integrate Z analytically: DCS-MGI"]
     F --> G["Profile DCS-SLIS and coupled corrections"]
-    G --> H["Choose the minimum-total-work start level"]
-    H --> I["Probability estimate, uncertainty, work and provenance"]
+    G --> H["Finite-look simultaneous work intervals"]
+    H --> I["Freeze start level and integer RMSE allocation"]
+    I --> J["Independent final estimate, uncertainty, work and provenance"]
 ```
 
 At MLMC level \(\ell\), the standardized Gaussian input under the target law is
@@ -143,6 +155,9 @@ repository as falsified or historical research tracks.
 | DCS correction rate | Conditional upper bound | \(O(h^{2r})\) if the coupled threshold error is \(O(h^r)\) in \(L^2\) |
 | MLMC complexity | Conditional corollary | Requires separate bias, variance, and cost exponents |
 | SLIS/MLMC crossover | Exact finite-profile calculation | Includes profiling/training work and the finest single level as a legal endpoint |
+| Pilot-selected estimator | Conditionally unbiased | Final samples are independent and pilots never enter final means |
+| Sequential work intervals | Finite-look familywise coverage | Defensive bounded observations only; not an anytime confidence sequence |
+| Achieved-RMSE allocation | Implemented and oracle-tested | Uses frozen upper variances, integer rounding, and pre-sampling resource censoring |
 
 The project does **not** currently claim:
 
@@ -258,6 +273,28 @@ Run the complete unit and integration test suite:
 
 ```bash
 python -m pytest -q
+```
+
+Run the laptop-safe V5 development chain (outputs are smoke evidence, not frozen
+results):
+
+```bash
+python -m experiments.g11_v5_threshold_diagnostics \
+  --config configs/g11_v5_threshold_diagnostics_development.yaml \
+  --smoke --output results/g11_v5_threshold_diagnostics_local_smoke.json
+
+python -m experiments.g11_v5_selector_qualification \
+  --config configs/g11_v5_selector_qualification.yaml \
+  --smoke --output results/g11_v5_selector_local_smoke.json
+
+python -m experiments.g11_v5_confirmatory \
+  --config configs/g11_v5_confirmatory_development.yaml \
+  --smoke --output results/g11_v5_confirmatory_local_smoke.json
+
+python -m experiments.g11_v5_result_audit \
+  --result results/g11_v5_confirmatory_local_smoke.json \
+  --config configs/g11_v5_confirmatory_development.yaml \
+  --output results/g11_v5_confirmatory_local_audit.json
 ```
 
 Run a fast Gaussian-oracle smoke check without overwriting the tracked result:
