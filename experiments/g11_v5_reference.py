@@ -187,6 +187,36 @@ def _method_reference(
     }
 
 
+def _reference_gates(
+    cells: list[dict[str, Any]], *, expected_cells: int
+) -> dict[str, bool]:
+    """Evaluate reference qualification from serialized cells, fail closed."""
+
+    methods = [method for cell in cells for method in cell["methods"]]
+    finite_methods = all(
+        int(method["final_samples"]) > 1
+        and math.isfinite(float(method["estimate"]))
+        and math.isfinite(float(method["variance"]))
+        and float(method["variance"]) >= 0.0
+        and math.isfinite(float(method["standard_error"]))
+        and float(method["standard_error"]) >= 0.0
+        for method in methods
+    )
+    return {
+        "complete_reference_matrix": len(cells) == expected_cells and expected_cells > 0,
+        "all_method_summaries_finite": len(methods) == 2 * expected_cells and finite_methods,
+        "all_reference_standard_errors_attained": all(
+            cell["gate"]["reference_se_contract"] for cell in cells
+        ),
+        "all_independent_crosschecks_agree": all(
+            cell["gate"]["independent_agreement"] for cell in cells
+        ),
+        "all_eta_zero_oracles_agree": all(
+            cell["gate"]["eta_zero_agreement"] for cell in cells
+        ),
+    }
+
+
 def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
     config, config_hash = _load(config_path)
     common = config["model_common"]
@@ -302,15 +332,10 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
                     },
                 }
             )
-    formal_gates = {
-        "all_reference_standard_errors_attained": all(
-            cell["gate"]["reference_se_contract"] for cell in cells
-        ),
-        "all_independent_crosschecks_agree": all(
-            cell["gate"]["independent_agreement"] for cell in cells
-        ),
-        "all_eta_zero_oracles_agree": all(cell["gate"]["eta_zero_agreement"] for cell in cells),
-    }
+    formal_gates = _reference_gates(
+        cells,
+        expected_cells=len(config["models"]) * len(config["tasks"]),
+    )
     provenance = source_provenance()
     formal_readiness = {
         "frozen_config": bool(config.get("frozen")),
