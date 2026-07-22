@@ -165,8 +165,8 @@ consistency, not the 20-cluster primary performance claim.
 | G2 terminal model-level theorem | not passed | inverse-slope and coefficient-rate obligations remain |
 | G3 barrier model-level theorem | not passed | early-active and mesh moment rate remains conditional |
 | G4 robust selector | formal pass | frozen 8-case x 500-repetition qualification passes every predeclared gate |
-| G5 baselines/references | formal pass | frozen 120-record CEM baseline and 8-cell reference protocols pass |
-| G6 qualification | not passed | full laptop qualification has not run |
+| G5 baselines/references | 32-step pass only | G6 exposed mismatch with the 128-step primary grid; matched reruns required |
+| G6 qualification | V1 failed | complete/audited run failed barrier accuracy gates because G5 input estimands used 32 rather than 128 steps |
 | G7--G10 | blocked by earlier gates | no freeze, untouched confirmation, Linux reproduction, or manuscript audit yet |
 
 It would still be a technical and scientific error to mark V5 “submission complete”

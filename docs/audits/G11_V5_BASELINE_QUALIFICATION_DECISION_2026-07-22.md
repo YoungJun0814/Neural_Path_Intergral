@@ -2,11 +2,14 @@
 
 Date: 2026-07-22
 
-Decision: **the frozen fresh-training baseline protocol passed.**
+Decision: **the frozen 32-step fresh-training baseline protocol passed.**
 
 This decision qualifies the crude MC, pure CEM-SLIS, and defensive CEM-mixture
 implementations used as V5 comparators. It does not state that the proposed hybrid
 estimator beats them.
+
+Scope correction after G6 V1: this artifact is valid only for its declared 32-step
+grid. It does not qualify the 128-step primary matrix; a matched v2 run is required.
 
 ## 1. Frozen execution identity
 

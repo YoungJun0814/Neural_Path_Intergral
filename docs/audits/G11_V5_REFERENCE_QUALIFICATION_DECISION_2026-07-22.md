@@ -2,7 +2,10 @@
 
 Date: 2026-07-22
 
-Decision: **the frozen finite-grid reference protocol passed.**
+Decision: **the frozen 32-step finite-grid reference protocol passed.**
+
+Scope correction after G6 V1: these probabilities must not be used as references
+for the 128-step primary barrier estimand. A matched v2 reference run is required.
 
 ## 1. Frozen execution identity
 
