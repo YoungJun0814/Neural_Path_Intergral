@@ -60,6 +60,18 @@ class BarrierObligationDiagnostics:
     maximum_exact_decomposition_violation: float
 
 
+@dataclass(frozen=True)
+class TerminalSlopeInverseMomentBound:
+    """Explicit target-law bound for the inverse terminal affine slope moment."""
+
+    steps: int
+    order: float
+    grid_scaled_l1_mass: float
+    deterministic_slope_scale: float
+    maximum_volterra_variance: float
+    upper_bound: float
+
+
 def direction_regularity_diagnostics(
     fine_direction: torch.Tensor,
     *,
@@ -148,6 +160,80 @@ def slope_lower_tail_diagnostics(
     )
 
 
+def terminal_slope_inverse_moment_bound(
+    direction: torch.Tensor,
+    *,
+    step_dt: float,
+    maturity: float,
+    hurst: float,
+    xi: float,
+    eta: float,
+    rho: float,
+    order: float,
+    minimum_grid_scaled_l1_mass: float | None = None,
+    grid_tolerance: float = 1e-12,
+) -> TerminalSlopeInverseMomentBound:
+    """Bound ``E[B_n^{-q}]`` for the terminal W2 smoothing slope.
+
+    For positive unit direction ``u`` and target-law rBergomi variance,
+
+    ``B_n=sqrt(1-rho^2)*sqrt(dt)*sum_i u_i*sqrt(V_i)``.
+
+    Weighted Jensen and the Gaussian MGF give the returned finite bound.  The BLP
+    cell-average construction has Volterra variance no larger than ``T^(2H)`` by
+    Jensen on every historical kernel cell.  A uniform-in-grid theorem additionally
+    requires the supplied grid-scaled L1 mass to have a positive common lower bound.
+    """
+
+    weights = torch.as_tensor(direction, dtype=torch.float64, device="cpu").reshape(-1)
+    if weights.numel() < 1 or not torch.isfinite(weights).all():
+        raise ValueError("direction must be a nonempty finite vector")
+    if bool((weights <= 0.0).any()):
+        raise ValueError("terminal inverse-moment theorem requires a positive direction")
+    norm = float(torch.linalg.vector_norm(weights))
+    if abs(norm - 1.0) > grid_tolerance:
+        raise ValueError("terminal inverse-moment theorem requires a unit direction")
+    numeric = (step_dt, maturity, hurst, xi, eta, rho, order, grid_tolerance)
+    if any(not math.isfinite(value) for value in numeric):
+        raise ValueError("terminal inverse-moment inputs must be finite")
+    if step_dt <= 0.0 or maturity <= 0.0:
+        raise ValueError("step_dt and maturity must be positive")
+    if not 0.0 < hurst < 0.5:
+        raise ValueError("rough Bergomi Hurst parameter must lie in (0, 0.5)")
+    if xi <= 0.0 or eta < 0.0 or not -1.0 < rho < 1.0 or order <= 0.0:
+        raise ValueError("invalid rBergomi or inverse-moment parameter")
+    if grid_tolerance <= 0.0:
+        raise ValueError("grid_tolerance must be positive")
+    implied_maturity = weights.numel() * step_dt
+    if abs(implied_maturity - maturity) > grid_tolerance * max(1.0, maturity):
+        raise ValueError("direction length and step_dt do not match maturity")
+
+    grid_mass = math.sqrt(step_dt) * float(torch.sum(weights))
+    if minimum_grid_scaled_l1_mass is not None:
+        if (
+            not math.isfinite(minimum_grid_scaled_l1_mass)
+            or minimum_grid_scaled_l1_mass <= 0.0
+        ):
+            raise ValueError("minimum grid-scaled L1 mass must be finite and positive")
+        if grid_mass + grid_tolerance < minimum_grid_scaled_l1_mass:
+            raise ValueError("direction violates the declared uniform L1-mass lower bound")
+    maximum_variance = maturity ** (2.0 * hurst)
+    deterministic_scale = math.sqrt(1.0 - rho**2) * math.sqrt(xi) * grid_mass
+    log_bound = (
+        -order * math.log(deterministic_scale)
+        + eta**2 * maximum_variance * (order / 4.0 + order**2 / 8.0)
+    )
+    upper = math.exp(log_bound) if log_bound <= math.log(torch.finfo(torch.float64).max) else math.inf
+    return TerminalSlopeInverseMomentBound(
+        steps=int(weights.numel()),
+        order=order,
+        grid_scaled_l1_mass=grid_mass,
+        deterministic_slope_scale=deterministic_scale,
+        maximum_volterra_variance=maximum_variance,
+        upper_bound=upper,
+    )
+
+
 def coefficient_moment_diagnostics(
     fine_intercept: torch.Tensor,
     fine_slope: torch.Tensor,
@@ -211,4 +297,3 @@ def barrier_obligation_diagnostics(
         good_event_fraction=float(torch.mean(good.to(torch.float64))),
         maximum_exact_decomposition_violation=diagnostics.maximum_exact_decomposition_violation,
     )
-

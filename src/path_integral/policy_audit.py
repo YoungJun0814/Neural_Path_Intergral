@@ -49,6 +49,10 @@ def audit_v6_policy(
         "cell_id": prepared.cell_id,
         "execution_method": prepared.execution_method,
         "route": None if prepared.route is None else asdict(prepared.route),
+        "audit_design": (
+            None if prepared.audit_design is None else asdict(prepared.audit_design)
+        ),
+        "minimum_final_samples": prepared.minimum_final_samples,
         "core_preparation_hash": prepared.core.preparation_hash,
         "preprocessing_work_sha256": prepared.preprocessing_work.sha256,
     }

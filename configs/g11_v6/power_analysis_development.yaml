@@ -1,0 +1,20 @@
+schema: npi.g11.v6-power-analysis.config.v1
+protocol_id: g11-v6-power-analysis-development-v1
+frozen: false
+
+statistics:
+  alpha: 0.05
+  power: 0.80
+  practical_geometric_mean_ratio: 1.20
+
+conservatism:
+  effect_shrinkage: 0.50
+  sd_inflation: 1.50
+
+design:
+  planned_clusters: 20
+
+resources:
+  conservative_work_units_per_second: 1000000.0
+  maximum_wall_hours: 72.0
+

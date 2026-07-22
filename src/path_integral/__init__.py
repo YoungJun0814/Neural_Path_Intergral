@@ -148,6 +148,7 @@ from .policy_allocation import (
     execute_v6_policy,
     prepare_v6_direct_policy,
     prepare_v6_hybrid_policy,
+    v6_policy_preparation_to_dict,
 )
 from .policy_audit import V6PolicyAudit, audit_v6_policy
 from .potentials import terminal_left_tail_potential
@@ -233,10 +234,12 @@ from .rbergomi_theory_diagnostics import (
     CoefficientMomentDiagnostics,
     DirectionRegularityDiagnostics,
     SlopeLowerTailDiagnostics,
+    TerminalSlopeInverseMomentBound,
     barrier_obligation_diagnostics,
     coefficient_moment_diagnostics,
     direction_regularity_diagnostics,
     slope_lower_tail_diagnostics,
+    terminal_slope_inverse_moment_bound,
 )
 from .rbergomi_threshold_diagnostics import (
     RBergomiThresholdCouplingDiagnostics,
@@ -344,6 +347,7 @@ __all__ = [
     "execute_v6_policy",
     "prepare_v6_direct_policy",
     "prepare_v6_hybrid_policy",
+    "v6_policy_preparation_to_dict",
     "audit_v6_policy",
     "gaussian_exponential_tilt_log_normalizer",
     "gaussian_exponential_tilt_optimal_control",
@@ -379,10 +383,12 @@ __all__ = [
     "CoefficientMomentDiagnostics",
     "DirectionRegularityDiagnostics",
     "SlopeLowerTailDiagnostics",
+    "TerminalSlopeInverseMomentBound",
     "barrier_obligation_diagnostics",
     "coefficient_moment_diagnostics",
     "direction_regularity_diagnostics",
     "slope_lower_tail_diagnostics",
+    "terminal_slope_inverse_moment_bound",
     "sample_gaussian_mixture",
     "sample_mixture_labels",
     "selected_component_log_p_over_q",

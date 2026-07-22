@@ -8,9 +8,12 @@ import pytest
 import torch
 
 from src.path_integral import (
+    FrozenCrossoverDecision,
+    HybridProfileOpportunity,
     HybridTarget,
     LevelBatch,
     RarityRouterConfig,
+    RoutingWorkInterval,
     SingleTermDesign,
     V6WorkLedger,
     V6WorkRecord,
@@ -18,6 +21,8 @@ from src.path_integral import (
     execute_v6_policy,
     freeze_rarity_route,
     prepare_v6_direct_policy,
+    prepare_v6_hybrid_policy,
+    update_profile_intervals,
 )
 
 
@@ -70,7 +75,6 @@ def test_routed_direct_policy_executes_and_passes_independent_audit() -> None:
     result = execute_v6_policy(
         prepared,
         DirectSampler(),
-        cumulative_final_cpu_seconds=0.1,
         final_peak_memory_bytes=1000,
     )
     assert result.core.complete
@@ -114,10 +118,81 @@ def test_policy_auditor_detects_result_hash_tampering() -> None:
     result = execute_v6_policy(
         prepared,
         DirectSampler(),
-        cumulative_final_cpu_seconds=0.1,
         final_peak_memory_bytes=1000,
     )
     tampered = replace(result, result_hash="0" * 64)
     audit = audit_v6_policy(prepared, tampered)
     assert not audit.result_hash_valid
     assert not audit.passed
+
+
+def test_economically_admitted_hybrid_policy_uses_registered_bounded_profiles() -> None:
+    route = freeze_rarity_route(
+        successes=0,
+        trials=256,
+        screening_work=256.0,
+        config=RarityRouterConfig(
+            maximum_hybrid_profile_work=1000.0,
+            maximum_profile_fraction=0.25,
+        ),
+        crude_work=RoutingWorkInterval("crude", 9000.0, 10000.0, 11000.0),
+        dcs_work=RoutingWorkInterval("dcs_slis", 7000.0, 8000.0, 9000.0),
+        hybrid_opportunity=HybridProfileOpportunity(100.0, 5000.0, 1000.0),
+    )
+    assert route.action == "profile_hybrid"
+    generator = torch.Generator().manual_seed(77)
+    signs = (2 * torch.randint(0, 2, (256,), generator=generator) - 1).to(torch.float64)
+    profiles = update_profile_intervals(
+        {"base": 0.1 + 0.1 * signs, "correction": 0.02 * signs},
+        absolute_bounds={"base": 1.0, "correction": 1.0},
+        costs_per_sample={"base": 1.0, "correction": 2.0},
+        familywise_alpha=0.05,
+        total_predeclared_looks=1,
+    )
+    selection = FrozenCrossoverDecision(
+        selected_candidate="hybrid",
+        look_index=0,
+        reason="synthetic registered look",
+        surviving_candidates=("hybrid",),
+        selected_work_interval=(100.0, 200.0),
+        selected_point_work=150.0,
+        worst_case_interval_regret_bound=1.0,
+    )
+    work = V6WorkLedger(
+        (_record("screening"), _record("routing"), _record("selector_profile"))
+    )
+    prepared = prepare_v6_hybrid_policy(
+        HybridTarget("hybrid-target", 0.1, 0.5),
+        profiles,
+        policy_name="v6_policy",
+        cell_id="rare-cell",
+        route=route,
+        selection=selection,
+        selected_profile_ids=("base", "correction"),
+        protocol="g11-v6-hybrid-policy-test",
+        regime="gaussian",
+        task="digital",
+        operation_work_cap=1e9,
+        preprocessing_work=work,
+        minimum_final_samples=32,
+    )
+
+    class TwoTermSampler:
+        def __call__(self, profile_id, role, count, seeds):
+            del role, seeds
+            values = (
+                torch.full((count,), 0.1, dtype=torch.float64)
+                if profile_id == "base"
+                else torch.zeros(count, dtype=torch.float64)
+            )
+            cost = 1.0 if profile_id == "base" else 2.0
+            return LevelBatch(values, count * cost)
+
+    result = execute_v6_policy(
+        prepared,
+        TwoTermSampler(),
+        final_peak_memory_bytes=0,
+    )
+    assert result.core.complete
+    assert result.execution_method == "hybrid"
+    assert audit_v6_policy(prepared, result).passed

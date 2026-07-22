@@ -14,6 +14,7 @@ from src.path_integral import (
     direction_regularity_diagnostics,
     evaluate_rbergomi_threshold_coupling,
     slope_lower_tail_diagnostics,
+    terminal_slope_inverse_moment_bound,
 )
 
 
@@ -50,6 +51,47 @@ def test_slope_tail_diagnostic_reports_empirical_inverse_moments_only() -> None:
         float(torch.mean(1.0 / slopes))
     )
     assert dict(diagnostics.lower_tail_probabilities)[0.15] == 0.25
+
+
+def test_terminal_slope_inverse_moment_bound_is_exact_for_constant_volatility() -> None:
+    steps = 16
+    direction = torch.full((steps,), 1.0 / math.sqrt(steps), dtype=torch.float64)
+    result = terminal_slope_inverse_moment_bound(
+        direction,
+        step_dt=1.0 / steps,
+        maturity=1.0,
+        hurst=0.1,
+        xi=0.04,
+        eta=0.0,
+        rho=-0.7,
+        order=2.0,
+        minimum_grid_scaled_l1_mass=1.0,
+    )
+    exact_slope = math.sqrt(1.0 - 0.7**2) * math.sqrt(0.04)
+    assert result.grid_scaled_l1_mass == pytest.approx(1.0)
+    assert result.upper_bound == pytest.approx(exact_slope**-2.0)
+
+
+def test_piecewise_positive_direction_has_a_grid_uniform_scaled_l1_mass() -> None:
+    masses = []
+    for steps in (16, 64):
+        schedule = torch.cat(
+            (torch.full((steps // 2,), 2.0), torch.ones(steps // 2))
+        ).to(torch.float64)
+        direction = schedule / torch.linalg.vector_norm(schedule)
+        result = terminal_slope_inverse_moment_bound(
+            direction,
+            step_dt=1.0 / steps,
+            maturity=1.0,
+            hurst=0.05,
+            xi=0.04,
+            eta=1.5,
+            rho=-0.7,
+            order=4.0,
+        )
+        masses.append(result.grid_scaled_l1_mass)
+        assert math.isfinite(result.upper_bound)
+    assert masses[0] == pytest.approx(masses[1])
 
 
 def test_coefficient_diagnostic_returns_raw_lp_norms_without_fitting_a_rate() -> None:

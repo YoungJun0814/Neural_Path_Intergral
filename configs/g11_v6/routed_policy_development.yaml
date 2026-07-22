@@ -1,0 +1,48 @@
+schema: npi.g11.v6-routed-policy.config.v1
+protocol_id: g11-v6-routed-policy-development-v1
+phase: development
+frozen: false
+estimand: fixed_finest_grid
+
+hierarchy:
+  coarsest_steps: 8
+  finest_level: 4
+
+proposal:
+  weights: [0.15, 0.35, 0.50]
+  controls:
+    - [[0.0, 0.0], [0.0, 0.0]]
+    - [[-0.5, -2.0], [-0.25, -1.0]]
+    - [[-1.0, -4.0], [-0.5, -2.0]]
+
+router:
+  probability_cutoff: 0.05
+  confidence_level: 0.99
+  initial_screening_trials: 256
+  maximum_screening_trials: 1024
+  minimum_certified_relative_saving: 0.10
+  maximum_hybrid_profile_work: 5.0e8
+  maximum_profile_fraction: 0.25
+  ambiguous_fallback: dcs_slis
+
+selector:
+  looks: [64, 128, 256, 512]
+  familywise_alpha: 0.05
+  elimination_relative_tolerance: 0.00
+  practical_equivalence_relative_tolerance: 0.05
+
+sampling:
+  clusters: 8
+  relative_sampling_rmse: 0.20
+  confidence_level: 0.95
+  dcs_pilot_samples: 512
+  minimum_final_samples: 4096
+  chunk_size: 8192
+  allocation_safety_factor: 1.25
+  operation_work_cap: 5.0e10
+  engine: fft
+
+gates:
+  maximum_median_selection_fraction: 0.25
+  maximum_p90_selection_fraction: 0.40
+

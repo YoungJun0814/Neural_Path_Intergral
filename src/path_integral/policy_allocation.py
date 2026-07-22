@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import time
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 from typing import Literal
@@ -36,6 +37,8 @@ class V6PolicyPreparedRun:
     cell_id: str
     execution_method: V6ExecutionMethod
     route: FrozenRarityRoute | None
+    audit_design: SingleTermDesign | None
+    minimum_final_samples: int
     core: HybridPreparedRun
     preprocessing_work: V6WorkLedger
     policy_hash: str
@@ -51,6 +54,43 @@ class V6PolicyResult:
     core: HybridResult
     total_work: V6WorkLedger
     result_hash: str
+
+
+def v6_policy_preparation_to_dict(prepared: V6PolicyPreparedRun) -> dict[str, object]:
+    """Serialize every sufficient statistic required by the offline V6 auditor."""
+
+    core = prepared.core
+    return {
+        "schema": prepared.schema,
+        "policy_name": prepared.policy_name,
+        "cell_id": prepared.cell_id,
+        "execution_method": prepared.execution_method,
+        "route": None if prepared.route is None else asdict(prepared.route),
+        "audit_design": (
+            None if prepared.audit_design is None else asdict(prepared.audit_design)
+        ),
+        "minimum_final_samples": prepared.minimum_final_samples,
+        "core": {
+            "protocol": core.protocol,
+            "regime": core.regime,
+            "task": core.task,
+            "selected_candidate": core.selected_candidate,
+            "target": asdict(core.target),
+            "selection": asdict(core.selection),
+            "allocations": [asdict(item) for item in core.allocations],
+            "expected_final_work": core.expected_final_work,
+            "operation_work_cap": core.operation_work_cap,
+            "resource_censored": core.resource_censored,
+            "censoring_reason": core.censoring_reason,
+            "chunk_size": core.chunk_size,
+            "streams": list(core.streams),
+            "seed_ledger": core.ledger.to_dict(),
+            "work_entries": [asdict(item) for item in core.work.entries],
+            "preparation_hash": core.preparation_hash,
+        },
+        "preprocessing_work": prepared.preprocessing_work.to_dict(),
+        "policy_hash": prepared.policy_hash,
+    }
 
 
 def _canonical_hash(payload: dict[str, object]) -> str:
@@ -119,7 +159,10 @@ def _required_categories(
         required.append("proposal_training")
     if method == "hybrid":
         required.append("selector_profile")
-    required.append("allocation_pilot")
+    elif not (method == "crude" and route is not None):
+        # The natural-law screening sample is already a valid crude allocation
+        # pilot. Requiring a second record would double-label the same work.
+        required.append("allocation_pilot")
     return tuple(required)
 
 
@@ -140,6 +183,8 @@ def _policy_hash(
     cell_id: str,
     execution_method: V6ExecutionMethod,
     route: FrozenRarityRoute | None,
+    audit_design: SingleTermDesign | None,
+    minimum_final_samples: int,
     core: HybridPreparedRun,
     work: V6WorkLedger,
 ) -> str:
@@ -150,6 +195,8 @@ def _policy_hash(
             "cell_id": cell_id,
             "execution_method": execution_method,
             "route": None if route is None else asdict(route),
+            "audit_design": None if audit_design is None else asdict(audit_design),
+            "minimum_final_samples": minimum_final_samples,
             "core_preparation_hash": core.preparation_hash,
             "preprocessing_work_sha256": work.sha256,
         }
@@ -200,6 +247,8 @@ def prepare_v6_direct_policy(
         cell_id=cell_id,
         execution_method=execution_method,
         route=route,
+        audit_design=design,
+        minimum_final_samples=minimum_final_samples,
         core=core,
         work=preprocessing_work,
     )
@@ -209,6 +258,8 @@ def prepare_v6_direct_policy(
         cell_id=cell_id,
         execution_method=execution_method,
         route=route,
+        audit_design=design,
+        minimum_final_samples=minimum_final_samples,
         core=core,
         preprocessing_work=preprocessing_work,
         policy_hash=policy_hash,
@@ -263,6 +314,8 @@ def prepare_v6_hybrid_policy(
         cell_id=cell_id,
         execution_method="hybrid",
         route=route,
+        audit_design=None,
+        minimum_final_samples=minimum_final_samples,
         core=core,
         work=preprocessing_work,
     )
@@ -272,6 +325,8 @@ def prepare_v6_hybrid_policy(
         cell_id=cell_id,
         execution_method="hybrid",
         route=route,
+        audit_design=None,
+        minimum_final_samples=minimum_final_samples,
         core=core,
         preprocessing_work=preprocessing_work,
         policy_hash=policy_hash,
@@ -286,14 +341,13 @@ def execute_v6_policy(
     maximum_chunks: int | None = None,
     reference_probability: float | None = None,
     reference_standard_error: float = 0.0,
-    cumulative_final_cpu_seconds: float,
     final_peak_memory_bytes: int,
+    prior_final_cpu_seconds: float = 0.0,
 ) -> V6PolicyResult:
     """Execute the frozen policy and attach a complete training-inclusive ledger.
 
-    On resume, ``cumulative_final_cpu_seconds`` must cover the earlier checkpointed
-    chunks as well as the current call; this avoids silently undercharging resumed
-    execution.
+    On resume, ``prior_final_cpu_seconds`` must contain CPU time charged by earlier
+    checkpointed chunks. The current call measures and adds its own process CPU time.
     """
 
     expected_hash = _policy_hash(
@@ -301,19 +355,22 @@ def execute_v6_policy(
         cell_id=prepared.cell_id,
         execution_method=prepared.execution_method,
         route=prepared.route,
+        audit_design=prepared.audit_design,
+        minimum_final_samples=prepared.minimum_final_samples,
         core=prepared.core,
         work=prepared.preprocessing_work,
     )
     if prepared.schema != "npi.g11.v6-policy-preparation.v1" or expected_hash != prepared.policy_hash:
         raise ValueError("V6 policy preparation hash is invalid")
-    if not math.isfinite(cumulative_final_cpu_seconds) or cumulative_final_cpu_seconds < 0.0:
-        raise ValueError("cumulative_final_cpu_seconds must be finite and nonnegative")
+    if not math.isfinite(prior_final_cpu_seconds) or prior_final_cpu_seconds < 0.0:
+        raise ValueError("prior_final_cpu_seconds must be finite and nonnegative")
     if (
         isinstance(final_peak_memory_bytes, bool)
         or not isinstance(final_peak_memory_bytes, int)
         or final_peak_memory_bytes < 0
     ):
         raise ValueError("final_peak_memory_bytes must be a nonnegative integer")
+    cpu_started = time.process_time()
     core_result = execute_hybrid_run(
         prepared.core,
         sampler,
@@ -321,6 +378,9 @@ def execute_v6_policy(
         maximum_chunks=maximum_chunks,
         reference_probability=reference_probability,
         reference_standard_error=reference_standard_error,
+    )
+    cumulative_final_cpu_seconds = prior_final_cpu_seconds + (
+        time.process_time() - cpu_started
     )
     final_entries = tuple(entry for entry in core_result.work.entries if entry.role == "final")
     total_work = prepared.preprocessing_work

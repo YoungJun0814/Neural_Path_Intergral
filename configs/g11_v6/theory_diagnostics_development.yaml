@@ -1,0 +1,37 @@
+schema: npi.g11.v6-theory-diagnostics.config.v1
+protocol_id: g11-v6-theory-diagnostics-development-v1
+phase: development
+frozen: false
+estimand: fixed_finest_grid
+
+target_probability: 1.0e-3
+
+hierarchy:
+  coarsest_steps: 8
+  adjacent_levels: [1, 2, 3, 4]
+
+proposal:
+  weights: [0.15, 0.35, 0.50]
+  controls:
+    - [[0.0, 0.0], [0.0, 0.0]]
+    - [[-0.5, -2.0], [-0.25, -1.0]]
+    - [[-1.0, -4.0], [-0.5, -2.0]]
+
+sampling:
+  replicates: 8
+  paths_per_level: 4096
+  engine: fft
+
+analysis:
+  denominator_floor: 1.0e-6
+  active_time_fraction: 0.25
+  inverse_orders: [1.0, 2.0, 4.0]
+  lower_tail_floors: [1.0e-4, 1.0e-3, 1.0e-2]
+  bootstrap_repetitions: 500
+  minimum_rate_levels: 4
+  endpoint_slope_margin: 0.15
+  maximum_variance_cv: 0.20
+
+gates:
+  pathwise_tolerance: 1.0e-11
+
