@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import replace
 
 import pytest
@@ -19,6 +20,7 @@ from src.path_integral import (
     V6WorkRecord,
     audit_v6_policy,
     execute_v6_policy,
+    execute_v6_policy_durable,
     freeze_rarity_route,
     prepare_v6_direct_policy,
     prepare_v6_hybrid_policy,
@@ -196,3 +198,74 @@ def test_economically_admitted_hybrid_policy_uses_registered_bounded_profiles() 
     assert result.core.complete
     assert result.execution_method == "hybrid"
     assert audit_v6_policy(prepared, result).passed
+
+
+def test_durable_policy_checkpoint_resumes_without_reusing_final_samples(tmp_path) -> None:
+    work = V6WorkLedger(
+        (_record("proposal_training", "pure_cem"), _record("allocation_pilot", "pure_cem"))
+    )
+    prepared = prepare_v6_direct_policy(
+        HybridTarget("durable-target", 0.1, 0.5),
+        SingleTermDesign("cem", 64, 0.1, 0.02, 0.025, 1.0, None),
+        policy_name="pure_cem",
+        cell_id="rare-cell",
+        execution_method="pure_cem",
+        protocol="g11-v6-durable-test",
+        regime="gaussian",
+        task="digital",
+        operation_work_cap=1e9,
+        preprocessing_work=work,
+        chunk_size=7,
+        minimum_final_samples=32,
+        streams=("proposal",),
+    )
+    checkpoint = tmp_path / "policy-checkpoint.json"
+    partial = execute_v6_policy_durable(
+        prepared,
+        DirectSampler(),
+        checkpoint_path=checkpoint,
+        chunks_per_checkpoint=1,
+        maximum_cycles=2,
+        final_peak_memory_bytes=100,
+    )
+    assert not partial.core.complete
+    assert checkpoint.exists()
+    resumed = execute_v6_policy_durable(
+        prepared,
+        DirectSampler(),
+        checkpoint_path=checkpoint,
+        resume=True,
+        chunks_per_checkpoint=1,
+        final_peak_memory_bytes=100,
+    )
+    one_shot = execute_v6_policy(
+        prepared,
+        DirectSampler(),
+        final_peak_memory_bytes=100,
+    )
+    assert resumed.core.complete
+    assert resumed.core.terms == one_shot.core.terms
+    assert resumed.core.seed_ledger_hash == one_shot.core.seed_ledger_hash
+    assert resumed.core.work.total_work_units == one_shot.core.work.total_work_units
+
+    tampered_checkpoint = tmp_path / "tampered.json"
+    execute_v6_policy_durable(
+        prepared,
+        DirectSampler(),
+        checkpoint_path=tampered_checkpoint,
+        chunks_per_checkpoint=1,
+        maximum_cycles=1,
+        final_peak_memory_bytes=100,
+    )
+    state_path = tampered_checkpoint.with_suffix(".json.v6.json")
+    state = json.loads(state_path.read_text(encoding="utf-8"))
+    state["policy_hash"] = "0" * 64
+    state_path.write_text(json.dumps(state), encoding="utf-8")
+    with pytest.raises(ValueError, match="does not match"):
+        execute_v6_policy_durable(
+            prepared,
+            DirectSampler(),
+            checkpoint_path=tampered_checkpoint,
+            resume=True,
+            final_peak_memory_bytes=100,
+        )

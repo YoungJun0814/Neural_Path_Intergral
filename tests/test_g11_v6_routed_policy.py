@@ -34,7 +34,14 @@ def test_v6_routed_policy_smoke_is_auditable_and_unqualified(tmp_path: Path) -> 
     reference = run_reference(REFERENCE, manifest_path, smoke=True)
     reference_path = tmp_path / "reference.json"
     reference_path.write_text(json.dumps(reference), encoding="utf-8")
-    result = run_policy(POLICY, manifest_path, reference_path, smoke=True)
+    checkpoint_directory = tmp_path / "policy-progress"
+    result = run_policy(
+        POLICY,
+        manifest_path,
+        reference_path,
+        smoke=True,
+        checkpoint_directory=checkpoint_directory,
+    )
     assert result["schema"] == "npi.g11.v6-routed-policy.v1"
     assert len(result["records"]) == 2
     assert result["gates"]["complete_matrix"]
@@ -46,3 +53,14 @@ def test_v6_routed_policy_smoke_is_auditable_and_unqualified(tmp_path: Path) -> 
     offline = run_audit(AUDIT, artifact_path)
     assert offline["gates"]["all_records_pass"]
     assert not offline["qualification_audit_passed"]
+    resumed = run_policy(
+        POLICY,
+        manifest_path,
+        reference_path,
+        smoke=True,
+        checkpoint_directory=checkpoint_directory,
+        resume=True,
+    )
+    assert [record["result"]["result_hash"] for record in resumed["records"]] == [
+        record["result"]["result_hash"] for record in result["records"]
+    ]

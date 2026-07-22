@@ -8,6 +8,7 @@ import math
 import time
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass
+from pathlib import Path
 from typing import Literal
 
 from src.path_integral.hybrid_allocation import (
@@ -18,8 +19,10 @@ from src.path_integral.hybrid_allocation import (
     HybridTermSampler,
     SingleTermDesign,
     execute_hybrid_run,
+    load_hybrid_checkpoint,
     prepare_hybrid_run,
     prepare_single_term_run,
+    save_hybrid_checkpoint,
 )
 from src.path_integral.mlmc import WorkLedgerEntry
 from src.path_integral.rarity_router import FrozenRarityRoute
@@ -420,3 +423,120 @@ def execute_v6_policy(
         total_work=total_work,
         result_hash=_canonical_hash(result_payload),
     )
+
+
+def _durable_state_path(checkpoint_path: Path) -> Path:
+    return checkpoint_path.with_suffix(checkpoint_path.suffix + ".v6.json")
+
+
+def _write_durable_state(path: Path, payload: dict[str, object]) -> None:
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.parent.mkdir(parents=True, exist_ok=True)
+    temporary.write_text(
+        json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False),
+        encoding="utf-8",
+    )
+    for attempt in range(10):
+        try:
+            temporary.replace(path)
+            return
+        except PermissionError:
+            if attempt == 9:
+                raise
+            time.sleep(0.025 * 2**attempt)
+
+
+def execute_v6_policy_durable(
+    prepared: V6PolicyPreparedRun,
+    sampler: HybridTermSampler,
+    *,
+    checkpoint_path: str | Path,
+    resume: bool = False,
+    chunks_per_checkpoint: int = 1,
+    maximum_cycles: int | None = None,
+    reference_probability: float | None = None,
+    reference_standard_error: float = 0.0,
+    final_peak_memory_bytes: int,
+) -> V6PolicyResult:
+    """Execute a V6 policy with a strict, policy-bound durable checkpoint.
+
+    A call interrupted after a published cycle loses at most
+    ``chunks_per_checkpoint`` chunks.  ``maximum_cycles`` is intended for schedulers
+    and tests that deliberately yield; omit it to run through completion.
+    """
+
+    checkpoint = Path(checkpoint_path)
+    state_path = _durable_state_path(checkpoint)
+    if (
+        isinstance(chunks_per_checkpoint, bool)
+        or chunks_per_checkpoint < 1
+        or isinstance(maximum_cycles, bool)
+        or (maximum_cycles is not None and maximum_cycles < 1)
+    ):
+        raise ValueError("durable checkpoint cycle counts must be positive integers")
+    prior_cpu = 0.0
+    core_checkpoint = None
+    if resume:
+        if not checkpoint.exists() or not state_path.exists():
+            raise FileNotFoundError("durable V6 resume requires checkpoint and state files")
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        if not isinstance(state, dict) or set(state) != {
+            "schema",
+            "status",
+            "policy_hash",
+            "core_preparation_hash",
+            "prior_final_cpu_seconds",
+        }:
+            raise ValueError("malformed durable V6 state")
+        if (
+            state["schema"] != "npi.g11.v6-policy-checkpoint.v1"
+            or state["status"] != "running"
+            or state["policy_hash"] != prepared.policy_hash
+            or state["core_preparation_hash"] != prepared.core.preparation_hash
+        ):
+            raise ValueError("durable V6 state does not match the prepared policy")
+        prior_cpu = float(state["prior_final_cpu_seconds"])
+        if not math.isfinite(prior_cpu) or prior_cpu < 0.0:
+            raise ValueError("durable V6 state contains invalid CPU work")
+        core_checkpoint = load_hybrid_checkpoint(checkpoint)
+    elif checkpoint.exists() or state_path.exists():
+        raise FileExistsError("fresh durable execution refuses an existing checkpoint")
+
+    cycles = 0
+    while True:
+        result = execute_v6_policy(
+            prepared,
+            sampler,
+            checkpoint=core_checkpoint,
+            maximum_chunks=chunks_per_checkpoint,
+            reference_probability=reference_probability,
+            reference_standard_error=reference_standard_error,
+            final_peak_memory_bytes=final_peak_memory_bytes,
+            prior_final_cpu_seconds=prior_cpu,
+        )
+        cycles += 1
+        if result.core.complete or result.core.resource_censored:
+            # Keep the last published running checkpoint until the outer experiment
+            # durably journals the completed record. If the process dies in that
+            # narrow window, resume deterministically replays only the final suffix.
+            return result
+        if result.core.checkpoint is None:
+            raise AssertionError("incomplete V6 execution did not return a core checkpoint")
+        core_checkpoint = result.core.checkpoint
+        final_records = tuple(
+            record for record in result.total_work.records if record.category == "final"
+        )
+        prior_cpu = final_records[-1].cpu_seconds if final_records else prior_cpu
+        save_hybrid_checkpoint(core_checkpoint, checkpoint)
+        _write_durable_state(
+            state_path,
+            {
+                "schema": "npi.g11.v6-policy-checkpoint.v1",
+                "status": "running",
+                "policy_hash": prepared.policy_hash,
+                "core_preparation_hash": prepared.core.preparation_hash,
+                "prior_final_cpu_seconds": prior_cpu,
+            },
+        )
+        if maximum_cycles is not None and cycles >= maximum_cycles:
+            return result

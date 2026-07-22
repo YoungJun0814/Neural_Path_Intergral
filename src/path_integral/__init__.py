@@ -146,6 +146,7 @@ from .policy_allocation import (
     V6PolicyPreparedRun,
     V6PolicyResult,
     execute_v6_policy,
+    execute_v6_policy_durable,
     prepare_v6_direct_policy,
     prepare_v6_hybrid_policy,
     v6_policy_preparation_to_dict,
@@ -285,6 +286,12 @@ from .threshold_stability import (
     defensive_moment_upper_bounds,
     ratio_candidate_stability,
 )
+from .v6_progress import (
+    V6ProgressJournal,
+    load_v6_progress,
+    save_v6_progress,
+    v6_record_checkpoint_path,
+)
 from .v6_protocol import (
     V6_CELL_MANIFEST_SCHEMA,
     V6CellManifest,
@@ -345,6 +352,7 @@ __all__ = [
     "V6PolicyResult",
     "V6PolicyAudit",
     "execute_v6_policy",
+    "execute_v6_policy_durable",
     "prepare_v6_direct_policy",
     "prepare_v6_hybrid_policy",
     "v6_policy_preparation_to_dict",
@@ -531,4 +539,8 @@ __all__ = [
     "V6RBergomiCell",
     "V6WorkLedger",
     "V6WorkRecord",
+    "V6ProgressJournal",
+    "load_v6_progress",
+    "save_v6_progress",
+    "v6_record_checkpoint_path",
 ]

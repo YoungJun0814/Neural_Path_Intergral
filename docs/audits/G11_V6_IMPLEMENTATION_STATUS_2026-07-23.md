@@ -170,12 +170,24 @@ inverse-slope negative moments”이다. “unconditional rBergomi complexity th
 ## 8. 실행된 검증
 
 - 연구 코드 범위 Ruff: 통과;
-- 전체 pytest: `464 passed` (freeze/hardware 모듈 포함);
+- 전체 pytest: `466 passed` (freeze/hardware/resume 모듈 포함);
 - 실제 rBergomi baseline smoke: 통과;
 - 실제 rBergomi routed-policy smoke 및 offline audit: 통과;
 - 실제 rBergomi Route B diagnostic smoke: 통과;
 - constant-volatility inverse-moment equality oracle: 통과; 그리고
 - 두 해상도 piecewise direction mass invariance: 통과.
+
+별도의 laptop orchestration을 실제 실행해 calibration부터 두 offline audit와 Route B
+diagnostic까지 9개 artifact를 생성했다. 본체 elapsed time은 약 13.6초였고 9개 smoke
+gate가 모두 통과했다. Artifact는
+`tmp/g11_v6_laptop_smoke_2026-07-23/`에 있으며 scientific claim은 schema에서
+명시적으로 금지된다.
+
+Baseline과 routed-policy full matrix는 완료 record마다 strict progress journal을
+원자적으로 갱신하고 `--resume`에서 identity/hash가 같은 record만 재사용한다. 현재
+record 내부의 장애는 formal confirmation에서 실패로 남기며 complete-case deletion이나
+조용한 재시도로 숨기지 않는다. 동일 frozen preparation을 유지하는 scheduler에는
+별도의 chunk-level `execute_v6_policy_durable` API가 제공된다.
 
 저장소 루트 전체 Ruff는 이번 연구 변경과 무관한 기존 보조 visualization scripts의
 49개 lint issue 때문에 실패한다. `src`, `experiments`, `tests` 범위는 clean하다.

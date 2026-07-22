@@ -44,7 +44,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **464/464 tests on 2026-07-23**.
+The complete local regression suite passed **466/466 tests on 2026-07-23**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finest discrete grid rather than a continuously monitored event,
@@ -267,6 +267,23 @@ Machine-readable outputs are stored under [`results/`](results/), including the
 [strict artifact audit](results/g11_artifact_audit_v1_2026-07-19.json),
 [rate audit](results/g11_threshold_rate_audit_v1_2026-07-19.json), and
 [rare-MLMC development result](results/g11_rare_mlmc_development_v1_2026-07-19.json).
+
+### Laptop-safe V6 end-to-end check
+
+The following command runs calibration, a manifest/reference pair, all three direct
+baselines, the routed policy, two offline audits, and Route B diagnostics at smoke
+scale. It writes distinct artifacts and is structurally prohibited from satisfying a
+scientific gate.
+
+```bash
+python -m experiments.g11_v6_laptop_smoke \
+  --output-directory tmp/g11_v6_laptop_smoke
+```
+
+Long baseline and routed-policy runs also accept `--checkpoint-directory` and
+`--resume`. Completed records are hash-bound in a strict progress journal. An
+interrupted in-progress record is not silently promoted or deleted; formal
+confirmation treats such an interruption under its predeclared failure rule.
 
 ## Installation
 

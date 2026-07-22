@@ -31,7 +31,14 @@ def test_v6_baseline_smoke_executes_actual_allocations(tmp_path: Path) -> None:
     reference = run_reference(REFERENCE, manifest_path, smoke=True)
     reference_path = tmp_path / "reference.json"
     reference_path.write_text(json.dumps(reference), encoding="utf-8")
-    result = run(BASELINE, manifest_path, reference_path, smoke=True)
+    checkpoint_directory = tmp_path / "baseline-progress"
+    result = run(
+        BASELINE,
+        manifest_path,
+        reference_path,
+        smoke=True,
+        checkpoint_directory=checkpoint_directory,
+    )
     assert result["schema"] == "npi.g11.v6-baseline-qualification.v1"
     assert len(result["records"]) == 6
     assert result["gates"]["complete_matrix"]
@@ -42,3 +49,14 @@ def test_v6_baseline_smoke_executes_actual_allocations(tmp_path: Path) -> None:
         "pure_cem",
         "defensive_cem",
     }
+    resumed = run(
+        BASELINE,
+        manifest_path,
+        reference_path,
+        smoke=True,
+        checkpoint_directory=checkpoint_directory,
+        resume=True,
+    )
+    assert [record["result"]["result_hash"] for record in resumed["records"]] == [
+        record["result"]["result_hash"] for record in result["records"]
+    ]

@@ -24,13 +24,16 @@ from src.path_integral import (
     SingleTermDesign,
     TerminalThresholdTask,
     TimePiecewiseTwoDriverControl,
+    V6ProgressJournal,
     V6WorkLedger,
     V6WorkRecord,
     conservative_bernoulli_variance_upper,
     exact_binomial_probability_interval,
     execute_v6_policy,
     heavy_tail_diagnostics,
+    load_v6_progress,
     prepare_v6_direct_policy,
+    save_v6_progress,
     simulate_rbergomi_mixture,
     update_profile_intervals,
     v6_policy_preparation_to_dict,
@@ -291,10 +294,14 @@ def run(
     reference_path: Path,
     *,
     smoke: bool = False,
+    checkpoint_directory: Path | None = None,
+    resume: bool = False,
 ) -> dict[str, Any]:
     config, config_hash = _load_config(config_path)
     manifest = _load_manifest(manifest_path)
     references, reference_hash = _load_references(reference_path)
+    if resume and checkpoint_directory is None:
+        raise ValueError("baseline resume requires a checkpoint directory")
     if not smoke and config["phase"] != "development":
         if (
             manifest.phase != config["phase"]
@@ -309,8 +316,41 @@ def run(
     relative_rmse = max(0.50, float(sampling["relative_sampling_rmse"])) if smoke else float(
         sampling["relative_sampling_rmse"]
     )
+    progress_identities: dict[str, object] = {
+        "config_sha256": config_hash,
+        "manifest_sha256": manifest.sha256,
+        "reference_sha256": reference_hash,
+        "smoke": smoke,
+    }
+    progress_path = (
+        None if checkpoint_directory is None else checkpoint_directory / "progress.json"
+    )
+    if progress_path is not None and resume:
+        records = list(
+            load_v6_progress(
+                progress_path,
+                experiment="g11_v6_baseline",
+                identities=progress_identities,
+            ).records
+        )
+    else:
+        if progress_path is not None and progress_path.exists():
+            raise FileExistsError("fresh baseline execution refuses existing progress")
+        records = []
+    completed = {
+        (str(record["cell_id"]), int(record["cluster"]), str(record["method"]))
+        for record in records
+    }
     master_ledger = SeedLedger()
-    records = []
+    for record in records:
+        restored = SeedLedger.from_dict(record["result"]["core"]["seed_ledger_payload"])
+        for seed_record in restored.records:
+            master_ledger.allocate(seed_record.key)
+    if progress_path is not None and not progress_path.exists():
+        save_v6_progress(
+            progress_path,
+            V6ProgressJournal("g11_v6_baseline", progress_identities, tuple(records)),
+        )
     for cell in cells:
         if cell.cell_id not in references:
             raise ValueError(f"reference artifact lacks cell {cell.cell_id}")
@@ -327,6 +367,9 @@ def run(
         )
         for cluster in range(clusters):
             for method in ("crude", "pure_cem", "defensive_cem"):
+                record_identity = (cell.cell_id, cluster, method)
+                if record_identity in completed:
+                    continue
                 policy_name = method
                 ledger = SeedLedger()
                 work = V6WorkLedger()
@@ -463,6 +506,13 @@ def run(
                 final_ledger = SeedLedger.from_dict(result.core.seed_ledger_payload)
                 for seed_record in final_ledger.records:
                     master_ledger.allocate(seed_record.key)
+                if progress_path is not None:
+                    save_v6_progress(
+                        progress_path,
+                        V6ProgressJournal(
+                            "g11_v6_baseline", progress_identities, tuple(records)
+                        ),
+                    )
     gates = {
         "complete_matrix": len(records) == len(cells) * clusters * 3,
         "all_runs_complete": all(record["result"]["core"]["complete"] for record in records),
@@ -524,12 +574,16 @@ def main() -> None:
     parser.add_argument("--reference", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--smoke", action="store_true")
+    parser.add_argument("--checkpoint-directory", type=Path)
+    parser.add_argument("--resume", action="store_true")
     arguments = parser.parse_args()
     result = run(
         arguments.config,
         arguments.manifest,
         arguments.reference,
         smoke=arguments.smoke,
+        checkpoint_directory=arguments.checkpoint_directory,
+        resume=arguments.resume,
     )
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
     arguments.output.write_text(

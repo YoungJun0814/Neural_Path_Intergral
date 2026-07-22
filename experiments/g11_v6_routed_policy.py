@@ -33,6 +33,7 @@ from src.path_integral import (
     SeedLedger,
     SingleTermDesign,
     TimePiecewiseTwoDriverControl,
+    V6ProgressJournal,
     V6WorkLedger,
     advance_sequential_crossover,
     audit_v6_policy,
@@ -40,10 +41,12 @@ from src.path_integral import (
     exact_binomial_probability_interval,
     execute_v6_policy,
     freeze_rarity_route,
+    load_v6_progress,
     prepare_v6_direct_policy,
     prepare_v6_hybrid_policy,
     rbergomi_hybrid_candidate_profiles,
     rbergomi_hybrid_profile_ids,
+    save_v6_progress,
     update_profile_intervals,
     v6_policy_preparation_to_dict,
 )
@@ -184,10 +187,20 @@ def _linear_quantile(values: list[float], probability: float) -> float | None:
     return (1.0 - weight) * ordered[lower] + weight * ordered[upper]
 
 
-def run(config_path: Path, manifest_path: Path, reference_path: Path, *, smoke: bool = False):
+def run(
+    config_path: Path,
+    manifest_path: Path,
+    reference_path: Path,
+    *,
+    smoke: bool = False,
+    checkpoint_directory: Path | None = None,
+    resume: bool = False,
+):
     config, config_hash = _load_config(config_path)
     manifest = _load_manifest(manifest_path)
     references, reference_hash = _load_references(reference_path)
+    if resume and checkpoint_directory is None:
+        raise ValueError("routed-policy resume requires a checkpoint directory")
     if not smoke and config["phase"] != "development":
         if (
             manifest.phase != config["phase"]
@@ -209,8 +222,42 @@ def run(config_path: Path, manifest_path: Path, reference_path: Path, *, smoke: 
     proposal_weights = torch.tensor(config["proposal"]["weights"], dtype=torch.float64)
     profile_ids = rbergomi_hybrid_profile_ids(finest_level)
     candidate_profiles = rbergomi_hybrid_candidate_profiles(finest_level)
+    progress_identities: dict[str, object] = {
+        "config_sha256": config_hash,
+        "manifest_sha256": manifest.sha256,
+        "reference_sha256": reference_hash,
+        "smoke": smoke,
+    }
+    progress_path = (
+        None if checkpoint_directory is None else checkpoint_directory / "progress.json"
+    )
+    if progress_path is not None and resume:
+        records = list(
+            load_v6_progress(
+                progress_path,
+                experiment="g11_v6_routed_policy",
+                identities=progress_identities,
+            ).records
+        )
+    else:
+        if progress_path is not None and progress_path.exists():
+            raise FileExistsError("fresh routed-policy execution refuses existing progress")
+        records = []
+    completed = {
+        (str(record["cell_id"]), int(record["cluster"])) for record in records
+    }
     master_ledger = SeedLedger()
-    records = []
+    for record in records:
+        restored = SeedLedger.from_dict(record["result"]["core"]["seed_ledger_payload"])
+        for seed_record in restored.records:
+            master_ledger.allocate(seed_record.key)
+    if progress_path is not None and not progress_path.exists():
+        save_v6_progress(
+            progress_path,
+            V6ProgressJournal(
+                "g11_v6_routed_policy", progress_identities, tuple(records)
+            ),
+        )
     for cell in cells:
         if cell.cell_id not in references:
             raise ValueError(f"reference artifact lacks cell {cell.cell_id}")
@@ -230,6 +277,8 @@ def run(config_path: Path, manifest_path: Path, reference_path: Path, *, smoke: 
         )
         natural = controls[0]
         for cluster in range(clusters):
+            if (cell.cell_id, cluster) in completed:
+                continue
             ledger = SeedLedger()
             work = V6WorkLedger()
             crude_interval = None
@@ -638,6 +687,13 @@ def run(config_path: Path, manifest_path: Path, reference_path: Path, *, smoke: 
             final_ledger = SeedLedger.from_dict(result.core.seed_ledger_payload)
             for seed_record in final_ledger.records:
                 master_ledger.allocate(seed_record.key)
+            if progress_path is not None:
+                save_v6_progress(
+                    progress_path,
+                    V6ProgressJournal(
+                        "g11_v6_routed_policy", progress_identities, tuple(records)
+                    ),
+                )
     selection_fractions = [float(record["selection_work_fraction"]) for record in records]
     median_fraction = _linear_quantile(selection_fractions, 0.5)
     p90_fraction = _linear_quantile(selection_fractions, 0.9)
@@ -698,8 +754,17 @@ def main() -> None:
     parser.add_argument("--reference", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--smoke", action="store_true")
+    parser.add_argument("--checkpoint-directory", type=Path)
+    parser.add_argument("--resume", action="store_true")
     arguments = parser.parse_args()
-    result = run(arguments.config, arguments.manifest, arguments.reference, smoke=arguments.smoke)
+    result = run(
+        arguments.config,
+        arguments.manifest,
+        arguments.reference,
+        smoke=arguments.smoke,
+        checkpoint_directory=arguments.checkpoint_directory,
+        resume=arguments.resume,
+    )
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
     arguments.output.write_text(
         json.dumps(result, indent=2, sort_keys=True, allow_nan=False), encoding="utf-8"
