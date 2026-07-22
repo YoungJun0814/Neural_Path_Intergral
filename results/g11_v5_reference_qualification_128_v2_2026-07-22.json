@@ -1,0 +1,1801 @@
+{
+  "cells": [
+    {
+      "cell_id": "h005:terminal",
+      "eta_zero_oracle": null,
+      "gate": {
+        "eta_zero_agreement": true,
+        "independent_agreement": true,
+        "reference_se_contract": true
+      },
+      "independent_method_agreement": {
+        "agrees": true,
+        "combined_z_score": 0.8067695246557935,
+        "estimate_a": 0.2552008619113438,
+        "estimate_b": 0.2523960905183929,
+        "maximum_z_score": 4.0,
+        "standard_error_a": 0.0023763353223973343,
+        "standard_error_b": 0.002537597835813659
+      },
+      "methods": [
+        {
+          "allocation_design_variance": 0.11906415523418575,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 1.6403930364363701,
+              "offset": 0
+            }
+          ],
+          "estimate": 0.2552008619113438,
+          "final_samples": 16384,
+          "method": "dcs_reference",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.0952513241873486,
+          "requested_final_samples": 16384,
+          "resource_censored": false,
+          "standard_error": 0.0023763353223973343,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.09251994934432962
+        },
+        {
+          "allocation_design_variance": 0.2109723721463455,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 2.4113115299894075,
+              "offset": 0
+            },
+            {
+              "count": 10526,
+              "maximum_absolute_contribution": 2.3475405964852447,
+              "offset": 16384
+            }
+          ],
+          "estimate": 0.2523960905183929,
+          "final_samples": 26910,
+          "method": "raw_crosscheck",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.1687778977170764,
+          "requested_final_samples": 26910,
+          "resource_censored": false,
+          "standard_error": 0.002537597835813659,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.17328432871093716
+        }
+      ],
+      "model": {
+        "H": 0.05,
+        "eta": 1.1,
+        "id": "h005",
+        "maturity": 0.25,
+        "rho": -0.6,
+        "spot": 100.0,
+        "xi": 0.04
+      },
+      "target_standard_error": 0.002800000000000001,
+      "task": {
+        "kind": "terminal",
+        "level": 94.0,
+        "nominal_probability": 0.28
+      }
+    },
+    {
+      "cell_id": "h005:barrier",
+      "eta_zero_oracle": null,
+      "gate": {
+        "eta_zero_agreement": true,
+        "independent_agreement": true,
+        "reference_se_contract": true
+      },
+      "independent_method_agreement": {
+        "agrees": true,
+        "combined_z_score": 1.3617473576768861,
+        "estimate_a": 0.2803571521605308,
+        "estimate_b": 0.28518377515318505,
+        "maximum_z_score": 4.0,
+        "standard_error_a": 0.0025183746675365264,
+        "standard_error_b": 0.0024941527771592488
+      },
+      "methods": [
+        {
+          "allocation_design_variance": 0.14462103061216114,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 1.7315057430771914,
+              "offset": 0
+            },
+            {
+              "count": 2063,
+              "maximum_absolute_contribution": 1.4809145694192942,
+              "offset": 16384
+            }
+          ],
+          "estimate": 0.2803571521605308,
+          "final_samples": 18447,
+          "method": "dcs_reference",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.11569682448972891,
+          "requested_final_samples": 18447,
+          "resource_censored": false,
+          "standard_error": 0.0025183746675365264,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.11699476569145689
+        },
+        {
+          "allocation_design_variance": 0.25774172885767366,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 2.591362497765865,
+              "offset": 0
+            },
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 2.6694835026809076,
+              "offset": 16384
+            },
+            {
+              "count": 108,
+              "maximum_absolute_contribution": 1.86117648322165,
+              "offset": 32768
+            }
+          ],
+          "estimate": 0.28518377515318505,
+          "final_samples": 32876,
+          "method": "raw_crosscheck",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.20619338308613894,
+          "requested_final_samples": 32876,
+          "resource_censored": false,
+          "standard_error": 0.0024941527771592488,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.2045149575403688
+        }
+      ],
+      "model": {
+        "H": 0.05,
+        "eta": 1.1,
+        "id": "h005",
+        "maturity": 0.25,
+        "rho": -0.6,
+        "spot": 100.0,
+        "xi": 0.04
+      },
+      "target_standard_error": 0.002800000000000001,
+      "task": {
+        "barrier": 90.0,
+        "kind": "barrier",
+        "nominal_probability": 0.28
+      }
+    },
+    {
+      "cell_id": "h012:terminal",
+      "eta_zero_oracle": null,
+      "gate": {
+        "eta_zero_agreement": true,
+        "independent_agreement": true,
+        "reference_se_contract": true
+      },
+      "independent_method_agreement": {
+        "agrees": true,
+        "combined_z_score": 1.1722109060138288,
+        "estimate_a": 0.2501800334269665,
+        "estimate_b": 0.24616354632165438,
+        "maximum_z_score": 4.0,
+        "standard_error_a": 0.00231871674753145,
+        "standard_error_b": 0.002522678716115773
+      },
+      "methods": [
+        {
+          "allocation_design_variance": 0.10840529240957215,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 1.5968224188207587,
+              "offset": 0
+            }
+          ],
+          "estimate": 0.2501800334269665,
+          "final_samples": 16384,
+          "method": "dcs_reference",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.08672423392765773,
+          "requested_final_samples": 16384,
+          "resource_censored": false,
+          "standard_error": 0.00231871674753145,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.08808771346895382
+        },
+        {
+          "allocation_design_variance": 0.20886550062303932,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 2.6549357699941267,
+              "offset": 0
+            },
+            {
+              "count": 10258,
+              "maximum_absolute_contribution": 2.489847804691787,
+              "offset": 16384
+            }
+          ],
+          "estimate": 0.24616354632165438,
+          "final_samples": 26642,
+          "method": "raw_crosscheck",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.16709240049843146,
+          "requested_final_samples": 26642,
+          "resource_censored": false,
+          "standard_error": 0.002522678716115773,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.169547234398177
+        }
+      ],
+      "model": {
+        "H": 0.12,
+        "eta": 1.1,
+        "id": "h012",
+        "maturity": 0.25,
+        "rho": -0.6,
+        "spot": 100.0,
+        "xi": 0.04
+      },
+      "target_standard_error": 0.002800000000000001,
+      "task": {
+        "kind": "terminal",
+        "level": 94.0,
+        "nominal_probability": 0.28
+      }
+    },
+    {
+      "cell_id": "h012:barrier",
+      "eta_zero_oracle": null,
+      "gate": {
+        "eta_zero_agreement": true,
+        "independent_agreement": true,
+        "reference_se_contract": true
+      },
+      "independent_method_agreement": {
+        "agrees": true,
+        "combined_z_score": 0.6899667765070361,
+        "estimate_a": 0.27896571165846956,
+        "estimate_b": 0.27651632523286196,
+        "maximum_z_score": 4.0,
+        "standard_error_a": 0.002526943059922059,
+        "standard_error_b": 0.002493412065939335
+      },
+      "methods": [
+        {
+          "allocation_design_variance": 0.1449051886596,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 1.6366325123228598,
+              "offset": 0
+            },
+            {
+              "count": 2099,
+              "maximum_absolute_contribution": 1.5130078885575657,
+              "offset": 16384
+            }
+          ],
+          "estimate": 0.27896571165846956,
+          "final_samples": 18483,
+          "method": "dcs_reference",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.11592415092768,
+          "requested_final_samples": 18483,
+          "resource_censored": false,
+          "standard_error": 0.002526943059922059,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.11802211021875528
+        },
+        {
+          "allocation_design_variance": 0.2551796077721786,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 2.711011196790036,
+              "offset": 0
+            },
+            {
+              "count": 16165,
+              "maximum_absolute_contribution": 3.2338455788398375,
+              "offset": 16384
+            }
+          ],
+          "estimate": 0.27651632523286196,
+          "final_samples": 32549,
+          "method": "raw_crosscheck",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.20414368621774287,
+          "requested_final_samples": 32549,
+          "resource_censored": false,
+          "standard_error": 0.002493412065939335,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.20236050932638358
+        }
+      ],
+      "model": {
+        "H": 0.12,
+        "eta": 1.1,
+        "id": "h012",
+        "maturity": 0.25,
+        "rho": -0.6,
+        "spot": 100.0,
+        "xi": 0.04
+      },
+      "target_standard_error": 0.002800000000000001,
+      "task": {
+        "barrier": 90.0,
+        "kind": "barrier",
+        "nominal_probability": 0.28
+      }
+    },
+    {
+      "cell_id": "h030:terminal",
+      "eta_zero_oracle": null,
+      "gate": {
+        "eta_zero_agreement": true,
+        "independent_agreement": true,
+        "reference_se_contract": true
+      },
+      "independent_method_agreement": {
+        "agrees": true,
+        "combined_z_score": 1.9237731501928625,
+        "estimate_a": 0.25614879255874,
+        "estimate_b": 0.24967235615573483,
+        "maximum_z_score": 4.0,
+        "standard_error_a": 0.0022613852648974324,
+        "standard_error_b": 0.0024939222629796515
+      },
+      "methods": [
+        {
+          "allocation_design_variance": 0.10040185100451549,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 1.6229211720540984,
+              "offset": 0
+            }
+          ],
+          "estimate": 0.25614879255874,
+          "final_samples": 16384,
+          "method": "dcs_reference",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.08032148080361239,
+          "requested_final_samples": 16384,
+          "resource_censored": false,
+          "standard_error": 0.0022613852648974324,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.08378553657418107
+        },
+        {
+          "allocation_design_variance": 0.20993907100966575,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 2.5296680740255524,
+              "offset": 0
+            },
+            {
+              "count": 10394,
+              "maximum_absolute_contribution": 2.6060918315045933,
+              "offset": 16384
+            }
+          ],
+          "estimate": 0.24967235615573483,
+          "final_samples": 26778,
+          "method": "raw_crosscheck",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.1679512568077326,
+          "requested_final_samples": 26778,
+          "resource_censored": false,
+          "standard_error": 0.0024939222629796515,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.16654974093986932
+        }
+      ],
+      "model": {
+        "H": 0.3,
+        "eta": 1.1,
+        "id": "h030",
+        "maturity": 0.25,
+        "rho": -0.6,
+        "spot": 100.0,
+        "xi": 0.04
+      },
+      "target_standard_error": 0.002800000000000001,
+      "task": {
+        "kind": "terminal",
+        "level": 94.0,
+        "nominal_probability": 0.28
+      }
+    },
+    {
+      "cell_id": "h030:barrier",
+      "eta_zero_oracle": null,
+      "gate": {
+        "eta_zero_agreement": true,
+        "independent_agreement": true,
+        "reference_se_contract": true
+      },
+      "independent_method_agreement": {
+        "agrees": true,
+        "combined_z_score": 0.12055176592896824,
+        "estimate_a": 0.2811754204508771,
+        "estimate_b": 0.2816048831021089,
+        "maximum_z_score": 4.0,
+        "standard_error_a": 0.002486043817422118,
+        "standard_error_b": 0.0025516297142619366
+      },
+      "methods": [
+        {
+          "allocation_design_variance": 0.13971027098022165,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 1.7090018046743802,
+              "offset": 0
+            },
+            {
+              "count": 1437,
+              "maximum_absolute_contribution": 1.4241154390468134,
+              "offset": 16384
+            }
+          ],
+          "estimate": 0.2811754204508771,
+          "final_samples": 17821,
+          "method": "dcs_reference",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.11176821678417731,
+          "requested_final_samples": 17821,
+          "resource_censored": false,
+          "standard_error": 0.002486043817422118,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.11014115543724574
+        },
+        {
+          "allocation_design_variance": 0.2378844903192362,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 2.566880294591279,
+              "offset": 0
+            },
+            {
+              "count": 13959,
+              "maximum_absolute_contribution": 2.6741342908818346,
+              "offset": 16384
+            }
+          ],
+          "estimate": 0.2816048831021089,
+          "final_samples": 30343,
+          "method": "raw_crosscheck",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.19030759225538896,
+          "requested_final_samples": 30343,
+          "resource_censored": false,
+          "standard_error": 0.0025516297142619366,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.19755763523128916
+        }
+      ],
+      "model": {
+        "H": 0.3,
+        "eta": 1.1,
+        "id": "h030",
+        "maturity": 0.25,
+        "rho": -0.6,
+        "spot": 100.0,
+        "xi": 0.04
+      },
+      "target_standard_error": 0.002800000000000001,
+      "task": {
+        "barrier": 90.0,
+        "kind": "barrier",
+        "nominal_probability": 0.28
+      }
+    },
+    {
+      "cell_id": "eta0_oracle:terminal",
+      "eta_zero_oracle": {
+        "dcs_agreement": {
+          "agrees": true,
+          "combined_z_score": 1.5773271708631,
+          "estimate_a": 0.28809902027171336,
+          "estimate_b": 0.2847615353001629,
+          "maximum_z_score": 4.0,
+          "standard_error_a": 0.0021159116721004745,
+          "standard_error_b": 0.0
+        },
+        "probability": 0.2847615353001629,
+        "source": "closed_form_black_scholes_terminal"
+      },
+      "gate": {
+        "eta_zero_agreement": true,
+        "independent_agreement": true,
+        "reference_se_contract": true
+      },
+      "independent_method_agreement": {
+        "agrees": true,
+        "combined_z_score": 0.9778629396555422,
+        "estimate_a": 0.28809902027171336,
+        "estimate_b": 0.2849202550951911,
+        "maximum_z_score": 4.0,
+        "standard_error_a": 0.0021159116721004745,
+        "standard_error_b": 0.002467821293788923
+      },
+      "methods": [
+        {
+          "allocation_design_variance": 0.09151383964019047,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 1.5730033533562278,
+              "offset": 0
+            }
+          ],
+          "estimate": 0.28809902027171336,
+          "final_samples": 16384,
+          "method": "dcs_reference",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.07321107171215238,
+          "requested_final_samples": 16384,
+          "resource_censored": false,
+          "standard_error": 0.0021159116721004745,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.07335251483248272
+        },
+        {
+          "allocation_design_variance": 0.22487669374910102,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 2.477326593506393,
+              "offset": 0
+            },
+            {
+              "count": 12300,
+              "maximum_absolute_contribution": 2.572880649046104,
+              "offset": 16384
+            }
+          ],
+          "estimate": 0.2849202550951911,
+          "final_samples": 28684,
+          "method": "raw_crosscheck",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.1799013549992808,
+          "requested_final_samples": 28684,
+          "resource_censored": false,
+          "standard_error": 0.002467821293788923,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.17468963135183035
+        }
+      ],
+      "model": {
+        "H": 0.12,
+        "eta": 0.0,
+        "id": "eta0_oracle",
+        "maturity": 0.25,
+        "rho": -0.6,
+        "spot": 100.0,
+        "xi": 0.04
+      },
+      "target_standard_error": 0.002800000000000001,
+      "task": {
+        "kind": "terminal",
+        "level": 94.0,
+        "nominal_probability": 0.28
+      }
+    },
+    {
+      "cell_id": "eta0_oracle:barrier",
+      "eta_zero_oracle": {
+        "dcs_agreement": {
+          "agrees": true,
+          "combined_z_score": 0.07827206143524261,
+          "estimate_a": 0.28491452665125006,
+          "estimate_b": 0.2847473521927464,
+          "maximum_z_score": 4.0,
+          "standard_error_a": 0.0021358126442342557,
+          "standard_error_b": 0.0
+        },
+        "probability": 0.2847473521927464,
+        "source": "deterministic_killed_density_quadrature"
+      },
+      "gate": {
+        "eta_zero_agreement": true,
+        "independent_agreement": true,
+        "reference_se_contract": true
+      },
+      "independent_method_agreement": {
+        "agrees": true,
+        "combined_z_score": 0.4874486780648104,
+        "estimate_a": 0.28491452665125006,
+        "estimate_b": 0.2865408788527252,
+        "maximum_z_score": 4.0,
+        "standard_error_a": 0.0021358126442342557,
+        "standard_error_b": 0.002563251553049807
+      },
+      "methods": [
+        {
+          "allocation_design_variance": 0.09030257345113853,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 1.6081521754549464,
+              "offset": 0
+            }
+          ],
+          "estimate": 0.28491452665125006,
+          "final_samples": 16384,
+          "method": "dcs_reference",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.07224205876091082,
+          "requested_final_samples": 16384,
+          "resource_censored": false,
+          "standard_error": 0.0021358126442342557,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.0747388215504228
+        },
+        {
+          "allocation_design_variance": 0.20909823892133336,
+          "chunks": [
+            {
+              "count": 16384,
+              "maximum_absolute_contribution": 2.332012321513815,
+              "offset": 0
+            },
+            {
+              "count": 10287,
+              "maximum_absolute_contribution": 2.521574509253998,
+              "offset": 16384
+            }
+          ],
+          "estimate": 0.2865408788527252,
+          "final_samples": 26671,
+          "method": "raw_crosscheck",
+          "pilot_samples_discarded": 4096,
+          "pilot_variance": 0.1672785911370667,
+          "requested_final_samples": 26671,
+          "resource_censored": false,
+          "standard_error": 0.002563251553049807,
+          "target_attained": true,
+          "target_standard_error": 0.002800000000000001,
+          "variance": 0.1752353650992648
+        }
+      ],
+      "model": {
+        "H": 0.12,
+        "eta": 0.0,
+        "id": "eta0_oracle",
+        "maturity": 0.25,
+        "rho": -0.6,
+        "spot": 100.0,
+        "xi": 0.04
+      },
+      "target_standard_error": 0.002800000000000001,
+      "task": {
+        "barrier": 90.0,
+        "kind": "barrier",
+        "nominal_probability": 0.28
+      }
+    }
+  ],
+  "config_sha256": "7d3246fb8a7e22494cd39efa6ec2d657ca50ecd5536393e036d3e64a9504a35f",
+  "dirty_worktree": false,
+  "environment": {
+    "cuda": "12.8",
+    "deterministic_algorithms": false,
+    "dtype": "torch.float64",
+    "os": "Windows-11-10.0.26200-SP0",
+    "packages": {
+      "PyYAML": "6.0.3",
+      "numpy": "2.1.3",
+      "scipy": "1.15.3"
+    },
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "python": "3.13.5",
+    "pytorch": "2.9.1+cu128",
+    "torch_threads": 16
+  },
+  "estimand": "fixed finite-grid event probabilities",
+  "formal_readiness": {
+    "clean_source": true,
+    "frozen_config": true,
+    "non_smoke": true
+  },
+  "gates": {
+    "all_eta_zero_oracles_agree": true,
+    "all_independent_crosschecks_agree": true,
+    "all_method_summaries_finite": true,
+    "all_reference_standard_errors_attained": true,
+    "complete_reference_matrix": true
+  },
+  "protocol_id": "g11-v5-reference-qualification-128-v2",
+  "reference_qualified": true,
+  "schema": "npi.g11.v5-reference.v1",
+  "seed_ledger": {
+    "records": [
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 9140553352168216937
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 7220748499926071899
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 6530290705973399546
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 1996938726462763661
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 2857211571354811697
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 111487388700166124
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 4337062299374865064
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 542983858651706020
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 2020979400148084738
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 8830058283908443574
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 4354388585167693284
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 488521475634988282
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 3440341724714683504
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 5128190862768746290
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 5420262074503004487
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 6692022543217156008
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 7598405059901863474
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 9065880309373597414
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 2630521416094161298
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 3075546355489222782
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 2,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 2440356953101711163
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 2,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 9092983757110658964
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 2150067130894507008
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 3027423506344969003
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 754447374808799516
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 5822840327392977510
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 7575909281182607069
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 3816369224302531698
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 8165444671095945147
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 8288306273722906673
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 5784668924404581940
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 3998745109569227228
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 277398237907056299
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 1136158878854038445
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 2345687820433640883
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 2029872026911404025
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 4863701434636394463
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 5712693726041022424
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 6643131295667207899
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 5298203849006099289
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 7070593047996745811
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 1916290864420643282
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 452556397221778039
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 1704874864612395429
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 128645530565228105
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 3099307918690915592
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 5575379031211569335
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 5895382401350115144
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 578423191358555124
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 8754865555259036910
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 6184547598905684145
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 7917147072746389527
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 562235048308170803
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 4922849386444990677
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "labels",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 5981433107639855603
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 1,
+          "role": "reference-final",
+          "stream": "proposal",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 1920793555595754667
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 5634135643431491801
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 5015280674869521203
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 8790435723622112881
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 2349036078455419693
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 3246855293957469006
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 3728921568909314800
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 3987710655630414346
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "eta0_oracle",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 9120814920491351825
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 7384660315024698995
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 2731058748551281184
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 8983997712807926246
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 5098839657945487
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 5189745475996023458
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 198035191228054608
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 3681893948135098306
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h005",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 1192666910090368563
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 4978825537344690795
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 2099331792678635789
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 8988045451305052520
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 3703922237257543980
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 7645072927128473204
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 3116944041213158891
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 2335539888914204099
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h012",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 6151756819294627471
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 5034936592174922105
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "barrier:dcs_reference"
+        },
+        "seed": 5514276892882877281
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 8256752475614214667
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "barrier:raw_crosscheck"
+        },
+        "seed": 4091281688727994069
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 2071899835187627694
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "terminal:dcs_reference"
+        },
+        "seed": 2761399545761993808
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "labels",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 2602884420728152423
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "g11-v5-reference-qualification-128-v2",
+          "regime": "h030",
+          "replicate": 0,
+          "role": "reference-pilot",
+          "stream": "proposal",
+          "task": "terminal:raw_crosscheck"
+        },
+        "seed": 2349186864085463273
+      }
+    ],
+    "schema": "npi.g11.seed-ledger.v1"
+  },
+  "seed_ledger_sha256": "dd95d95eb5d64db32fb34f67a35cfa1bbc0bc03f938022f667658f75dbd5cbf2",
+  "smoke": false,
+  "source_commit": "54b9effe91ed908b45c169f1af0cc3a3e0d93edf"
+}

@@ -20,12 +20,12 @@ The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
 pilot-frozen achieved-RMSE allocation, resource censoring, durable resume, fresh CEM
 baseline contracts, independent references, and an independent result audit. Its
-development smoke checks pass. The frozen 4,000-record selector passes. The initial
-120-record CEM and 8-cell reference qualifications also pass on 32 steps, but the
-first full achieved-RMSE qualification correctly failed because those G5 inputs did
-not match its 128-step barrier estimand. Matched 128-step G5 reruns are now required.
-Terminal and barrier model-level rates also remain conditional, and there is no
-untouched V5 confirmation or Linux reproduction.
+development smoke checks pass. The frozen 4,000-record selector passes. The first
+full achieved-RMSE qualification correctly failed because its initially qualified
+G5 inputs used 32 rather than 128 steps. New matched 128-step baseline (120 records)
+and reference (8 cells) v2 protocols now pass, so G6 must be rerun under a new seed
+namespace. Terminal and barrier model-level rates remain conditional, and there is
+no untouched V5 confirmation or Linux reproduction.
 
 The earlier 640-cell M7 V3 run completed and passes its integrity audit, but its
 strict frozen headline **failed** because one recovered Windows checkpoint
@@ -64,6 +64,7 @@ Start with:
 - [V5 baseline qualification decision](docs/audits/G11_V5_BASELINE_QUALIFICATION_DECISION_2026-07-22.md)
 - [V5 reference qualification decision](docs/audits/G11_V5_REFERENCE_QUALIFICATION_DECISION_2026-07-22.md)
 - [V5 achieved-RMSE V1 failure decision](docs/audits/G11_V5_ACHIEVED_RMSE_QUALIFICATION_V1_FAILURE_2026-07-22.md)
+- [V5 matched 128-step G5 decision](docs/audits/G11_V5_MATCHED_128_G5_QUALIFICATION_DECISION_2026-07-22.md)
 - [V5 reproducible literature search](docs/literature/G11_V5_SEARCH_LOG.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
