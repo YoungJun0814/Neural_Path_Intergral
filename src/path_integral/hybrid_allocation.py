@@ -6,12 +6,13 @@ import hashlib
 import json
 import math
 import os
+import re
 import time
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from statistics import NormalDist
-from typing import Protocol, cast
+from typing import Protocol
 
 import torch
 
@@ -60,7 +61,7 @@ class HybridTermAllocation:
     """Frozen integer allocation for one independently sampled telescoping term."""
 
     profile_id: str
-    absolute_bound: float
+    absolute_bound: float | None
     design_variance: float
     cost_per_sample: float
     continuous_count: float
@@ -102,6 +103,113 @@ class HybridTermEstimate:
 
 
 @dataclass(frozen=True)
+class SingleTermDesign:
+    """Pilot-frozen design for a direct single-term MC or IS estimator.
+
+    ``absolute_bound=None`` is required for a genuinely unbounded likelihood such as
+    pure Gaussian-shift CEM.  Such a run receives an asymptotic interval but no
+    artificial Hoeffding interval.
+    """
+
+    profile_id: str
+    pilot_count: int
+    pilot_mean: float
+    pilot_variance: float
+    design_variance: float
+    cost_per_sample: float
+    absolute_bound: float | None
+
+    def __post_init__(self) -> None:
+        if not self.profile_id or self.profile_id.strip() != self.profile_id:
+            raise ValueError("profile_id must be nonempty and stripped")
+        if isinstance(self.pilot_count, bool) or self.pilot_count < 2:
+            raise ValueError("pilot_count must be an integer at least two")
+        for field, value in (
+            ("pilot_mean", self.pilot_mean),
+            ("pilot_variance", self.pilot_variance),
+            ("design_variance", self.design_variance),
+            ("cost_per_sample", self.cost_per_sample),
+        ):
+            if not math.isfinite(value):
+                raise ValueError(f"{field} must be finite")
+        if self.pilot_variance < 0.0 or self.design_variance < self.pilot_variance:
+            raise ValueError("design_variance must dominate the nonnegative pilot variance")
+        if self.cost_per_sample <= 0.0:
+            raise ValueError("cost_per_sample must be positive")
+        if self.absolute_bound is not None:
+            if not math.isfinite(self.absolute_bound) or self.absolute_bound <= 0.0:
+                raise ValueError("absolute_bound must be positive when supplied")
+            if abs(self.pilot_mean) > self.absolute_bound * (1.0 + 1e-12):
+                raise ValueError("pilot mean exceeds the supplied absolute bound")
+
+
+def _checkpoint_text(value: object, field: str) -> str:
+    if not isinstance(value, str) or not value or value.strip() != value:
+        raise ValueError(f"hybrid checkpoint {field} must be a nonempty stripped string")
+    return value
+
+
+def _checkpoint_hash(value: object, field: str) -> str:
+    result = _checkpoint_text(value, field)
+    if re.fullmatch(r"[0-9a-f]{64}", result) is None:
+        raise ValueError(f"hybrid checkpoint {field} must be lowercase 64-hex")
+    return result
+
+
+def _checkpoint_integer(value: object, field: str, *, minimum: int = 0) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
+        raise ValueError(f"hybrid checkpoint {field} must be an integer at least {minimum}")
+    return value
+
+
+def _checkpoint_real(
+    value: object,
+    field: str,
+    *,
+    minimum: float | None = None,
+) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(f"hybrid checkpoint {field} must be a finite real number")
+    result = float(value)
+    if not math.isfinite(result) or (minimum is not None and result < minimum):
+        raise ValueError(f"hybrid checkpoint {field} must be a finite real number")
+    return result
+
+
+def _checkpoint_moment(value: object) -> OnlineMoments:
+    if not isinstance(value, dict) or set(value) != {"count", "mean", "m2"}:
+        raise ValueError("invalid hybrid checkpoint moment record")
+    record: dict[str, object] = dict(value)
+    count = _checkpoint_integer(record["count"], "moment count")
+    mean = _checkpoint_real(record["mean"], "moment mean")
+    m2 = _checkpoint_real(record["m2"], "moment m2", minimum=0.0)
+    if count < 2 and m2 != 0.0:
+        raise ValueError("hybrid checkpoint moment m2 must be zero below two samples")
+    if count == 0 and mean != 0.0:
+        raise ValueError("hybrid checkpoint empty moment must have zero mean")
+    return OnlineMoments(count=count, mean=mean, m2=m2)
+
+
+def _checkpoint_work_entry(value: object) -> WorkLedgerEntry:
+    fields = {"role", "level", "samples", "work_units", "wall_seconds"}
+    if not isinstance(value, dict) or set(value) != fields:
+        raise ValueError("invalid hybrid checkpoint work-ledger record")
+    record: dict[str, object] = dict(value)
+    raw_level = record["level"]
+    level = None if raw_level is None else _checkpoint_integer(raw_level, "work level")
+    entry = WorkLedgerEntry(
+        role=_checkpoint_text(record["role"], "work role"),
+        level=level,
+        samples=_checkpoint_integer(record["samples"], "work samples"),
+        work_units=_checkpoint_real(record["work_units"], "work units", minimum=0.0),
+        wall_seconds=_checkpoint_real(record["wall_seconds"], "wall seconds", minimum=0.0),
+    )
+    validator = WorkLedger.empty()
+    validator.add(entry)
+    return entry
+
+
+@dataclass(frozen=True)
 class HybridCheckpoint:
     """Resume state tied to one immutable preparation hash."""
 
@@ -132,61 +240,91 @@ class HybridCheckpoint:
     def from_dict(cls, payload: dict[str, object]) -> HybridCheckpoint:
         if payload.get("schema") != "npi.g11.hybrid-checkpoint.v1":
             raise ValueError("unsupported hybrid checkpoint schema")
-        raw_moments = payload.get("moments")
-        raw_work = payload.get("work_entries")
-        raw_allocations = payload.get("allocations")
-        raw_ledger = payload.get("ledger")
-        raw_next_term = payload.get("next_term")
-        raw_next_offset = payload.get("next_offset")
-        if (
-            not isinstance(raw_moments, list)
-            or not all(isinstance(item, dict) for item in raw_moments)
-            or not isinstance(raw_work, list)
-            or not all(isinstance(item, dict) for item in raw_work)
-            or not isinstance(raw_allocations, list)
-            or not all(isinstance(item, int) for item in raw_allocations)
-            or not isinstance(raw_ledger, dict)
-            or not isinstance(raw_next_term, int)
-            or isinstance(raw_next_term, bool)
-            or not isinstance(raw_next_offset, int)
-            or isinstance(raw_next_offset, bool)
-        ):
-            raise ValueError("malformed hybrid checkpoint collections")
+        expected_fields = {
+            "schema",
+            "preparation_hash",
+            "selected_candidate",
+            "allocations",
+            "next_term",
+            "next_offset",
+            "moments",
+            "ledger",
+            "work_entries",
+        }
+        if set(payload) != expected_fields:
+            raise ValueError("malformed hybrid checkpoint fields")
+
+        preparation_hash = _checkpoint_hash(payload["preparation_hash"], "preparation hash")
+        selected_candidate = _checkpoint_text(
+            payload["selected_candidate"], "selected candidate"
+        )
+        next_term = _checkpoint_integer(payload["next_term"], "next term")
+        next_offset = _checkpoint_integer(payload["next_offset"], "next offset")
+
+        raw_allocations = payload["allocations"]
+        if not isinstance(raw_allocations, list) or not raw_allocations:
+            raise ValueError("hybrid checkpoint allocations must be a nonempty list")
+        allocations = tuple(
+            _checkpoint_integer(item, "allocation", minimum=1) for item in raw_allocations
+        )
+
+        raw_moments = payload["moments"]
+        if not isinstance(raw_moments, list):
+            raise ValueError("hybrid checkpoint moments must be a list")
+        moments = tuple(_checkpoint_moment(item) for item in raw_moments)
+
+        raw_ledger = payload["ledger"]
+        if not isinstance(raw_ledger, dict):
+            raise ValueError("hybrid checkpoint ledger must be an object")
+        ledger_payload: dict[str, object] = dict(raw_ledger)
         try:
-            moments = tuple(
-                OnlineMoments(
-                    count=int(item["count"]),
-                    mean=float(item["mean"]),
-                    m2=float(item["m2"]),
-                )
-                for item in raw_moments
-            )
-            work = tuple(
-                WorkLedgerEntry(
-                    role=str(item["role"]),
-                    level=(None if item["level"] is None else int(item["level"])),
-                    samples=int(item["samples"]),
-                    work_units=float(item["work_units"]),
-                    wall_seconds=float(item["wall_seconds"]),
-                )
-                for item in raw_work
-            )
-            checkpoint = cls(
-                schema=str(payload["schema"]),
-                preparation_hash=str(payload["preparation_hash"]),
-                selected_candidate=str(payload["selected_candidate"]),
-                allocations=tuple(raw_allocations),
-                next_term=raw_next_term,
-                next_offset=raw_next_offset,
-                moments=moments,
-                ledger_payload=cast(dict[str, object], raw_ledger),
-                work_entries=work,
-            )
+            SeedLedger.from_dict(ledger_payload)
         except (KeyError, TypeError, ValueError) as error:
-            raise ValueError("malformed hybrid checkpoint") from error
-        if checkpoint.next_term < 0 or checkpoint.next_offset < 0:
-            raise ValueError("malformed hybrid checkpoint position")
-        return checkpoint
+            raise ValueError("invalid hybrid checkpoint seed ledger") from error
+
+        raw_work = payload["work_entries"]
+        if not isinstance(raw_work, list):
+            raise ValueError("hybrid checkpoint work entries must be a list")
+        work = tuple(_checkpoint_work_entry(item) for item in raw_work)
+
+        if len(moments) != len(allocations):
+            raise ValueError("hybrid checkpoint moments and allocations must have equal lengths")
+        if next_term > len(allocations):
+            raise ValueError("hybrid checkpoint next term exceeds its allocation")
+        if next_term == len(allocations) and next_offset != 0:
+            raise ValueError("completed hybrid checkpoint must have zero offset")
+        if next_term < len(allocations) and next_offset > allocations[next_term]:
+            raise ValueError("hybrid checkpoint offset exceeds its term allocation")
+        expected_counts = tuple(
+            allocation if index < next_term else next_offset if index == next_term else 0
+            for index, allocation in enumerate(allocations)
+        )
+        if tuple(item.count for item in moments) != expected_counts:
+            raise ValueError("hybrid checkpoint moments do not match its execution position")
+        if any(
+            entry.role == "final"
+            and (entry.level is None or entry.level >= len(allocations))
+            for entry in work
+        ):
+            raise ValueError("hybrid checkpoint final-work term is outside its allocation")
+        final_counts = tuple(
+            sum(entry.samples for entry in work if entry.role == "final" and entry.level == index)
+            for index in range(len(allocations))
+        )
+        if final_counts != expected_counts:
+            raise ValueError("hybrid checkpoint final-work ledger does not match its moments")
+
+        return cls(
+            schema="npi.g11.hybrid-checkpoint.v1",
+            preparation_hash=preparation_hash,
+            selected_candidate=selected_candidate,
+            allocations=allocations,
+            next_term=next_term,
+            next_offset=next_offset,
+            moments=moments,
+            ledger_payload=ledger_payload,
+            work_entries=work,
+        )
 
 
 @dataclass(frozen=True)
@@ -212,6 +350,7 @@ class HybridResult:
     terms: tuple[HybridTermEstimate, ...]
     allocations: tuple[HybridTermAllocation, ...]
     work: WorkLedger
+    seed_ledger_payload: dict[str, object]
     seed_ledger_hash: str
     preparation_hash: str
     checkpoint: HybridCheckpoint | None
@@ -395,6 +534,109 @@ def prepare_hybrid_run(
     )
 
 
+def prepare_single_term_run(
+    target: HybridTarget,
+    design: SingleTermDesign,
+    *,
+    method: str,
+    protocol: str,
+    regime: str,
+    task: str,
+    operation_work_cap: float,
+    chunk_size: int = 4096,
+    minimum_final_samples: int = 32,
+    streams: tuple[str, ...] = ("proposal", "labels"),
+    preparation_ledger: SeedLedger | None = None,
+    preprocessing_work_entries: Sequence[WorkLedgerEntry] = (),
+) -> HybridPreparedRun:
+    """Freeze a direct MC/IS allocation under the common achieved-RMSE contract."""
+
+    text_fields = (method, protocol, regime, task)
+    if any(not value or value.strip() != value for value in text_fields):
+        raise ValueError("method, protocol, regime, and task must be nonempty and stripped")
+    if chunk_size < 1:
+        raise ValueError("chunk_size must be positive")
+    if minimum_final_samples < 2:
+        raise ValueError("minimum_final_samples must be at least two")
+    if not math.isfinite(operation_work_cap) or operation_work_cap <= 0.0:
+        raise ValueError("operation_work_cap must be finite and positive")
+    if not streams or len(set(streams)) != len(streams):
+        raise ValueError("streams must be nonempty and unique")
+
+    work = WorkLedger.empty()
+    for entry in preprocessing_work_entries:
+        if entry.role.startswith("final"):
+            raise ValueError("preparation work cannot contain final-role entries")
+        work.add(entry)
+    ledger = SeedLedger(() if preparation_ledger is None else preparation_ledger.records)
+    if any(record.key.role.startswith("final") for record in ledger.records):
+        raise ValueError("preparation ledger already contains a final seed")
+
+    continuous = design.design_variance / target.sampling_variance_target
+    if continuous > (1 << 63) - 1:
+        raise OverflowError("required allocation exceeds signed 64-bit range")
+    final_count = max(minimum_final_samples, math.ceil(continuous))
+    design_sampling_variance = design.design_variance / final_count
+    allocation = HybridTermAllocation(
+        profile_id=design.profile_id,
+        absolute_bound=design.absolute_bound,
+        design_variance=design.design_variance,
+        cost_per_sample=design.cost_per_sample,
+        continuous_count=continuous,
+        final_count=final_count,
+        design_sampling_variance=design_sampling_variance,
+    )
+    expected_final_work = final_count * design.cost_per_sample
+    expected_total_work = work.total_work_units + expected_final_work
+    censored = expected_total_work > operation_work_cap
+    reason = "frozen achieved-RMSE allocation exceeds the operation-work cap" if censored else None
+    point_total_work = work.total_work_units + continuous * design.cost_per_sample
+    selection = FrozenCrossoverDecision(
+        selected_candidate=method,
+        look_index=0,
+        reason="direct single-term method; no crossover selection",
+        surviving_candidates=(method,),
+        selected_work_interval=(point_total_work, point_total_work),
+        selected_point_work=point_total_work,
+        worst_case_interval_regret_bound=1.0,
+    )
+    preparation_payload: dict[str, object] = {
+        "schema": "npi.g11.single-term-preparation.v1",
+        "protocol": protocol,
+        "regime": regime,
+        "task": task,
+        "method": method,
+        "target": asdict(target),
+        "design": asdict(design),
+        "allocation": asdict(allocation),
+        "expected_final_work": expected_final_work,
+        "operation_work_cap": operation_work_cap,
+        "resource_censored": censored,
+        "chunk_size": chunk_size,
+        "streams": list(streams),
+        "preparation_seed_ledger_hash": ledger.sha256,
+        "preprocessing_work": [asdict(item) for item in work.entries],
+    }
+    return HybridPreparedRun(
+        protocol=protocol,
+        regime=regime,
+        task=task,
+        selected_candidate=method,
+        target=target,
+        selection=selection,
+        allocations=(allocation,),
+        expected_final_work=expected_final_work,
+        operation_work_cap=operation_work_cap,
+        resource_censored=censored,
+        censoring_reason=reason,
+        chunk_size=chunk_size,
+        streams=streams,
+        ledger=ledger,
+        work=work,
+        preparation_hash=_canonical_hash(preparation_payload),
+    )
+
+
 def _execution_state(
     prepared: HybridPreparedRun, checkpoint: HybridCheckpoint | None
 ) -> tuple[int, int, list[OnlineMoments], SeedLedger, WorkLedger]:
@@ -490,6 +732,7 @@ def _censored_result(prepared: HybridPreparedRun) -> HybridResult:
         terms=(),
         allocations=prepared.allocations,
         work=WorkLedger(list(prepared.work.entries)),
+        seed_ledger_payload=prepared.ledger.to_dict(),
         seed_ledger_hash=prepared.ledger.sha256,
         preparation_hash=prepared.preparation_hash,
         checkpoint=None,
@@ -552,7 +795,9 @@ def execute_hybrid_run(
         expected_work = count * allocation.cost_per_sample
         if not math.isclose(batch.work_units, expected_work, rel_tol=1e-12, abs_tol=1e-12):
             raise ValueError("sampler work differs from the frozen operation cost")
-        if float(torch.amax(torch.abs(batch.values))) > allocation.absolute_bound * (1.0 + 1e-12):
+        if allocation.absolute_bound is not None and float(
+            torch.amax(torch.abs(batch.values))
+        ) > allocation.absolute_bound * (1.0 + 1e-12):
             raise ValueError("final contribution exceeds its defensive bound")
         moments[term].update(batch.values)
         work.add(WorkLedgerEntry("final", term, count, batch.work_units, batch.wall_seconds))
@@ -601,6 +846,7 @@ def execute_hybrid_run(
             terms=(),
             allocations=prepared.allocations,
             work=work,
+            seed_ledger_payload=ledger.to_dict(),
             seed_ledger_hash=ledger.sha256,
             preparation_hash=prepared.preparation_hash,
             checkpoint=state,
@@ -626,20 +872,23 @@ def execute_hybrid_run(
     )
     family_alpha = 1.0 - prepared.target.confidence_level
     term_alpha = family_alpha / len(prepared.allocations)
-    bounded_radius = math.fsum(
-        allocation.absolute_bound
-        * math.sqrt(2.0 * math.log(2.0 / term_alpha) / allocation.final_count)
-        for allocation in prepared.allocations
-    )
-    bounded_raw = (
-        estimate - bounded_radius,
-        estimate + bounded_radius,
-    )
-    bounded_clipped = (
-        max(0.0, estimate - bounded_radius),
-        min(1.0, estimate + bounded_radius),
-    )
-    bounded = bounded_clipped if bounded_clipped[0] <= bounded_clipped[1] else bounded_raw
+    bounded = None
+    if all(allocation.absolute_bound is not None for allocation in prepared.allocations):
+        bounded_radius = math.fsum(
+            allocation.absolute_bound
+            * math.sqrt(2.0 * math.log(2.0 / term_alpha) / allocation.final_count)
+            for allocation in prepared.allocations
+            if allocation.absolute_bound is not None
+        )
+        bounded_raw = (
+            estimate - bounded_radius,
+            estimate + bounded_radius,
+        )
+        bounded_clipped = (
+            max(0.0, estimate - bounded_radius),
+            min(1.0, estimate + bounded_radius),
+        )
+        bounded = bounded_clipped if bounded_clipped[0] <= bounded_clipped[1] else bounded_raw
     achieved_nominal = standard_error / prepared.target.nominal_probability
     achieved_reference = (
         standard_error / reference_probability if reference_probability is not None else None
@@ -676,6 +925,7 @@ def execute_hybrid_run(
         terms=estimates,
         allocations=prepared.allocations,
         work=work,
+        seed_ledger_payload=ledger.to_dict(),
         seed_ledger_hash=ledger.sha256,
         preparation_hash=prepared.preparation_hash,
         checkpoint=None,

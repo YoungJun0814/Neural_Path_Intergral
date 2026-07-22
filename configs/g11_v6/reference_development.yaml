@@ -1,0 +1,27 @@
+schema: npi.g11.v6-reference.config.v1
+protocol_id: g11-v6-reference-development-v1
+phase: development
+frozen: false
+estimand: fixed_finest_grid
+
+proposal:
+  weights: [0.15, 0.35, 0.50]
+  controls:
+    - [[0.0, 0.0], [0.0, 0.0]]
+    - [[-0.5, -2.0], [-0.25, -1.0]]
+    - [[-1.0, -4.0], [-0.5, -2.0]]
+
+reference_contract:
+  minimum_relative_sampling_rmse: 0.10
+  se_fraction_of_requested: 0.10
+  maximum_combined_z_score: 4.0
+  maximum_normalization_z: 4.0
+
+sampling:
+  pilot_samples: 4096
+  minimum_final_samples: 16384
+  maximum_final_samples: 5000000
+  chunk_size: 16384
+  allocation_safety_factor: 1.50
+  engine: fft
+

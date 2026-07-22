@@ -1,0 +1,45 @@
+schema: npi.g11.v6-rarity-calibration.config.v1
+protocol_id: g11-v6-rarity-calibration-development-v1
+phase: development
+frozen: false
+estimand: fixed_finest_grid
+
+model_common:
+  eta: 1.1
+  xi: 0.04
+  rho: -0.6
+  spot: 100.0
+  maturity: 0.25
+
+models:
+  - {id: h005, H: 0.05}
+  - {id: h012, H: 0.12}
+  - {id: h030, H: 0.30}
+
+grid: {steps: 128}
+
+tasks:
+  terminal: {kind: terminal}
+  barrier: {kind: barrier}
+
+target_probabilities: [1.0e-2, 1.0e-3, 1.0e-4]
+
+proposal:
+  weights: [0.15, 0.35, 0.50]
+  controls:
+    - [[0.0, 0.0], [0.0, 0.0]]
+    - [[-0.5, -2.0], [-0.25, -1.0]]
+    - [[-1.0, -4.0], [-0.5, -2.0]]
+
+sampling:
+  calibration_paths: 131072
+  validation_paths: 131072
+  batch_size: 4096
+  engine: fft
+
+gates:
+  familywise_alpha: 0.05
+  probability_band_lower_factor: 0.50
+  probability_band_upper_factor: 2.00
+  maximum_relative_standard_error: 0.15
+  maximum_normalization_z: 4.0

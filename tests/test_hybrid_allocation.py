@@ -15,10 +15,12 @@ from src.path_integral import (
     LevelBatch,
     SeedKey,
     SeedLedger,
+    SingleTermDesign,
     WorkLedgerEntry,
     execute_hybrid_run,
     load_hybrid_checkpoint,
     prepare_hybrid_run,
+    prepare_single_term_run,
     save_hybrid_checkpoint,
     update_profile_intervals,
 )
@@ -184,6 +186,33 @@ def test_checkpoint_hash_tampering_is_rejected() -> None:
         execute_hybrid_run(prepared, BoundedTelescopingSampler(costs), checkpoint=tampered)
 
 
+def test_checkpoint_parser_rejects_unknown_coerced_and_inconsistent_fields() -> None:
+    prepared = _prepared("g11-v5-hybrid-strict-parser")
+    costs = {item.profile_id: item.cost_per_sample for item in prepared.allocations}
+    partial = execute_hybrid_run(prepared, BoundedTelescopingSampler(costs), maximum_chunks=1)
+    assert partial.checkpoint is not None
+
+    with_unknown = partial.checkpoint.to_dict()
+    with_unknown["ignored"] = True
+    with pytest.raises(ValueError, match="fields"):
+        hybrid_module.HybridCheckpoint.from_dict(with_unknown)
+
+    bool_allocation = partial.checkpoint.to_dict()
+    bool_allocation["allocations"][0] = True
+    with pytest.raises(ValueError, match="integer"):
+        hybrid_module.HybridCheckpoint.from_dict(bool_allocation)
+
+    coerced_moment = partial.checkpoint.to_dict()
+    coerced_moment["moments"][0]["mean"] = "0.0"
+    with pytest.raises(ValueError, match="finite real"):
+        hybrid_module.HybridCheckpoint.from_dict(coerced_moment)
+
+    inconsistent_work = partial.checkpoint.to_dict()
+    inconsistent_work["work_entries"][-1]["samples"] -= 1
+    with pytest.raises(ValueError, match="does not match"):
+        hybrid_module.HybridCheckpoint.from_dict(inconsistent_work)
+
+
 def test_checkpoint_writer_retries_transient_windows_replace(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -206,3 +235,57 @@ def test_checkpoint_writer_retries_transient_windows_replace(
     save_hybrid_checkpoint(partial.checkpoint, path, replace_attempts=2, initial_retry_seconds=0.0)
     assert attempts == 2
     assert load_hybrid_checkpoint(path) == partial.checkpoint
+
+
+def test_unbounded_single_term_uses_common_allocation_without_fake_hoeffding_bound() -> None:
+    target = HybridTarget("pure-cem-tail", 0.15, 0.20)
+    design = SingleTermDesign(
+        profile_id="pure_cem",
+        pilot_count=512,
+        pilot_mean=0.15,
+        pilot_variance=0.01,
+        design_variance=0.0125,
+        cost_per_sample=1.0,
+        absolute_bound=None,
+    )
+    prepared = prepare_single_term_run(
+        target,
+        design,
+        method="pure_cem",
+        protocol="g11-v6-pure-cem-test",
+        regime="gaussian",
+        task="digital",
+        operation_work_cap=1e9,
+        chunk_size=41,
+    )
+    sampler = BoundedTelescopingSampler({"base": 1.0})
+
+    class PureCEMAdapter:
+        def __call__(self, profile_id, role, count, seeds):
+            batch = sampler("base", role, count, seeds)
+            return LevelBatch(batch.values, batch.work_units)
+
+    result = execute_hybrid_run(prepared, PureCEMAdapter())
+    assert result.complete
+    assert result.asymptotic_confidence_interval is not None
+    assert result.bounded_confidence_interval is None
+    assert result.allocations[0].absolute_bound is None
+
+
+def test_bounded_single_term_retains_defensive_final_check() -> None:
+    prepared = prepare_single_term_run(
+        HybridTarget("defensive-tail", 0.15, 0.20),
+        SingleTermDesign("defensive", 128, 0.15, 0.01, 0.01, 1.0, 0.25),
+        method="defensive_cem",
+        protocol="g11-v6-defensive-test",
+        regime="gaussian",
+        task="digital",
+        operation_work_cap=1e9,
+    )
+
+    class ViolatingSampler:
+        def __call__(self, profile_id, role, count, seeds):
+            return LevelBatch(torch.full((count,), 0.30), float(count))
+
+    with pytest.raises(ValueError, match="defensive bound"):
+        execute_hybrid_run(prepared, ViolatingSampler())

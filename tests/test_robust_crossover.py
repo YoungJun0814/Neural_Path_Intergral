@@ -188,3 +188,54 @@ def test_sequential_state_rejects_optional_looks_and_freezes_at_declared_cap() -
     assert final.stopped
     assert final.stop_reason == "predeclared pilot cap reached"
     assert final.frozen_decision is not None
+
+
+def test_sequential_state_freezes_before_next_look_exceeds_work_budget() -> None:
+    state = advance_sequential_crossover(
+        {
+            "hybrid_term": torch.tensor([-1.0, 1.0] * 4),
+            "slis_term": torch.tensor([-1.0, 1.0] * 4),
+        },
+        absolute_bounds={"hybrid_term": 1.0, "slis_term": 1.0},
+        costs_per_sample={"hybrid_term": 1.0, "slis_term": 1.0},
+        candidate_profiles={"hybrid": ("hybrid_term",), "slis": ("slis_term",)},
+        preprocessing_work={"hybrid": 2.0, "slis": 0.0},
+        sampling_variance_target=0.01,
+        predeclared_looks=(8, 16, 32),
+        look_index=0,
+        familywise_alpha=0.05,
+        simpler_candidate="slis",
+        maximum_profile_work=20.0,
+    )
+    assert state.cumulative_profile_work == 16.0
+    assert state.effective_profile_work_cap == 20.0
+    assert state.stop_reason == "next declared look exceeds the profiling work budget"
+    assert state.frozen_decision is not None
+
+
+def test_sequential_profile_budget_is_predeclared_and_cannot_change() -> None:
+    common = dict(
+        absolute_bounds={"a": 1.0, "b": 1.0},
+        costs_per_sample={"a": 1.0, "b": 1.0},
+        candidate_profiles={"a": ("a",), "b": ("b",)},
+        preprocessing_work={"a": 0.0, "b": 0.0},
+        sampling_variance_target=0.01,
+        predeclared_looks=(8, 16),
+        familywise_alpha=0.05,
+        simpler_candidate="a",
+    )
+    first = advance_sequential_crossover(
+        {"a": torch.tensor([-1.0, 1.0] * 4), "b": torch.tensor([-1.0, 1.0] * 4)},
+        look_index=0,
+        maximum_profile_work=40.0,
+        **common,
+    )
+    assert not first.stopped
+    with pytest.raises(ValueError, match="changed"):
+        advance_sequential_crossover(
+            {"a": torch.tensor([-1.0, 1.0] * 8), "b": torch.tensor([-1.0, 1.0] * 8)},
+            look_index=1,
+            maximum_profile_work=41.0,
+            previous_state=first,
+            **common,
+        )

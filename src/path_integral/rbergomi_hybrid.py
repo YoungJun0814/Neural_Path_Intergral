@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 import re
 from collections.abc import Mapping, Sequence
+from typing import cast
 
 import torch
 
@@ -14,6 +15,8 @@ from src.path_integral.rbergomi_mixture import RBergomiControl
 from src.path_integral.rbergomi_mlmc_sampler import (
     RBergomiMLMCSampler,
     RBergomiMLMCSamplerConfig,
+    SamplingRole,
+    SimulationEngine,
 )
 from src.physics_engine import RBergomiSimulator
 
@@ -56,7 +59,7 @@ class RBergomiHybridTermSampler:
         maturity: float,
         coarsest_steps: int,
         finest_level: int,
-        engine: str = "fft",
+        engine: SimulationEngine = "fft",
     ) -> None:
         if finest_level < 0:
             raise ValueError("finest_level must be nonnegative")
@@ -87,7 +90,7 @@ class RBergomiHybridTermSampler:
                 maturity=self.maturity,
                 coarsest_steps=coarsest_steps,
                 method="dcs_mgi",
-                engine=self.engine,  # type: ignore[arg-type]
+                engine=self.engine,
                 dtype=torch.float64,
                 require_natural_component=True,
             ),
@@ -112,10 +115,11 @@ class RBergomiHybridTermSampler:
     ) -> LevelBatch:
         if role not in {"pilot", "final"}:
             raise ValueError("hybrid sampling role must be pilot or final")
+        sampling_role = cast(SamplingRole, role)
         kind, level = self._parse(profile_id)
         if kind == "single":
-            return self._single_samplers[level](0, role, count, seeds)  # type: ignore[arg-type]
-        return self._correction_sampler(level, role, count, seeds)  # type: ignore[arg-type]
+            return self._single_samplers[level](0, sampling_role, count, seeds)
+        return self._correction_sampler(level, sampling_role, count, seeds)
 
     def cost_per_sample(self, profile_id: str) -> float:
         _kind, level = self._parse(profile_id)
@@ -123,5 +127,11 @@ class RBergomiHybridTermSampler:
         return float(steps * max(1.0, math.log2(steps)))
 
     @property
+    def declared_natural_component_weight(self) -> float:
+        """Weight of expert zero, whose zero-control identity is checked at sampling."""
+
+        return float(self.weights[0])
+
+    @property
     def defensive_absolute_bound(self) -> float:
-        return 1.0 / float(torch.amin(self.weights))
+        return 1.0 / self.declared_natural_component_weight

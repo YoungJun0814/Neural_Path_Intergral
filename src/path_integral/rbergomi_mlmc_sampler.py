@@ -25,6 +25,7 @@ from src.physics_engine import RBergomiSimulator
 
 CorrectionMethod = Literal["raw", "raw_defensive", "dcs_mgi"]
 SimulationEngine = Literal["reference", "fft"]
+SamplingRole = Literal["pilot", "final"]
 
 
 @dataclass(frozen=True)
@@ -97,7 +98,7 @@ class RBergomiMLMCSampler:
     def __call__(
         self,
         level: int,
-        role: Literal["pilot", "final"],
+        role: SamplingRole,
         count: int,
         seeds: Mapping[str, int],
     ) -> LevelBatch:

@@ -70,3 +70,9 @@ def test_profile_sampler_rejects_out_of_hierarchy_identifier() -> None:
             2,
             {"proposal": 1, "labels": 2},
         )
+
+
+def test_defensive_bound_uses_declared_zero_component_not_smallest_weight() -> None:
+    sampler = _sampler()
+    assert sampler.declared_natural_component_weight == pytest.approx(0.2)
+    assert sampler.defensive_absolute_bound == pytest.approx(5.0)

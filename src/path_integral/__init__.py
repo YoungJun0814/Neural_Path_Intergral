@@ -95,9 +95,11 @@ from .hybrid_allocation import (
     HybridTarget,
     HybridTermAllocation,
     HybridTermEstimate,
+    SingleTermDesign,
     execute_hybrid_run,
     load_hybrid_checkpoint,
     prepare_hybrid_run,
+    prepare_single_term_run,
     save_hybrid_checkpoint,
 )
 from .memory import SOEKernelBank, fit_positive_soe_kernel
@@ -140,7 +142,22 @@ from .path_functionals import (
     TerminalThresholdTask,
 )
 from .pice import ConstantPICEFit, fit_constant_pice, reconstruct_candidate_increments
+from .policy_allocation import (
+    V6PolicyPreparedRun,
+    V6PolicyResult,
+    execute_v6_policy,
+    prepare_v6_direct_policy,
+    prepare_v6_hybrid_policy,
+)
+from .policy_audit import V6PolicyAudit, audit_v6_policy
 from .potentials import terminal_left_tail_potential
+from .rarity_router import (
+    FrozenRarityRoute,
+    HybridProfileOpportunity,
+    RarityRouterConfig,
+    RoutingWorkInterval,
+    freeze_rarity_route,
+)
 from .rate_analysis import (
     CorrectionRateObservation,
     RateWindowAnalysis,
@@ -211,6 +228,16 @@ from .rbergomi_smoothing import (
     simulate_smoothed_adjacent_rbergomi,
     simulate_smoothed_rbergomi,
 )
+from .rbergomi_theory_diagnostics import (
+    BarrierObligationDiagnostics,
+    CoefficientMomentDiagnostics,
+    DirectionRegularityDiagnostics,
+    SlopeLowerTailDiagnostics,
+    barrier_obligation_diagnostics,
+    coefficient_moment_diagnostics,
+    direction_regularity_diagnostics,
+    slope_lower_tail_diagnostics,
+)
 from .rbergomi_threshold_diagnostics import (
     RBergomiThresholdCouplingDiagnostics,
     evaluate_rbergomi_threshold_coupling,
@@ -255,6 +282,12 @@ from .threshold_stability import (
     defensive_moment_upper_bounds,
     ratio_candidate_stability,
 )
+from .v6_protocol import (
+    V6_CELL_MANIFEST_SCHEMA,
+    V6CellManifest,
+    V6RBergomiCell,
+)
+from .v6_work_ledger import V6WorkLedger, V6WorkRecord
 
 __all__ = [
     "ConstantPICEFit",
@@ -305,6 +338,13 @@ __all__ = [
     "component_log_q_over_p",
     "control_span_from_vectors",
     "fit_constant_pice",
+    "V6PolicyPreparedRun",
+    "V6PolicyResult",
+    "V6PolicyAudit",
+    "execute_v6_policy",
+    "prepare_v6_direct_policy",
+    "prepare_v6_hybrid_policy",
+    "audit_v6_policy",
     "gaussian_exponential_tilt_log_normalizer",
     "gaussian_exponential_tilt_optimal_control",
     "gaussian_exponential_tilt_pi_gap",
@@ -335,6 +375,14 @@ __all__ = [
     "evaluate_rbergomi_dcs_adjacent",
     "evaluate_rbergomi_dcs_level",
     "evaluate_rbergomi_threshold_coupling",
+    "BarrierObligationDiagnostics",
+    "CoefficientMomentDiagnostics",
+    "DirectionRegularityDiagnostics",
+    "SlopeLowerTailDiagnostics",
+    "barrier_obligation_diagnostics",
+    "coefficient_moment_diagnostics",
+    "direction_regularity_diagnostics",
+    "slope_lower_tail_diagnostics",
     "sample_gaussian_mixture",
     "sample_mixture_labels",
     "selected_component_log_p_over_q",
@@ -423,6 +471,11 @@ __all__ = [
     "RateWindowAnalysis",
     "correction_rate_observation",
     "identify_rate_window",
+    "FrozenRarityRoute",
+    "HybridProfileOpportunity",
+    "RarityRouterConfig",
+    "RoutingWorkInterval",
+    "freeze_rarity_route",
     "BoundedMomentInterval",
     "CandidateElimination",
     "CandidateWorkInterval",
@@ -442,9 +495,11 @@ __all__ = [
     "HybridTarget",
     "HybridTermAllocation",
     "HybridTermEstimate",
+    "SingleTermDesign",
     "execute_hybrid_run",
     "load_hybrid_checkpoint",
     "prepare_hybrid_run",
+    "prepare_single_term_run",
     "save_hybrid_checkpoint",
     "BinomialProbabilityInterval",
     "HeavyTailDiagnostics",
@@ -465,4 +520,9 @@ __all__ = [
     "paired_log_work_summary",
     "paired_power_forecast",
     "reference_agreement",
+    "V6_CELL_MANIFEST_SCHEMA",
+    "V6CellManifest",
+    "V6RBergomiCell",
+    "V6WorkLedger",
+    "V6WorkRecord",
 ]

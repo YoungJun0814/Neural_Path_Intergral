@@ -98,6 +98,10 @@ class SequentialCrossoverState:
     candidate_work: tuple[CandidateWorkInterval, ...]
     surviving_candidates: tuple[str, ...]
     elimination_history: tuple[CandidateElimination, ...]
+    maximum_profile_work: float | None
+    maximum_profile_fraction_of_best_point: float | None
+    cumulative_profile_work: float
+    effective_profile_work_cap: float | None
     stopped: bool
     stop_reason: str | None
     frozen_decision: FrozenCrossoverDecision | None
@@ -409,6 +413,8 @@ def advance_sequential_crossover(
     previous_state: SequentialCrossoverState | None = None,
     elimination_relative_tolerance: float = 0.0,
     practical_equivalence_relative_tolerance: float = 0.0,
+    maximum_profile_work: float | None = None,
+    maximum_profile_fraction_of_best_point: float | None = None,
 ) -> SequentialCrossoverState:
     """Advance exactly one cumulative look and freeze only by declared rules.
 
@@ -433,6 +439,15 @@ def advance_sequential_crossover(
         0.0 <= practical_equivalence_relative_tolerance < 1.0
     ):
         raise ValueError("practical-equivalence tolerance must lie in [0, 1)")
+    if maximum_profile_work is not None and (
+        not math.isfinite(maximum_profile_work) or maximum_profile_work <= 0.0
+    ):
+        raise ValueError("maximum profile work must be finite and positive")
+    if maximum_profile_fraction_of_best_point is not None and (
+        not math.isfinite(maximum_profile_fraction_of_best_point)
+        or not 0.0 < maximum_profile_fraction_of_best_point < 1.0
+    ):
+        raise ValueError("maximum profile fraction must lie in (0, 1)")
     if previous_state is not None:
         if previous_state.stopped:
             raise ValueError("a frozen crossover state cannot be advanced")
@@ -442,6 +457,13 @@ def advance_sequential_crossover(
             raise ValueError("sequential looks must be advanced without gaps or repeats")
         if previous_state.familywise_alpha != familywise_alpha:
             raise ValueError("familywise alpha changed between looks")
+        if previous_state.maximum_profile_work != maximum_profile_work:
+            raise ValueError("maximum profile work changed between looks")
+        if (
+            previous_state.maximum_profile_fraction_of_best_point
+            != maximum_profile_fraction_of_best_point
+        ):
+            raise ValueError("maximum profile fraction changed between looks")
         prior_survivors = previous_state.surviving_candidates
         history = previous_state.elimination_history
     else:
@@ -474,6 +496,21 @@ def advance_sequential_crossover(
     if simpler_candidate not in candidate_profiles:
         raise ValueError("simpler_candidate is not a declared candidate")
 
+    cumulative_profile_work = math.fsum(
+        profile.moments.sample_count * profile.cost_per_sample for profile in profiles
+    )
+    if maximum_profile_work is not None and cumulative_profile_work > maximum_profile_work * (
+        1.0 + 1e-12
+    ):
+        raise ValueError("current declared look exceeds the absolute profile-work budget")
+    best_point_work = min(work_map[item].point_total_work for item in survivors)
+    caps = []
+    if maximum_profile_work is not None:
+        caps.append(maximum_profile_work)
+    if maximum_profile_fraction_of_best_point is not None:
+        caps.append(maximum_profile_fraction_of_best_point * best_point_work)
+    effective_profile_work_cap = min(caps) if caps else None
+
     stop_reason: str | None = None
     if len(survivors) == 1:
         stop_reason = "one candidate remains"
@@ -485,6 +522,17 @@ def advance_sequential_crossover(
             and maximum_upper <= (1.0 + practical_equivalence_relative_tolerance) * minimum_lower
         ):
             stop_reason = "all surviving candidates are practically equivalent"
+        elif (
+            effective_profile_work_cap is not None
+            and cumulative_profile_work >= effective_profile_work_cap * (1.0 - 1e-12)
+        ):
+            stop_reason = "frozen profiling work budget reached"
+        elif effective_profile_work_cap is not None and look_index < len(looks) - 1:
+            next_profile_work = math.fsum(
+                looks[look_index + 1] * profile.cost_per_sample for profile in profiles
+            )
+            if next_profile_work > effective_profile_work_cap * (1.0 + 1e-12):
+                stop_reason = "next declared look exceeds the profiling work budget"
         elif look_index == len(looks) - 1:
             stop_reason = "predeclared pilot cap reached"
 
@@ -513,6 +561,10 @@ def advance_sequential_crossover(
         candidate_work=work,
         surviving_candidates=survivors,
         elimination_history=history + elimination.eliminated,
+        maximum_profile_work=maximum_profile_work,
+        maximum_profile_fraction_of_best_point=maximum_profile_fraction_of_best_point,
+        cumulative_profile_work=cumulative_profile_work,
+        effective_profile_work_cap=effective_profile_work_cap,
         stopped=decision is not None,
         stop_reason=stop_reason,
         frozen_decision=decision,
