@@ -42,6 +42,29 @@ def _normalized_sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
+def _portable_artifact_path(value: str) -> str:
+    """Canonicalize a repository-relative manifest path across host platforms."""
+
+    return value.replace("\\", "/")
+
+
+def _normalized_input_manifest(value: object) -> list[dict[str, str]] | None:
+    if not isinstance(value, list):
+        return None
+    normalized: list[dict[str, str]] = []
+    for item in value:
+        if not isinstance(item, dict) or set(item) != {"path", "sha256"}:
+            return None
+        path = item["path"]
+        sha256 = item["sha256"]
+        if not isinstance(path, str) or not isinstance(sha256, str):
+            return None
+        normalized.append(
+            {"path": _portable_artifact_path(path), "sha256": sha256}
+        )
+    return normalized
+
+
 def _close(left: Any, right: Any, *, rel_tol: float = 2e-10) -> bool:
     if left is None or right is None:
         return left is right
@@ -532,16 +555,16 @@ def run(config_path: Path, result_path: Path) -> dict[str, Any]:
         failures.append("result dtype is not torch.float64")
     expected_inputs = [
         {
-            "path": str(Path(declaration[kind]["path"])),
+            "path": _portable_artifact_path(str(declaration[kind]["path"])),
             "sha256": str(declaration[kind]["sha256"]),
         }
         for declaration in config["regimes"]
         for kind in ("calibration_config", "calibration_result")
     ]
-    if result.get("input_artifacts") != expected_inputs:
+    if _normalized_input_manifest(result.get("input_artifacts")) != expected_inputs:
         failures.append("input artifact manifest mismatch")
     for item in expected_inputs:
-        if _normalized_sha256(Path(item["path"])) != item["sha256"]:
+        if _normalized_sha256(repository / item["path"]) != item["sha256"]:
             failures.append(f"audited input hash mismatch: {item['path']}")
 
     return {

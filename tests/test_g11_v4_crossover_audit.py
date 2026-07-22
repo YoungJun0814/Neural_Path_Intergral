@@ -27,6 +27,16 @@ def test_committed_v4_result_passes_independent_audit() -> None:
     assert audit["independent_summary"]["run_count"] == 135
 
 
+def test_v4_audit_treats_manifest_separators_portably(tmp_path: Path) -> None:
+    result = json.loads(RESULT.read_text(encoding="utf-8"))
+    for item in result["input_artifacts"]:
+        item["path"] = item["path"].replace("\\", "/")
+    portable_result = tmp_path / "portable-result.json"
+    portable_result.write_text(json.dumps(result), encoding="utf-8")
+    audit = run(CONFIG, portable_result)
+    assert "input artifact manifest mismatch" not in audit["integrity_failures"]
+
+
 def test_v4_audit_detects_a_tampered_crossover_decision() -> None:
     config, _config_hash = _load_config(CONFIG)
     result = json.loads(RESULT.read_text(encoding="utf-8"))
