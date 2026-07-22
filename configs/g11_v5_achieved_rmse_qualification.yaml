@@ -3,17 +3,17 @@ protocol_id: g11-v5-achieved-rmse-qualification-v1
 frozen: true
 estimand: finite_grid
 run_class: qualification
-source_commit: f7e323587a821769130e939639bc6ff0378b6d86
+source_commit: 1034a231b1b37a464f3f3c96fc6cac0b0a8972d9
 
 qualification_inputs:
   - path: results/g11_v5_selector_qualification_v1_2026-07-22.json
-    sha256: 0903f6698c7d67b49490e703ee2a37fb2849352bf5da24c027410dc02241cfbc
+    canonical_json_sha256: 06718e7394b82463b22d5f606670d8b68f04b56dce9829367e8018379579f562
     required_gate: qualification_passed
   - path: results/g11_v5_baseline_qualification_v1_2026-07-22.json
-    sha256: f6fbd539121a92eafbba1abf41f834364467e61ec6e3e41bd5a4aee547029740
+    canonical_json_sha256: e3817df903d1eeee0212b08bdac84b4b8549c9d2366136c6158d8c09990e77c6
     required_gate: baseline_qualified
   - path: results/g11_v5_reference_qualification_v1_2026-07-22.json
-    sha256: a173ed5b10927c66c5717137418ea120b9a45383d00e3dcca4af6f020b85e49e
+    canonical_json_sha256: 930f87fe9964723deab8da0271051da907e07a5f7a984b2b1663f56b0c30e5fd
     required_gate: reference_qualified
 
 model_common:
