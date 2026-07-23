@@ -1,0 +1,43 @@
+{
+  "clusters": 24,
+  "config_sha256": {
+    "routed_policy_qualification_v1.yaml": "80a99f2dc17a73aa218760fe795b447a623c21e89b5672e1240a9db758368b03",
+    "routed_policy_selector_off_qualification_v1.yaml": "f79e2745733fd58cfa4c9ed7ca560206e199201310efbac67f1de2a67556370c",
+    "secondary_baselines_qualification_v1.yaml": "3b4ec541218e9b3f1f858bbabcc000d48f676d94d859ca8f1dc67619604913a2"
+  },
+  "manifest_cell_count": 18,
+  "minimum_selector_profile_batch_work": 16384,
+  "proposal_bank_receipt": {
+    "clusters": 24,
+    "dirty_worktree": false,
+    "formal_readiness": {
+      "clean_source": true,
+      "formal_training_source": true,
+      "nondevelopment_output": true
+    },
+    "manifest_cell_count": 18,
+    "phase": "qualification",
+    "proposal_training_audit": {
+      "derivation": "componentwise_median_pure_cem_then_zero_half_full_bank",
+      "formal_training_source_readiness": true,
+      "source_artifact_sha256": "b74770898cc1c4896adb6a65062595d6decadbc1948ad11cc00095f61c2ebc01",
+      "source_commit": "514afe79307a3cf01b6b9627275addf675792c62",
+      "source_contract_verified": true,
+      "source_dirty_worktree": false,
+      "source_record_count": 6,
+      "source_schema": "npi.g11.v6-proposal-training.v1",
+      "source_smoke": false,
+      "total_cpu_seconds": 115.703125,
+      "total_samples": 98304,
+      "total_wall_seconds": 8.343280399916694,
+      "total_work_units": 88080384.0,
+      "verified": true
+    },
+    "protocol_id": "g11-v6-routed-policy-qualification-v1",
+    "schema": "npi.g11.v6-proposal-bank-materialization-receipt.v1",
+    "source_commit": "514afe79307a3cf01b6b9627275addf675792c62",
+    "training_amortization_record_count": 432
+  },
+  "schema": "npi.g11.v6-qualification-suite-materialization-receipt.v1",
+  "selector_off_profile_cap": 1.0
+}
