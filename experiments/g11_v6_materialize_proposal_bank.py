@@ -9,9 +9,9 @@ from typing import Any, Literal
 
 import yaml
 
-from experiments.g11_v6_routed_policy import (
-    _task_conditioned_training_source_audit,
-    _task_conditioned_training_source_summary,
+from experiments.g11_v6_proposal_source import (
+    task_conditioned_training_source_audit,
+    task_conditioned_training_source_summary,
 )
 from src.path_integral.provenance import source_provenance
 
@@ -58,7 +58,7 @@ def materialize_proposal_policy(
     ):
         raise ValueError("manifest cell and cluster counts must be positive integers")
 
-    summary = _task_conditioned_training_source_summary(training_source_path)
+    summary = task_conditioned_training_source_summary(training_source_path)
     if phase == "qualification" and not summary["formal_training_source_readiness"]:
         raise ValueError(
             "qualification proposal bank requires clean committed non-smoke training"
@@ -86,7 +86,7 @@ def materialize_proposal_policy(
     output["frozen"] = phase == "qualification"
     output["proposal"] = proposal
     output["sampling"]["clusters"] = clusters
-    audit = _task_conditioned_training_source_audit(
+    audit = task_conditioned_training_source_audit(
         output["proposal"], training_source_path
     )
     provenance = source_provenance()

@@ -15,6 +15,9 @@ from typing import Any, Literal
 import torch
 import yaml
 
+from experiments.g11_v6_proposal_source import (
+    task_conditioned_training_source_audit,
+)
 from src.path_integral import (
     DiscreteBarrierHitTask,
     OnlineMoments,
@@ -32,13 +35,18 @@ from src.physics_engine import RBergomiSimulator
 
 _SCHEMA_V1 = "npi.g11.v6-reference.config.v1"
 _SCHEMA_V2 = "npi.g11.v6-reference.config.v2"
+_SCHEMA_V3 = "npi.g11.v6-reference.config.v3"
 ReferenceMethod = Literal["dcs_reference", "raw_crosscheck"]
 
 
 def _load_config(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     payload = yaml.safe_load(raw)
-    if not isinstance(payload, dict) or payload.get("schema") not in (_SCHEMA_V1, _SCHEMA_V2):
+    if not isinstance(payload, dict) or payload.get("schema") not in (
+        _SCHEMA_V1,
+        _SCHEMA_V2,
+        _SCHEMA_V3,
+    ):
         raise ValueError("unsupported V6 reference config")
     expected = {
         "schema",
@@ -84,13 +92,37 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         }
     if set(sampling) != sampling_fields:
         raise ValueError("malformed V6 reference sampling fields")
-    if payload["schema"] == _SCHEMA_V2:
+    if payload["schema"] in (_SCHEMA_V2, _SCHEMA_V3):
         if sampling["allocation_variance_statistic"] != "median_replicate_variance":
             raise ValueError("unsupported V6 reference planning statistic")
         if int(sampling["pilot_replicates"]) < 3:
             raise ValueError("V2 reference requires at least three planning replicates")
         if float(sampling["raw_crosscheck_standard_error_multiplier"]) < 1.0:
             raise ValueError("raw cross-check SE multiplier must be at least one")
+    proposal = payload["proposal"]
+    if not isinstance(proposal, dict):
+        raise ValueError("V6 reference proposal must be an object")
+    if payload["schema"] == _SCHEMA_V3:
+        required_proposal = {
+            "weights",
+            "task_controls",
+            "training_source_artifact_sha256",
+            "training_derivation",
+            "training_source_record_count",
+            "training_total_samples",
+            "training_total_work_units",
+            "training_total_wall_seconds",
+            "training_total_cpu_seconds",
+            "training_amortization_record_count",
+        }
+        if set(proposal) != required_proposal:
+            raise ValueError("malformed task-conditioned reference proposal")
+        controls = proposal["task_controls"]
+        if not isinstance(controls, dict) or set(controls) != {
+            "terminal_left_tail",
+            "discrete_lower_barrier",
+        }:
+            raise ValueError("reference proposal must cover both task families")
     return payload, hashlib.sha256(raw).hexdigest()
 
 
@@ -684,6 +716,7 @@ def run(
     smoke: bool = False,
     checkpoint_directory: Path | None = None,
     resume: bool = False,
+    proposal_training_source_path: Path | None = None,
 ) -> dict[str, Any]:
     config, config_hash = _load_config(config_path)
     if resume and checkpoint_directory is None:
@@ -696,15 +729,49 @@ def run(
             raise ValueError("qualification reference requires a frozen qualification manifest")
     proposal = config["proposal"]
     weights = torch.tensor(proposal["weights"], dtype=torch.float64)
-    controls = tuple(
-        TimePiecewiseTwoDriverControl(
-            tuple(tuple(float(value) for value in segment) for segment in schedule),
-            maturity=manifest.cells[0].maturity,
+    proposal_training_audit = None
+    if config["schema"] == _SCHEMA_V3:
+        if proposal_training_source_path is None:
+            raise ValueError(
+                "task-conditioned reference requires its proposal-training source"
+            )
+        proposal_training_audit = task_conditioned_training_source_audit(
+            proposal, proposal_training_source_path
         )
-        for schedule in proposal["controls"]
-    )
-    if len(controls) != weights.numel() or bool((weights <= 0.0).any()) or not math.isclose(
+        controls_by_task = {
+            task: tuple(
+                TimePiecewiseTwoDriverControl(
+                    tuple(
+                        tuple(float(value) for value in segment)
+                        for segment in schedule
+                    ),
+                    maturity=manifest.cells[0].maturity,
+                )
+                for schedule in schedules
+            )
+            for task, schedules in proposal["task_controls"].items()
+        }
+    else:
+        controls = tuple(
+            TimePiecewiseTwoDriverControl(
+                tuple(
+                    tuple(float(value) for value in segment)
+                    for segment in schedule
+                ),
+                maturity=manifest.cells[0].maturity,
+            )
+            for schedule in proposal["controls"]
+        )
+        controls_by_task = {
+            "terminal_left_tail": controls,
+            "discrete_lower_barrier": controls,
+        }
+    if (
+        any(len(controls) != weights.numel() for controls in controls_by_task.values())
+        or bool((weights <= 0.0).any())
+        or not math.isclose(
         float(weights.sum()), 1.0, rel_tol=0.0, abs_tol=1e-12
+        )
     ):
         raise ValueError("reference proposal weights and controls are invalid")
     if smoke:
@@ -726,12 +793,13 @@ def run(
             rho=cell.rho,
             device="cpu",
         )
+        controls = controls_by_task[cell.task]
         target_se = (
             float(contract["se_fraction_of_requested"])
             * float(contract["minimum_relative_sampling_rmse"])
             * cell.nominal_probability
         )
-        if config["schema"] == _SCHEMA_V2:
+        if config["schema"] in (_SCHEMA_V2, _SCHEMA_V3):
             method_outputs = tuple(
                 _method_reference_v2(
                     config=config,
@@ -789,7 +857,7 @@ def run(
                     "dcs_reference_se_contract": methods[0]["target_attained"],
                     **(
                         {"raw_crosscheck_se_contract": methods[1]["target_attained"]}
-                        if config["schema"] == _SCHEMA_V2
+                        if config["schema"] in (_SCHEMA_V2, _SCHEMA_V3)
                         else {}
                     ),
                     "no_reference_resource_censoring": not any(
@@ -815,7 +883,7 @@ def run(
                     cell["gates"]["raw_crosscheck_se_contract"] for cell in output_cells
                 )
             }
-            if config["schema"] == _SCHEMA_V2
+            if config["schema"] in (_SCHEMA_V2, _SCHEMA_V3)
             else {}
         ),
         "no_reference_resource_censoring": all(
@@ -834,6 +902,19 @@ def run(
         "frozen_manifest": manifest.frozen,
         "clean_source": not bool(provenance["dirty_worktree"]),
         "non_smoke": not smoke,
+        "proposal_training_source_verified": (
+            config["schema"] != _SCHEMA_V3
+            or bool(proposal_training_audit and proposal_training_audit["verified"])
+        ),
+        "proposal_training_source_formal": (
+            config["schema"] != _SCHEMA_V3
+            or bool(
+                proposal_training_audit
+                and proposal_training_audit[
+                    "formal_training_source_readiness"
+                ]
+            )
+        ),
     }
     return {
         "schema": "npi.g11.v6-reference.v1",
@@ -841,6 +922,7 @@ def run(
         "config_schema": config["schema"],
         "config_sha256": config_hash,
         "manifest_sha256": manifest.sha256,
+        "proposal_training_audit": proposal_training_audit,
         "smoke": smoke,
         "estimand": "fixed finest-grid event probability",
         "continuous_time_claim": False,
@@ -867,6 +949,7 @@ def main() -> None:
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--checkpoint-directory", type=Path)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--proposal-training-source", type=Path)
     arguments = parser.parse_args()
     result = run(
         arguments.config,
@@ -874,6 +957,7 @@ def main() -> None:
         smoke=arguments.smoke,
         checkpoint_directory=arguments.checkpoint_directory,
         resume=arguments.resume,
+        proposal_training_source_path=arguments.proposal_training_source,
     )
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
     arguments.output.write_text(

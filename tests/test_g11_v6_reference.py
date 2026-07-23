@@ -17,6 +17,12 @@ ROOT = Path(__file__).resolve().parents[1]
 CALIBRATION = ROOT / "configs" / "g11_v6" / "rarity_calibration_development.yaml"
 REFERENCE = ROOT / "configs" / "g11_v6" / "reference_development.yaml"
 REFERENCE_V2 = ROOT / "configs" / "g11_v6" / "reference_development_v2.yaml"
+REFERENCE_QUALIFICATION = (
+    ROOT / "configs" / "g11_v6" / "reference_qualification_v1.yaml"
+)
+ROUTED_QUALIFICATION = (
+    ROOT / "configs" / "g11_v6" / "routed_policy_qualification_v1.yaml"
+)
 
 
 def test_v6_reference_config_is_strict(tmp_path: Path) -> None:
@@ -81,6 +87,39 @@ def test_v6_reference_v2_checkpoint_round_trip_and_tamper_rejection(tmp_path: Pa
 def test_v6_reference_v2_resume_requires_checkpoint_directory() -> None:
     with pytest.raises(ValueError, match="checkpoint directory"):
         run_reference(REFERENCE_V2, Path("unused.json"), resume=True)
+
+
+def test_v6_reference_v3_requires_hashed_proposal_training_source(
+    tmp_path: Path,
+) -> None:
+    reference = yaml.safe_load(
+        REFERENCE_QUALIFICATION.read_text(encoding="utf-8")
+    )
+    routed = yaml.safe_load(
+        ROUTED_QUALIFICATION.read_text(encoding="utf-8")
+    )
+    reference["schema"] = "npi.g11.v6-reference.config.v3"
+    reference["protocol_id"] = "g11-v6-reference-v3-test"
+    reference["proposal"] = routed["proposal"]
+    config_path = tmp_path / "reference-v3.yaml"
+    config_path.write_text(
+        yaml.safe_dump(reference, sort_keys=False), encoding="utf-8"
+    )
+    loaded, digest = _load_config(config_path)
+    assert loaded["schema"] == "npi.g11.v6-reference.config.v3"
+    assert set(loaded["proposal"]["task_controls"]) == {
+        "terminal_left_tail",
+        "discrete_lower_barrier",
+    }
+    assert len(digest) == 64
+
+    calibration = run_calibration(CALIBRATION, smoke=True)
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(
+        json.dumps(calibration["candidate_manifest"]), encoding="utf-8"
+    )
+    with pytest.raises(ValueError, match="proposal-training source"):
+        run_reference(config_path, manifest_path, smoke=True)
 
 
 @pytest.mark.slow

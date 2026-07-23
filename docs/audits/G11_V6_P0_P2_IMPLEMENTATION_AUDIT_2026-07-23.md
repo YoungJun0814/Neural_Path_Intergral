@@ -102,6 +102,15 @@ because smoke caps cannot satisfy reference precision. The full accepted 18-cell
 matrix can require up to 20 million final paths per cell and was not represented as
 completed.
 
+The first clean full attempt under `g11-v6-reference-qualification-v1` hit its
+predeclared resource stop: the `h005-terminal-p1e-04` DCS planning request was
+`40,440,463`, above the `20,000,000` cap. The run was stopped and preserved rather
+than completing a protocol that could no longer pass. This is a reference-proposal
+efficiency failure, not a V6 accuracy result. The corrective V2 reference keeps the
+same SE/cap contract and uses the already frozen reference-free task-conditioned
+proposal bank under a new seed namespace. See
+`G11_V6_REFERENCE_V1_RESOURCE_FAILURE_2026-07-23.md`.
+
 ### P0.3 Training/calibration/qualification/confirmation separation
 
 Status: **implemented; provisional audit pass**
