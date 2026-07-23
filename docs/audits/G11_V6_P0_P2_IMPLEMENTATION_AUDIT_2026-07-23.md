@@ -230,6 +230,16 @@ fivefold independent-pilot variance rule as pure CEM. This is a strong-baseline
 fairness correction, not a change to the primary comparator. See
 `G11_V6_BASELINE_V4_OVERCONSERVATIVE_DESIGN_2026-07-23.md`.
 
+V5 was then stopped after 198 durable records when one pure-CEM `1e-4` record
+exceeded its per-record empirical sampling-variance target. The allocation is not
+retuned from this tail observation. The audit instead found that the runner's
+all-1,296-record empirical gate contradicted the plan's already prespecified
+method-by-cell attainment-rate and bootstrap-RMSE co-gates. V6 leaves every
+allocation rule unchanged, retains the per-record gate as a diagnostic, serializes
+the operational qualification contract, and makes the independent auditor replay
+the operational/diagnostic split. See
+`G11_V6_BASELINE_V5_EMPIRICAL_GATE_FAILURE_2026-07-23.md`.
+
 The mandatory comparison design is now:
 
 | Contrast | Isolated contribution |

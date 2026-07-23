@@ -14,6 +14,7 @@ from experiments.g11_v6_result_audit import (
     _audit_crude_design_certificate,
     _audit_defensive_design_certificate,
     _audit_record,
+    _audit_v6_baseline_summary,
     _load_config,
     run,
 )
@@ -87,6 +88,107 @@ def test_v6_independent_audit_config_is_strict() -> None:
     config, digest = _load_config(CONFIG)
     assert "npi.g11.v6-routed-policy.v1" in config["accepted_source_schemas"]
     assert len(digest) == 64
+
+
+def test_v6_baseline_summary_defers_random_per_record_misses() -> None:
+    records = []
+    for method in ("crude", "pure_cem", "defensive_cem"):
+        record = {
+            "cell_id": "cell-a",
+            "cluster": 0,
+            "method": method,
+            "cem_fit": (
+                None
+                if method == "crude"
+                else {"converged": True, "control": [[1.0, -1.0]]}
+            ),
+            "crude_design_certificate": (
+                {"certified": True} if method == "crude" else None
+            ),
+            "defensive_design_certificate": (
+                {"certified": True} if method == "defensive_cem" else None
+            ),
+            "result": {
+                "core": {
+                    "complete": True,
+                    "resource_censored": False,
+                    "design_target_attained": True,
+                    "empirical_target_attained": method != "pure_cem",
+                    "seed_ledger_payload": {
+                        "records": [{"key": {"role": "final"}}]
+                    },
+                },
+                "total_work": {
+                    "records": [
+                        {
+                            "category": (
+                                "final" if method == "crude" else "proposal_training"
+                            )
+                        }
+                    ]
+                },
+            },
+        }
+        records.append(record)
+    operational_names = [
+        "complete_matrix",
+        "all_runs_complete",
+        "no_resource_censoring",
+        "all_design_targets_attained",
+        "all_cem_training_charged",
+        "all_cem_fits_converged",
+        "all_cem_controls_finite_and_bounded",
+        "all_defensive_designs_certified",
+        "all_crude_designs_certified",
+        "all_final_seed_roles_separate",
+    ]
+    qualification_gates = {name: True for name in operational_names}
+    gates = {
+        "complete_matrix": True,
+        "all_runs_complete": True,
+        "no_resource_censoring": True,
+        "all_design_targets_attained": True,
+        "all_empirical_targets_attained": False,
+        "all_cem_training_charged": True,
+        "all_cem_fits_converged": True,
+        "all_cem_controls_finite_and_bounded": True,
+        "all_defensive_designs_certified": True,
+        "all_crude_designs_certified": True,
+        "all_final_seed_roles_separate": True,
+    }
+    source = {
+        "protocol_id": "g11-v6-baseline-qualification-v6",
+        "methods": ["crude", "pure_cem", "defensive_cem"],
+        "records": records,
+        "gates": gates,
+        "qualification_gates": qualification_gates,
+        "qualification_contract": {
+            "schema": "npi.g11.v6-baseline-qualification-contract.v1",
+            "expected_cell_ids": ["cell-a"],
+            "expected_clusters": 1,
+            "methods": ["crude", "pure_cem", "defensive_cem"],
+            "control_bound": 20.0,
+            "operational_gate_names": operational_names,
+            "per_record_empirical_target_role": (
+                "deferred_to_prespecified_method_cell_attainment_and_bootstrap_rmse_co_gates"
+            ),
+            "aggregate_accuracy_protocol_id": (
+                "g11-v6-power-analysis-qualification-v1"
+            ),
+        },
+        "formal_readiness": {
+            "frozen_config": True,
+            "frozen_manifest": True,
+            "clean_source": True,
+            "non_smoke": True,
+        },
+        "baseline_qualified": True,
+    }
+    assert _audit_v6_baseline_summary(source)
+
+    tampered = copy.deepcopy(source)
+    tampered["qualification_gates"]["all_runs_complete"] = False
+    assert not _audit_v6_baseline_summary(tampered)
 
 
 def test_v6_auditor_replays_defensive_rarity_band_certificate() -> None:

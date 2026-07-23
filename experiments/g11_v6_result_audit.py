@@ -764,6 +764,186 @@ def _audit_crude_design_certificate(
         return False
 
 
+_V6_BASELINE_OPERATIONAL_GATE_NAMES = (
+    "complete_matrix",
+    "all_runs_complete",
+    "no_resource_censoring",
+    "all_design_targets_attained",
+    "all_cem_training_charged",
+    "all_cem_fits_converged",
+    "all_cem_controls_finite_and_bounded",
+    "all_defensive_designs_certified",
+    "all_crude_designs_certified",
+    "all_final_seed_roles_separate",
+)
+_V6_BASELINE_ALL_GATE_NAMES = (
+    *_V6_BASELINE_OPERATIONAL_GATE_NAMES[:4],
+    "all_empirical_targets_attained",
+    *_V6_BASELINE_OPERATIONAL_GATE_NAMES[4:],
+)
+_V6_AGGREGATE_ACCURACY_RULE = (
+    "deferred_to_prespecified_method_cell_attainment_and_bootstrap_rmse_co_gates"
+)
+
+
+def _audit_v6_baseline_summary(source: dict[str, Any]) -> bool:
+    """Replay the V6 operational/diagnostic gate split without production helpers."""
+
+    if source.get("protocol_id") != "g11-v6-baseline-qualification-v6":
+        return True
+    try:
+        records = source["records"]
+        contract = source["qualification_contract"]
+        if not isinstance(records, list) or not isinstance(contract, dict):
+            return False
+        expected_contract_fields = {
+            "schema",
+            "expected_cell_ids",
+            "expected_clusters",
+            "methods",
+            "control_bound",
+            "operational_gate_names",
+            "per_record_empirical_target_role",
+            "aggregate_accuracy_protocol_id",
+        }
+        if set(contract) != expected_contract_fields:
+            return False
+        cells = contract["expected_cell_ids"]
+        clusters = int(contract["expected_clusters"])
+        methods = contract["methods"]
+        control_bound = float(contract["control_bound"])
+        if (
+            contract["schema"]
+            != "npi.g11.v6-baseline-qualification-contract.v1"
+            or not isinstance(cells, list)
+            or not cells
+            or len(cells) != len(set(cells))
+            or not all(isinstance(cell, str) and cell for cell in cells)
+            or clusters < 1
+            or not isinstance(methods, list)
+            or set(methods) != {"crude", "pure_cem", "defensive_cem"}
+            or len(methods) != 3
+            or not math.isfinite(control_bound)
+            or control_bound <= 0.0
+            or contract["operational_gate_names"]
+            != list(_V6_BASELINE_OPERATIONAL_GATE_NAMES)
+            or contract["per_record_empirical_target_role"]
+            != _V6_AGGREGATE_ACCURACY_RULE
+            or not isinstance(contract["aggregate_accuracy_protocol_id"], str)
+            or not contract["aggregate_accuracy_protocol_id"]
+            or source.get("methods") != methods
+        ):
+            return False
+        expected_keys = {
+            (cell, cluster, method)
+            for cell in cells
+            for cluster in range(clusters)
+            for method in methods
+        }
+        actual_keys = [
+            (
+                str(record["cell_id"]),
+                int(record["cluster"]),
+                str(record["method"]),
+            )
+            for record in records
+        ]
+        matrix_complete = len(actual_keys) == len(set(actual_keys)) and set(
+            actual_keys
+        ) == expected_keys
+        recomputed = {
+            "complete_matrix": matrix_complete,
+            "all_runs_complete": all(
+                bool(record["result"]["core"]["complete"]) for record in records
+            ),
+            "no_resource_censoring": all(
+                not bool(record["result"]["core"]["resource_censored"])
+                for record in records
+            ),
+            "all_design_targets_attained": all(
+                bool(record["result"]["core"]["design_target_attained"])
+                for record in records
+            ),
+            "all_empirical_targets_attained": all(
+                bool(record["result"]["core"]["empirical_target_attained"])
+                for record in records
+            ),
+            "all_cem_training_charged": all(
+                record["method"] == "crude"
+                or record["result"]["total_work"]["records"][0]["category"]
+                == "proposal_training"
+                for record in records
+            ),
+            "all_cem_fits_converged": all(
+                record["method"] == "crude"
+                or (
+                    isinstance(record["cem_fit"], dict)
+                    and record["cem_fit"]["converged"] is True
+                )
+                for record in records
+            ),
+            "all_cem_controls_finite_and_bounded": all(
+                record["method"] == "crude"
+                or (
+                    isinstance(record["cem_fit"], dict)
+                    and all(
+                        math.isfinite(float(value))
+                        and abs(float(value)) <= control_bound
+                        for segment in record["cem_fit"]["control"]
+                        for value in segment
+                    )
+                )
+                for record in records
+            ),
+            "all_defensive_designs_certified": all(
+                record["method"] != "defensive_cem"
+                or (
+                    isinstance(record.get("defensive_design_certificate"), dict)
+                    and record["defensive_design_certificate"].get("certified") is True
+                )
+                for record in records
+            ),
+            "all_crude_designs_certified": all(
+                record["method"] != "crude"
+                or (
+                    isinstance(record.get("crude_design_certificate"), dict)
+                    and record["crude_design_certificate"].get("certified") is True
+                )
+                for record in records
+            ),
+            "all_final_seed_roles_separate": all(
+                all(
+                    seed["key"]["role"] == "final"
+                    for seed in record["result"]["core"]["seed_ledger_payload"][
+                        "records"
+                    ]
+                    if seed["key"]["role"]
+                    not in {"proposal-training", "allocation-pilot"}
+                )
+                for record in records
+            ),
+        }
+        serialized_gates = source["gates"]
+        qualification_gates = source["qualification_gates"]
+        if (
+            set(serialized_gates) != set(_V6_BASELINE_ALL_GATE_NAMES)
+            or serialized_gates != recomputed
+            or qualification_gates
+            != {
+                name: recomputed[name]
+                for name in _V6_BASELINE_OPERATIONAL_GATE_NAMES
+            }
+        ):
+            return False
+        formal = source["formal_readiness"]
+        expected_decision = all(qualification_gates.values()) and all(
+            bool(value) for value in formal.values()
+        )
+        return bool(source["baseline_qualified"]) == expected_decision
+    except (KeyError, TypeError, ValueError, IndexError, OverflowError):
+        return False
+
+
 def _audit_record(
     record: dict[str, Any],
     *,
@@ -965,6 +1145,7 @@ def run(config_path: Path, source_path: Path) -> dict[str, Any]:
                     "g11-v6-baseline-qualification-v3",
                     "g11-v6-baseline-qualification-v4",
                     "g11-v6-baseline-qualification-v5",
+                    "g11-v6-baseline-qualification-v6",
                 }
             ),
             require_crude_design_certificate=(
@@ -972,6 +1153,7 @@ def run(config_path: Path, source_path: Path) -> dict[str, Any]:
                 in {
                     "g11-v6-baseline-qualification-v4",
                     "g11-v6-baseline-qualification-v5",
+                    "g11-v6-baseline-qualification-v6",
                 }
             ),
         )
@@ -985,6 +1167,7 @@ def run(config_path: Path, source_path: Path) -> dict[str, Any]:
     smoke = bool(source.get("smoke", False))
     gates = {
         "all_records_pass": all(record["passed"] for record in audits),
+        "summary_decision_recomputed": _audit_v6_baseline_summary(source),
         "complete_if_required": complete or not bool(requirements["require_complete"]),
         "uncensored_if_required": uncensored
         or not bool(requirements["require_uncensored"]),

@@ -49,7 +49,23 @@ _SCHEMA_V2 = "npi.g11.v6-baseline-qualification.config.v2"
 _SCHEMA_V3 = "npi.g11.v6-baseline-qualification.config.v3"
 _SCHEMA_V4 = "npi.g11.v6-baseline-qualification.config.v4"
 _SCHEMA_V5 = "npi.g11.v6-baseline-qualification.config.v5"
+_SCHEMA_V6 = "npi.g11.v6-baseline-qualification.config.v6"
 BaselineMethod = Literal["crude", "pure_cem", "defensive_cem"]
+_OPERATIONAL_QUALIFICATION_GATE_NAMES = (
+    "complete_matrix",
+    "all_runs_complete",
+    "no_resource_censoring",
+    "all_design_targets_attained",
+    "all_cem_training_charged",
+    "all_cem_fits_converged",
+    "all_cem_controls_finite_and_bounded",
+    "all_defensive_designs_certified",
+    "all_crude_designs_certified",
+    "all_final_seed_roles_separate",
+)
+_AGGREGATE_ACCURACY_RULE = (
+    "deferred_to_prespecified_method_cell_attainment_and_bootstrap_rmse_co_gates"
+)
 
 
 def _record_checkpoint_path(
@@ -82,6 +98,7 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         _SCHEMA_V3,
         _SCHEMA_V4,
         _SCHEMA_V5,
+        _SCHEMA_V6,
     ):
         raise ValueError("unsupported V6 baseline-qualification config")
     expected = {
@@ -94,12 +111,20 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         "training",
         "defensive_mixture",
     }
-    if payload["schema"] in (_SCHEMA_V2, _SCHEMA_V3, _SCHEMA_V4, _SCHEMA_V5):
+    if payload["schema"] in (
+        _SCHEMA_V2,
+        _SCHEMA_V3,
+        _SCHEMA_V4,
+        _SCHEMA_V5,
+        _SCHEMA_V6,
+    ):
         expected.add("methods")
     if payload["schema"] == _SCHEMA_V3:
         expected.add("defensive_design")
-    if payload["schema"] in (_SCHEMA_V4, _SCHEMA_V5):
+    if payload["schema"] in (_SCHEMA_V4, _SCHEMA_V5, _SCHEMA_V6):
         expected.add("rarity_band_design")
+    if payload["schema"] == _SCHEMA_V6:
+        expected.add("qualification_decision")
     if set(payload) != expected:
         raise ValueError("malformed V6 baseline-qualification config fields")
     if payload["phase"] not in ("development", "qualification", "confirmation"):
@@ -108,7 +133,13 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         raise ValueError("qualification and confirmation baseline configs must be frozen")
     if payload["estimand"] != "fixed_finest_grid":
         raise ValueError("baseline qualification must declare a fixed-grid estimand")
-    if payload["schema"] in (_SCHEMA_V2, _SCHEMA_V3, _SCHEMA_V4, _SCHEMA_V5):
+    if payload["schema"] in (
+        _SCHEMA_V2,
+        _SCHEMA_V3,
+        _SCHEMA_V4,
+        _SCHEMA_V5,
+        _SCHEMA_V6,
+    ):
         methods = payload["methods"]
         allowed = {"crude", "pure_cem", "defensive_cem"}
         if (
@@ -118,9 +149,10 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
             or any(method not in allowed for method in methods)
         ):
             raise ValueError(
-                "V2/V3/V4/V5 baseline methods must be a nonempty unique supported list"
+                "V2/V3/V4/V5/V6 baseline methods must be a nonempty unique "
+                "supported list"
             )
-    if payload["schema"] in (_SCHEMA_V3, _SCHEMA_V4, _SCHEMA_V5):
+    if payload["schema"] in (_SCHEMA_V3, _SCHEMA_V4, _SCHEMA_V5, _SCHEMA_V6):
         design_key = (
             "defensive_design"
             if payload["schema"] == _SCHEMA_V3
@@ -131,13 +163,13 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
             "nominal_probability_upper_multiplier",
             "reference_certificate_z",
         }
-        if payload["schema"] == _SCHEMA_V5:
+        if payload["schema"] in (_SCHEMA_V5, _SCHEMA_V6):
             expected_design_fields.add("defensive_variance_safety_factor")
         if (
             not isinstance(design_contract, dict)
             or set(design_contract) != expected_design_fields
         ):
-            raise ValueError("malformed V3/V4/V5 rarity-band design contract")
+            raise ValueError("malformed V3/V4/V5/V6 rarity-band design contract")
         multiplier = design_contract["nominal_probability_upper_multiplier"]
         certificate_z = design_contract["reference_certificate_z"]
         if (
@@ -147,8 +179,8 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
             or float(multiplier) < 1.0
         ):
             raise ValueError(
-                "V3/V4/V5 nominal-probability upper multiplier must be finite and at "
-                "least one"
+                "V3/V4/V5/V6 nominal-probability upper multiplier must be finite "
+                "and at least one"
             )
         if (
             isinstance(certificate_z, bool)
@@ -157,9 +189,9 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
             or float(certificate_z) <= 0.0
         ):
             raise ValueError(
-                "V3/V4/V5 reference-certificate z must be finite and positive"
+                "V3/V4/V5/V6 reference-certificate z must be finite and positive"
             )
-        if payload["schema"] == _SCHEMA_V5:
+        if payload["schema"] in (_SCHEMA_V5, _SCHEMA_V6):
             safety = design_contract["defensive_variance_safety_factor"]
             if (
                 isinstance(safety, bool)
@@ -168,8 +200,23 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
                 or float(safety) < 1.0
             ):
                 raise ValueError(
-                    "V5 defensive variance safety factor must be finite and at least one"
+                    "V5/V6 defensive variance safety factor must be finite and at "
+                    "least one"
                 )
+    if payload["schema"] == _SCHEMA_V6:
+        decision = payload["qualification_decision"]
+        if not isinstance(decision, dict) or set(decision) != {
+            "per_record_empirical_target_role",
+            "aggregate_accuracy_protocol_id",
+        }:
+            raise ValueError("malformed V6 baseline qualification decision")
+        if decision["per_record_empirical_target_role"] != _AGGREGATE_ACCURACY_RULE:
+            raise ValueError("V6 must defer accuracy to the prespecified aggregate co-gates")
+        if (
+            not isinstance(decision["aggregate_accuracy_protocol_id"], str)
+            or not decision["aggregate_accuracy_protocol_id"]
+        ):
+            raise ValueError("V6 aggregate accuracy protocol ID must be nonempty")
     return payload, hashlib.sha256(raw).hexdigest()
 
 
@@ -465,6 +512,7 @@ def run(
             _SCHEMA_V3,
             _SCHEMA_V4,
             _SCHEMA_V5,
+            _SCHEMA_V6,
         )
         else ("crude", "pure_cem", "defensive_cem")
     )
@@ -516,7 +564,7 @@ def run(
             raise ValueError(f"reference estimand drift for cell {cell.cell_id}")
         defensive_probability_upper = None
         reference_design_certificate = None
-        if config["schema"] in (_SCHEMA_V3, _SCHEMA_V4, _SCHEMA_V5):
+        if config["schema"] in (_SCHEMA_V3, _SCHEMA_V4, _SCHEMA_V5, _SCHEMA_V6):
             design_key = (
                 "defensive_design"
                 if config["schema"] == _SCHEMA_V3
@@ -653,7 +701,7 @@ def run(
                     ),
                     crude_probability_upper=(
                         defensive_probability_upper
-                        if config["schema"] in (_SCHEMA_V4, _SCHEMA_V5)
+                        if config["schema"] in (_SCHEMA_V4, _SCHEMA_V5, _SCHEMA_V6)
                         and method == "crude"
                         else None
                     ),
@@ -663,14 +711,14 @@ def run(
                                 "defensive_variance_safety_factor"
                             ]
                         )
-                        if config["schema"] == _SCHEMA_V5
+                        if config["schema"] in (_SCHEMA_V5, _SCHEMA_V6)
                         and method == "defensive_cem"
                         else None
                     ),
                 )
                 crude_design_certificate = None
                 if (
-                    config["schema"] in (_SCHEMA_V4, _SCHEMA_V5)
+                    config["schema"] in (_SCHEMA_V4, _SCHEMA_V5, _SCHEMA_V6)
                     and method == "crude"
                     and reference_design_certificate is not None
                 ):
@@ -724,7 +772,7 @@ def run(
                         "structural_variance_upper": structural_upper,
                         "selected_design_variance": design.design_variance,
                     }
-                    if config["schema"] == _SCHEMA_V5:
+                    if config["schema"] in (_SCHEMA_V5, _SCHEMA_V6):
                         defensive_design_certificate = {
                             **reference_design_certificate,
                             "schema": (
@@ -895,7 +943,7 @@ def run(
             )
             for record in records
         )
-        if config["schema"] in (_SCHEMA_V3, _SCHEMA_V4, _SCHEMA_V5)
+        if config["schema"] in (_SCHEMA_V3, _SCHEMA_V4, _SCHEMA_V5, _SCHEMA_V6)
         else True,
         "all_crude_designs_certified": all(
             record["method"] != "crude"
@@ -905,7 +953,7 @@ def run(
             )
             for record in records
         )
-        if config["schema"] in (_SCHEMA_V4, _SCHEMA_V5)
+        if config["schema"] in (_SCHEMA_V4, _SCHEMA_V5, _SCHEMA_V6)
         else True,
         "all_final_seed_roles_separate": all(
             all(
@@ -923,6 +971,28 @@ def run(
         "clean_source": not bool(provenance["dirty_worktree"]),
         "non_smoke": not smoke,
     }
+    qualification_gates = (
+        {
+            name: gates[name]
+            for name in _OPERATIONAL_QUALIFICATION_GATE_NAMES
+        }
+        if config["schema"] == _SCHEMA_V6
+        else dict(gates)
+    )
+    qualification_contract = None
+    if config["schema"] == _SCHEMA_V6:
+        qualification_contract = {
+            "schema": "npi.g11.v6-baseline-qualification-contract.v1",
+            "expected_cell_ids": [cell.cell_id for cell in cells],
+            "expected_clusters": clusters,
+            "methods": list(methods),
+            "control_bound": float(config["training"]["control_bound"]),
+            "operational_gate_names": list(_OPERATIONAL_QUALIFICATION_GATE_NAMES),
+            "per_record_empirical_target_role": _AGGREGATE_ACCURACY_RULE,
+            "aggregate_accuracy_protocol_id": config["qualification_decision"][
+                "aggregate_accuracy_protocol_id"
+            ],
+        }
     return {
         "schema": "npi.g11.v6-baseline-qualification.v1",
         "protocol_id": config["protocol_id"],
@@ -935,8 +1005,10 @@ def run(
         "smoke": smoke,
         "records": records,
         "gates": gates,
+        "qualification_gates": qualification_gates,
+        "qualification_contract": qualification_contract,
         "formal_readiness": formal,
-        "baseline_qualified": all(gates.values()) and all(formal.values()),
+        "baseline_qualified": all(qualification_gates.values()) and all(formal.values()),
         "seed_ledger": master_ledger.to_dict(),
         "seed_ledger_sha256": master_ledger.sha256,
         "environment": runtime_provenance(dtype="torch.float64"),

@@ -33,6 +33,9 @@ QUALIFICATION_V4 = (
 QUALIFICATION_V5 = (
     ROOT / "configs" / "g11_v6" / "baseline_qualification_v5.yaml"
 )
+QUALIFICATION_V6 = (
+    ROOT / "configs" / "g11_v6" / "baseline_qualification_v6.yaml"
+)
 
 
 def test_v6_baseline_config_is_strict() -> None:
@@ -79,6 +82,21 @@ def test_v6_baseline_config_is_strict() -> None:
         "defensive_variance_safety_factor": 5.0,
     }
     assert len(qualification_v5_digest) == 64
+
+    qualification_v6, qualification_v6_digest = _load_config(QUALIFICATION_V6)
+    assert qualification_v6["protocol_id"] == "g11-v6-baseline-qualification-v6"
+    assert qualification_v6["rarity_band_design"] == {
+        "nominal_probability_upper_multiplier": 2.0,
+        "reference_certificate_z": 4.0,
+        "defensive_variance_safety_factor": 5.0,
+    }
+    assert qualification_v6["qualification_decision"] == {
+        "per_record_empirical_target_role": (
+            "deferred_to_prespecified_method_cell_attainment_and_bootstrap_rmse_co_gates"
+        ),
+        "aggregate_accuracy_protocol_id": "g11-v6-power-analysis-qualification-v1",
+    }
+    assert len(qualification_v6_digest) == 64
 
 
 def test_v6_defensive_design_uses_frozen_rarity_band_second_moment_bound() -> None:
