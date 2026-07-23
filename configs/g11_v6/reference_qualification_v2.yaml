@@ -1,0 +1,60 @@
+schema: npi.g11.v6-reference.config.v3
+protocol_id: g11-v6-reference-qualification-v2
+phase: qualification
+frozen: true
+estimand: fixed_finest_grid
+proposal:
+  weights:
+  - 0.15
+  - 0.35
+  - 0.5
+  task_controls:
+    terminal_left_tail:
+    - - - 0.0
+        - 0.0
+      - - 0.0
+        - 0.0
+    - - - 2.9620780444796315
+        - -1.3824888866398168
+      - - 2.4304477946707084
+        - -1.8719832517727761
+    - - - 5.924156088959263
+        - -2.7649777732796337
+      - - 4.860895589341417
+        - -3.7439665035455523
+    discrete_lower_barrier:
+    - - - 0.0
+        - 0.0
+      - - 0.0
+        - 0.0
+    - - - 3.1502656492310512
+        - -1.405401929785233
+      - - 2.1961241070492656
+        - -1.4764392270612017
+    - - - 6.3005312984621025
+        - -2.810803859570466
+      - - 4.392248214098531
+        - -2.9528784541224034
+  training_source_artifact_sha256: b74770898cc1c4896adb6a65062595d6decadbc1948ad11cc00095f61c2ebc01
+  training_derivation: componentwise_median_pure_cem_then_zero_half_full_bank
+  training_source_record_count: 6
+  training_total_samples: 98304
+  training_total_work_units: 88080384.0
+  training_total_wall_seconds: 8.343280399916694
+  training_total_cpu_seconds: 115.703125
+  training_amortization_record_count: 432
+reference_contract:
+  minimum_relative_sampling_rmse: 0.1
+  se_fraction_of_requested: 0.1
+  maximum_combined_z_score: 4.0
+  maximum_normalization_z: 4.0
+sampling:
+  pilot_replicates: 8
+  pilot_samples_per_replicate: 16384
+  minimum_final_samples: 16384
+  maximum_final_samples: 20000000
+  chunk_size: 16384
+  allocation_safety_factor: 2.0
+  allocation_variance_statistic: median_replicate_variance
+  raw_crosscheck_standard_error_multiplier: 3.0
+  engine: fft
