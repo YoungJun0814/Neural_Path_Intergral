@@ -1,7 +1,8 @@
 # G11 V6 Reference V1 Resource-Failure Audit
 
-Date: 2026-07-23  
-Protocol: `g11-v6-reference-qualification-v1`  
+Date: 2026-07-23
+
+Protocol: `g11-v6-reference-qualification-v1`
 Source commit: `d64194559ee27a37af67c03200515b16be6367dd`
 
 ## Decision
