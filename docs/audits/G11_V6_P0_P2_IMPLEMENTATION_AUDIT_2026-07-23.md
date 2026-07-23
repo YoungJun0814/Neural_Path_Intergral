@@ -84,7 +84,7 @@ serve as the final strict-model artifact.
 
 ### P0.2 Full independent reference
 
-Status: **runner and checkpoint protocol pass; full execution pending**
+Status: **full 18-cell reference pass**
 
 The reference runner provides:
 
@@ -110,6 +110,15 @@ efficiency failure, not a V6 accuracy result. The corrective V2 reference keeps 
 same SE/cap contract and uses the already frozen reference-free task-conditioned
 proposal bank under a new seed namespace. See
 `G11_V6_REFERENCE_V1_RESOURCE_FAILURE_2026-07-23.md`.
+
+The replacement `g11-v6-reference-qualification-v2` retained every accuracy and
+resource contract, reused the pre-qualification task-conditioned defensive bank,
+and passed all 18 cells with both DCS and raw estimators. Its 36 method runs had no
+resource censoring; the maximum requested final count was `458,389`, maximum
+achieved/target SE was `0.824`, maximum absolute agreement z was `1.767`, and
+maximum absolute normalization z was `2.536`. The artifact SHA-256 is
+`786173bd1316d882f8abe049abbd2f12fc05c681864c8367b61c5cd612f73db7`.
+See `G11_V6_REFERENCE_V2_DECISION_2026-07-23.md`.
 
 ### P0.3 Training/calibration/qualification/confirmation separation
 
