@@ -162,6 +162,15 @@ document is itself an archive entry.
 The source training artifact itself was generated from a dirty older development
 state. Therefore this archive is a replay test, not the final publication archive.
 
+During the clean-snapshot audit, a V6-only CEM configuration defect was found before
+formal proposal training. The implementation interprets `elite_quantile` as the
+score CDF quantile and retains `score >= quantile`; consequently `0.90` selects the
+intended upper approximately 10%, whereas the V6 files had declared `0.10` and
+retained approximately 90%. All V6 baseline/training configs were corrected to
+`0.90`, and a regression assertion now fixes that convention. No formal calibration,
+proposal-training, qualification, or confirmation artifact generated while this
+correction was uncommitted is admissible.
+
 ### P0.5 Mandatory baselines and ablations
 
 Status: **implemented and smoke-audited; full matrix pending**

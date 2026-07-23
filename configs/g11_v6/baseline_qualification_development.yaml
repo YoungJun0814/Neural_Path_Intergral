@@ -21,7 +21,7 @@ training:
   initial_control: [[-0.5, -1.5], [-0.25, -0.75]]
   paths_per_iteration: 4096
   maximum_iterations: 8
-  elite_quantile: 0.10
+  elite_quantile: 0.90
   smoothing: 0.70
   minimum_elite_paths: 64
   control_bound: 20.0
@@ -29,4 +29,3 @@ training:
 
 defensive_mixture:
   natural_weight: 0.20
-

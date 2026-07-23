@@ -26,6 +26,9 @@ def test_v6_baseline_config_is_strict() -> None:
     primary, primary_digest = _load_config(PRIMARY_PILOT)
     assert primary["schema"] == "npi.g11.v6-baseline-qualification.config.v2"
     assert primary["methods"] == ["pure_cem"]
+    # The CEM retains scores above this CDF quantile.  Therefore 0.90,
+    # rather than 0.10, implements the intended upper approximately 10%.
+    assert primary["training"]["elite_quantile"] == 0.90
     assert len(primary_digest) == 64
 
 
