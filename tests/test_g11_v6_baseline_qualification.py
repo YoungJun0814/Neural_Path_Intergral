@@ -6,8 +6,13 @@ import json
 from pathlib import Path
 
 import pytest
+import torch
 
-from experiments.g11_v6_baseline_qualification import _load_config, run
+from experiments.g11_v6_baseline_qualification import (
+    _design_from_pilot,
+    _load_config,
+    run,
+)
 from experiments.g11_v6_rarity_calibration import run as run_calibration
 from experiments.g11_v6_reference import run as run_reference
 
@@ -18,6 +23,9 @@ BASELINE = ROOT / "configs" / "g11_v6" / "baseline_qualification_development.yam
 PRIMARY_PILOT = ROOT / "configs" / "g11_v6" / "baseline_primary_resource_pilot_v2.yaml"
 QUALIFICATION_V2 = (
     ROOT / "configs" / "g11_v6" / "baseline_qualification_v2.yaml"
+)
+QUALIFICATION_V3 = (
+    ROOT / "configs" / "g11_v6" / "baseline_qualification_v3.yaml"
 )
 
 
@@ -40,6 +48,42 @@ def test_v6_baseline_config_is_strict() -> None:
     assert qualification["frozen"]
     assert qualification["training"]["elite_quantile"] == 0.90
     assert len(qualification_digest) == 64
+
+    qualification_v3, qualification_v3_digest = _load_config(QUALIFICATION_V3)
+    assert qualification_v3["protocol_id"] == "g11-v6-baseline-qualification-v3"
+    assert qualification_v3["defensive_design"] == {
+        "nominal_probability_upper_multiplier": 2.0,
+        "reference_certificate_z": 4.0,
+    }
+    assert len(qualification_v3_digest) == 64
+
+
+def test_v6_defensive_design_uses_frozen_rarity_band_second_moment_bound() -> None:
+    values = torch.tensor([0.0, 0.0, 0.0, 0.01], dtype=torch.float64)
+    uncapped = _design_from_pilot(
+        "defensive_cem",
+        values,
+        cost_per_sample=1.0,
+        nominal_probability=1.0e-4,
+        confidence_level=0.95,
+        pure_safety=5.0,
+        defensive_bound=5.0,
+        bounded_alpha=0.05,
+    )
+    capped = _design_from_pilot(
+        "defensive_cem",
+        values,
+        cost_per_sample=1.0,
+        nominal_probability=1.0e-4,
+        confidence_level=0.95,
+        pure_safety=5.0,
+        defensive_bound=5.0,
+        bounded_alpha=0.05,
+        defensive_probability_upper=2.0e-4,
+    )
+    assert capped.design_variance <= 5.0 * 2.0e-4
+    assert capped.design_variance >= capped.pilot_variance
+    assert capped.design_variance < uncapped.design_variance
 
 
 @pytest.mark.slow

@@ -10,7 +10,12 @@ from pathlib import Path
 import pytest
 import torch
 
-from experiments.g11_v6_result_audit import _audit_record, _load_config, run
+from experiments.g11_v6_result_audit import (
+    _audit_defensive_design_certificate,
+    _audit_record,
+    _load_config,
+    run,
+)
 from src.path_integral import (
     HybridTarget,
     LevelBatch,
@@ -19,6 +24,7 @@ from src.path_integral import (
     V6WorkRecord,
     execute_v6_policy,
     prepare_v6_direct_policy,
+    update_profile_intervals,
     v6_policy_preparation_to_dict,
 )
 
@@ -80,6 +86,63 @@ def test_v6_independent_audit_config_is_strict() -> None:
     config, digest = _load_config(CONFIG)
     assert "npi.g11.v6-routed-policy.v1" in config["accepted_source_schemas"]
     assert len(digest) == 64
+
+
+def test_v6_auditor_replays_defensive_rarity_band_certificate() -> None:
+    values = torch.zeros(4096, dtype=torch.float64)
+    values[:4] = 1.0
+    profile = update_profile_intervals(
+        {"defensive": values},
+        absolute_bounds={"defensive": 5.0},
+        costs_per_sample={"defensive": 1.0},
+        familywise_alpha=0.05,
+        total_predeclared_looks=1,
+    )[0]
+    probability_upper = 2.0e-3
+    structural_upper = 5.0 * probability_upper
+    selected = max(
+        profile.moments.sample_variance,
+        min(profile.moments.variance_interval[1], structural_upper),
+    )
+    record = {
+        "method": "defensive_cem",
+        "nominal_probability": 1.0e-3,
+        "reference_probability": 1.0e-3,
+        "reference_standard_error": 1.0e-6,
+        "pilot_tail_diagnostics": {
+            "count": 4096,
+            "mean": profile.moments.sample_mean,
+            "variance": float(torch.var(values, unbiased=True)),
+        },
+        "design": {"design_variance": selected},
+        "defensive_design_certificate": {
+            "schema": "npi.g11.v6-defensive-design-certificate.v1",
+            "nominal_probability": 1.0e-3,
+            "nominal_probability_upper_multiplier": 2.0,
+            "probability_upper_bound": probability_upper,
+            "reference_certificate_z": 4.0,
+            "reference_upper_bound": 1.004e-3,
+            "certified": True,
+            "absolute_bound": 5.0,
+            "familywise_alpha": 0.05,
+            "pilot_count": profile.moments.sample_count,
+            "pilot_mean": profile.moments.sample_mean,
+            "pilot_variance": profile.moments.sample_variance,
+            "rigorous_bounded_variance_upper": (
+                profile.moments.variance_interval[1]
+            ),
+            "structural_variance_upper": structural_upper,
+            "selected_design_variance": selected,
+        },
+    }
+    assert _audit_defensive_design_certificate(
+        record, relative=1e-13, absolute=1e-12, required=True
+    )
+    tampered = copy.deepcopy(record)
+    tampered["defensive_design_certificate"]["structural_variance_upper"] *= 0.5
+    assert not _audit_defensive_design_certificate(
+        tampered, relative=1e-13, absolute=1e-12, required=True
+    )
 
 
 def test_offline_auditor_recomputes_valid_record_and_rejects_tampering(

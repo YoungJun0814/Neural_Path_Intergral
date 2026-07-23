@@ -203,6 +203,17 @@ correction was uncommitted is admissible.
 
 Status: **implemented and smoke-audited; full matrix pending**
 
+The first full baseline protocol (`g11-v6-baseline-qualification-v2`) was stopped
+after 74 durable records. Its one-look `B^2` Hoeffding variance upper bound implied
+about 1.45 billion final paths for every `1e-4` defensive-CEM record even under an
+all-zero pilot, so resource censoring was mathematically unavoidable. The preserved
+failure and the non-leaking structural second-moment correction are documented in
+`G11_V6_BASELINE_V2_RESOURCE_DESIGN_FAILURE_2026-07-23.md`. The replacement V3
+protocol uses the exact inequality
+`Var(1_A dP/dQ) <= B P(A)`, a frozen rarity-band upper envelope, a four-standard-error
+independent-reference eligibility certificate, a new protocol/seed namespace, and
+an independently replayed design certificate. No V2 result is reused.
+
 The mandatory comparison design is now:
 
 | Contrast | Isolated contribution |

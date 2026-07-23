@@ -46,6 +46,7 @@ from src.training import fit_rbergomi_piecewise_cem
 
 _SCHEMA_V1 = "npi.g11.v6-baseline-qualification.config.v1"
 _SCHEMA_V2 = "npi.g11.v6-baseline-qualification.config.v2"
+_SCHEMA_V3 = "npi.g11.v6-baseline-qualification.config.v3"
 BaselineMethod = Literal["crude", "pure_cem", "defensive_cem"]
 
 
@@ -73,7 +74,11 @@ def _clear_record_checkpoint(checkpoint: Path) -> None:
 def _load_config(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     payload = yaml.safe_load(raw)
-    if not isinstance(payload, dict) or payload.get("schema") not in (_SCHEMA_V1, _SCHEMA_V2):
+    if not isinstance(payload, dict) or payload.get("schema") not in (
+        _SCHEMA_V1,
+        _SCHEMA_V2,
+        _SCHEMA_V3,
+    ):
         raise ValueError("unsupported V6 baseline-qualification config")
     expected = {
         "schema",
@@ -85,8 +90,10 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         "training",
         "defensive_mixture",
     }
-    if payload["schema"] == _SCHEMA_V2:
+    if payload["schema"] in (_SCHEMA_V2, _SCHEMA_V3):
         expected.add("methods")
+    if payload["schema"] == _SCHEMA_V3:
+        expected.add("defensive_design")
     if set(payload) != expected:
         raise ValueError("malformed V6 baseline-qualification config fields")
     if payload["phase"] not in ("development", "qualification", "confirmation"):
@@ -95,7 +102,7 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         raise ValueError("qualification and confirmation baseline configs must be frozen")
     if payload["estimand"] != "fixed_finest_grid":
         raise ValueError("baseline qualification must declare a fixed-grid estimand")
-    if payload["schema"] == _SCHEMA_V2:
+    if payload["schema"] in (_SCHEMA_V2, _SCHEMA_V3):
         methods = payload["methods"]
         allowed = {"crude", "pure_cem", "defensive_cem"}
         if (
@@ -104,7 +111,32 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
             or len(set(methods)) != len(methods)
             or any(method not in allowed for method in methods)
         ):
-            raise ValueError("V2 baseline methods must be a nonempty unique supported list")
+            raise ValueError("V2/V3 baseline methods must be a nonempty unique supported list")
+    if payload["schema"] == _SCHEMA_V3:
+        defensive_design = payload["defensive_design"]
+        if not isinstance(defensive_design, dict) or set(defensive_design) != {
+            "nominal_probability_upper_multiplier",
+            "reference_certificate_z",
+        }:
+            raise ValueError("malformed V3 defensive-design contract")
+        multiplier = defensive_design["nominal_probability_upper_multiplier"]
+        certificate_z = defensive_design["reference_certificate_z"]
+        if (
+            isinstance(multiplier, bool)
+            or not isinstance(multiplier, (int, float))
+            or not math.isfinite(float(multiplier))
+            or float(multiplier) < 1.0
+        ):
+            raise ValueError(
+                "V3 nominal-probability upper multiplier must be finite and at least one"
+            )
+        if (
+            isinstance(certificate_z, bool)
+            or not isinstance(certificate_z, (int, float))
+            or not math.isfinite(float(certificate_z))
+            or float(certificate_z) <= 0.0
+        ):
+            raise ValueError("V3 reference-certificate z must be finite and positive")
     return payload, hashlib.sha256(raw).hexdigest()
 
 
@@ -282,6 +314,7 @@ def _design_from_pilot(
     pure_safety: float,
     defensive_bound: float,
     bounded_alpha: float,
+    defensive_probability_upper: float | None = None,
 ) -> SingleTermDesign:
     count = int(values.numel())
     mean = float(torch.mean(values))
@@ -301,7 +334,21 @@ def _design_from_pilot(
             familywise_alpha=bounded_alpha,
             total_predeclared_looks=1,
         )[0]
-        design_variance = max(variance, profile.moments.variance_interval[1])
+        rigorous_upper = profile.moments.variance_interval[1]
+        if defensive_probability_upper is None:
+            design_variance = max(variance, rigorous_upper)
+        else:
+            if (
+                not math.isfinite(defensive_probability_upper)
+                or not 0.0 < defensive_probability_upper <= 1.0
+            ):
+                raise ValueError(
+                    "defensive probability upper bound must lie in (0, 1]"
+                )
+            # For Y = 1_A dP/dQ with 0 <= dP/dQ <= B,
+            # Var_Q(Y) <= E_Q[Y^2] <= B E_Q[Y] = B P(A).
+            structural_upper = defensive_bound * defensive_probability_upper
+            design_variance = max(variance, min(rigorous_upper, structural_upper))
         bound = defensive_bound
     else:
         design_variance = pure_safety * variance
@@ -348,7 +395,7 @@ def run(
     clusters = 1 if smoke else int(config["sampling"]["clusters"])
     methods = tuple(
         config["methods"]
-        if config["schema"] == _SCHEMA_V2
+        if config["schema"] in (_SCHEMA_V2, _SCHEMA_V3)
         else ("crude", "pure_cem", "defensive_cem")
     )
     sampling = config["sampling"]
@@ -397,6 +444,32 @@ def run(
         reference_probability, reference_se, reference_cell = references[cell.cell_id]
         if reference_cell != cell.to_dict():
             raise ValueError(f"reference estimand drift for cell {cell.cell_id}")
+        defensive_probability_upper = None
+        reference_design_certificate = None
+        if config["schema"] == _SCHEMA_V3:
+            multiplier = float(
+                config["defensive_design"]["nominal_probability_upper_multiplier"]
+            )
+            certificate_z = float(config["defensive_design"]["reference_certificate_z"])
+            defensive_probability_upper = min(
+                1.0, multiplier * cell.nominal_probability
+            )
+            reference_upper = reference_probability + certificate_z * reference_se
+            reference_certified = reference_upper <= defensive_probability_upper
+            reference_design_certificate = {
+                "schema": "npi.g11.v6-defensive-design-certificate.v1",
+                "nominal_probability": cell.nominal_probability,
+                "nominal_probability_upper_multiplier": multiplier,
+                "probability_upper_bound": defensive_probability_upper,
+                "reference_certificate_z": certificate_z,
+                "reference_upper_bound": reference_upper,
+                "certified": reference_certified,
+            }
+            if not reference_certified:
+                raise ValueError(
+                    f"reference upper certificate exceeds the frozen rarity band for "
+                    f"{cell.cell_id}"
+                )
         task = _task(cell)
         simulator = RBergomiSimulator(
             H=cell.hurst, eta=cell.eta, xi=cell.xi, rho=cell.rho, device="cpu"
@@ -498,7 +571,43 @@ def run(
                         1.0 / float(config["defensive_mixture"]["natural_weight"])
                     ),
                     bounded_alpha=float(sampling["bounded_familywise_alpha"]),
+                    defensive_probability_upper=(
+                        defensive_probability_upper
+                        if method == "defensive_cem"
+                        else None
+                    ),
                 )
+                defensive_design_certificate = None
+                if method == "defensive_cem" and reference_design_certificate is not None:
+                    bounded_profile = update_profile_intervals(
+                        {"defensive": pilot.values},
+                        absolute_bounds={
+                            "defensive": 1.0
+                            / float(config["defensive_mixture"]["natural_weight"])
+                        },
+                        costs_per_sample={"defensive": sampler.cost},
+                        familywise_alpha=float(sampling["bounded_familywise_alpha"]),
+                        total_predeclared_looks=1,
+                    )[0]
+                    structural_upper = (
+                        float(bounded_profile.moments.absolute_bound)
+                        * float(reference_design_certificate["probability_upper_bound"])
+                    )
+                    defensive_design_certificate = {
+                        **reference_design_certificate,
+                        "absolute_bound": bounded_profile.moments.absolute_bound,
+                        "familywise_alpha": float(
+                            sampling["bounded_familywise_alpha"]
+                        ),
+                        "pilot_count": bounded_profile.moments.sample_count,
+                        "pilot_mean": bounded_profile.moments.sample_mean,
+                        "pilot_variance": bounded_profile.moments.sample_variance,
+                        "rigorous_bounded_variance_upper": (
+                            bounded_profile.moments.variance_interval[1]
+                        ),
+                        "structural_variance_upper": structural_upper,
+                        "selected_design_variance": design.design_variance,
+                    }
                 prepared = prepare_v6_direct_policy(
                     HybridTarget(
                         f"{cell.cell_id}:{method}",
@@ -563,6 +672,11 @@ def run(
                         "cem_fit": fit_payload,
                         "pilot_tail_diagnostics": asdict(heavy_tail_diagnostics(pilot.values)),
                         "design": asdict(design),
+                        "defensive_design_certificate": (
+                            defensive_design_certificate
+                            if method == "defensive_cem"
+                            else None
+                        ),
                         "preparation_hash": prepared.policy_hash,
                         "preparation": v6_policy_preparation_to_dict(prepared),
                         "result": asdict(result),
@@ -620,6 +734,16 @@ def run(
             )
             for record in records
         ),
+        "all_defensive_designs_certified": all(
+            record["method"] != "defensive_cem"
+            or (
+                isinstance(record.get("defensive_design_certificate"), dict)
+                and record["defensive_design_certificate"]["certified"] is True
+            )
+            for record in records
+        )
+        if config["schema"] == _SCHEMA_V3
+        else True,
         "all_final_seed_roles_separate": all(
             all(
                 seed["key"]["role"] == "final"

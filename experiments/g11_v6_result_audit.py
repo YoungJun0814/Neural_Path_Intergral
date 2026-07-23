@@ -325,8 +325,187 @@ def _audit_router(record: dict[str, Any]) -> bool:
     ) == _canonical_hash(decision_payload)
 
 
+def _audit_defensive_design_certificate(
+    record: dict[str, Any],
+    *,
+    relative: float,
+    absolute: float,
+    required: bool,
+) -> bool:
+    """Independently replay the V3 defensive second-moment design contract."""
+
+    if str(record.get("method")) != "defensive_cem":
+        return True
+    certificate = record.get("defensive_design_certificate")
+    if certificate is None:
+        return not required
+    if not isinstance(certificate, dict):
+        return False
+    expected_fields = {
+        "schema",
+        "nominal_probability",
+        "nominal_probability_upper_multiplier",
+        "probability_upper_bound",
+        "reference_certificate_z",
+        "reference_upper_bound",
+        "certified",
+        "absolute_bound",
+        "familywise_alpha",
+        "pilot_count",
+        "pilot_mean",
+        "pilot_variance",
+        "rigorous_bounded_variance_upper",
+        "structural_variance_upper",
+        "selected_design_variance",
+    }
+    if set(certificate) != expected_fields:
+        return False
+    try:
+        nominal = float(certificate["nominal_probability"])
+        multiplier = float(certificate["nominal_probability_upper_multiplier"])
+        probability_upper = float(certificate["probability_upper_bound"])
+        certificate_z = float(certificate["reference_certificate_z"])
+        reference_upper = float(certificate["reference_upper_bound"])
+        bound = float(certificate["absolute_bound"])
+        alpha = float(certificate["familywise_alpha"])
+        count = int(certificate["pilot_count"])
+        mean = float(certificate["pilot_mean"])
+        variance = float(certificate["pilot_variance"])
+        rigorous_upper = float(certificate["rigorous_bounded_variance_upper"])
+        structural_upper = float(certificate["structural_variance_upper"])
+        selected_variance = float(certificate["selected_design_variance"])
+        diagnostics = record["pilot_tail_diagnostics"]
+        if (
+            certificate["schema"]
+            != "npi.g11.v6-defensive-design-certificate.v1"
+            or count < 2
+            or not 0.0 < alpha < 1.0
+            or bound <= 0.0
+            or multiplier < 1.0
+            or certificate_z <= 0.0
+            or not all(
+                math.isfinite(value)
+                for value in (
+                    nominal,
+                    multiplier,
+                    probability_upper,
+                    certificate_z,
+                    reference_upper,
+                    bound,
+                    alpha,
+                    mean,
+                    variance,
+                    rigorous_upper,
+                    structural_upper,
+                    selected_variance,
+                )
+            )
+        ):
+            return False
+
+        alpha_per_moment = alpha / 2.0
+        second = variance + mean**2
+        mean_radius = bound * math.sqrt(
+            2.0 * math.log(2.0 / alpha_per_moment) / count
+        )
+        second_radius = bound**2 * math.sqrt(
+            math.log(2.0 / alpha_per_moment) / (2.0 * count)
+        )
+        mean_lower = max(-bound, mean - mean_radius)
+        mean_upper = min(bound, mean + mean_radius)
+        second_lower = max(0.0, second - second_radius)
+        second_upper = min(bound**2, second + second_radius)
+        maximum_abs_mean = max(abs(mean_lower), abs(mean_upper))
+        minimum_abs_mean = (
+            0.0
+            if mean_lower <= 0.0 <= mean_upper
+            else min(abs(mean_lower), abs(mean_upper))
+        )
+        variance_lower = max(0.0, second_lower - maximum_abs_mean**2)
+        recomputed_rigorous = max(
+            0.0, min(bound**2, second_upper - minimum_abs_mean**2)
+        )
+        if variance_lower > recomputed_rigorous:
+            recomputed_rigorous = bound**2
+
+        recomputed_probability_upper = min(1.0, multiplier * nominal)
+        recomputed_reference_upper = float(
+            record["reference_probability"]
+        ) + certificate_z * float(record["reference_standard_error"])
+        recomputed_structural = bound * recomputed_probability_upper
+        recomputed_selected = max(
+            variance, min(recomputed_rigorous, recomputed_structural)
+        )
+        diagnostics_population_variance = (
+            float(diagnostics["variance"]) * (count - 1) / count
+        )
+        return all(
+            (
+                nominal == float(record["nominal_probability"]),
+                int(diagnostics["count"]) == count,
+                _close(
+                    mean,
+                    float(diagnostics["mean"]),
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    variance,
+                    diagnostics_population_variance,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    probability_upper,
+                    recomputed_probability_upper,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    reference_upper,
+                    recomputed_reference_upper,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                bool(certificate["certified"])
+                == (recomputed_reference_upper <= recomputed_probability_upper),
+                bool(certificate["certified"]),
+                _close(
+                    rigorous_upper,
+                    recomputed_rigorous,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    structural_upper,
+                    recomputed_structural,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    selected_variance,
+                    recomputed_selected,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    selected_variance,
+                    float(record["design"]["design_variance"]),
+                    relative=relative,
+                    absolute=absolute,
+                ),
+            )
+        )
+    except (KeyError, TypeError, ValueError, ZeroDivisionError, OverflowError):
+        return False
+
+
 def _audit_record(
-    record: dict[str, Any], *, relative: float, absolute: float
+    record: dict[str, Any],
+    *,
+    relative: float,
+    absolute: float,
+    require_defensive_design_certificate: bool = False,
 ) -> dict[str, Any]:
     preparation = record["preparation"]
     result = record["result"]
@@ -476,6 +655,12 @@ def _audit_record(
         "work_recomputed": work_valid,
         "seed_ledger_and_roles": seed_valid,
         "result_statistics": result_statistics_valid,
+        "defensive_design_certificate": _audit_defensive_design_certificate(
+            record,
+            relative=relative,
+            absolute=absolute,
+            required=require_defensive_design_certificate,
+        ),
     }
     return {
         "cell_id": str(record["cell_id"]),
@@ -503,6 +688,9 @@ def run(config_path: Path, source_path: Path) -> dict[str, Any]:
             record,
             relative=float(tolerance["relative"]),
             absolute=float(tolerance["absolute"]),
+            require_defensive_design_certificate=(
+                source.get("protocol_id") == "g11-v6-baseline-qualification-v3"
+            ),
         )
         for record in records
     ]
