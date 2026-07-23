@@ -214,6 +214,14 @@ protocol uses the exact inequality
 independent-reference eligibility certificate, a new protocol/seed namespace, and
 an independently replayed design certificate. No V2 result is reused.
 
+V3 subsequently stopped after 134 complete records when one crude final allocation
+missed its empirical sampling-variance target by 8.69%. The pointwise 95%
+Clopper--Pearson pilot design was not adequate for an all-record matrix gate. V4
+extends the same frozen rarity-band contract to crude MC via
+`Var(1_A) <= p_upper(1-p_upper)` while leaving the primary pure-CEM comparator
+unchanged. See
+`G11_V6_BASELINE_V3_EMPIRICAL_RMSE_FAILURE_2026-07-23.md`.
+
 The mandatory comparison design is now:
 
 | Contrast | Isolated contribution |

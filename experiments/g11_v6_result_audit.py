@@ -500,12 +500,144 @@ def _audit_defensive_design_certificate(
         return False
 
 
+def _audit_crude_design_certificate(
+    record: dict[str, Any],
+    *,
+    relative: float,
+    absolute: float,
+    required: bool,
+) -> bool:
+    """Independently replay the V4 crude rarity-band variance design."""
+
+    if str(record.get("method")) != "crude":
+        return True
+    certificate = record.get("crude_design_certificate")
+    if certificate is None:
+        return not required
+    if not isinstance(certificate, dict):
+        return False
+    expected_fields = {
+        "schema",
+        "nominal_probability",
+        "nominal_probability_upper_multiplier",
+        "probability_upper_bound",
+        "reference_certificate_z",
+        "reference_upper_bound",
+        "certified",
+        "pilot_count",
+        "pilot_mean",
+        "pilot_variance",
+        "structural_variance_upper",
+        "selected_design_variance",
+    }
+    if set(certificate) != expected_fields:
+        return False
+    try:
+        nominal = float(certificate["nominal_probability"])
+        multiplier = float(certificate["nominal_probability_upper_multiplier"])
+        probability_upper = float(certificate["probability_upper_bound"])
+        certificate_z = float(certificate["reference_certificate_z"])
+        reference_upper = float(certificate["reference_upper_bound"])
+        count = int(certificate["pilot_count"])
+        mean = float(certificate["pilot_mean"])
+        variance = float(certificate["pilot_variance"])
+        structural_upper = float(certificate["structural_variance_upper"])
+        selected_variance = float(certificate["selected_design_variance"])
+        diagnostics = record["pilot_tail_diagnostics"]
+        if (
+            certificate["schema"] != "npi.g11.v6-crude-design-certificate.v1"
+            or count < 2
+            or multiplier < 1.0
+            or certificate_z <= 0.0
+            or not all(
+                math.isfinite(value)
+                for value in (
+                    nominal,
+                    multiplier,
+                    probability_upper,
+                    certificate_z,
+                    reference_upper,
+                    mean,
+                    variance,
+                    structural_upper,
+                    selected_variance,
+                )
+            )
+        ):
+            return False
+        recomputed_probability_upper = min(1.0, multiplier * nominal)
+        recomputed_reference_upper = float(
+            record["reference_probability"]
+        ) + certificate_z * float(record["reference_standard_error"])
+        recomputed_structural = (
+            0.25
+            if recomputed_probability_upper >= 0.5
+            else recomputed_probability_upper
+            * (1.0 - recomputed_probability_upper)
+        )
+        recomputed_selected = max(variance, recomputed_structural)
+        return all(
+            (
+                nominal == float(record["nominal_probability"]),
+                int(diagnostics["count"]) == count,
+                _close(
+                    mean,
+                    float(diagnostics["mean"]),
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    variance,
+                    float(diagnostics["variance"]),
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    probability_upper,
+                    recomputed_probability_upper,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    reference_upper,
+                    recomputed_reference_upper,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                bool(certificate["certified"])
+                == (recomputed_reference_upper <= recomputed_probability_upper),
+                bool(certificate["certified"]),
+                _close(
+                    structural_upper,
+                    recomputed_structural,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    selected_variance,
+                    recomputed_selected,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    selected_variance,
+                    float(record["design"]["design_variance"]),
+                    relative=relative,
+                    absolute=absolute,
+                ),
+            )
+        )
+    except (KeyError, TypeError, ValueError, ZeroDivisionError, OverflowError):
+        return False
+
+
 def _audit_record(
     record: dict[str, Any],
     *,
     relative: float,
     absolute: float,
     require_defensive_design_certificate: bool = False,
+    require_crude_design_certificate: bool = False,
 ) -> dict[str, Any]:
     preparation = record["preparation"]
     result = record["result"]
@@ -661,6 +793,12 @@ def _audit_record(
             absolute=absolute,
             required=require_defensive_design_certificate,
         ),
+        "crude_design_certificate": _audit_crude_design_certificate(
+            record,
+            relative=relative,
+            absolute=absolute,
+            required=require_crude_design_certificate,
+        ),
     }
     return {
         "cell_id": str(record["cell_id"]),
@@ -689,7 +827,14 @@ def run(config_path: Path, source_path: Path) -> dict[str, Any]:
             relative=float(tolerance["relative"]),
             absolute=float(tolerance["absolute"]),
             require_defensive_design_certificate=(
-                source.get("protocol_id") == "g11-v6-baseline-qualification-v3"
+                source.get("protocol_id")
+                in {
+                    "g11-v6-baseline-qualification-v3",
+                    "g11-v6-baseline-qualification-v4",
+                }
+            ),
+            require_crude_design_certificate=(
+                source.get("protocol_id") == "g11-v6-baseline-qualification-v4"
             ),
         )
         for record in records

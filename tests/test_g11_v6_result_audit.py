@@ -11,6 +11,7 @@ import pytest
 import torch
 
 from experiments.g11_v6_result_audit import (
+    _audit_crude_design_certificate,
     _audit_defensive_design_certificate,
     _audit_record,
     _load_config,
@@ -141,6 +142,48 @@ def test_v6_auditor_replays_defensive_rarity_band_certificate() -> None:
     tampered = copy.deepcopy(record)
     tampered["defensive_design_certificate"]["structural_variance_upper"] *= 0.5
     assert not _audit_defensive_design_certificate(
+        tampered, relative=1e-13, absolute=1e-12, required=True
+    )
+
+
+def test_v6_auditor_replays_crude_rarity_band_certificate() -> None:
+    count = 4096
+    mean = 1.0 / count
+    variance = mean * (1.0 - mean) * count / (count - 1)
+    probability_upper = 2.0e-3
+    structural_upper = probability_upper * (1.0 - probability_upper)
+    record = {
+        "method": "crude",
+        "nominal_probability": 1.0e-3,
+        "reference_probability": 1.0e-3,
+        "reference_standard_error": 1.0e-6,
+        "pilot_tail_diagnostics": {
+            "count": count,
+            "mean": mean,
+            "variance": variance,
+        },
+        "design": {"design_variance": structural_upper},
+        "crude_design_certificate": {
+            "schema": "npi.g11.v6-crude-design-certificate.v1",
+            "nominal_probability": 1.0e-3,
+            "nominal_probability_upper_multiplier": 2.0,
+            "probability_upper_bound": probability_upper,
+            "reference_certificate_z": 4.0,
+            "reference_upper_bound": 1.004e-3,
+            "certified": True,
+            "pilot_count": count,
+            "pilot_mean": mean,
+            "pilot_variance": variance,
+            "structural_variance_upper": structural_upper,
+            "selected_design_variance": structural_upper,
+        },
+    }
+    assert _audit_crude_design_certificate(
+        record, relative=1e-13, absolute=1e-12, required=True
+    )
+    tampered = copy.deepcopy(record)
+    tampered["crude_design_certificate"]["reference_upper_bound"] += 1.0e-4
+    assert not _audit_crude_design_certificate(
         tampered, relative=1e-13, absolute=1e-12, required=True
     )
 

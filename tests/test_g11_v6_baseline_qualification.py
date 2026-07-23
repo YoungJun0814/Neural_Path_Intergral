@@ -27,6 +27,9 @@ QUALIFICATION_V2 = (
 QUALIFICATION_V3 = (
     ROOT / "configs" / "g11_v6" / "baseline_qualification_v3.yaml"
 )
+QUALIFICATION_V4 = (
+    ROOT / "configs" / "g11_v6" / "baseline_qualification_v4.yaml"
+)
 
 
 def test_v6_baseline_config_is_strict() -> None:
@@ -57,6 +60,14 @@ def test_v6_baseline_config_is_strict() -> None:
     }
     assert len(qualification_v3_digest) == 64
 
+    qualification_v4, qualification_v4_digest = _load_config(QUALIFICATION_V4)
+    assert qualification_v4["protocol_id"] == "g11-v6-baseline-qualification-v4"
+    assert qualification_v4["rarity_band_design"] == {
+        "nominal_probability_upper_multiplier": 2.0,
+        "reference_certificate_z": 4.0,
+    }
+    assert len(qualification_v4_digest) == 64
+
 
 def test_v6_defensive_design_uses_frozen_rarity_band_second_moment_bound() -> None:
     values = torch.tensor([0.0, 0.0, 0.0, 0.01], dtype=torch.float64)
@@ -84,6 +95,33 @@ def test_v6_defensive_design_uses_frozen_rarity_band_second_moment_bound() -> No
     assert capped.design_variance <= 5.0 * 2.0e-4
     assert capped.design_variance >= capped.pilot_variance
     assert capped.design_variance < uncapped.design_variance
+
+
+def test_v6_crude_design_uses_frozen_rarity_band_variance_bound() -> None:
+    values = torch.tensor([0.0] * 4095 + [1.0], dtype=torch.float64)
+    pilot_only = _design_from_pilot(
+        "crude",
+        values,
+        cost_per_sample=1.0,
+        nominal_probability=1.0e-3,
+        confidence_level=0.95,
+        pure_safety=5.0,
+        defensive_bound=5.0,
+        bounded_alpha=0.05,
+    )
+    rarity_band = _design_from_pilot(
+        "crude",
+        values,
+        cost_per_sample=1.0,
+        nominal_probability=1.0e-3,
+        confidence_level=0.95,
+        pure_safety=5.0,
+        defensive_bound=5.0,
+        bounded_alpha=0.05,
+        crude_probability_upper=2.0e-3,
+    )
+    assert rarity_band.design_variance == pytest.approx(2.0e-3 * (1.0 - 2.0e-3))
+    assert rarity_band.design_variance > pilot_only.design_variance
 
 
 @pytest.mark.slow
