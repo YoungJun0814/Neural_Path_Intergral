@@ -30,6 +30,7 @@ from src.path_integral import (
     conservative_bernoulli_variance_upper,
     exact_binomial_probability_interval,
     execute_v6_policy,
+    execute_v6_policy_durable,
     heavy_tail_diagnostics,
     load_v6_progress,
     prepare_v6_direct_policy,
@@ -43,14 +44,36 @@ from src.path_integral.rbergomi_fft import simulate_rbergomi_fft
 from src.physics_engine import RBergomiSimulator
 from src.training import fit_rbergomi_piecewise_cem
 
-_SCHEMA = "npi.g11.v6-baseline-qualification.config.v1"
+_SCHEMA_V1 = "npi.g11.v6-baseline-qualification.config.v1"
+_SCHEMA_V2 = "npi.g11.v6-baseline-qualification.config.v2"
 BaselineMethod = Literal["crude", "pure_cem", "defensive_cem"]
+
+
+def _record_checkpoint_path(
+    directory: Path, *, cell_id: str, cluster: int, method: str
+) -> Path:
+    """Return a path-safe, deterministic checkpoint name for one final run."""
+
+    identity = json.dumps(
+        {"cell_id": cell_id, "cluster": cluster, "method": method},
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    digest = hashlib.sha256(identity).hexdigest()
+    return directory / "records" / f"{digest}.json"
+
+
+def _clear_record_checkpoint(checkpoint: Path) -> None:
+    """Remove a completed record's replay checkpoint after its journal is durable."""
+
+    checkpoint.unlink(missing_ok=True)
+    checkpoint.with_suffix(checkpoint.suffix + ".v6.json").unlink(missing_ok=True)
 
 
 def _load_config(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     payload = yaml.safe_load(raw)
-    if not isinstance(payload, dict) or payload.get("schema") != _SCHEMA:
+    if not isinstance(payload, dict) or payload.get("schema") not in (_SCHEMA_V1, _SCHEMA_V2):
         raise ValueError("unsupported V6 baseline-qualification config")
     expected = {
         "schema",
@@ -62,6 +85,8 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         "training",
         "defensive_mixture",
     }
+    if payload["schema"] == _SCHEMA_V2:
+        expected.add("methods")
     if set(payload) != expected:
         raise ValueError("malformed V6 baseline-qualification config fields")
     if payload["phase"] not in ("development", "qualification", "confirmation"):
@@ -70,6 +95,16 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         raise ValueError("qualification and confirmation baseline configs must be frozen")
     if payload["estimand"] != "fixed_finest_grid":
         raise ValueError("baseline qualification must declare a fixed-grid estimand")
+    if payload["schema"] == _SCHEMA_V2:
+        methods = payload["methods"]
+        allowed = {"crude", "pure_cem", "defensive_cem"}
+        if (
+            not isinstance(methods, list)
+            or not methods
+            or len(set(methods)) != len(methods)
+            or any(method not in allowed for method in methods)
+        ):
+            raise ValueError("V2 baseline methods must be a nonempty unique supported list")
     return payload, hashlib.sha256(raw).hexdigest()
 
 
@@ -311,6 +346,11 @@ def run(
             raise ValueError("formal baselines require a same-phase frozen manifest")
     cells = _smoke_cells(manifest.cells) if smoke else manifest.cells
     clusters = 1 if smoke else int(config["sampling"]["clusters"])
+    methods = tuple(
+        config["methods"]
+        if config["schema"] == _SCHEMA_V2
+        else ("crude", "pure_cem", "defensive_cem")
+    )
     sampling = config["sampling"]
     pilot_count = 256 if smoke else int(sampling["pilot_samples"])
     relative_rmse = max(0.50, float(sampling["relative_sampling_rmse"])) if smoke else float(
@@ -366,7 +406,7 @@ def run(
             tuple((0.0, 0.0) for _ in range(segments)), maturity=cell.maturity
         )
         for cluster in range(clusters):
-            for method in ("crude", "pure_cem", "defensive_cem"):
+            for method in methods:
                 record_identity = (cell.cell_id, cluster, method)
                 if record_identity in completed:
                     continue
@@ -480,13 +520,38 @@ def run(
                     streams=streams,
                     preparation_seed_ledger=ledger,
                 )
-                result = execute_v6_policy(
-                    prepared,
-                    sampler,
-                    reference_probability=reference_probability,
-                    reference_standard_error=reference_se,
-                    final_peak_memory_bytes=0,
+                record_checkpoint = (
+                    None
+                    if checkpoint_directory is None
+                    else _record_checkpoint_path(
+                        checkpoint_directory,
+                        cell_id=cell.cell_id,
+                        cluster=cluster,
+                        method=method,
+                    )
                 )
+                if record_checkpoint is None:
+                    result = execute_v6_policy(
+                        prepared,
+                        sampler,
+                        reference_probability=reference_probability,
+                        reference_standard_error=reference_se,
+                        final_peak_memory_bytes=0,
+                    )
+                else:
+                    state_path = record_checkpoint.with_suffix(
+                        record_checkpoint.suffix + ".v6.json"
+                    )
+                    result = execute_v6_policy_durable(
+                        prepared,
+                        sampler,
+                        checkpoint_path=record_checkpoint,
+                        resume=record_checkpoint.exists() or state_path.exists(),
+                        chunks_per_checkpoint=1,
+                        reference_probability=reference_probability,
+                        reference_standard_error=reference_se,
+                        final_peak_memory_bytes=0,
+                    )
                 records.append(
                     {
                         "cell_id": cell.cell_id,
@@ -513,14 +578,19 @@ def run(
                             "g11_v6_baseline", progress_identities, tuple(records)
                         ),
                     )
+                    if record_checkpoint is not None:
+                        _clear_record_checkpoint(record_checkpoint)
     gates = {
-        "complete_matrix": len(records) == len(cells) * clusters * 3,
+        "complete_matrix": len(records) == len(cells) * clusters * len(methods),
         "all_runs_complete": all(record["result"]["core"]["complete"] for record in records),
         "no_resource_censoring": all(
             not record["result"]["core"]["resource_censored"] for record in records
         ),
         "all_design_targets_attained": all(
             record["result"]["core"]["design_target_attained"] for record in records
+        ),
+        "all_empirical_targets_attained": all(
+            record["result"]["core"]["empirical_target_attained"] for record in records
         ),
         "all_cem_training_charged": all(
             record["method"] == "crude"
@@ -547,6 +617,8 @@ def run(
     return {
         "schema": "npi.g11.v6-baseline-qualification.v1",
         "protocol_id": config["protocol_id"],
+        "config_schema": config["schema"],
+        "methods": list(methods),
         "phase": config["phase"],
         "config_sha256": config_hash,
         "manifest_sha256": manifest.sha256,

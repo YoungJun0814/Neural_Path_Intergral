@@ -2,8 +2,8 @@
 
 작성일: 2026-07-23
 
-상태: 공통 코어와 논문용 실행·감사 인프라 구현 완료, 대규모 qualification과
-untouched confirmation은 아직 미실행
+상태: 공통 코어와 논문용 실행·감사 인프라 구현 완료, two-cell 24-cluster
+development pilot 완료, full-matrix qualification과 untouched confirmation은 아직 미실행
 
 ## 1. 현재 모델을 한 문장으로 설명하면
 
@@ -170,7 +170,7 @@ inverse-slope negative moments”이다. “unconditional rBergomi complexity th
 ## 8. 실행된 검증
 
 - 연구 코드 범위 Ruff: 통과;
-- 전체 pytest: `466 passed` (freeze/hardware/resume 모듈 포함);
+- 전체 pytest: `481 passed` (freeze/hardware/resume 모듈 포함);
 - 실제 rBergomi baseline smoke: 통과;
 - 실제 rBergomi routed-policy smoke 및 offline audit: 통과;
 - 실제 rBergomi Route B diagnostic smoke: 통과;
@@ -185,38 +185,55 @@ gate가 모두 통과했다. Artifact는
 
 Baseline과 routed-policy full matrix는 완료 record마다 strict progress journal을
 원자적으로 갱신하고 `--resume`에서 identity/hash가 같은 record만 재사용한다. 현재
-record 내부의 장애는 formal confirmation에서 실패로 남기며 complete-case deletion이나
-조용한 재시도로 숨기지 않는다. 동일 frozen preparation을 유지하는 scheduler에는
-별도의 chunk-level `execute_v6_policy_durable` API가 제공된다.
+record의 final sampling도 chunk-level `execute_v6_policy_durable`에 실제 연결되어
+policy hash, preparation hash와 final seed namespace를 바꾸지 않고 재개한다.
+Complete-case deletion이나 조용한 재튜닝은 허용하지 않는다.
 
 저장소 루트 전체 Ruff는 이번 연구 변경과 무관한 기존 보조 visualization scripts의
 49개 lint issue 때문에 실패한다. `src`, `experiments`, `tests` 범위는 clean하다.
 
-## 9. 아직 실행하지 않은 계산
+## 9. 추가로 실행된 laptop development evidence
+
+- 18-cell full calibration: 18/18 통과;
+- H=0.12, 10^-3 terminal/barrier independent V2 reference: 모든 precision,
+  likelihood-normalization, method-agreement gate 통과;
+- pure CEM과 V8 policy 각 24 clusters, 총 48 records: complete, uncensored, aggregate
+  accuracy co-gates 및 independent JSON audit 통과;
+- training-inclusive geometric work ratio: 3.1308, one-sided 95% lower 2.8095;
+- conservative required clusters: 51, 다음 resource plan: 64; 그리고
+- full Route B diagnostic: 432 records, 5/6 rate windows identified; 경험적 rate는 proof가
+  아님.
+
+상세한 실패 이력, artifact hash와 claim 경계는
+`G11_V6_LAPTOP_DEVELOPMENT_DECISION_2026-07-23.md`에 기록했다.
+
+## 10. 아직 실행하지 않은 계산
 
 다음은 코드가 없어서가 아니라 실제 계산·통계 증거가 아직 없어서 남아 있다.
 
-1. `H={0.05,0.12,0.30}`, terminal/barrier, `1e-2/1e-3/1e-4` full calibration;
-2. 모든 accepted cell의 independent reference bank;
-3. 여러 qualification cluster에서 세 baseline과 V6 policy의 실제 achieved-RMSE;
-4. observed paired log-work variance와 power/resource forecast;
-5. passing power result가 있을 때만 outcome-blind confirmation freeze;
+1. 모든 accepted cell의 independent reference bank;
+2. full heterogeneous matrix의 crude/defensive CEM/fixed DCS-SLIS mandatory secondary
+   baselines와 ablations;
+3. disjoint proposal training과 full-matrix qualification;
+4. full-matrix effect variance에서 다시 계산한 power/resource forecast;
+5. passing qualification 뒤 outcome-blind confirmation freeze;
 6. untouched confirmation;
-7. JSON-only independent audits;
-8. 별도 protocol/seed를 사용한 clean Linux reproduction; 그리고
-9. 남은 Route B proof obligations.
+7. 별도 protocol/seed를 사용한 clean Linux reproduction; 그리고
+8. 남은 Route B proof obligations.
 
 `1e-4` reference와 powered multi-cluster confirmation은 노트북에서 매우 오래 걸릴 수
 있다. Laptop은 smoke, 한두 cell qualification, resource profiling과 theorem
 diagnostic에 적합하다. External compute는 router/selector gate와 resource forecast가
 통과한 뒤 cluster 병렬화 용도로만 사용한다.
 
-## 10. 현재 논문 수준 판단
+## 11. 현재 논문 수준 판단
 
 코드와 연구 설계는 박사과정 연구 인프라 수준이다. 그러나 논문 contribution은
 실행된 결과와 완성된 theorem으로 판단되므로 아직 박사급 논문 “완성본”은 아니다.
 
-- Route A가 통과하면 training-inclusive rare-event computational paper가 가능하다.
+- 두 셀 Route A development 결과는 유망하지만 powered/full-matrix claim은 아니다.
+- Route A full-matrix confirmation이 통과하면 training-inclusive rare-event
+  computational paper가 가능하다.
 - terminal coefficient/rate theorem까지 완성되면 Route B 이론 논문이 가능하다.
 - 두 경로가 모두 통과하고 confirmation/Linux reproduction까지 완료되면 SIFIN/SISC
   수준의 강한 후보가 된다.

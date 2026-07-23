@@ -413,6 +413,7 @@ def prepare_hybrid_run(
     chunk_size: int = 4096,
     minimum_final_samples: int = 32,
     allocation_safety_factor: float = 1.0,
+    design_variance_overrides: Mapping[str, float] | None = None,
     streams: tuple[str, ...] = ("proposal", "labels"),
     preparation_ledger: SeedLedger | None = None,
     preprocessing_work_entries: Sequence[WorkLedgerEntry] = (),
@@ -454,9 +455,21 @@ def prepare_hybrid_run(
         raise ValueError("preparation ledger already contains a final seed")
 
     terms = tuple(profile_map[profile_id] for profile_id in selected_ids)
-    design_variances = tuple(
-        allocation_safety_factor * profile.moments.variance_interval[1] for profile in terms
-    )
+    if design_variance_overrides is not None:
+        if set(design_variance_overrides) != set(selected_ids):
+            raise ValueError("design-variance overrides must match the selected profiles")
+        if any(
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+            or value < 0.0
+            for value in design_variance_overrides.values()
+        ):
+            raise ValueError("design-variance overrides must be finite and nonnegative")
+        base_variances = tuple(float(design_variance_overrides[item]) for item in selected_ids)
+    else:
+        base_variances = tuple(profile.moments.variance_interval[1] for profile in terms)
+    design_variances = tuple(allocation_safety_factor * value for value in base_variances)
     costs = tuple(profile.cost_per_sample for profile in terms)
     root_sum = math.fsum(
         math.sqrt(variance * cost) for variance, cost in zip(design_variances, costs, strict=True)
@@ -590,7 +603,7 @@ def prepare_single_term_run(
     expected_total_work = work.total_work_units + expected_final_work
     censored = expected_total_work > operation_work_cap
     reason = "frozen achieved-RMSE allocation exceeds the operation-work cap" if censored else None
-    point_total_work = work.total_work_units + continuous * design.cost_per_sample
+    point_total_work = work.total_work_units + final_count * design.cost_per_sample
     selection = FrozenCrossoverDecision(
         selected_candidate=method,
         look_index=0,

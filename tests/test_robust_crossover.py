@@ -104,6 +104,25 @@ def test_candidate_work_propagation_counts_preprocessing_and_can_reverse_online_
     assert total["a_method"].point_total_work < total["b_method"].point_total_work
 
 
+def test_candidate_work_includes_every_execution_floor() -> None:
+    profiles = update_profile_intervals(
+        {"a": torch.zeros(64), "b": torch.zeros(64)},
+        absolute_bounds={"a": 1.0, "b": 1.0},
+        costs_per_sample={"a": 2.0, "b": 3.0},
+        familywise_alpha=0.05,
+        total_predeclared_looks=1,
+    )
+    candidate = candidate_work_intervals(
+        profiles,
+        candidate_profiles={"hybrid": ("a", "b")},
+        preprocessing_work={"hybrid": 7.0},
+        sampling_variance_target=0.01,
+        minimum_final_samples_per_term=100,
+    )[0]
+    assert candidate.point_total_work == 7.0 + 100 * 2.0 + 100 * 3.0
+    assert candidate.total_work_interval[0] == candidate.point_total_work
+
+
 def test_elimination_is_one_sided_and_never_drops_interval_oracle() -> None:
     candidates = (
         _candidate("oracle", 9.0, 10.0, 11.0),

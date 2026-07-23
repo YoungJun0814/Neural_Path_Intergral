@@ -6,7 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from experiments.g11_v6_confirmatory import _load_config, run
+from experiments.g11_v6_confirmatory import _artifact_canonical_hash, _load_config, run
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "configs" / "g11_v6" / "confirmatory_development.yaml"
@@ -103,6 +103,8 @@ def test_confirmatory_analysis_uses_equal_cell_pairs_and_accuracy_co_gates(
     _write(policy_audit_path, policy_audit)
     power = {
         "schema": "npi.g11.v6-power-analysis.v1",
+        "baseline_artifact_sha256": _artifact_canonical_hash(baseline),
+        "policy_artifact_sha256": _artifact_canonical_hash(policy),
         "forecast": {"required_clusters_normal_approximation": 6},
     }
     power_path = tmp_path / "power.json"
@@ -120,5 +122,19 @@ def test_confirmatory_analysis_uses_equal_cell_pairs_and_accuracy_co_gates(
     assert result["gates"]["all_accuracy_co_gates"]
     assert result["gates"]["one_sided_efficiency_lower_exceeds_one"]
     assert result["gates"]["shared_protocol_identities"]
+    assert result["gates"]["power_matches_paired_sources"]
     assert result["scientific_gates_passed"]
     assert not result["confirmation_passed"]
+
+    power["policy_artifact_sha256"] = "0" * 64
+    _write(power_path, power)
+    mismatched = run(
+        CONFIG,
+        baseline_path,
+        policy_path,
+        baseline_audit_path,
+        policy_audit_path,
+        power_path,
+    )
+    assert not mismatched["gates"]["power_matches_paired_sources"]
+    assert not mismatched["scientific_gates_passed"]

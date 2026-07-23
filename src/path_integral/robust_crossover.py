@@ -100,6 +100,7 @@ class SequentialCrossoverState:
     elimination_history: tuple[CandidateElimination, ...]
     maximum_profile_work: float | None
     maximum_profile_fraction_of_best_point: float | None
+    minimum_final_samples_per_term: int
     cumulative_profile_work: float
     effective_profile_work_cap: float | None
     stopped: bool
@@ -244,11 +245,18 @@ def candidate_work_intervals(
     candidate_profiles: Mapping[str, Sequence[str]],
     preprocessing_work: Mapping[str, float],
     sampling_variance_target: float,
+    minimum_final_samples_per_term: int = 0,
 ) -> tuple[CandidateWorkInterval, ...]:
     """Propagate simultaneous variance intervals through monotone MLMC work."""
 
     if not math.isfinite(sampling_variance_target) or sampling_variance_target <= 0.0:
         raise ValueError("sampling_variance_target must be finite and positive")
+    if (
+        isinstance(minimum_final_samples_per_term, bool)
+        or not isinstance(minimum_final_samples_per_term, int)
+        or minimum_final_samples_per_term < 0
+    ):
+        raise ValueError("minimum final samples per term must be a nonnegative integer")
     profile_map = {profile.profile_id: profile for profile in profiles}
     if len(profile_map) != len(tuple(profiles)):
         raise ValueError("profile identifiers must be unique")
@@ -272,9 +280,39 @@ def candidate_work_intervals(
         lower = _work_coefficient(tuple(term.moments.variance_interval[0] for term in terms), costs)
         point = _work_coefficient(tuple(term.moments.sample_variance for term in terms), costs)
         upper = _work_coefficient(tuple(term.moments.variance_interval[1] for term in terms), costs)
-        total_lower = fixed + lower / sampling_variance_target
-        total_point = fixed + point / sampling_variance_target
-        total_upper = fixed + upper / sampling_variance_target
+        variance_vectors = (
+            tuple(term.moments.variance_interval[0] for term in terms),
+            tuple(term.moments.sample_variance for term in terms),
+            tuple(term.moments.variance_interval[1] for term in terms),
+        )
+        sampling_work = []
+        for variances, coefficient in zip(
+            variance_vectors, (lower, point, upper), strict=True
+        ):
+            scale = math.fsum(
+                math.sqrt(variance * cost)
+                for variance, cost in zip(variances, costs, strict=True)
+            )
+            if minimum_final_samples_per_term == 0:
+                sampling_work.append(coefficient / sampling_variance_target)
+            else:
+                sampling_work.append(
+                    math.fsum(
+                        max(
+                            minimum_final_samples_per_term,
+                            (
+                                math.sqrt(variance / cost)
+                                * scale
+                                / sampling_variance_target
+                            ),
+                        )
+                        * cost
+                        for variance, cost in zip(variances, costs, strict=True)
+                    )
+                )
+        total_lower = fixed + sampling_work[0]
+        total_point = fixed + sampling_work[1]
+        total_upper = fixed + sampling_work[2]
         result.append(
             CandidateWorkInterval(
                 candidate_id=candidate_id,
@@ -415,6 +453,7 @@ def advance_sequential_crossover(
     practical_equivalence_relative_tolerance: float = 0.0,
     maximum_profile_work: float | None = None,
     maximum_profile_fraction_of_best_point: float | None = None,
+    minimum_final_samples_per_term: int = 0,
 ) -> SequentialCrossoverState:
     """Advance exactly one cumulative look and freeze only by declared rules.
 
@@ -464,6 +503,8 @@ def advance_sequential_crossover(
             != maximum_profile_fraction_of_best_point
         ):
             raise ValueError("maximum profile fraction changed between looks")
+        if previous_state.minimum_final_samples_per_term != minimum_final_samples_per_term:
+            raise ValueError("minimum final samples changed between looks")
         prior_survivors = previous_state.surviving_candidates
         history = previous_state.elimination_history
     else:
@@ -484,6 +525,7 @@ def advance_sequential_crossover(
         candidate_profiles=candidate_profiles,
         preprocessing_work=preprocessing_work,
         sampling_variance_target=sampling_variance_target,
+        minimum_final_samples_per_term=minimum_final_samples_per_term,
     )
     elimination = eliminate_dominated_candidates(
         work,
@@ -563,6 +605,7 @@ def advance_sequential_crossover(
         elimination_history=history + elimination.eliminated,
         maximum_profile_work=maximum_profile_work,
         maximum_profile_fraction_of_best_point=maximum_profile_fraction_of_best_point,
+        minimum_final_samples_per_term=minimum_final_samples_per_term,
         cumulative_profile_work=cumulative_profile_work,
         effective_profile_work_cap=effective_profile_work_cap,
         stopped=decision is not None,

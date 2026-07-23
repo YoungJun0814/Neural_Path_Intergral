@@ -6,7 +6,7 @@ import hashlib
 import json
 import math
 import time
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Literal
@@ -286,6 +286,7 @@ def prepare_v6_hybrid_policy(
     chunk_size: int = 4096,
     minimum_final_samples: int = 32,
     allocation_safety_factor: float = 1.0,
+    design_variance_overrides: Mapping[str, float] | None = None,
     streams: tuple[str, ...] = ("proposal", "labels"),
     preparation_seed_ledger: SeedLedger | None = None,
 ) -> V6PolicyPreparedRun:
@@ -306,6 +307,7 @@ def prepare_v6_hybrid_policy(
         chunk_size=chunk_size,
         minimum_final_samples=minimum_final_samples,
         allocation_safety_factor=allocation_safety_factor,
+        design_variance_overrides=design_variance_overrides,
         streams=streams,
         preparation_ledger=preparation_seed_ledger,
         preprocessing_work_entries=_preprocessing_entries(

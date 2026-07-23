@@ -12,18 +12,23 @@ from typing import Any
 import torch
 import yaml
 
+from experiments.g11_v6_confirmatory import _accuracy_groups
 from src.path_integral import paired_power_forecast
 from src.path_integral.provenance import runtime_provenance, source_provenance
 
-_SCHEMA = "npi.g11.v6-power-analysis.config.v1"
+_SCHEMA_V1 = "npi.g11.v6-power-analysis.config.v1"
+_SCHEMA_V2 = "npi.g11.v6-power-analysis.config.v2"
 
 
 def _load_config(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     payload = yaml.safe_load(raw)
-    if not isinstance(payload, dict) or payload.get("schema") != _SCHEMA:
+    if not isinstance(payload, dict) or payload.get("schema") not in (
+        _SCHEMA_V1,
+        _SCHEMA_V2,
+    ):
         raise ValueError("unsupported V6 power-analysis config")
-    if set(payload) != {
+    expected = {
         "schema",
         "protocol_id",
         "frozen",
@@ -31,8 +36,36 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         "conservatism",
         "design",
         "resources",
-    }:
+    }
+    if payload["schema"] == _SCHEMA_V2:
+        expected.add("accuracy")
+    if set(payload) != expected:
         raise ValueError("malformed V6 power-analysis config fields")
+    if payload["schema"] == _SCHEMA_V2:
+        accuracy = payload["accuracy"]
+        if not isinstance(accuracy, dict) or set(accuracy) != {
+            "confidence_level",
+            "rmse_engineering_multiplier",
+            "minimum_target_attainment_rate",
+            "bootstrap_repetitions",
+            "bootstrap_seed",
+        }:
+            raise ValueError("malformed V2 power-analysis accuracy fields")
+        confidence = float(accuracy["confidence_level"])
+        minimum_attainment = float(accuracy["minimum_target_attainment_rate"])
+        multiplier = float(accuracy["rmse_engineering_multiplier"])
+        if not 0.5 < confidence < 1.0 or not 0.0 < minimum_attainment < 1.0:
+            raise ValueError("invalid V2 power-analysis accuracy probability")
+        if not math.isfinite(multiplier) or multiplier <= 0.0:
+            raise ValueError("invalid V2 power-analysis RMSE multiplier")
+        if (
+            isinstance(accuracy["bootstrap_repetitions"], bool)
+            or not isinstance(accuracy["bootstrap_repetitions"], int)
+            or accuracy["bootstrap_repetitions"] < 200
+            or isinstance(accuracy["bootstrap_seed"], bool)
+            or not isinstance(accuracy["bootstrap_seed"], int)
+        ):
+            raise ValueError("invalid V2 power-analysis bootstrap design")
     return payload, hashlib.sha256(raw).hexdigest()
 
 
@@ -86,6 +119,16 @@ def run(config_path: Path, baseline_path: Path, policy_path: Path) -> dict[str, 
             or policy_record["result"]["core"]["resource_censored"]
         ):
             raise ValueError("censored or incomplete pairs cannot be dropped from power planning")
+        if (
+            not baseline_record["result"]["core"]["design_target_attained"]
+            or not policy_record["result"]["core"]["design_target_attained"]
+        ):
+            raise ValueError("pairs that miss a design RMSE target cannot enter power planning")
+        if config["schema"] == _SCHEMA_V1 and (
+            not baseline_record["result"]["core"]["empirical_target_attained"]
+            or not policy_record["result"]["core"]["empirical_target_attained"]
+        ):
+            raise ValueError("pairs that miss a sampling-RMSE target cannot enter power planning")
         cem_work = _total_work(baseline_record)
         policy_work = _total_work(policy_record)
         pairs.append(
@@ -138,6 +181,33 @@ def run(config_path: Path, baseline_path: Path, policy_path: Path) -> dict[str, 
     projected_hours = projected_total / float(
         config["resources"]["conservative_work_units_per_second"]
     ) / 3600.0
+    accuracy = None
+    if config["schema"] == _SCHEMA_V2:
+        accuracy_config = config["accuracy"]
+        confidence = float(accuracy_config["confidence_level"])
+        repetitions = int(accuracy_config["bootstrap_repetitions"])
+        seed = int(accuracy_config["bootstrap_seed"])
+        accuracy = _accuracy_groups(
+            list(baseline_records.values()),
+            method_label="pure_cem",
+            multiplier=float(accuracy_config["rmse_engineering_multiplier"]),
+            minimum_attainment=float(
+                accuracy_config["minimum_target_attainment_rate"]
+            ),
+            confidence_level=confidence,
+            repetitions=repetitions,
+            seed=seed,
+        ) + _accuracy_groups(
+            list(policy_records.values()),
+            method_label="v6_policy",
+            multiplier=float(accuracy_config["rmse_engineering_multiplier"]),
+            minimum_attainment=float(
+                accuracy_config["minimum_target_attainment_rate"]
+            ),
+            confidence_level=confidence,
+            repetitions=repetitions,
+            seed=seed + 100_000,
+        )
     gates = {
         "observed_direction_favors_policy": observed_mean > 0.0,
         "power_forecast_available": forecast is not None,
@@ -147,6 +217,10 @@ def run(config_path: Path, baseline_path: Path, policy_path: Path) -> dict[str, 
         <= float(config["resources"]["maximum_wall_hours"]),
         "no_pairs_excluded": len(pairs) == len(cells) * len(clusters),
     }
+    if accuracy is not None:
+        gates["all_accuracy_co_gates"] = all(
+            record["attainment_gate"] and record["rmse_gate"] for record in accuracy
+        )
     provenance = source_provenance()
     formal = {
         "frozen_config": bool(config["frozen"]),
@@ -158,6 +232,7 @@ def run(config_path: Path, baseline_path: Path, policy_path: Path) -> dict[str, 
         "schema": "npi.g11.v6-power-analysis.v1",
         "protocol_id": config["protocol_id"],
         "config_sha256": config_hash,
+        "config_schema": config["schema"],
         "baseline_artifact_sha256": baseline_hash,
         "policy_artifact_sha256": policy_hash,
         "cell_count": len(cells),
@@ -173,6 +248,7 @@ def run(config_path: Path, baseline_path: Path, policy_path: Path) -> dict[str, 
         "paired_total_work_p90_per_cell_cluster": work_p90,
         "projected_total_work_units": projected_total,
         "projected_wall_hours": projected_hours,
+        "accuracy": accuracy,
         "gates": gates,
         "formal_readiness": formal,
         "development_power_ready": all(gates.values()),
@@ -203,4 +279,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -111,12 +111,12 @@ Thus the same target-law inverse-slope bound supplies the likelihood-weighted mo
 needed in localized second-moment arguments. This step would be invalid for a pure
 non-defensive Gaussian shift because no deterministic likelihood bound exists.
 
-## 5. Verification for the current V6 direction family
+## 5. Verification for the declared V6 direction families
 
-The proposal schedules have price-driver magnitudes proportional to the same
-two-segment vector: zero for the defensive expert, `(2,1)` for the middle expert, and
-`(4,2)` for the strongest expert, up to a common sign. `rank_one_price_control_span`
-orients the nonzero anchor positively and normalizes it.
+The theory-diagnostic proposal schedules have price-driver magnitudes proportional to
+the same two-segment vector: zero for the defensive expert, `(2,1)` for the middle
+expert, and `(4,2)` for the strongest expert, up to a common sign.
+`rank_one_price_control_span` orients the nonzero anchor positively and normalizes it.
 
 For two equal, grid-aligned segments with positive magnitudes `a` and `b`,
 
@@ -126,9 +126,16 @@ This quantity is independent of `n` and strictly positive. For `(a,b)=(4,2)`,
 
 `c_n = sqrt(T/2) 6/sqrt(20)`.
 
-The current hierarchy starts from eight steps and doubles the grid, so the midpoint
-segment boundary remains aligned at every level. The direction-mass premise is
-therefore discharged for the declared V6 family, not merely observed in a plot.
+The CEM-anchored computational policy uses separate positive price magnitudes after
+orientation: approximately `(0.508085,0.442047)` for terminal and
+`(0.358043,0.070209)` for barrier. Its half/full experts are proportional, so the same
+formula applies. The corresponding masses are approximately `0.997593 sqrt(T)` and
+`0.829958 sqrt(T)`, respectively.
+
+Every declared hierarchy starts from eight steps and doubles the grid, so the
+midpoint segment boundary remains aligned at every level. The direction-mass premise
+is therefore discharged for both the diagnostic and CEM-anchored computational
+families, not merely observed in a plot.
 
 ## 6. Code contract
 

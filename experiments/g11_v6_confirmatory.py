@@ -240,6 +240,12 @@ def run(
         policy_audit_path, "npi.g11.v6-independent-audit.v1"
     )
     power, power_hash = _load(power_path, "npi.g11.v6-power-analysis.v1")
+    baseline_canonical_hash = _artifact_canonical_hash(baseline)
+    policy_canonical_hash = _artifact_canonical_hash(policy)
+    power_matches_paired_sources = (
+        power.get("baseline_artifact_sha256") == baseline_canonical_hash
+        and power.get("policy_artifact_sha256") == policy_canonical_hash
+    )
     shared_manifest = baseline.get("manifest_sha256")
     shared_reference = baseline.get("reference_artifact_sha256")
     shared_protocol_identities = (
@@ -341,6 +347,7 @@ def run(
     gates = {
         "frozen_artifact_hashes_match": hashes_match,
         "shared_protocol_identities": shared_protocol_identities,
+        "power_matches_paired_sources": power_matches_paired_sources,
         "identical_complete_pair_set": len(paired) == len(cells) * len(clusters),
         "minimum_cluster_count": len(clusters) >= int(requirements["minimum_clusters"]),
         "all_runs_complete": all(record["result"]["core"]["complete"] for record in all_records),

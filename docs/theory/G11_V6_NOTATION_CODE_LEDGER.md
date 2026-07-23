@@ -97,11 +97,16 @@ Verified finite-grid facts:
 - path reconstruction is checked; and
 - fine and coarse arrays use their actual coupled volatility paths.
 
+Proved model-level fact:
+
+- for the declared positive direction family with grid-scaled mass bounded below,
+  every terminal inverse-slope moment has an explicit mesh-uniform target-law bound;
+  see `G11_V6_TERMINAL_SLOPE_THEOREM.md`.
+
 Unproved asymptotic facts:
 
-- a mesh-uniform lower-tail or inverse-moment bound for terminal `B`;
 - fine/coarse `L^p` rates for `A` and `B`; and
-- uniform proposal-parameter dependence of those constants.
+- uniform proposal-parameter dependence of those rate constants.
 
 Executable diagnostics: `slope_lower_tail_diagnostics` and
 `coefficient_moment_diagnostics`. Their output is empirical evidence only.
@@ -211,7 +216,7 @@ then returns an asymptotic interval and `bounded_confidence_interval=None`.
 | pure CEM is not given a false bounded interval | implemented and tested |
 | direction/pair-sum convention diagnostics | implemented and tested |
 | empirical slope/coefficient/barrier diagnostics | implemented and tested; not proofs |
-| uniform terminal slope inverse moments | open |
+| uniform terminal slope inverse moments | proved for the declared positive direction family |
 | terminal rBergomi coefficient rates | open |
 | terminal DCS correction rate | conditional |
 | terminal continuous-time bias/complexity | open |
@@ -219,13 +224,10 @@ then returns an asymptotic interval and `bounded_confidence_interval=None`.
 
 ## 12. Immediate proof sequence
 
-1. freeze the direction family and compact parameter domain;
-2. derive a positive block-mass lower bound for the terminal slope;
-3. combine it with Gaussian exponential moments for a uniform lower-tail or inverse
-   moment statement;
-4. prove fine/coarse Volterra, variance, intercept, and slope `L^p` errors under the
+1. freeze a compact parameter domain for the remaining rate constants;
+2. prove fine/coarse Volterra, variance, intercept, and slope `L^p` errors under the
    exact BLP/FFT coupling;
-5. substitute these rates into the existing localized ratio bound;
-6. state the second-moment theorem before any complexity corollary;
-7. add a separate weak-bias result if continuous-target complexity is pursued; and
-8. treat barrier active-time and enrichment terms as a new theorem.
+3. substitute these rates into the existing localized ratio bound;
+4. state the second-moment theorem before any complexity corollary;
+5. add a separate weak-bias result if continuous-target complexity is pursued; and
+6. treat barrier active-time and enrichment terms as a new theorem.

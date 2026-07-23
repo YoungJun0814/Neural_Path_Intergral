@@ -1,0 +1,31 @@
+schema: npi.g11.v6-baseline-qualification.config.v1
+protocol_id: g11-v6-baseline-resource-pilot-v1
+phase: development
+frozen: false
+estimand: fixed_finest_grid
+
+sampling:
+  clusters: 3
+  relative_sampling_rmse: 0.20
+  confidence_level: 0.95
+  pilot_samples: 4096
+  minimum_final_samples: 4096
+  chunk_size: 8192
+  operation_work_cap: 5.0e10
+  pure_cem_variance_safety_factor: 2.0
+  bounded_familywise_alpha: 0.05
+  engine: fft
+
+training:
+  segments: 2
+  initial_control: [[-0.5, -1.5], [-0.25, -0.75]]
+  paths_per_iteration: 4096
+  maximum_iterations: 8
+  elite_quantile: 0.10
+  smoothing: 0.70
+  minimum_elite_paths: 64
+  control_bound: 20.0
+  target_level_repetitions: 2
+
+defensive_mixture:
+  natural_weight: 0.20

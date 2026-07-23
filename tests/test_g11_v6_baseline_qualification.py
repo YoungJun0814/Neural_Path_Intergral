@@ -15,12 +15,18 @@ ROOT = Path(__file__).resolve().parents[1]
 CALIBRATION = ROOT / "configs" / "g11_v6" / "rarity_calibration_development.yaml"
 REFERENCE = ROOT / "configs" / "g11_v6" / "reference_development.yaml"
 BASELINE = ROOT / "configs" / "g11_v6" / "baseline_qualification_development.yaml"
+PRIMARY_PILOT = ROOT / "configs" / "g11_v6" / "baseline_primary_resource_pilot_v2.yaml"
 
 
 def test_v6_baseline_config_is_strict() -> None:
     config, digest = _load_config(BASELINE)
     assert config["sampling"]["relative_sampling_rmse"] == 0.20
     assert len(digest) == 64
+
+    primary, primary_digest = _load_config(PRIMARY_PILOT)
+    assert primary["schema"] == "npi.g11.v6-baseline-qualification.config.v2"
+    assert primary["methods"] == ["pure_cem"]
+    assert len(primary_digest) == 64
 
 
 @pytest.mark.slow

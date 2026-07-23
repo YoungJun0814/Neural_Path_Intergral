@@ -106,6 +106,35 @@ def test_preparation_meets_integer_design_target_without_allocating_final_seeds(
     assert all(entry.role != "final" for entry in prepared.work.entries)
 
 
+def test_independent_planning_variances_can_override_confidence_bounds() -> None:
+    prepared = prepare_hybrid_run(
+        HybridTarget("finite-grid-digital", 0.15, 0.20),
+        _profiles(),
+        selection=_selection(),
+        selected_profile_ids=("base", "correction"),
+        protocol="g11-v6-planning-override",
+        regime="gaussian",
+        task="digital",
+        operation_work_cap=1e9,
+        minimum_final_samples=32,
+        allocation_safety_factor=2.0,
+        design_variance_overrides={"base": 0.04, "correction": 0.01},
+    )
+    assert [item.design_variance for item in prepared.allocations] == [0.08, 0.02]
+    with pytest.raises(ValueError, match="match the selected profiles"):
+        prepare_hybrid_run(
+            HybridTarget("finite-grid-digital", 0.15, 0.20),
+            _profiles(),
+            selection=_selection(),
+            selected_profile_ids=("base", "correction"),
+            protocol="g11-v6-invalid-planning-override",
+            regime="gaussian",
+            task="digital",
+            operation_work_cap=1e9,
+            design_variance_overrides={"base": 0.04},
+        )
+
+
 def test_final_execution_is_independent_resumable_and_bitwise_identical(tmp_path: Path) -> None:
     prepared = _prepared("g11-v5-hybrid-resume")
     costs = {item.profile_id: item.cost_per_sample for item in prepared.allocations}

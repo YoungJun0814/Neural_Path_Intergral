@@ -6,8 +6,9 @@ import argparse
 import hashlib
 import json
 import math
+import statistics
 import time
-from dataclasses import asdict
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Literal, cast
 
@@ -24,6 +25,7 @@ from experiments.g11_v6_baseline_qualification import (
 )
 from experiments.g11_v6_reference import _load_manifest
 from src.path_integral import (
+    FrozenCrossoverDecision,
     HybridProfileOpportunity,
     HybridTarget,
     RarityRouterConfig,
@@ -40,6 +42,7 @@ from src.path_integral import (
     conservative_bernoulli_variance_upper,
     exact_binomial_probability_interval,
     execute_v6_policy,
+    execute_v6_policy_durable,
     freeze_rarity_route,
     load_v6_progress,
     prepare_v6_direct_policy,
@@ -53,13 +56,141 @@ from src.path_integral import (
 from src.path_integral.provenance import runtime_provenance, source_provenance
 from src.physics_engine import RBergomiSimulator
 
-_SCHEMA = "npi.g11.v6-routed-policy.config.v1"
+_SCHEMA_V1 = "npi.g11.v6-routed-policy.config.v1"
+_SCHEMA_V2 = "npi.g11.v6-routed-policy.config.v2"
+_SCHEMA_V3 = "npi.g11.v6-routed-policy.config.v3"
+
+
+def _record_checkpoint_path(directory: Path, *, cell_id: str, cluster: int) -> Path:
+    """Return a path-safe, deterministic checkpoint name for one final run."""
+
+    identity = json.dumps(
+        {"cell_id": cell_id, "cluster": cluster},
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    digest = hashlib.sha256(identity).hexdigest()
+    return directory / "records" / f"{digest}.json"
+
+
+def _clear_record_checkpoint(checkpoint: Path) -> None:
+    """Remove a completed record's replay checkpoint after its journal is durable."""
+
+    checkpoint.unlink(missing_ok=True)
+    checkpoint.with_suffix(checkpoint.suffix + ".v6.json").unlink(missing_ok=True)
+
+
+def _task_conditioned_training_source_audit(
+    proposal: dict[str, Any], source_path: Path
+) -> dict[str, Any]:
+    """Verify a V3 proposal bank against its pure-CEM training artifact."""
+
+    raw = source_path.read_bytes()
+    raw_sha256 = hashlib.sha256(raw).hexdigest()
+    if raw_sha256 != proposal["training_source_artifact_sha256"]:
+        raise ValueError("proposal training source hash does not match the config")
+    source = json.loads(raw)
+    if (
+        not isinstance(source, dict)
+        or source.get("schema") != "npi.g11.v6-baseline-qualification.v1"
+    ):
+        raise ValueError("proposal training source must be a V6 baseline artifact")
+    records = source.get("records")
+    if not isinstance(records, list) or not records:
+        raise ValueError("proposal training source must contain records")
+
+    grouped_controls: dict[str, list[list[list[float]]]] = {}
+    total_samples = 0
+    total_work = 0.0
+    total_wall = 0.0
+    total_cpu = 0.0
+    for record in records:
+        if record.get("method") != "pure_cem":
+            raise ValueError("proposal training source may contain only pure-CEM records")
+        if not record["result"]["core"]["complete"]:
+            raise ValueError("proposal training source contains an incomplete record")
+        task = str(record["preparation"]["core"]["task"])
+        control = record["cem_fit"]["control"]
+        if (
+            task not in {"terminal_left_tail", "discrete_lower_barrier"}
+            or not isinstance(control, list)
+            or not control
+            or any(not isinstance(segment, list) or len(segment) != 2 for segment in control)
+        ):
+            raise ValueError("proposal training source contains a malformed CEM control")
+        grouped_controls.setdefault(task, []).append(control)
+        training_records = [
+            entry
+            for entry in record["result"]["total_work"]["records"]
+            if entry["category"] == "proposal_training"
+        ]
+        if len(training_records) != 1:
+            raise ValueError("each proposal training record must have one training ledger entry")
+        entry = training_records[0]
+        total_samples += int(entry["samples"])
+        total_work += float(entry["work_units"])
+        total_wall += float(entry["wall_seconds"])
+        total_cpu += float(entry["cpu_seconds"])
+
+    expected_tasks = {"terminal_left_tail", "discrete_lower_barrier"}
+    if set(grouped_controls) != expected_tasks:
+        raise ValueError("proposal training source must cover both task families")
+    derived: dict[str, list[list[list[float]]]] = {}
+    for task, controls in grouped_controls.items():
+        segments = len(controls[0])
+        if any(len(control) != segments for control in controls):
+            raise ValueError("proposal training controls have inconsistent segment counts")
+        median_control = [
+            [statistics.median(control[segment][driver] for control in controls) for driver in range(2)]
+            for segment in range(segments)
+        ]
+        zero = [[0.0, 0.0] for _ in range(segments)]
+        half = [[0.5 * value for value in segment] for segment in median_control]
+        derived[task] = [zero, half, median_control]
+
+    configured = proposal["task_controls"]
+    for task in sorted(expected_tasks):
+        configured_tensor = torch.tensor(configured[task], dtype=torch.float64)
+        derived_tensor = torch.tensor(derived[task], dtype=torch.float64)
+        if configured_tensor.shape != derived_tensor.shape or not torch.allclose(
+            configured_tensor, derived_tensor, rtol=0.0, atol=1e-9
+        ):
+            raise ValueError("configured proposal controls do not match the declared derivation")
+
+    expected_totals = {
+        "training_source_record_count": len(records),
+        "training_total_samples": total_samples,
+        "training_total_work_units": total_work,
+        "training_total_wall_seconds": total_wall,
+        "training_total_cpu_seconds": total_cpu,
+    }
+    for key, observed in expected_totals.items():
+        declared = proposal[key]
+        if isinstance(observed, int):
+            if int(declared) != observed:
+                raise ValueError(f"proposal {key} does not match the source ledger")
+        elif not math.isclose(float(declared), observed, rel_tol=1e-12, abs_tol=1e-12):
+            raise ValueError(f"proposal {key} does not match the source ledger")
+    return {
+        "verified": True,
+        "source_artifact_sha256": raw_sha256,
+        "source_record_count": len(records),
+        "derivation": "componentwise_median_pure_cem_then_zero_half_full_bank",
+        "total_samples": total_samples,
+        "total_work_units": total_work,
+        "total_wall_seconds": total_wall,
+        "total_cpu_seconds": total_cpu,
+    }
 
 
 def _load_config(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     payload = yaml.safe_load(raw)
-    if not isinstance(payload, dict) or payload.get("schema") != _SCHEMA:
+    if not isinstance(payload, dict) or payload.get("schema") not in (
+        _SCHEMA_V1,
+        _SCHEMA_V2,
+        _SCHEMA_V3,
+    ):
         raise ValueError("unsupported V6 routed-policy config")
     expected = {
         "schema",
@@ -82,7 +213,165 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         raise ValueError("qualification and confirmation policy configs must be frozen")
     if payload["estimand"] != "fixed_finest_grid":
         raise ValueError("routed policy must declare a fixed-grid estimand")
+    if payload["schema"] in (_SCHEMA_V2, _SCHEMA_V3):
+        selector = payload["selector"]
+        required = {
+            "decision_mode",
+            "planning_replicates",
+            "samples_per_replicate",
+            "planning_variance_statistic",
+            "familywise_alpha",
+            "practical_equivalence_relative_tolerance",
+        }
+        if not isinstance(selector, dict) or set(selector) != required:
+            raise ValueError("malformed V2 routed-policy selector fields")
+        if selector["decision_mode"] != "replicated_planning":
+            raise ValueError("unsupported V2 routed-policy decision mode")
+        if selector["planning_variance_statistic"] not in {
+            "median_replicate_variance",
+            "mean_replicate_variance",
+        }:
+            raise ValueError("unsupported V2 routed-policy planning statistic")
+        if int(selector["planning_replicates"]) < 3:
+            raise ValueError("replicated planning requires at least three replicates")
+        proposal = payload["proposal"]
+        if not isinstance(proposal, dict):
+            raise ValueError("V2 routed-policy proposal must be an object")
+        if "task_controls" in proposal:
+            required_proposal = (
+                {
+                    "weights",
+                    "task_controls",
+                    "training_source_artifact_sha256",
+                    "amortized_training_samples_per_record",
+                    "amortized_training_work_per_record",
+                    "amortized_training_wall_seconds_per_record",
+                    "amortized_training_cpu_seconds_per_record",
+                }
+                if payload["schema"] == _SCHEMA_V2
+                else {
+                    "weights",
+                    "task_controls",
+                    "training_source_artifact_sha256",
+                    "training_derivation",
+                    "training_source_record_count",
+                    "training_total_samples",
+                    "training_total_work_units",
+                    "training_total_wall_seconds",
+                    "training_total_cpu_seconds",
+                    "training_amortization_record_count",
+                }
+            )
+            if set(proposal) != required_proposal:
+                raise ValueError("malformed task-conditioned proposal fields")
+            controls = proposal["task_controls"]
+            if not isinstance(controls, dict) or set(controls) != {
+                "terminal_left_tail",
+                "discrete_lower_barrier",
+            }:
+                raise ValueError("task-conditioned proposal must cover both task families")
+            digest = proposal["training_source_artifact_sha256"]
+            if (
+                not isinstance(digest, str)
+                or len(digest) != 64
+                or any(character not in "0123456789abcdef" for character in digest)
+            ):
+                raise ValueError("proposal training-source hash must be lowercase SHA-256")
+            if payload["schema"] == _SCHEMA_V3:
+                if proposal["training_derivation"] != (
+                    "componentwise_median_pure_cem_then_zero_half_full_bank"
+                ):
+                    raise ValueError("unsupported proposal training derivation")
+                positive_integer_fields = (
+                    "training_source_record_count",
+                    "training_total_samples",
+                    "training_amortization_record_count",
+                )
+                if any(
+                    isinstance(proposal[field], bool)
+                    or not isinstance(proposal[field], int)
+                    or proposal[field] < 1
+                    for field in positive_integer_fields
+                ):
+                    raise ValueError("proposal training counts must be positive integers")
+                positive_float_fields = (
+                    "training_total_work_units",
+                    "training_total_wall_seconds",
+                    "training_total_cpu_seconds",
+                )
+                if any(
+                    isinstance(proposal[field], bool)
+                    or not isinstance(proposal[field], (int, float))
+                    or not math.isfinite(float(proposal[field]))
+                    or float(proposal[field]) <= 0.0
+                    for field in positive_float_fields
+                ):
+                    raise ValueError("proposal training totals must be finite and positive")
+    if (
+        payload["phase"] != "development"
+        and "task_controls" in payload["proposal"]
+        and payload["schema"] != _SCHEMA_V3
+    ):
+        raise ValueError("formal task-conditioned policies require V3 training provenance")
     return payload, hashlib.sha256(raw).hexdigest()
+
+
+@dataclass(frozen=True)
+class ReplicatedPlanningSelection:
+    schema: str
+    planning_replicates: int
+    samples_per_replicate: int
+    variance_statistic: str
+    profile_replicate_variances: dict[str, tuple[float, ...]]
+    profile_planning_variances: dict[str, float]
+    candidate_point_work: dict[str, float]
+    cumulative_sample_count: int
+    cumulative_profile_work: float
+    finite_sample_work_certificate: bool
+    profiles: tuple[Any, ...]
+    frozen_decision: FrozenCrossoverDecision
+
+
+def _fixed_hybrid_work(
+    variances: tuple[float, ...],
+    costs: tuple[float, ...],
+    *,
+    target: float,
+    minimum_final_samples: int,
+) -> float:
+    root_sum = math.fsum(
+        math.sqrt(variance * cost)
+        for variance, cost in zip(variances, costs, strict=True)
+    )
+    counts = [
+        max(
+            minimum_final_samples,
+            math.ceil(root_sum * math.sqrt(variance / cost) / target)
+            if variance > 0.0
+            else minimum_final_samples,
+        )
+        for variance, cost in zip(variances, costs, strict=True)
+    ]
+    while (
+        math.fsum(
+            variance / count
+            for variance, count in zip(variances, counts, strict=True)
+        )
+        > target * (1.0 + 1e-14)
+    ):
+        best = max(
+            range(len(counts)),
+            key=lambda index: (
+                (
+                    variances[index] / counts[index]
+                    - variances[index] / (counts[index] + 1)
+                )
+                / costs[index],
+                -index,
+            ),
+        )
+        counts[best] += 1
+    return math.fsum(count * cost for count, cost in zip(counts, costs, strict=True))
 
 
 def _router_config(payload: dict[str, Any], *, smoke: bool) -> RarityRouterConfig:
@@ -135,15 +424,23 @@ def _append_screening(
     return batch.values, batch.work_units, batch.wall_seconds, cpu
 
 
-def _work_interval_from_profile(profile, *, preprocessing_work: float, target: float):
+def _work_interval_from_profile(
+    profile,
+    *,
+    preprocessing_work: float,
+    target: float,
+    minimum_final_samples: int,
+    point_variance_floor: float = 0.0,
+):
     lower, upper = profile.moments.variance_interval
     point = profile.moments.sample_variance
     cost = profile.cost_per_sample
     return RoutingWorkInterval(
         "dcs_slis",
-        preprocessing_work + lower * cost / target,
-        preprocessing_work + point * cost / target,
-        preprocessing_work + upper * cost / target,
+        preprocessing_work + max(minimum_final_samples, lower / target) * cost,
+        preprocessing_work
+        + max(minimum_final_samples, max(point, point_variance_floor) / target) * cost,
+        preprocessing_work + max(minimum_final_samples, upper / target) * cost,
     )
 
 
@@ -154,6 +451,8 @@ def _crude_work_interval(
     preprocessing_work: float,
     target: float,
     confidence_level: float,
+    minimum_final_samples: int,
+    point_probability: float | None = None,
 ) -> RoutingWorkInterval:
     hits = int(torch.count_nonzero(values))
     interval = exact_binomial_probability_interval(
@@ -165,12 +464,16 @@ def _crude_work_interval(
     )
     lower = min(endpoint_variances)
     upper = conservative_bernoulli_variance_upper(interval)
-    point = float(torch.var(values, unbiased=True))
+    point = (
+        float(torch.var(values, unbiased=True))
+        if point_probability is None
+        else point_probability * (1.0 - point_probability)
+    )
     return RoutingWorkInterval(
         "crude",
-        preprocessing_work + lower * cost / target,
-        preprocessing_work + point * cost / target,
-        preprocessing_work + upper * cost / target,
+        preprocessing_work + max(minimum_final_samples, lower / target) * cost,
+        preprocessing_work + max(minimum_final_samples, point / target) * cost,
+        preprocessing_work + max(minimum_final_samples, upper / target) * cost,
     )
 
 
@@ -187,6 +490,127 @@ def _linear_quantile(values: list[float], probability: float) -> float | None:
     return (1.0 - weight) * ordered[lower] + weight * ordered[upper]
 
 
+def _replicated_planning_selection(
+    *,
+    config: dict[str, Any],
+    dcs_sampler: RBergomiHybridTermSampler,
+    ledger: SeedLedger,
+    cell,
+    cluster: int,
+    profile_ids: tuple[str, ...],
+    candidate_profiles: dict[str, tuple[str, ...]],
+    preprocessing_work: float,
+    sampling_variance_target: float,
+    minimum_final_samples: int,
+    smoke: bool,
+) -> tuple[ReplicatedPlanningSelection, float, float, float]:
+    selector = config["selector"]
+    replicates = 3 if smoke else int(selector["planning_replicates"])
+    samples_per_replicate = 64 if smoke else int(selector["samples_per_replicate"])
+    observations = {profile_id: [] for profile_id in profile_ids}
+    replicate_variances = {profile_id: [] for profile_id in profile_ids}
+    selector_work = 0.0
+    selector_wall = 0.0
+    selector_cpu = 0.0
+    for replicate in range(replicates):
+        for profile_index, profile_id in enumerate(profile_ids):
+            seeds = {
+                stream: ledger.allocate(
+                    SeedKey(
+                        str(config["protocol_id"]),
+                        "selector-planning",
+                        f"{cell.cell_id}:cluster-{cluster}",
+                        profile_id,
+                        profile_index,
+                        replicate,
+                        stream,
+                    )
+                )
+                for stream in ("proposal", "labels")
+            }
+            cpu_started = time.process_time()
+            batch = dcs_sampler(profile_id, "pilot", samples_per_replicate, seeds)
+            selector_cpu += time.process_time() - cpu_started
+            selector_work += batch.work_units
+            selector_wall += batch.wall_seconds
+            observations[profile_id].append(batch.values)
+            replicate_variances[profile_id].append(
+                float(torch.var(batch.values, unbiased=True))
+            )
+    combined = {
+        profile_id: torch.cat(batches) for profile_id, batches in observations.items()
+    }
+    profiles = update_profile_intervals(
+        combined,
+        absolute_bounds={
+            profile_id: dcs_sampler.defensive_absolute_bound for profile_id in profile_ids
+        },
+        costs_per_sample={
+            profile_id: dcs_sampler.cost_per_sample(profile_id) for profile_id in profile_ids
+        },
+        familywise_alpha=float(selector["familywise_alpha"]),
+        total_predeclared_looks=1,
+    )
+    statistic = str(selector["planning_variance_statistic"])
+    planning_variances = {
+        profile_id: (
+            statistics.median(values)
+            if statistic == "median_replicate_variance"
+            else statistics.fmean(values)
+        )
+        for profile_id, values in replicate_variances.items()
+    }
+    safety = float(config["sampling"]["allocation_safety_factor"])
+    candidate_work: dict[str, float] = {}
+    for candidate, term_ids in candidate_profiles.items():
+        variances = tuple(safety * planning_variances[term_id] for term_id in term_ids)
+        costs = tuple(dcs_sampler.cost_per_sample(term_id) for term_id in term_ids)
+        candidate_work[candidate] = preprocessing_work + selector_work + _fixed_hybrid_work(
+            variances,
+            costs,
+            target=sampling_variance_target,
+            minimum_final_samples=minimum_final_samples,
+        )
+    best = min(candidate_work, key=lambda item: (candidate_work[item], item))
+    simpler = f"start_{max(int(item.split('_')[1]) for item in candidate_profiles)}"
+    tolerance = float(selector["practical_equivalence_relative_tolerance"])
+    selected = (
+        simpler
+        if candidate_work[simpler] <= (1.0 + tolerance) * candidate_work[best]
+        else best
+    )
+    selected_work = candidate_work[selected]
+    decision = FrozenCrossoverDecision(
+        selected_candidate=selected,
+        look_index=replicates - 1,
+        reason=(
+            "replicated planning point-work selection; no finite-sample work-regret "
+            "certificate"
+        ),
+        surviving_candidates=tuple(sorted(candidate_profiles)),
+        selected_work_interval=(selected_work, selected_work),
+        selected_point_work=selected_work,
+        worst_case_interval_regret_bound=selected_work / candidate_work[best],
+    )
+    state = ReplicatedPlanningSelection(
+        schema="npi.g11.v6-replicated-planning-selection.v1",
+        planning_replicates=replicates,
+        samples_per_replicate=samples_per_replicate,
+        variance_statistic=statistic,
+        profile_replicate_variances={
+            profile_id: tuple(values) for profile_id, values in replicate_variances.items()
+        },
+        profile_planning_variances=planning_variances,
+        candidate_point_work=candidate_work,
+        cumulative_sample_count=replicates * samples_per_replicate,
+        cumulative_profile_work=selector_work,
+        finite_sample_work_certificate=False,
+        profiles=profiles,
+        frozen_decision=decision,
+    )
+    return state, selector_work, selector_wall, selector_cpu
+
+
 def run(
     config_path: Path,
     manifest_path: Path,
@@ -195,6 +619,7 @@ def run(
     smoke: bool = False,
     checkpoint_directory: Path | None = None,
     resume: bool = False,
+    proposal_training_source_path: Path | None = None,
 ):
     config, config_hash = _load_config(config_path)
     manifest = _load_manifest(manifest_path)
@@ -219,7 +644,42 @@ def run(
     relative_rmse = max(0.50, float(sampling["relative_sampling_rmse"])) if smoke else float(
         sampling["relative_sampling_rmse"]
     )
-    proposal_weights = torch.tensor(config["proposal"]["weights"], dtype=torch.float64)
+    minimum_final_samples = 128 if smoke else int(sampling["minimum_final_samples"])
+    proposal = config["proposal"]
+    proposal_weights = torch.tensor(proposal["weights"], dtype=torch.float64)
+    proposal_training_audit: dict[str, Any] | None = None
+    proposal_training_per_record: dict[str, float | int] | None = None
+    if config["schema"] == _SCHEMA_V3:
+        amortization_count = int(proposal["training_amortization_record_count"])
+        expected_count = len(cells) * clusters
+        if amortization_count != expected_count:
+            raise ValueError(
+                "proposal training amortization count must equal the executed cell-cluster matrix"
+            )
+        total_samples = int(proposal["training_total_samples"])
+        if total_samples % amortization_count:
+            raise ValueError("proposal training samples must divide the amortization matrix")
+        proposal_training_per_record = {
+            "samples": total_samples // amortization_count,
+            "work_units": float(proposal["training_total_work_units"])
+            / amortization_count,
+            "wall_seconds": float(proposal["training_total_wall_seconds"])
+            / amortization_count,
+            "cpu_seconds": float(proposal["training_total_cpu_seconds"])
+            / amortization_count,
+        }
+        if proposal_training_source_path is not None:
+            proposal_training_audit = _task_conditioned_training_source_audit(
+                proposal, proposal_training_source_path
+            )
+        elif config["phase"] != "development":
+            raise ValueError("formal V3 policy execution requires its proposal training source")
+        else:
+            proposal_training_audit = {
+                "verified": False,
+                "source_artifact_sha256": proposal["training_source_artifact_sha256"],
+                "reason": "development execution did not receive the source artifact",
+            }
     profile_ids = rbergomi_hybrid_profile_ids(finest_level)
     candidate_profiles = rbergomi_hybrid_candidate_profiles(finest_level)
     progress_identities: dict[str, object] = {
@@ -268,19 +728,54 @@ def run(
         simulator = RBergomiSimulator(
             H=cell.hurst, eta=cell.eta, xi=cell.xi, rho=cell.rho, device="cpu"
         )
+        schedules = (
+            proposal["task_controls"][cell.task]
+            if "task_controls" in proposal
+            else proposal["controls"]
+        )
         controls = tuple(
             TimePiecewiseTwoDriverControl(
                 tuple(tuple(float(value) for value in segment) for segment in schedule),
                 maturity=cell.maturity,
             )
-            for schedule in config["proposal"]["controls"]
+            for schedule in schedules
         )
+        if len(controls) != proposal_weights.numel():
+            raise ValueError("task-conditioned proposal controls do not match mixture weights")
         natural = controls[0]
         for cluster in range(clusters):
             if (cell.cell_id, cluster) in completed:
                 continue
             ledger = SeedLedger()
             work = V6WorkLedger()
+            if proposal_training_per_record is not None:
+                work = work.append(
+                    _work_record(
+                        "proposal_training",
+                        method="v6_policy",
+                        cell_id=cell.cell_id,
+                        samples=int(proposal_training_per_record["samples"]),
+                        work_units=float(proposal_training_per_record["work_units"]),
+                        wall_seconds=float(proposal_training_per_record["wall_seconds"]),
+                        cpu_seconds=float(proposal_training_per_record["cpu_seconds"]),
+                    )
+                )
+            elif "amortized_training_work_per_record" in proposal:
+                work = work.append(
+                    _work_record(
+                        "proposal_training",
+                        method="v6_policy",
+                        cell_id=cell.cell_id,
+                        samples=int(proposal["amortized_training_samples_per_record"]),
+                        work_units=float(proposal["amortized_training_work_per_record"]),
+                        wall_seconds=float(
+                            proposal["amortized_training_wall_seconds_per_record"]
+                        ),
+                        cpu_seconds=float(
+                            proposal["amortized_training_cpu_seconds_per_record"]
+                        ),
+                    )
+                )
             crude_interval = None
             dcs_interval = None
             hybrid_opportunity = None
@@ -413,13 +908,34 @@ def run(
                     preprocessing_work=common_prework,
                     target=target_variance,
                     confidence_level=router_config.confidence_level,
+                    minimum_final_samples=minimum_final_samples,
+                    point_probability=(
+                        cell.nominal_probability
+                        if config["schema"] in (_SCHEMA_V2, _SCHEMA_V3)
+                        else None
+                    ),
                 )
                 dcs_interval = _work_interval_from_profile(
                     dcs_profile,
                     preprocessing_work=common_prework,
                     target=target_variance,
+                    minimum_final_samples=minimum_final_samples,
+                    point_variance_floor=(
+                        cell.nominal_probability * (1.0 - cell.nominal_probability)
+                        if config["schema"] in (_SCHEMA_V2, _SCHEMA_V3)
+                        else 0.0
+                    ),
                 )
-                first_look = 32 if smoke else int(config["selector"]["looks"][0])
+                if config["schema"] in (_SCHEMA_V2, _SCHEMA_V3):
+                    planning_replicates = (
+                        3 if smoke else int(config["selector"]["planning_replicates"])
+                    )
+                    planning_samples = (
+                        64 if smoke else int(config["selector"]["samples_per_replicate"])
+                    )
+                    first_look = planning_replicates * planning_samples
+                else:
+                    first_look = 32 if smoke else int(config["selector"]["looks"][0])
                 minimum_profile_work = math.fsum(
                     first_look * dcs_sampler.cost_per_sample(profile_id)
                     for profile_id in profile_ids
@@ -453,7 +969,72 @@ def run(
             )
 
             selection_state = None
-            if route.action == "profile_hybrid":
+            if route.action == "profile_hybrid" and config["schema"] in (
+                _SCHEMA_V2,
+                _SCHEMA_V3,
+            ):
+                selection_state, selector_work, selector_wall, selector_cpu_total = (
+                    _replicated_planning_selection(
+                        config=config,
+                        dcs_sampler=dcs_sampler,
+                        ledger=ledger,
+                        cell=cell,
+                        cluster=cluster,
+                        profile_ids=profile_ids,
+                        candidate_profiles=candidate_profiles,
+                        preprocessing_work=work.total_work_units,
+                        sampling_variance_target=(
+                            cell.nominal_probability * relative_rmse
+                        )
+                        ** 2,
+                        minimum_final_samples=minimum_final_samples,
+                        smoke=smoke,
+                    )
+                )
+                work = work.append(
+                    _work_record(
+                        "selector_profile",
+                        method="v6_policy",
+                        cell_id=cell.cell_id,
+                        samples=(
+                            selection_state.cumulative_sample_count * len(profile_ids)
+                        ),
+                        work_units=selector_work,
+                        wall_seconds=selector_wall,
+                        cpu_seconds=selector_cpu_total,
+                    )
+                )
+                selected = selection_state.frozen_decision.selected_candidate
+                selected_profile_ids = candidate_profiles[selected]
+                prepared = prepare_v6_hybrid_policy(
+                    HybridTarget(
+                        f"{cell.cell_id}:v6-policy",
+                        cell.nominal_probability,
+                        relative_rmse,
+                        confidence_level=float(sampling["confidence_level"]),
+                    ),
+                    selection_state.profiles,
+                    policy_name="v6_policy",
+                    cell_id=cell.cell_id,
+                    route=route,
+                    selection=selection_state.frozen_decision,
+                    selected_profile_ids=selected_profile_ids,
+                    protocol=f"{config['protocol_id']}:cluster-{cluster}",
+                    regime=f"{cell.cell_id}:cluster-{cluster}",
+                    task=cell.task,
+                    operation_work_cap=float(sampling["operation_work_cap"]),
+                    preprocessing_work=work,
+                    chunk_size=(512 if smoke else int(sampling["chunk_size"])),
+                    minimum_final_samples=minimum_final_samples,
+                    allocation_safety_factor=float(sampling["allocation_safety_factor"]),
+                    design_variance_overrides={
+                        profile_id: selection_state.profile_planning_variances[profile_id]
+                        for profile_id in selected_profile_ids
+                    },
+                    preparation_seed_ledger=ledger,
+                )
+                final_sampler = dcs_sampler
+            elif route.action == "profile_hybrid":
                 looks = tuple(int(value) for value in config["selector"]["looks"])
                 if smoke:
                     looks = (32, 64)
@@ -521,6 +1102,7 @@ def run(
                         maximum_profile_fraction_of_best_point=float(
                             config["router"]["maximum_profile_fraction"]
                         ),
+                        minimum_final_samples_per_term=minimum_final_samples,
                     )
                     previous = cumulative
                     if selection_state.stopped:
@@ -557,7 +1139,7 @@ def run(
                     operation_work_cap=float(sampling["operation_work_cap"]),
                     preprocessing_work=work,
                     chunk_size=(512 if smoke else int(sampling["chunk_size"])),
-                    minimum_final_samples=(128 if smoke else int(sampling["minimum_final_samples"])),
+                    minimum_final_samples=minimum_final_samples,
                     allocation_safety_factor=float(sampling["allocation_safety_factor"]),
                     preparation_seed_ledger=ledger,
                 )
@@ -599,7 +1181,7 @@ def run(
                     preprocessing_work=work,
                     route=route,
                     chunk_size=(512 if smoke else int(sampling["chunk_size"])),
-                    minimum_final_samples=(128 if smoke else int(sampling["minimum_final_samples"])),
+                    minimum_final_samples=minimum_final_samples,
                     preparation_seed_ledger=ledger,
                 )
                 final_sampler = dcs_sampler
@@ -632,7 +1214,7 @@ def run(
                     preprocessing_work=work,
                     route=route,
                     chunk_size=(512 if smoke else int(sampling["chunk_size"])),
-                    minimum_final_samples=(128 if smoke else int(sampling["minimum_final_samples"])),
+                    minimum_final_samples=minimum_final_samples,
                     streams=("proposal",),
                     preparation_seed_ledger=ledger,
                 )
@@ -640,13 +1222,35 @@ def run(
             else:
                 raise AssertionError("router remained unresolved")
 
-            result = execute_v6_policy(
-                prepared,
-                final_sampler,
-                reference_probability=reference_probability,
-                reference_standard_error=reference_se,
-                final_peak_memory_bytes=0,
+            record_checkpoint = (
+                None
+                if checkpoint_directory is None
+                else _record_checkpoint_path(
+                    checkpoint_directory, cell_id=cell.cell_id, cluster=cluster
+                )
             )
+            if record_checkpoint is None:
+                result = execute_v6_policy(
+                    prepared,
+                    final_sampler,
+                    reference_probability=reference_probability,
+                    reference_standard_error=reference_se,
+                    final_peak_memory_bytes=0,
+                )
+            else:
+                state_path = record_checkpoint.with_suffix(
+                    record_checkpoint.suffix + ".v6.json"
+                )
+                result = execute_v6_policy_durable(
+                    prepared,
+                    final_sampler,
+                    checkpoint_path=record_checkpoint,
+                    resume=record_checkpoint.exists() or state_path.exists(),
+                    chunks_per_checkpoint=1,
+                    reference_probability=reference_probability,
+                    reference_standard_error=reference_se,
+                    final_peak_memory_bytes=0,
+                )
             audit = audit_v6_policy(prepared, result)
             selection_fraction = (
                 result.total_work.category_work("selector_profile")
@@ -694,6 +1298,8 @@ def run(
                         "g11_v6_routed_policy", progress_identities, tuple(records)
                     ),
                 )
+                if record_checkpoint is not None:
+                    _clear_record_checkpoint(record_checkpoint)
     selection_fractions = [float(record["selection_work_fraction"]) for record in records]
     median_fraction = _linear_quantile(selection_fractions, 0.5)
     p90_fraction = _linear_quantile(selection_fractions, 0.9)
@@ -703,6 +1309,13 @@ def run(
             record["route"]["action"] != "continue_screening" for record in records
         ),
         "all_runs_complete": all(record["result"]["core"]["complete"] for record in records),
+        "all_design_targets_attained": all(
+            record["result"]["core"]["design_target_attained"] for record in records
+        ),
+        "all_empirical_targets_attained": all(
+            record["result"]["core"]["empirical_target_attained"] is True
+            for record in records
+        ),
         "no_resource_censoring": all(
             not record["result"]["core"]["resource_censored"] for record in records
         ),
@@ -722,14 +1335,26 @@ def run(
         "frozen_manifest": manifest.frozen,
         "clean_source": not bool(provenance["dirty_worktree"]),
         "non_smoke": not smoke,
+        "proposal_training_source_verified": (
+            "task_controls" not in proposal
+            or bool(proposal_training_audit and proposal_training_audit["verified"])
+        ),
     }
     return {
         "schema": "npi.g11.v6-routed-policy.v1",
         "protocol_id": config["protocol_id"],
+        "config_schema": config["schema"],
+        "work_certificate_scope": (
+            "simultaneous bounded work intervals"
+            if config["schema"] == _SCHEMA_V1
+            else "replicated planning point-work only; no finite-sample work-regret certificate"
+        ),
         "phase": config["phase"],
         "config_sha256": config_hash,
         "manifest_sha256": manifest.sha256,
         "reference_artifact_sha256": reference_hash,
+        "proposal_training_audit": proposal_training_audit,
+        "proposal_training_per_record": proposal_training_per_record,
         "smoke": smoke,
         "records": records,
         "selection_fraction_summary": {"median": median_fraction, "p90": p90_fraction},
@@ -756,6 +1381,7 @@ def main() -> None:
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--checkpoint-directory", type=Path)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--proposal-training-source", type=Path)
     arguments = parser.parse_args()
     result = run(
         arguments.config,
@@ -764,6 +1390,7 @@ def main() -> None:
         smoke=arguments.smoke,
         checkpoint_directory=arguments.checkpoint_directory,
         resume=arguments.resume,
+        proposal_training_source_path=arguments.proposal_training_source,
     )
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
     arguments.output.write_text(

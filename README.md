@@ -21,8 +21,12 @@ free rarity router, profiling caps, matched crude/pure-CEM/defensive-CEM baselin
 one achieved-RMSE execution contract, exact training-inclusive work ledgers, paired
 power planning, a fail-closed confirmation analyzer, an offline JSON-only auditor,
 outcome-blind freeze tooling, and a cross-platform reproduction audit. Development
-smoke and corruption tests pass. Full rare-cell qualification, untouched confirmation,
-and Linux reproduction have **not** yet been run.
+smoke and corruption tests pass. A two-cell, 24-cluster laptop development pilot
+passes the prespecified aggregate accuracy gates and favors the policy over pure CEM
+by a 3.13x training-inclusive geometric work ratio (one-sided 95% lower ratio 2.81x).
+The conservative forecast requires 51 clusters, so this is not powered confirmation.
+Full rare-cell qualification, untouched confirmation, and Linux reproduction have
+**not** yet been run.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -44,7 +48,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **466/466 tests on 2026-07-23**.
+The complete local regression suite passed **481/481 tests on 2026-07-23**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finest discrete grid rather than a continuously monitored event,
@@ -81,6 +85,7 @@ Start with:
 - [V6 dual-track PhD implementation plan](docs/plans/G11_V6_DUAL_TRACK_PHD_IMPLEMENTATION_PLAN_2026-07-23.md)
 - [V6 notation-to-code ledger](docs/theory/G11_V6_NOTATION_CODE_LEDGER.md)
 - [V6 terminal inverse-slope theorem](docs/theory/G11_V6_TERMINAL_SLOPE_THEOREM.md)
+- [V6 laptop development decision](docs/audits/G11_V6_LAPTOP_DEVELOPMENT_DECISION_2026-07-23.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
@@ -281,9 +286,9 @@ python -m experiments.g11_v6_laptop_smoke \
 ```
 
 Long baseline and routed-policy runs also accept `--checkpoint-directory` and
-`--resume`. Completed records are hash-bound in a strict progress journal. An
-interrupted in-progress record is not silently promoted or deleted; formal
-confirmation treats such an interruption under its predeclared failure rule.
+`--resume`. Completed records are hash-bound in a strict progress journal, while the
+current record's final allocation uses a policy-bound chunk checkpoint. Resume cannot
+change the proposal, route, selected candidate, integer allocation, or seed namespace.
 
 ## Installation
 
