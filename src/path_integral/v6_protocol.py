@@ -12,7 +12,7 @@ import json
 import math
 import re
 from dataclasses import asdict, dataclass
-from typing import Literal
+from typing import Literal, cast
 
 V6_CELL_MANIFEST_SCHEMA = "npi.g11.v6-cell-manifest.v1"
 V6Phase = Literal["development", "qualification", "confirmation"]
@@ -166,7 +166,7 @@ class V6RBergomiCell:
             spot=_strict_real(payload["spot"], "spot"),
             maturity=_strict_real(payload["maturity"], "maturity"),
             finest_steps=_strict_integer(payload["finest_steps"], "finest_steps", minimum=2),
-            task=task,
+            task=cast(V6Task, task),
             event_threshold=_strict_real(payload["event_threshold"], "event_threshold"),
             nominal_probability=_strict_real(
                 payload["nominal_probability"], "nominal_probability"
@@ -276,7 +276,7 @@ class V6CellManifest:
         return cls(
             schema=_strict_text(payload["schema"], "schema"),
             protocol=_strict_text(payload["protocol"], "protocol"),
-            phase=phase,
+            phase=cast(V6Phase, phase),
             frozen=frozen,
             source_commit=_strict_text(payload["source_commit"], "source_commit"),
             dirty_tree=dirty_tree,

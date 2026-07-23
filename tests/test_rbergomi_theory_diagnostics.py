@@ -14,6 +14,7 @@ from src.path_integral import (
     direction_regularity_diagnostics,
     evaluate_rbergomi_threshold_coupling,
     slope_lower_tail_diagnostics,
+    terminal_rate_contract,
     terminal_slope_inverse_moment_bound,
 )
 
@@ -92,6 +93,22 @@ def test_piecewise_positive_direction_has_a_grid_uniform_scaled_l1_mass() -> Non
         masses.append(result.grid_scaled_l1_mass)
         assert math.isfinite(result.upper_bound)
     assert masses[0] == pytest.approx(masses[1])
+
+
+def test_terminal_rate_contract_separates_candidate_rate_from_journal_claim_and_barrier() -> None:
+    contract = terminal_rate_contract(0.12, epsilon_margin=0.01)
+    assert contract.coefficient_lp_exponent == pytest.approx(0.11)
+    assert contract.threshold_lp_exponent == pytest.approx(0.11)
+    assert contract.dcs_second_moment_exponent == pytest.approx(0.22)
+    assert contract.weak_bias_exponent == pytest.approx(0.11)
+    assert contract.fft_has_log_factor
+    assert contract.mlmc_epsilon_polynomial_exponent == pytest.approx(1.0 / 0.11)
+    assert not contract.barrier_included
+    assert "independent mathematical review" in contract.proof_status
+    assert not contract.journal_claim_ready
+
+    with pytest.raises(ValueError, match="epsilon"):
+        terminal_rate_contract(0.12, epsilon_margin=0.12)
 
 
 def test_coefficient_diagnostic_returns_raw_lp_norms_without_fitting_a_rate() -> None:

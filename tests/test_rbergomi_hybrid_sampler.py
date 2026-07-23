@@ -15,7 +15,7 @@ from src.path_integral import (
 from src.physics_engine import RBergomiSimulator
 
 
-def _sampler() -> RBergomiHybridTermSampler:
+def _sampler(*, correction_method: str = "dcs_mgi") -> RBergomiHybridTermSampler:
     simulator = RBergomiSimulator(H=0.12, eta=1.1, xi=0.04, rho=-0.6, device="cpu")
     controls = (
         TimePiecewiseTwoDriverControl(((0.0, 0.0), (0.0, 0.0)), maturity=0.25),
@@ -30,6 +30,7 @@ def _sampler() -> RBergomiHybridTermSampler:
         maturity=0.25,
         coarsest_steps=8,
         finest_level=2,
+        correction_method=correction_method,
     )
 
 
@@ -76,3 +77,16 @@ def test_defensive_bound_uses_declared_zero_component_not_smallest_weight() -> N
     sampler = _sampler()
     assert sampler.declared_natural_component_weight == pytest.approx(0.2)
     assert sampler.defensive_absolute_bound == pytest.approx(5.0)
+
+
+def test_smoothing_off_sampler_uses_raw_defensive_term_under_same_seeds() -> None:
+    smoothed = _sampler(correction_method="dcs_mgi")
+    raw = _sampler(correction_method="raw_defensive")
+    seeds = {"proposal": 12345, "labels": 23456}
+    dcs_batch = smoothed("single_2", "pilot", 512, seeds)
+    raw_batch = raw("single_2", "pilot", 512, seeds)
+    assert dcs_batch.values.shape == raw_batch.values.shape
+    assert not torch.equal(dcs_batch.values, raw_batch.values)
+    assert float(torch.amax(torch.abs(raw_batch.values))) <= (
+        raw.defensive_absolute_bound + 1e-12
+    )

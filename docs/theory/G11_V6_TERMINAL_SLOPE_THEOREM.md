@@ -2,9 +2,10 @@
 
 Date: 2026-07-23
 
-Status: proved for the implemented target-law terminal slope and positive deterministic
-rank-one direction; this does not by itself prove the terminal correction rate,
-weak bias, MLMC complexity, or any barrier rate
+Status: the inverse-slope bound is proved for the implemented target-law terminal
+slope and positive deterministic rank-one direction. The separate terminal coefficient
+document is a conservative proof candidate, not yet an independently reviewed journal
+theorem; every barrier rate remains open.
 
 ## 1. Object covered by the theorem
 
@@ -151,14 +152,11 @@ what discharges the negative-moment obligation.
 
 ## 7. What remains conditional
 
-This theorem removes the terminal small-slope/negative-moment obstacle only. The
-following are still required before claiming a model-level terminal correction rate:
-
-- `L^p` rates for fine/coarse terminal intercept and slope coefficients under the
-  exact implemented coupling;
-- the numerator-envelope moments used by the ratio-localization theorem;
-- an explicit optimization of the localization threshold using those rates; and
-- separate weak-bias and cost exponents before any end-to-end MLMC complexity claim.
+The separate `G11_V6_TERMINAL_COEFFICIENT_RATE_THEOREM.md` gives a proof candidate
+for the fine/coarse terminal coefficient, threshold, weak-bias, and cost obligations
+at every rate `r<H`. After independent mathematical review, the resulting FFT-MLMC
+complexity would be conservatively
+`O(epsilon^(-1/r) log(epsilon^-1))`, not `O(epsilon^-2)`.
 
 For discrete barriers the active time can occur close to zero and fine-only monitoring
 points add a mesh-enrichment term. The terminal result must not be transferred to the

@@ -167,17 +167,17 @@ def freeze_rarity_route(
     """
 
     _positive_real(screening_work, "screening_work", allow_zero=True)
-    for expected, interval in (("crude", crude_work), ("dcs_slis", dcs_work)):
-        if interval is not None and interval.method != expected:
+    for expected, work_interval in (("crude", crude_work), ("dcs_slis", dcs_work)):
+        if work_interval is not None and work_interval.method != expected:
             raise ValueError(f"{expected}_work has the wrong method identity")
-    interval = exact_binomial_probability_interval(
+    probability_interval = exact_binomial_probability_interval(
         successes,
         trials,
         confidence_level=config.confidence_level,
     )
-    if interval.lower > config.probability_cutoff:
+    if probability_interval.lower > config.probability_cutoff:
         rarity_class: RarityClass = "moderate"
-    elif interval.upper < config.probability_cutoff:
+    elif probability_interval.upper < config.probability_cutoff:
         rarity_class = "rare"
     else:
         rarity_class = "ambiguous"
@@ -241,7 +241,7 @@ def freeze_rarity_route(
         "action": action,
         "rarity_class": rarity_class,
         "reason": reason,
-        "probability_interval": asdict(interval),
+        "probability_interval": asdict(probability_interval),
         "screening_work": screening_work,
         "effective_profile_work_cap": effective_cap,
         "current_best_method": best_method,
@@ -257,11 +257,10 @@ def freeze_rarity_route(
         action=action,
         rarity_class=rarity_class,
         reason=reason,
-        probability_interval=interval,
+        probability_interval=probability_interval,
         screening_work=screening_work,
         effective_profile_work_cap=effective_cap,
         current_best_method=best_method,
         current_best_point_work=best_point,
         decision_hash=_decision_hash(payload),
     )
-

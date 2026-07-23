@@ -25,12 +25,20 @@ from src.path_integral.hybrid_allocation import (
     save_hybrid_checkpoint,
 )
 from src.path_integral.mlmc import WorkLedgerEntry
+from src.path_integral.provenance import process_peak_resident_memory_bytes
 from src.path_integral.rarity_router import FrozenRarityRoute
 from src.path_integral.robust_crossover import FrozenCrossoverDecision, LevelProfileInterval
 from src.path_integral.seed_ledger import SeedLedger
 from src.path_integral.v6_work_ledger import V6WorkLedger, V6WorkRecord
 
-V6ExecutionMethod = Literal["crude", "pure_cem", "defensive_cem", "dcs_slis", "hybrid"]
+V6ExecutionMethod = Literal[
+    "crude",
+    "pure_cem",
+    "defensive_cem",
+    "dcs_slis",
+    "raw_defensive",
+    "hybrid",
+]
 
 
 @dataclass(frozen=True)
@@ -212,7 +220,9 @@ def prepare_v6_direct_policy(
     *,
     policy_name: str,
     cell_id: str,
-    execution_method: Literal["crude", "pure_cem", "defensive_cem", "dcs_slis"],
+    execution_method: Literal[
+        "crude", "pure_cem", "defensive_cem", "dcs_slis", "raw_defensive"
+    ],
     protocol: str,
     regime: str,
     task: str,
@@ -387,6 +397,9 @@ def execute_v6_policy(
     cumulative_final_cpu_seconds = prior_final_cpu_seconds + (
         time.process_time() - cpu_started
     )
+    measured_peak_memory_bytes = max(
+        final_peak_memory_bytes, process_peak_resident_memory_bytes()
+    )
     final_entries = tuple(entry for entry in core_result.work.entries if entry.role == "final")
     total_work = prepared.preprocessing_work
     if final_entries:
@@ -400,7 +413,7 @@ def execute_v6_policy(
                 work_units=math.fsum(entry.work_units for entry in final_entries),
                 wall_seconds=math.fsum(entry.wall_seconds for entry in final_entries),
                 cpu_seconds=cumulative_final_cpu_seconds,
-                peak_memory_bytes=final_peak_memory_bytes,
+                peak_memory_bytes=measured_peak_memory_bytes,
                 successful=core_result.complete,
             )
         )

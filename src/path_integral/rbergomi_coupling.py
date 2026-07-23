@@ -16,7 +16,7 @@ from typing import cast
 import torch
 from scipy.integrate import quad
 
-from src.physics_engine import RBergomiSimulator
+from src.physics_engine import RBergomiSimulator, strict_lognormal_variance
 
 RBergomiControl = Callable[..., torch.Tensor]
 
@@ -300,11 +300,11 @@ def simulate_coupled_rbergomi_adjacent(
             fine_driver_matrix * fine_weights[step, : step + 1], dim=1
         )
         fine_volterra = volterra_scale * (fine_historical + target_fine_integral)
-        fine_variance = xi * torch.exp(
+        fine_variance = strict_lognormal_variance(
             eta * fine_volterra
-            - 0.5 * eta**2 * fine_volterra_variance[step + 1]
+            - 0.5 * eta**2 * fine_volterra_variance[step + 1],
+            xi=xi,
         )
-        fine_variance = torch.clamp(fine_variance, min=1e-10)
         if not torch.isfinite(fine_variance).all() or not torch.isfinite(fine_log_spot).all():
             raise FloatingPointError("fine coupled rBergomi path became nonfinite")
         fine_running_minimum = torch.minimum(fine_running_minimum, torch.exp(fine_log_spot))
@@ -354,11 +354,11 @@ def simulate_coupled_rbergomi_adjacent(
             coarse_volterra = volterra_scale * (
                 coarse_historical + target_coarse_integral
             )
-            coarse_variance = xi * torch.exp(
+            coarse_variance = strict_lognormal_variance(
                 eta * coarse_volterra
-                - 0.5 * eta**2 * coarse_volterra_variance[coarse_index + 1]
+                - 0.5 * eta**2 * coarse_volterra_variance[coarse_index + 1],
+                xi=xi,
             )
-            coarse_variance = torch.clamp(coarse_variance, min=1e-10)
             if (
                 not torch.isfinite(coarse_variance).all()
                 or not torch.isfinite(coarse_log_spot).all()

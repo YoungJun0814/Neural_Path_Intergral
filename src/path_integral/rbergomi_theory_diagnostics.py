@@ -72,6 +72,68 @@ class TerminalSlopeInverseMomentBound:
     upper_bound: float
 
 
+@dataclass(frozen=True)
+class TerminalRateContract:
+    """Conservative proof-candidate exponents for the strict terminal model."""
+
+    hurst: float
+    epsilon_margin: float
+    coefficient_lp_exponent: float
+    threshold_lp_exponent: float
+    dcs_second_moment_exponent: float
+    weak_bias_exponent: float
+    fft_polynomial_cost_exponent: float
+    fft_has_log_factor: bool
+    mlmc_epsilon_polynomial_exponent: float
+    barrier_included: bool
+    proof_status: str
+    journal_claim_ready: bool
+    proof_scope: str
+
+
+def terminal_rate_contract(
+    hurst: float, *, epsilon_margin: float
+) -> TerminalRateContract:
+    """Return the proved conservative exponent ledger, not a fitted rate.
+
+    The proof supports every exponent strictly below ``H``.  The explicit epsilon
+    margin prevents a numerical configuration from silently claiming an endpoint
+    uniformity that is absent from the compact-domain proof.
+    """
+
+    if not math.isfinite(hurst) or not 0.0 < hurst < 0.5:
+        raise ValueError("Hurst parameter must lie in (0, 0.5)")
+    if (
+        not math.isfinite(epsilon_margin)
+        or epsilon_margin <= 0.0
+        or epsilon_margin >= hurst
+    ):
+        raise ValueError("epsilon margin must lie in (0, H)")
+    rate = hurst - epsilon_margin
+    second = 2.0 * rate
+    return TerminalRateContract(
+        hurst=hurst,
+        epsilon_margin=epsilon_margin,
+        coefficient_lp_exponent=rate,
+        threshold_lp_exponent=rate,
+        dcs_second_moment_exponent=second,
+        weak_bias_exponent=rate,
+        fft_polynomial_cost_exponent=1.0,
+        fft_has_log_factor=True,
+        mlmc_epsilon_polynomial_exponent=1.0 / rate,
+        barrier_included=False,
+        proof_status=(
+            "self-contained proof candidate; independent mathematical review and "
+            "clean-artifact reproduction remain required"
+        ),
+        journal_claim_ready=False,
+        proof_scope=(
+            "terminal strict-lognormal rBergomi under the declared compact parameter, "
+            "positive-direction, deterministic-control, and exact adjacent-coupling assumptions"
+        ),
+    )
+
+
 def direction_regularity_diagnostics(
     fine_direction: torch.Tensor,
     *,

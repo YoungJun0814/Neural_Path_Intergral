@@ -19,6 +19,35 @@ from dataclasses import dataclass
 
 import torch
 
+
+def strict_lognormal_variance(
+    log_factor: torch.Tensor, *, xi: float
+) -> torch.Tensor:
+    """Evaluate ``xi * exp(log_factor)`` without silently flooring volatility."""
+
+    if not math.isfinite(xi) or xi <= 0.0:
+        raise ValueError("xi must be finite and positive")
+    if not log_factor.is_floating_point() or not torch.isfinite(log_factor).all():
+        raise FloatingPointError("lognormal variance exponent must be finite")
+    log_variance = log_factor + math.log(xi)
+    finfo = torch.finfo(log_variance.dtype)
+    lower = math.log(finfo.tiny)
+    upper = math.log(finfo.max)
+    if bool((log_variance < lower).any()) or bool((log_variance > upper).any()):
+        raise FloatingPointError(
+            "rBergomi variance lies outside the normal floating-point range"
+        )
+    variance = torch.exp(log_variance)
+    if (
+        not torch.isfinite(variance).all()
+        or bool((variance < finfo.tiny).any())
+    ):
+        raise FloatingPointError(
+            "rBergomi lognormal variance became subnormal or nonfinite"
+        )
+    return variance
+
+
 # -----------------------------------------------------------------------------
 # 1. Heston / Bates / SVJJ
 # -----------------------------------------------------------------------------
@@ -901,10 +930,10 @@ class RBergomiSimulator:
                 dim=1,
             )
             next_volterra = volterra_scale * (historical + target_local_integral)
-            next_variance = xi * torch.exp(
-                eta * next_volterra - 0.5 * (eta**2) * volterra_variance[step + 1]
+            next_variance = strict_lognormal_variance(
+                eta * next_volterra - 0.5 * (eta**2) * volterra_variance[step + 1],
+                xi=xi,
             )
-            next_variance = torch.clamp(next_variance, min=1e-10)
             if not torch.isfinite(next_variance).all() or not torch.isfinite(next_log_spot).all():
                 raise FloatingPointError("controlled rBergomi path became nonfinite")
 

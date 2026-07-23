@@ -28,6 +28,7 @@ from src.path_integral import (
     rank_one_price_control_span,
     simulate_coupled_rbergomi_mixture,
     slope_lower_tail_diagnostics,
+    terminal_rate_contract,
     terminal_slope_inverse_moment_bound,
 )
 from src.path_integral.provenance import runtime_provenance, source_provenance
@@ -62,6 +63,22 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         raise ValueError("qualification theory diagnostics must be frozen")
     if payload["estimand"] != "fixed_finest_grid":
         raise ValueError("theory diagnostics must retain the finite-grid estimand")
+    analysis = payload["analysis"]
+    if not isinstance(analysis, dict) or set(analysis) != {
+        "theorem_epsilon_margin",
+        "denominator_floor",
+        "active_time_fraction",
+        "inverse_orders",
+        "lower_tail_floors",
+        "bootstrap_repetitions",
+        "minimum_rate_levels",
+        "endpoint_slope_margin",
+        "maximum_variance_cv",
+    }:
+        raise ValueError("malformed V6 theory-diagnostics analysis fields")
+    margin = float(analysis["theorem_epsilon_margin"])
+    if not math.isfinite(margin) or margin <= 0.0:
+        raise ValueError("theorem epsilon margin must be finite and positive")
     return payload, hashlib.sha256(raw).hexdigest()
 
 
@@ -308,6 +325,13 @@ def run(config_path: Path, manifest_path: Path, *, smoke: bool = False) -> dict[
                 )
             )
     tolerance = float(config["gates"]["pathwise_tolerance"])
+    epsilon_margin = float(analysis["theorem_epsilon_margin"])
+    terminal_rate_contracts = {
+        f"h{hurst:.6f}": asdict(
+            terminal_rate_contract(hurst, epsilon_margin=epsilon_margin)
+        )
+        for hurst in sorted(by_hurst)
+    }
     gates = {
         "no_failures": not failures,
         "complete_diagnostic_matrix": len(records)
@@ -332,6 +356,8 @@ def run(config_path: Path, manifest_path: Path, *, smoke: bool = False) -> dict[
             )
             for record in records
         ),
+        "terminal_rate_contracts_valid": len(terminal_rate_contracts)
+        == len(by_hurst),
         "empirical_diagnostics_not_proof": True,
     }
     provenance = source_provenance()
@@ -348,9 +374,13 @@ def run(config_path: Path, manifest_path: Path, *, smoke: bool = False) -> dict[
         "manifest_sha256": manifest.sha256,
         "smoke": smoke,
         "claim_scope": (
-            "terminal inverse-slope moments have an analytic bound; coefficient and "
-            "correction-rate outputs remain falsification diagnostics, not a model-rate proof"
+            "the executable contract records a terminal proof candidate for coefficient, "
+            "threshold, second-moment, weak-bias, and conservative FFT-MLMC rates at every "
+            "r<H under the declared assumptions; independent mathematical review remains "
+            "required, fitted outputs are falsification diagnostics, and barriers are excluded"
         ),
+        "strict_lognormal_target": True,
+        "terminal_rate_contracts": terminal_rate_contracts,
         "records": records,
         "rate_results": rate_results,
         "failures": failures,

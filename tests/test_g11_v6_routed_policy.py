@@ -13,6 +13,7 @@ from experiments.g11_v6_rarity_calibration import run as run_calibration
 from experiments.g11_v6_reference import run as run_reference
 from experiments.g11_v6_result_audit import run as run_audit
 from experiments.g11_v6_routed_policy import (
+    _apportion_shared_training,
     _crude_work_interval,
     _load_config,
     _task_conditioned_training_source_audit,
@@ -82,6 +83,41 @@ def test_router_work_interval_charges_the_execution_floor_after_zero_hits() -> N
     assert interval.upper > interval.point
 
 
+def test_v3_shared_training_apportionment_conserves_nondivisible_totals() -> None:
+    proposal = {
+        "training_amortization_record_count": 6,
+        "training_total_samples": 20,
+        "training_total_work_units": 41.0,
+        "training_total_wall_seconds": 3.0,
+        "training_total_cpu_seconds": 5.0,
+    }
+    allocations, contract = _apportion_shared_training(proposal, 6)
+    assert [item["samples"] for item in allocations] == [4, 4, 3, 3, 3, 3]
+    assert sum(int(item["samples"]) for item in allocations) == 20
+    assert sum(float(item["work_units"]) for item in allocations) == pytest.approx(41.0)
+    assert sum(float(item["wall_seconds"]) for item in allocations) == pytest.approx(3.0)
+    assert sum(float(item["cpu_seconds"]) for item in allocations) == pytest.approx(5.0)
+    assert contract["integer_sample_remainder"] == 2
+    assert contract["rule"].startswith("manifest_order_then_cluster")
+
+
+def test_v3_shared_training_apportionment_rejects_matrix_drift() -> None:
+    proposal = {
+        "training_amortization_record_count": 5,
+        "training_total_samples": 20,
+        "training_total_work_units": 41.0,
+        "training_total_wall_seconds": 3.0,
+        "training_total_cpu_seconds": 5.0,
+    }
+    with pytest.raises(ValueError, match="executed cell-cluster matrix"):
+        _apportion_shared_training(proposal, 6)
+    allocations, contract = _apportion_shared_training(
+        proposal, 6, enforce_declared_count=False
+    )
+    assert len(allocations) == 6
+    assert not contract["declared_count_enforced"]
+
+
 def test_v3_proposal_bank_is_rederived_from_its_hashed_training_source(
     tmp_path: Path,
 ) -> None:
@@ -114,6 +150,9 @@ def test_v3_proposal_bank_is_rederived_from_its_hashed_training_source(
         )
     source = {
         "schema": "npi.g11.v6-baseline-qualification.v1",
+        "source_commit": "a" * 40,
+        "dirty_worktree": False,
+        "smoke": False,
         "records": records,
     }
     source_path = tmp_path / "training.json"
@@ -139,6 +178,7 @@ def test_v3_proposal_bank_is_rederived_from_its_hashed_training_source(
     audit = _task_conditioned_training_source_audit(proposal, source_path)
     assert audit["verified"]
     assert audit["total_samples"] == 20
+    assert audit["formal_training_source_readiness"]
 
     proposal["task_controls"]["terminal_left_tail"][2][0][0] += 0.01
     with pytest.raises(ValueError, match="declared derivation"):

@@ -28,8 +28,15 @@ def test_v6_theory_diagnostic_smoke_keeps_claim_conditional(tmp_path: Path) -> N
     manifest_path.write_text(json.dumps(calibration["candidate_manifest"]), encoding="utf-8")
     result = run(CONFIG, manifest_path, smoke=True)
     assert result["schema"] == "npi.g11.v6-theory-diagnostics.v1"
-    assert "inverse-slope moments" in result["claim_scope"]
-    assert "not a model-rate proof" in result["claim_scope"]
+    assert "proof candidate" in result["claim_scope"]
+    assert "independent mathematical review remains required" in result["claim_scope"]
+    assert "barriers are excluded" in result["claim_scope"]
+    assert result["strict_lognormal_target"]
+    assert result["terminal_rate_contracts"]
+    assert all(
+        contract["journal_claim_ready"] is False
+        for contract in result["terminal_rate_contracts"].values()
+    )
     assert result["gates"]["direction_geometry"]
     assert result["gates"]["pathwise_exactness"]
     assert result["gates"]["terminal_analytic_inverse_moment_bounds_finite"]

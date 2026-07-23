@@ -1,0 +1,14 @@
+schema: npi.g11.v6-independent-audit.config.v1
+protocol_id: g11-v6-independent-audit-qualification-v1
+frozen: true
+accepted_source_schemas:
+  - npi.g11.v6-baseline-qualification.v1
+  - npi.g11.v6-routed-policy.v1
+  - npi.g11.v6-secondary-baselines.v1
+tolerances:
+  relative: 1.0e-13
+  absolute: 1.0e-12
+requirements:
+  require_complete: true
+  require_uncensored: true
+  require_non_smoke_for_qualification: true

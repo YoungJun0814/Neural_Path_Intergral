@@ -2,8 +2,10 @@
 
 Date: 2026-07-23
 
-Status: finite-grid implementation mapping verified; terminal model-rate proof remains
-an open Route B obligation
+Status: finite-grid implementation mapping verified; conservative terminal
+coefficient, threshold, weak-bias, and complexity rates have a self-contained proof
+candidate for the strict-lognormal model. Independent mathematical review and
+barrier rates remain open.
 
 ## 1. Purpose
 
@@ -103,10 +105,16 @@ Proved model-level fact:
   every terminal inverse-slope moment has an explicit mesh-uniform target-law bound;
   see `G11_V6_TERMINAL_SLOPE_THEOREM.md`.
 
-Unproved asymptotic facts:
+Candidate asymptotic facts:
 
-- fine/coarse `L^p` rates for `A` and `B`; and
-- uniform proposal-parameter dependence of those rate constants.
+- for every `r<H`, adjacent terminal intercept and slope differences are
+  `O(h^r)` in every finite `L^p` under the declared compact parameter and
+  deterministic-control domain; and
+- the constants are uniform on that declared compact domain.
+
+The proof candidate and its exact limitations are in
+`G11_V6_TERMINAL_COEFFICIENT_RATE_THEOREM.md`; the independent obligation audit is
+in `G11_V6_TERMINAL_COEFFICIENT_PROOF_AUDIT_2026-07-23.md`.
 
 Executable diagnostics: `slope_lower_tail_diagnostics` and
 `coefficient_moment_diagnostics`. Their output is empirical evidence only.
@@ -217,17 +225,19 @@ then returns an asymptotic interval and `bounded_confidence_interval=None`.
 | direction/pair-sum convention diagnostics | implemented and tested |
 | empirical slope/coefficient/barrier diagnostics | implemented and tested; not proofs |
 | uniform terminal slope inverse moments | proved for the declared positive direction family |
-| terminal rBergomi coefficient rates | open |
-| terminal DCS correction rate | conditional |
-| terminal continuous-time bias/complexity | open |
+| terminal rBergomi coefficient rates | proof candidate for every exponent `r<H`; independent review pending |
+| terminal DCS correction rate | candidate second moment `O(h^(2r))` for every `r<H` |
+| terminal continuous-time bias/complexity | candidate bias `O(h^r)` and FFT-MLMC `O(epsilon^(-1/r) log epsilon^-1)` |
 | discrete-barrier model rate | conditional/open |
 
 ## 12. Immediate proof sequence
 
-1. freeze a compact parameter domain for the remaining rate constants;
-2. prove fine/coarse Volterra, variance, intercept, and slope `L^p` errors under the
-   exact BLP/FFT coupling;
-3. substitute these rates into the existing localized ratio bound;
-4. state the second-moment theorem before any complexity corollary;
-5. add a separate weak-bias result if continuous-target complexity is pursued; and
-6. treat barrier active-time and enrichment terms as a new theorem.
+1. discharge proof-audit obligations O1--O5 with explicit filtrations, indices, and
+   compact-domain constants;
+2. obtain and record an independent stochastic-analysis review;
+3. commit and rerun the strict-lognormal diagnostics from a clean source state;
+4. verify that coefficient and correction diagnostics do not contradict the
+   conservative terminal rates;
+5. keep the unfavorable rough-regime complexity conclusion rather than replacing it
+   with a fitted `O(epsilon^-2)` claim; and
+6. treat barrier active-time and enrichment terms as a separate future theorem.

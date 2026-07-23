@@ -87,6 +87,24 @@ def _total_work(record: dict[str, Any]) -> float:
     return value
 
 
+def _resource_totals(record: dict[str, Any]) -> tuple[float, float, int]:
+    records = record["result"]["total_work"]["records"]
+    wall = math.fsum(float(item["wall_seconds"]) for item in records)
+    cpu = math.fsum(float(item["cpu_seconds"]) for item in records)
+    peak = max(int(item["peak_memory_bytes"]) for item in records)
+    if (
+        not math.isfinite(wall)
+        or wall <= 0.0
+        or not math.isfinite(cpu)
+        or cpu <= 0.0
+        or peak <= 0
+    ):
+        raise ValueError(
+            "qualification wall, CPU, and absolute peak-RSS measurements must be positive"
+        )
+    return wall, cpu, peak
+
+
 def _quantile(values: list[float], probability: float) -> float:
     return float(torch.quantile(torch.tensor(values, dtype=torch.float64), probability))
 
@@ -131,6 +149,8 @@ def run(config_path: Path, baseline_path: Path, policy_path: Path) -> dict[str, 
             raise ValueError("pairs that miss a sampling-RMSE target cannot enter power planning")
         cem_work = _total_work(baseline_record)
         policy_work = _total_work(policy_record)
+        cem_wall, cem_cpu, cem_peak = _resource_totals(baseline_record)
+        policy_wall, policy_cpu, policy_peak = _resource_totals(policy_record)
         pairs.append(
             {
                 "cell_id": key[0],
@@ -138,6 +158,9 @@ def run(config_path: Path, baseline_path: Path, policy_path: Path) -> dict[str, 
                 "cem_work": cem_work,
                 "policy_work": policy_work,
                 "log_ratio": math.log(cem_work / policy_work),
+                "paired_wall_seconds": cem_wall + policy_wall,
+                "paired_cpu_seconds": cem_cpu + policy_cpu,
+                "maximum_absolute_peak_rss_bytes": max(cem_peak, policy_peak),
             }
         )
     cells = sorted({item["cell_id"] for item in pairs})
@@ -178,9 +201,23 @@ def run(config_path: Path, baseline_path: Path, policy_path: Path) -> dict[str, 
     paired_total_work = [item["cem_work"] + item["policy_work"] for item in pairs]
     work_p90 = _quantile(paired_total_work, 0.90)
     projected_total = work_p90 * len(cells) * planned_clusters
-    projected_hours = projected_total / float(
+    throughput_projected_hours = projected_total / float(
         config["resources"]["conservative_work_units_per_second"]
     ) / 3600.0
+    paired_wall_p90 = _quantile(
+        [float(item["paired_wall_seconds"]) for item in pairs], 0.90
+    )
+    paired_cpu_p90 = _quantile(
+        [float(item["paired_cpu_seconds"]) for item in pairs], 0.90
+    )
+    measured_projected_wall_hours = (
+        paired_wall_p90 * len(cells) * planned_clusters / 3600.0
+    )
+    projected_cpu_hours = paired_cpu_p90 * len(cells) * planned_clusters / 3600.0
+    projected_hours = max(throughput_projected_hours, measured_projected_wall_hours)
+    maximum_peak_rss = max(
+        int(item["maximum_absolute_peak_rss_bytes"]) for item in pairs
+    )
     accuracy = None
     if config["schema"] == _SCHEMA_V2:
         accuracy_config = config["accuracy"]
@@ -213,8 +250,14 @@ def run(config_path: Path, baseline_path: Path, policy_path: Path) -> dict[str, 
         "power_forecast_available": forecast is not None,
         "planned_clusters_reach_power": forecast is not None
         and planned_clusters >= int(forecast["required_clusters_normal_approximation"]),
+        "throughput_wall_time_within_budget": throughput_projected_hours
+        <= float(config["resources"]["maximum_wall_hours"]),
+        "measured_wall_time_within_budget": measured_projected_wall_hours
+        <= float(config["resources"]["maximum_wall_hours"]),
         "wall_time_within_budget": projected_hours
         <= float(config["resources"]["maximum_wall_hours"]),
+        "resource_measurements_complete": maximum_peak_rss > 0
+        and projected_cpu_hours > 0.0,
         "no_pairs_excluded": len(pairs) == len(cells) * len(clusters),
     }
     if accuracy is not None:
@@ -247,7 +290,17 @@ def run(config_path: Path, baseline_path: Path, policy_path: Path) -> dict[str, 
         "planned_clusters": planned_clusters,
         "paired_total_work_p90_per_cell_cluster": work_p90,
         "projected_total_work_units": projected_total,
+        "paired_wall_seconds_p90_per_cell_cluster": paired_wall_p90,
+        "paired_cpu_seconds_p90_per_cell_cluster": paired_cpu_p90,
+        "throughput_projected_wall_hours": throughput_projected_hours,
+        "measured_projected_wall_hours": measured_projected_wall_hours,
         "projected_wall_hours": projected_hours,
+        "projected_cpu_hours": projected_cpu_hours,
+        "maximum_observed_absolute_peak_rss_bytes": maximum_peak_rss,
+        "resource_projection_rule": (
+            "maximum of predeclared-throughput and observed-p90 sequential wall projections; "
+            "CPU is reported separately and peak RSS is an absolute process high-water mark"
+        ),
         "accuracy": accuracy,
         "gates": gates,
         "formal_readiness": formal,

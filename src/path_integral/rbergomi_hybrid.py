@@ -13,6 +13,7 @@ from src.path_integral.mlmc import LevelBatch
 from src.path_integral.rbergomi_dcs_mlmc import RBergomiPathTask
 from src.path_integral.rbergomi_mixture import RBergomiControl
 from src.path_integral.rbergomi_mlmc_sampler import (
+    CorrectionMethod,
     RBergomiMLMCSampler,
     RBergomiMLMCSamplerConfig,
     SamplingRole,
@@ -60,6 +61,7 @@ class RBergomiHybridTermSampler:
         coarsest_steps: int,
         finest_level: int,
         engine: SimulationEngine = "fft",
+        correction_method: CorrectionMethod = "dcs_mgi",
     ) -> None:
         if finest_level < 0:
             raise ValueError("finest_level must be nonnegative")
@@ -74,6 +76,7 @@ class RBergomiHybridTermSampler:
         self.coarsest_steps = coarsest_steps
         self.finest_level = finest_level
         self.engine = engine
+        self.correction_method = correction_method
         self._correction_sampler = self._sampler(coarsest_steps)
         self._single_samplers = {
             level: self._sampler(coarsest_steps * 2**level) for level in range(finest_level + 1)
@@ -89,7 +92,7 @@ class RBergomiHybridTermSampler:
                 spot=self.spot,
                 maturity=self.maturity,
                 coarsest_steps=coarsest_steps,
-                method="dcs_mgi",
+                method=self.correction_method,
                 engine=self.engine,
                 dtype=torch.float64,
                 require_natural_component=True,

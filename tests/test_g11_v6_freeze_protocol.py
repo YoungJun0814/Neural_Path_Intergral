@@ -31,6 +31,7 @@ def test_freeze_builder_changes_phase_and_seed_namespace_without_mutating_templa
         audit,
         confirmatory,
         planned_clusters=24,
+        manifest_cell_count=2,
         manifest_sha256="1" * 64,
         reference_sha256="2" * 64,
         power_sha256="3" * 64,
@@ -54,3 +55,37 @@ def test_freeze_builder_changes_phase_and_seed_namespace_without_mutating_templa
     parsed, _digest = load_confirmatory(path)
     assert parsed["frozen"]
     assert parsed["phase"] == "confirmation"
+
+
+def test_freeze_builder_updates_v3_training_matrix_without_changing_totals() -> None:
+    baseline = _yaml("baseline_primary_development_v6.yaml")
+    policy = _yaml("routed_policy_cem_anchored_development_v8.yaml")
+    audit = _yaml("result_audit_development.yaml")
+    confirmatory = _yaml("confirmatory_development.yaml")
+    original_training_totals = {
+        key: policy["proposal"][key]
+        for key in (
+            "training_total_samples",
+            "training_total_work_units",
+            "training_total_wall_seconds",
+            "training_total_cpu_seconds",
+        )
+    }
+    payloads, _hashes = build_frozen_configs(
+        baseline,
+        policy,
+        audit,
+        confirmatory,
+        planned_clusters=64,
+        manifest_cell_count=18,
+        manifest_sha256="1" * 64,
+        reference_sha256="2" * 64,
+        power_sha256="3" * 64,
+    )
+    frozen = payloads["routed_policy_confirmation.yaml"]
+    assert frozen["schema"] == "npi.g11.v6-routed-policy.config.v3"
+    assert frozen["proposal"]["training_amortization_record_count"] == 18 * 64
+    assert {
+        key: frozen["proposal"][key] for key in original_training_totals
+    } == original_training_totals
+    assert payloads["baseline_confirmation.yaml"]["schema"].endswith(".config.v2")

@@ -22,7 +22,16 @@ def _work_result(work: float) -> dict:
             "design_target_attained": True,
             "empirical_target_attained": True,
         },
-        "total_work": {"records": [{"work_units": work}]},
+        "total_work": {
+            "records": [
+                {
+                    "work_units": work,
+                    "wall_seconds": work / 100.0,
+                    "cpu_seconds": work / 50.0,
+                    "peak_memory_bytes": 1024,
+                }
+            ]
+        },
     }
 
 
@@ -67,6 +76,11 @@ def test_v6_power_analysis_uses_equal_cell_cluster_pairs(tmp_path: Path) -> None
     assert result["observed_geometric_mean_ratio"] == 2.0
     assert result["gates"]["no_pairs_excluded"]
     assert result["gates"]["observed_direction_favors_policy"]
+    assert result["gates"]["resource_measurements_complete"]
+    assert result["projected_wall_hours"] == max(
+        result["throughput_projected_wall_hours"],
+        result["measured_projected_wall_hours"],
+    )
     assert not result["freeze_power_ready"]
 
 

@@ -69,3 +69,12 @@ experiments/*/runs/
 *.log
 *.tmp
 *.bak
+
+# Local research scratch and portable patch bundles
+tmp/
+*.bundle
+
+# Non-authoritative smoke/progress artifacts. Frozen publication evidence is
+# versioned explicitly and therefore does not match these patterns.
+results/**/*smoke*
+results/**/*progress*

@@ -7,6 +7,7 @@ import platform
 import subprocess
 from typing import Any
 
+import psutil
 import torch
 
 
@@ -31,7 +32,7 @@ def runtime_provenance(*, dtype: str) -> dict[str, Any]:
     """Return the environment fields required by the frozen result schema."""
 
     packages = {}
-    for name in ("numpy", "scipy", "PyYAML"):
+    for name in ("numpy", "scipy", "PyYAML", "psutil"):
         try:
             packages[name] = importlib.metadata.version(name)
         except importlib.metadata.PackageNotFoundError:
@@ -47,3 +48,28 @@ def runtime_provenance(*, dtype: str) -> dict[str, Any]:
         "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
         "packages": packages,
     }
+
+
+def process_peak_resident_memory_bytes() -> int:
+    """Return the OS-reported lifetime peak resident set for this process."""
+
+    memory = psutil.Process().memory_info()
+    peak = getattr(memory, "peak_wset", None)
+    if peak is None:
+        # Linux psutil does not expose a lifetime peak.  ru_maxrss is KiB on
+        # Linux and bytes on macOS.
+        try:
+            import resource
+
+            getrusage = getattr(resource, "getrusage", None)
+            process_usage = getattr(resource, "RUSAGE_SELF", None)
+            if not callable(getrusage) or process_usage is None:
+                raise AttributeError("resource peak-RSS API is unavailable")
+            maximum = int(getrusage(process_usage).ru_maxrss)
+            peak = maximum if platform.system() == "Darwin" else maximum * 1024
+        except (AttributeError, ImportError, OSError, ValueError):
+            peak = int(memory.rss)
+    result = int(peak)
+    if result < 0:
+        raise RuntimeError("operating system returned a negative peak resident set")
+    return result

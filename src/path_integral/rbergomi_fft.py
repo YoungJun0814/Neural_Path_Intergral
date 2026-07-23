@@ -14,7 +14,11 @@ from src.path_integral.rbergomi_coupling import (
     RBergomiLevelPaths,
     adjacent_local_gaussian_coefficients,
 )
-from src.physics_engine import RBergomiSimulator, TwoDriverRBergomiPaths
+from src.physics_engine import (
+    RBergomiSimulator,
+    TwoDriverRBergomiPaths,
+    strict_lognormal_variance,
+)
 
 ConvolutionMethod = Literal["fft", "direct"]
 RBergomiControl = Callable[..., torch.Tensor]
@@ -200,10 +204,10 @@ def _assemble_level_with_h(
         target_driver_one, kernel.historical_kernel, method=method
     )
     volterra_after_zero = math.sqrt(2.0 * H) * (historical + target_local_integral)
-    variance_after_zero = xi * torch.exp(
-        eta * volterra_after_zero - 0.5 * eta**2 * kernel.volterra_variance[1:]
+    variance_after_zero = strict_lognormal_variance(
+        eta * volterra_after_zero - 0.5 * eta**2 * kernel.volterra_variance[1:],
+        xi=xi,
     )
-    variance_after_zero = torch.clamp(variance_after_zero, min=1e-10)
     initial_variance = torch.full(
         (target_driver_one.shape[0], 1),
         xi,

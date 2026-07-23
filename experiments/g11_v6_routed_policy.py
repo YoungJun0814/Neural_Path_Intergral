@@ -80,15 +80,11 @@ def _clear_record_checkpoint(checkpoint: Path) -> None:
     checkpoint.with_suffix(checkpoint.suffix + ".v6.json").unlink(missing_ok=True)
 
 
-def _task_conditioned_training_source_audit(
-    proposal: dict[str, Any], source_path: Path
-) -> dict[str, Any]:
-    """Verify a V3 proposal bank against its pure-CEM training artifact."""
+def _task_conditioned_training_source_summary(source_path: Path) -> dict[str, Any]:
+    """Derive the deterministic V3 proposal bank from a pure-CEM artifact."""
 
     raw = source_path.read_bytes()
     raw_sha256 = hashlib.sha256(raw).hexdigest()
-    if raw_sha256 != proposal["training_source_artifact_sha256"]:
-        raise ValueError("proposal training source hash does not match the config")
     source = json.loads(raw)
     if (
         not isinstance(source, dict)
@@ -148,7 +144,47 @@ def _task_conditioned_training_source_audit(
         half = [[0.5 * value for value in segment] for segment in median_control]
         derived[task] = [zero, half, median_control]
 
+    return {
+        "verified": True,
+        "source_artifact_sha256": raw_sha256,
+        "source_commit": source.get("source_commit"),
+        "source_dirty_worktree": source.get("dirty_worktree"),
+        "source_smoke": source.get("smoke"),
+        "formal_training_source_readiness": (
+            source.get("dirty_worktree") is False
+            and source.get("smoke") is False
+            and isinstance(source.get("source_commit"), str)
+            and len(source["source_commit"]) == 40
+            and all(
+                character in "0123456789abcdef"
+                for character in source["source_commit"]
+            )
+            and source["source_commit"] != "uncommitted"
+        ),
+        "source_record_count": len(records),
+        "derivation": "componentwise_median_pure_cem_then_zero_half_full_bank",
+        "task_controls": derived,
+        "total_samples": total_samples,
+        "total_work_units": total_work,
+        "total_wall_seconds": total_wall,
+        "total_cpu_seconds": total_cpu,
+    }
+
+
+def _task_conditioned_training_source_audit(
+    proposal: dict[str, Any], source_path: Path
+) -> dict[str, Any]:
+    """Verify a V3 proposal bank against its pure-CEM training artifact."""
+
+    summary = _task_conditioned_training_source_summary(source_path)
+    if (
+        summary["source_artifact_sha256"]
+        != proposal["training_source_artifact_sha256"]
+    ):
+        raise ValueError("proposal training source hash does not match the config")
     configured = proposal["task_controls"]
+    derived = summary["task_controls"]
+    expected_tasks = {"terminal_left_tail", "discrete_lower_barrier"}
     for task in sorted(expected_tasks):
         configured_tensor = torch.tensor(configured[task], dtype=torch.float64)
         derived_tensor = torch.tensor(derived[task], dtype=torch.float64)
@@ -158,11 +194,11 @@ def _task_conditioned_training_source_audit(
             raise ValueError("configured proposal controls do not match the declared derivation")
 
     expected_totals = {
-        "training_source_record_count": len(records),
-        "training_total_samples": total_samples,
-        "training_total_work_units": total_work,
-        "training_total_wall_seconds": total_wall,
-        "training_total_cpu_seconds": total_cpu,
+        "training_source_record_count": summary["source_record_count"],
+        "training_total_samples": summary["total_samples"],
+        "training_total_work_units": summary["total_work_units"],
+        "training_total_wall_seconds": summary["total_wall_seconds"],
+        "training_total_cpu_seconds": summary["total_cpu_seconds"],
     }
     for key, observed in expected_totals.items():
         declared = proposal[key]
@@ -171,16 +207,77 @@ def _task_conditioned_training_source_audit(
                 raise ValueError(f"proposal {key} does not match the source ledger")
         elif not math.isclose(float(declared), observed, rel_tol=1e-12, abs_tol=1e-12):
             raise ValueError(f"proposal {key} does not match the source ledger")
-    return {
-        "verified": True,
-        "source_artifact_sha256": raw_sha256,
-        "source_record_count": len(records),
-        "derivation": "componentwise_median_pure_cem_then_zero_half_full_bank",
-        "total_samples": total_samples,
-        "total_work_units": total_work,
-        "total_wall_seconds": total_wall,
-        "total_cpu_seconds": total_cpu,
+    return {key: value for key, value in summary.items() if key != "task_controls"}
+
+
+def _apportion_shared_training(
+    proposal: dict[str, Any],
+    record_count: int,
+    *,
+    enforce_declared_count: bool = True,
+) -> tuple[tuple[dict[str, float | int], ...], dict[str, Any]]:
+    """Allocate one shared proposal-training ledger exactly across final records.
+
+    Integer sample counts use quotient/remainder apportionment. Floating work,
+    wall-time, and CPU-time totals use equal shares with a final residual.  The
+    ordering contract is manifest order followed by cluster index, so resume state
+    cannot change which record receives a remainder.
+    """
+
+    if isinstance(record_count, bool) or not isinstance(record_count, int) or record_count < 1:
+        raise ValueError("proposal training apportionment requires a positive record count")
+    declared_count = int(proposal["training_amortization_record_count"])
+    if enforce_declared_count and declared_count != record_count:
+        raise ValueError(
+            "proposal training amortization count must equal the executed cell-cluster matrix"
+        )
+    total_samples = int(proposal["training_total_samples"])
+    quotient, remainder = divmod(total_samples, record_count)
+    if quotient < 1:
+        raise ValueError("proposal training sample total is smaller than the execution matrix")
+
+    sample_allocations = tuple(
+        quotient + (1 if index < remainder else 0) for index in range(record_count)
+    )
+
+    def floating_allocations(field: str) -> tuple[float, ...]:
+        total = float(proposal[field])
+        share = total / record_count
+        values = [share] * record_count
+        values[-1] = total - math.fsum(values[:-1])
+        if any(not math.isfinite(value) or value < 0.0 for value in values):
+            raise ValueError(f"proposal {field} cannot be apportioned safely")
+        if not math.isclose(math.fsum(values), total, rel_tol=0.0, abs_tol=1e-12):
+            raise AssertionError(f"proposal {field} apportionment does not conserve its total")
+        return tuple(values)
+
+    work = floating_allocations("training_total_work_units")
+    wall = floating_allocations("training_total_wall_seconds")
+    cpu = floating_allocations("training_total_cpu_seconds")
+    allocations = tuple(
+        {
+            "samples": sample_allocations[index],
+            "work_units": work[index],
+            "wall_seconds": wall[index],
+            "cpu_seconds": cpu[index],
+        }
+        for index in range(record_count)
+    )
+    contract = {
+        "rule": "manifest_order_then_cluster_quotient_remainder_v1",
+        "record_count": record_count,
+        "declared_record_count": declared_count,
+        "declared_count_enforced": enforce_declared_count,
+        "integer_sample_quotient": quotient,
+        "integer_sample_remainder": remainder,
+        "totals": {
+            "samples": total_samples,
+            "work_units": float(proposal["training_total_work_units"]),
+            "wall_seconds": float(proposal["training_total_wall_seconds"]),
+            "cpu_seconds": float(proposal["training_total_cpu_seconds"]),
+        },
     }
+    return allocations, contract
 
 
 def _load_config(path: Path) -> tuple[dict[str, Any], str]:
@@ -648,26 +745,16 @@ def run(
     proposal = config["proposal"]
     proposal_weights = torch.tensor(proposal["weights"], dtype=torch.float64)
     proposal_training_audit: dict[str, Any] | None = None
-    proposal_training_per_record: dict[str, float | int] | None = None
+    proposal_training_allocations: tuple[dict[str, float | int], ...] | None = None
+    proposal_training_allocation_contract: dict[str, Any] | None = None
     if config["schema"] == _SCHEMA_V3:
-        amortization_count = int(proposal["training_amortization_record_count"])
         expected_count = len(cells) * clusters
-        if amortization_count != expected_count:
-            raise ValueError(
-                "proposal training amortization count must equal the executed cell-cluster matrix"
-            )
-        total_samples = int(proposal["training_total_samples"])
-        if total_samples % amortization_count:
-            raise ValueError("proposal training samples must divide the amortization matrix")
-        proposal_training_per_record = {
-            "samples": total_samples // amortization_count,
-            "work_units": float(proposal["training_total_work_units"])
-            / amortization_count,
-            "wall_seconds": float(proposal["training_total_wall_seconds"])
-            / amortization_count,
-            "cpu_seconds": float(proposal["training_total_cpu_seconds"])
-            / amortization_count,
-        }
+        (
+            proposal_training_allocations,
+            proposal_training_allocation_contract,
+        ) = _apportion_shared_training(
+            proposal, expected_count, enforce_declared_count=not smoke
+        )
         if proposal_training_source_path is not None:
             proposal_training_audit = _task_conditioned_training_source_audit(
                 proposal, proposal_training_source_path
@@ -718,7 +805,7 @@ def run(
                 "g11_v6_routed_policy", progress_identities, tuple(records)
             ),
         )
-    for cell in cells:
+    for cell_index, cell in enumerate(cells):
         if cell.cell_id not in references:
             raise ValueError(f"reference artifact lacks cell {cell.cell_id}")
         reference_probability, reference_se, reference_cell = references[cell.cell_id]
@@ -748,16 +835,19 @@ def run(
                 continue
             ledger = SeedLedger()
             work = V6WorkLedger()
-            if proposal_training_per_record is not None:
+            if proposal_training_allocations is not None:
+                training_allocation = proposal_training_allocations[
+                    cell_index * clusters + cluster
+                ]
                 work = work.append(
                     _work_record(
                         "proposal_training",
                         method="v6_policy",
                         cell_id=cell.cell_id,
-                        samples=int(proposal_training_per_record["samples"]),
-                        work_units=float(proposal_training_per_record["work_units"]),
-                        wall_seconds=float(proposal_training_per_record["wall_seconds"]),
-                        cpu_seconds=float(proposal_training_per_record["cpu_seconds"]),
+                        samples=int(training_allocation["samples"]),
+                        work_units=float(training_allocation["work_units"]),
+                        wall_seconds=float(training_allocation["wall_seconds"]),
+                        cpu_seconds=float(training_allocation["cpu_seconds"]),
                     )
                 )
             elif "amortized_training_work_per_record" in proposal:
@@ -1339,6 +1429,13 @@ def run(
             "task_controls" not in proposal
             or bool(proposal_training_audit and proposal_training_audit["verified"])
         ),
+        "proposal_training_source_formal": (
+            "task_controls" not in proposal
+            or bool(
+                proposal_training_audit
+                and proposal_training_audit["formal_training_source_readiness"]
+            )
+        ),
     }
     return {
         "schema": "npi.g11.v6-routed-policy.v1",
@@ -1354,7 +1451,7 @@ def run(
         "manifest_sha256": manifest.sha256,
         "reference_artifact_sha256": reference_hash,
         "proposal_training_audit": proposal_training_audit,
-        "proposal_training_per_record": proposal_training_per_record,
+        "proposal_training_allocation": proposal_training_allocation_contract,
         "smoke": smoke,
         "records": records,
         "selection_fraction_summary": {"median": median_fraction, "p90": p90_fraction},

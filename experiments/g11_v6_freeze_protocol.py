@@ -12,6 +12,7 @@ import yaml
 
 from experiments.g11_v6_baseline_qualification import _load_references
 from experiments.g11_v6_reference import _load_manifest
+from experiments.g11_v6_routed_policy import _task_conditioned_training_source_audit
 from src.path_integral.provenance import source_provenance
 
 
@@ -28,10 +29,11 @@ def _sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def _load_yaml(path: Path, schema: str) -> dict[str, Any]:
+def _load_yaml(path: Path, schemas: str | tuple[str, ...]) -> dict[str, Any]:
     payload = yaml.safe_load(path.read_bytes())
-    if not isinstance(payload, dict) or payload.get("schema") != schema:
-        raise ValueError(f"expected {schema} template")
+    accepted = (schemas,) if isinstance(schemas, str) else schemas
+    if not isinstance(payload, dict) or payload.get("schema") not in accepted:
+        raise ValueError(f"expected one of {accepted} templates")
     return payload
 
 
@@ -42,6 +44,7 @@ def build_frozen_configs(
     confirmatory_template: dict[str, Any],
     *,
     planned_clusters: int,
+    manifest_cell_count: int,
     manifest_sha256: str,
     reference_sha256: str,
     power_sha256: str,
@@ -50,6 +53,12 @@ def build_frozen_configs(
 
     if isinstance(planned_clusters, bool) or planned_clusters < 3:
         raise ValueError("a powered confirmation requires at least three clusters")
+    if (
+        isinstance(manifest_cell_count, bool)
+        or not isinstance(manifest_cell_count, int)
+        or manifest_cell_count < 1
+    ):
+        raise ValueError("confirmation manifest must contain at least one cell")
     for name, value in (
         ("manifest", manifest_sha256),
         ("reference", reference_sha256),
@@ -81,6 +90,10 @@ def build_frozen_configs(
     policy["phase"] = "confirmation"
     policy["frozen"] = True
     policy["sampling"]["clusters"] = planned_clusters
+    if policy.get("schema") == "npi.g11.v6-routed-policy.config.v3":
+        policy["proposal"]["training_amortization_record_count"] = (
+            manifest_cell_count * planned_clusters
+        )
 
     audit = json.loads(json.dumps(audit_template))
     audit["protocol_id"] = "g11-v6-independent-audit-confirmation-v1"
@@ -132,6 +145,7 @@ def run(
     reference_path: Path,
     power_path: Path,
     output_directory: Path,
+    proposal_training_source_path: Path | None = None,
 ) -> dict[str, Any]:
     provenance = source_provenance()
     if provenance["dirty_worktree"]:
@@ -163,15 +177,48 @@ def run(
         or not power.get("freeze_power_ready")
     ):
         raise ValueError("freeze requires a passing qualification power artifact")
-    planned_clusters = int(power["planned_clusters"])
+    planned_clusters_raw = power.get("planned_clusters")
+    if (
+        isinstance(planned_clusters_raw, bool)
+        or not isinstance(planned_clusters_raw, int)
+        or planned_clusters_raw < 3
+    ):
+        raise ValueError(
+            "passing power artifact must declare an integer cluster count of at least three"
+        )
+    planned_clusters = planned_clusters_raw
+    policy_template = _load_yaml(
+        policy_template_path,
+        (
+            "npi.g11.v6-routed-policy.config.v1",
+            "npi.g11.v6-routed-policy.config.v2",
+            "npi.g11.v6-routed-policy.config.v3",
+        ),
+    )
+    proposal_training_audit = None
+    if policy_template["schema"] == "npi.g11.v6-routed-policy.config.v3":
+        if proposal_training_source_path is None:
+            raise ValueError("freezing a V3 policy requires its proposal training source")
+        proposal_training_audit = _task_conditioned_training_source_audit(
+            policy_template["proposal"], proposal_training_source_path
+        )
+        if not proposal_training_audit["formal_training_source_readiness"]:
+            raise ValueError(
+                "formal freeze requires a clean, committed, non-smoke proposal training source"
+            )
     payloads, hashes = build_frozen_configs(
         _load_yaml(
-            baseline_template_path, "npi.g11.v6-baseline-qualification.config.v1"
+            baseline_template_path,
+            (
+                "npi.g11.v6-baseline-qualification.config.v1",
+                "npi.g11.v6-baseline-qualification.config.v2",
+            ),
         ),
-        _load_yaml(policy_template_path, "npi.g11.v6-routed-policy.config.v1"),
+        policy_template,
         _load_yaml(audit_template_path, "npi.g11.v6-independent-audit.config.v1"),
         _load_yaml(confirmatory_template_path, "npi.g11.v6-confirmatory.config.v1"),
         planned_clusters=planned_clusters,
+        manifest_cell_count=len(manifest.cells),
         manifest_sha256=manifest.sha256,
         reference_sha256=reference_hash,
         power_sha256=_sha256(power_raw),
@@ -187,8 +234,10 @@ def run(
         "schema": "npi.g11.v6-freeze-receipt.v1",
         "source_commit": provenance["source_commit"],
         "planned_clusters": planned_clusters,
+        "manifest_cell_count": len(manifest.cells),
         "frozen_protocol_sha256": hashes,
         "confirmation_config_sha256": _sha256(_yaml_bytes(payloads["confirmatory.yaml"])),
+        "proposal_training_audit": proposal_training_audit,
         "input_file_sha256": {
             "baseline_template": _sha256(baseline_template_path.read_bytes()),
             "policy_template": _sha256(policy_template_path.read_bytes()),
@@ -197,6 +246,15 @@ def run(
             "manifest": _sha256(confirmation_manifest_path.read_bytes()),
             "reference": _sha256(reference_raw),
             "power": _sha256(power_raw),
+            **(
+                {
+                    "proposal_training_source": _sha256(
+                        proposal_training_source_path.read_bytes()
+                    )
+                }
+                if proposal_training_source_path is not None
+                else {}
+            ),
         },
     }
     targets["freeze_receipt.json"].write_text(
@@ -215,6 +273,7 @@ def main() -> None:
     parser.add_argument("--reference", type=Path, required=True)
     parser.add_argument("--power", type=Path, required=True)
     parser.add_argument("--output-directory", type=Path, required=True)
+    parser.add_argument("--proposal-training-source", type=Path)
     arguments = parser.parse_args()
     receipt = run(
         baseline_template_path=arguments.baseline_template,
@@ -225,6 +284,7 @@ def main() -> None:
         reference_path=arguments.reference,
         power_path=arguments.power,
         output_directory=arguments.output_directory,
+        proposal_training_source_path=arguments.proposal_training_source,
     )
     print(json.dumps(receipt, sort_keys=True))
 

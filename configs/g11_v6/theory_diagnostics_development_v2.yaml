@@ -23,6 +23,7 @@ sampling:
   engine: fft
 
 analysis:
+  theorem_epsilon_margin: 0.01
   denominator_floor: 1.0e-6
   active_time_fraction: 0.25
   inverse_orders: [1.0, 2.0, 4.0]

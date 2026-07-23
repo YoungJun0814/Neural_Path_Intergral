@@ -11,7 +11,7 @@ from src.path_integral.controllers.markov import TimePiecewiseTwoDriverControl
 from src.path_integral.rbergomi_coupling import (
     adjacent_local_gaussian_coefficients,
 )
-from src.physics_engine import RBergomiSimulator
+from src.physics_engine import RBergomiSimulator, strict_lognormal_variance
 
 
 @dataclass(frozen=True)
@@ -277,8 +277,10 @@ def _rbergomi_paths_from_innovations(
     flat_local = target_local.reshape(-1, steps)
     historical = flat_driver_one @ weights.T
     flat_volterra = math.sqrt(2.0 * H) * (historical + flat_local)
-    flat_variance_after = xi * torch.exp(eta * flat_volterra - 0.5 * eta**2 * volterra_variance[1:])
-    flat_variance_after = torch.clamp(flat_variance_after, min=1e-10)
+    flat_variance_after = strict_lognormal_variance(
+        eta * flat_volterra - 0.5 * eta**2 * volterra_variance[1:],
+        xi=xi,
+    )
     initial_variance = torch.full(
         (flat_variance_after.shape[0], 1), xi, device=target_local.device, dtype=dtype
     )
