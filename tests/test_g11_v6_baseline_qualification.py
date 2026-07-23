@@ -30,6 +30,9 @@ QUALIFICATION_V3 = (
 QUALIFICATION_V4 = (
     ROOT / "configs" / "g11_v6" / "baseline_qualification_v4.yaml"
 )
+QUALIFICATION_V5 = (
+    ROOT / "configs" / "g11_v6" / "baseline_qualification_v5.yaml"
+)
 
 
 def test_v6_baseline_config_is_strict() -> None:
@@ -68,6 +71,15 @@ def test_v6_baseline_config_is_strict() -> None:
     }
     assert len(qualification_v4_digest) == 64
 
+    qualification_v5, qualification_v5_digest = _load_config(QUALIFICATION_V5)
+    assert qualification_v5["protocol_id"] == "g11-v6-baseline-qualification-v5"
+    assert qualification_v5["rarity_band_design"] == {
+        "nominal_probability_upper_multiplier": 2.0,
+        "reference_certificate_z": 4.0,
+        "defensive_variance_safety_factor": 5.0,
+    }
+    assert len(qualification_v5_digest) == 64
+
 
 def test_v6_defensive_design_uses_frozen_rarity_band_second_moment_bound() -> None:
     values = torch.tensor([0.0, 0.0, 0.0, 0.01], dtype=torch.float64)
@@ -95,6 +107,23 @@ def test_v6_defensive_design_uses_frozen_rarity_band_second_moment_bound() -> No
     assert capped.design_variance <= 5.0 * 2.0e-4
     assert capped.design_variance >= capped.pilot_variance
     assert capped.design_variance < uncapped.design_variance
+
+    plugin = _design_from_pilot(
+        "defensive_cem",
+        values,
+        cost_per_sample=1.0,
+        nominal_probability=1.0e-4,
+        confidence_level=0.95,
+        pure_safety=5.0,
+        defensive_bound=5.0,
+        bounded_alpha=0.05,
+        defensive_probability_upper=2.0e-4,
+        defensive_variance_safety_factor=5.0,
+    )
+    assert plugin.design_variance == pytest.approx(
+        max(5.0 * plugin.pilot_variance, 1.0e-8)
+    )
+    assert plugin.design_variance < capped.design_variance
 
 
 def test_v6_crude_design_uses_frozen_rarity_band_variance_bound() -> None:

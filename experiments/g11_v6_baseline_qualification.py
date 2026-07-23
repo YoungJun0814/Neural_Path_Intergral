@@ -48,6 +48,7 @@ _SCHEMA_V1 = "npi.g11.v6-baseline-qualification.config.v1"
 _SCHEMA_V2 = "npi.g11.v6-baseline-qualification.config.v2"
 _SCHEMA_V3 = "npi.g11.v6-baseline-qualification.config.v3"
 _SCHEMA_V4 = "npi.g11.v6-baseline-qualification.config.v4"
+_SCHEMA_V5 = "npi.g11.v6-baseline-qualification.config.v5"
 BaselineMethod = Literal["crude", "pure_cem", "defensive_cem"]
 
 
@@ -80,6 +81,7 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         _SCHEMA_V2,
         _SCHEMA_V3,
         _SCHEMA_V4,
+        _SCHEMA_V5,
     ):
         raise ValueError("unsupported V6 baseline-qualification config")
     expected = {
@@ -92,11 +94,11 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         "training",
         "defensive_mixture",
     }
-    if payload["schema"] in (_SCHEMA_V2, _SCHEMA_V3, _SCHEMA_V4):
+    if payload["schema"] in (_SCHEMA_V2, _SCHEMA_V3, _SCHEMA_V4, _SCHEMA_V5):
         expected.add("methods")
     if payload["schema"] == _SCHEMA_V3:
         expected.add("defensive_design")
-    if payload["schema"] == _SCHEMA_V4:
+    if payload["schema"] in (_SCHEMA_V4, _SCHEMA_V5):
         expected.add("rarity_band_design")
     if set(payload) != expected:
         raise ValueError("malformed V6 baseline-qualification config fields")
@@ -106,7 +108,7 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         raise ValueError("qualification and confirmation baseline configs must be frozen")
     if payload["estimand"] != "fixed_finest_grid":
         raise ValueError("baseline qualification must declare a fixed-grid estimand")
-    if payload["schema"] in (_SCHEMA_V2, _SCHEMA_V3, _SCHEMA_V4):
+    if payload["schema"] in (_SCHEMA_V2, _SCHEMA_V3, _SCHEMA_V4, _SCHEMA_V5):
         methods = payload["methods"]
         allowed = {"crude", "pure_cem", "defensive_cem"}
         if (
@@ -116,20 +118,26 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
             or any(method not in allowed for method in methods)
         ):
             raise ValueError(
-                "V2/V3/V4 baseline methods must be a nonempty unique supported list"
+                "V2/V3/V4/V5 baseline methods must be a nonempty unique supported list"
             )
-    if payload["schema"] in (_SCHEMA_V3, _SCHEMA_V4):
+    if payload["schema"] in (_SCHEMA_V3, _SCHEMA_V4, _SCHEMA_V5):
         design_key = (
             "defensive_design"
             if payload["schema"] == _SCHEMA_V3
             else "rarity_band_design"
         )
         design_contract = payload[design_key]
-        if not isinstance(design_contract, dict) or set(design_contract) != {
+        expected_design_fields = {
             "nominal_probability_upper_multiplier",
             "reference_certificate_z",
-        }:
-            raise ValueError("malformed V3/V4 rarity-band design contract")
+        }
+        if payload["schema"] == _SCHEMA_V5:
+            expected_design_fields.add("defensive_variance_safety_factor")
+        if (
+            not isinstance(design_contract, dict)
+            or set(design_contract) != expected_design_fields
+        ):
+            raise ValueError("malformed V3/V4/V5 rarity-band design contract")
         multiplier = design_contract["nominal_probability_upper_multiplier"]
         certificate_z = design_contract["reference_certificate_z"]
         if (
@@ -139,7 +147,8 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
             or float(multiplier) < 1.0
         ):
             raise ValueError(
-                "V3/V4 nominal-probability upper multiplier must be finite and at least one"
+                "V3/V4/V5 nominal-probability upper multiplier must be finite and at "
+                "least one"
             )
         if (
             isinstance(certificate_z, bool)
@@ -147,7 +156,20 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
             or not math.isfinite(float(certificate_z))
             or float(certificate_z) <= 0.0
         ):
-            raise ValueError("V3/V4 reference-certificate z must be finite and positive")
+            raise ValueError(
+                "V3/V4/V5 reference-certificate z must be finite and positive"
+            )
+        if payload["schema"] == _SCHEMA_V5:
+            safety = design_contract["defensive_variance_safety_factor"]
+            if (
+                isinstance(safety, bool)
+                or not isinstance(safety, (int, float))
+                or not math.isfinite(float(safety))
+                or float(safety) < 1.0
+            ):
+                raise ValueError(
+                    "V5 defensive variance safety factor must be finite and at least one"
+                )
     return payload, hashlib.sha256(raw).hexdigest()
 
 
@@ -327,6 +349,7 @@ def _design_from_pilot(
     bounded_alpha: float,
     defensive_probability_upper: float | None = None,
     crude_probability_upper: float | None = None,
+    defensive_variance_safety_factor: float | None = None,
 ) -> SingleTermDesign:
     count = int(values.numel())
     mean = float(torch.mean(values))
@@ -375,7 +398,22 @@ def _design_from_pilot(
             # For Y = 1_A dP/dQ with 0 <= dP/dQ <= B,
             # Var_Q(Y) <= E_Q[Y^2] <= B E_Q[Y] = B P(A).
             structural_upper = defensive_bound * defensive_probability_upper
-            design_variance = max(variance, min(rigorous_upper, structural_upper))
+            if defensive_variance_safety_factor is None:
+                design_variance = max(
+                    variance, min(rigorous_upper, structural_upper)
+                )
+            else:
+                if (
+                    not math.isfinite(defensive_variance_safety_factor)
+                    or defensive_variance_safety_factor < 1.0
+                ):
+                    raise ValueError(
+                        "defensive variance safety factor must be finite and at least one"
+                    )
+                design_variance = max(
+                    defensive_variance_safety_factor * variance,
+                    nominal_probability**2,
+                )
         bound = defensive_bound
     else:
         design_variance = pure_safety * variance
@@ -422,7 +460,12 @@ def run(
     clusters = 1 if smoke else int(config["sampling"]["clusters"])
     methods = tuple(
         config["methods"]
-        if config["schema"] in (_SCHEMA_V2, _SCHEMA_V3, _SCHEMA_V4)
+        if config["schema"] in (
+            _SCHEMA_V2,
+            _SCHEMA_V3,
+            _SCHEMA_V4,
+            _SCHEMA_V5,
+        )
         else ("crude", "pure_cem", "defensive_cem")
     )
     sampling = config["sampling"]
@@ -473,7 +516,7 @@ def run(
             raise ValueError(f"reference estimand drift for cell {cell.cell_id}")
         defensive_probability_upper = None
         reference_design_certificate = None
-        if config["schema"] in (_SCHEMA_V3, _SCHEMA_V4):
+        if config["schema"] in (_SCHEMA_V3, _SCHEMA_V4, _SCHEMA_V5):
             design_key = (
                 "defensive_design"
                 if config["schema"] == _SCHEMA_V3
@@ -610,13 +653,24 @@ def run(
                     ),
                     crude_probability_upper=(
                         defensive_probability_upper
-                        if config["schema"] == _SCHEMA_V4 and method == "crude"
+                        if config["schema"] in (_SCHEMA_V4, _SCHEMA_V5)
+                        and method == "crude"
+                        else None
+                    ),
+                    defensive_variance_safety_factor=(
+                        float(
+                            config["rarity_band_design"][
+                                "defensive_variance_safety_factor"
+                            ]
+                        )
+                        if config["schema"] == _SCHEMA_V5
+                        and method == "defensive_cem"
                         else None
                     ),
                 )
                 crude_design_certificate = None
                 if (
-                    config["schema"] == _SCHEMA_V4
+                    config["schema"] in (_SCHEMA_V4, _SCHEMA_V5)
                     and method == "crude"
                     and reference_design_certificate is not None
                 ):
@@ -670,6 +724,40 @@ def run(
                         "structural_variance_upper": structural_upper,
                         "selected_design_variance": design.design_variance,
                     }
+                    if config["schema"] == _SCHEMA_V5:
+                        defensive_design_certificate = {
+                            **reference_design_certificate,
+                            "schema": (
+                                "npi.g11.v6-defensive-plugin-design-certificate.v1"
+                            ),
+                            "absolute_bound": (
+                                bounded_profile.moments.absolute_bound
+                            ),
+                            "pilot_count": bounded_profile.moments.sample_count,
+                            "pilot_mean": bounded_profile.moments.sample_mean,
+                            # The allocation routine uses the unbiased
+                            # torch.var(..., unbiased=True) estimate.  Record
+                            # that exact quantity so an independent auditor
+                            # can replay the selected design variance without
+                            # an n/(n-1) convention mismatch.
+                            "pilot_variance": float(
+                                torch.var(pilot.values, unbiased=True)
+                            ),
+                            "variance_safety_factor": float(
+                                config["rarity_band_design"][
+                                    "defensive_variance_safety_factor"
+                                ]
+                            ),
+                            "zero_variance_fallback": (
+                                cell.nominal_probability**2
+                            ),
+                            "structural_variance_upper_diagnostic": (
+                                structural_upper
+                            ),
+                            "selected_design_variance": (
+                                design.design_variance
+                            ),
+                        }
                 prepared = prepare_v6_direct_policy(
                     HybridTarget(
                         f"{cell.cell_id}:{method}",
@@ -807,7 +895,7 @@ def run(
             )
             for record in records
         )
-        if config["schema"] in (_SCHEMA_V3, _SCHEMA_V4)
+        if config["schema"] in (_SCHEMA_V3, _SCHEMA_V4, _SCHEMA_V5)
         else True,
         "all_crude_designs_certified": all(
             record["method"] != "crude"
@@ -817,7 +905,7 @@ def run(
             )
             for record in records
         )
-        if config["schema"] == _SCHEMA_V4
+        if config["schema"] in (_SCHEMA_V4, _SCHEMA_V5)
         else True,
         "all_final_seed_roles_separate": all(
             all(

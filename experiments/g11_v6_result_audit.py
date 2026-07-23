@@ -341,6 +341,139 @@ def _audit_defensive_design_certificate(
         return not required
     if not isinstance(certificate, dict):
         return False
+    if (
+        certificate.get("schema")
+        == "npi.g11.v6-defensive-plugin-design-certificate.v1"
+    ):
+        plugin_fields = {
+            "schema",
+            "nominal_probability",
+            "nominal_probability_upper_multiplier",
+            "probability_upper_bound",
+            "reference_certificate_z",
+            "reference_upper_bound",
+            "certified",
+            "absolute_bound",
+            "pilot_count",
+            "pilot_mean",
+            "pilot_variance",
+            "variance_safety_factor",
+            "zero_variance_fallback",
+            "structural_variance_upper_diagnostic",
+            "selected_design_variance",
+        }
+        if set(certificate) != plugin_fields:
+            return False
+        try:
+            nominal = float(certificate["nominal_probability"])
+            multiplier = float(
+                certificate["nominal_probability_upper_multiplier"]
+            )
+            probability_upper = float(certificate["probability_upper_bound"])
+            certificate_z = float(certificate["reference_certificate_z"])
+            reference_upper = float(certificate["reference_upper_bound"])
+            bound = float(certificate["absolute_bound"])
+            count = int(certificate["pilot_count"])
+            mean = float(certificate["pilot_mean"])
+            variance = float(certificate["pilot_variance"])
+            safety = float(certificate["variance_safety_factor"])
+            fallback = float(certificate["zero_variance_fallback"])
+            structural = float(
+                certificate["structural_variance_upper_diagnostic"]
+            )
+            selected = float(certificate["selected_design_variance"])
+            diagnostics = record["pilot_tail_diagnostics"]
+            recomputed_probability_upper = min(1.0, multiplier * nominal)
+            recomputed_reference_upper = float(
+                record["reference_probability"]
+            ) + certificate_z * float(record["reference_standard_error"])
+            recomputed_structural = bound * recomputed_probability_upper
+            recomputed_fallback = nominal**2
+            recomputed_selected = max(safety * variance, recomputed_fallback)
+            return all(
+                (
+                    count >= 2,
+                    multiplier >= 1.0,
+                    certificate_z > 0.0,
+                    bound > 0.0,
+                    safety >= 1.0,
+                    all(
+                        math.isfinite(value)
+                        for value in (
+                            nominal,
+                            multiplier,
+                            probability_upper,
+                            certificate_z,
+                            reference_upper,
+                            bound,
+                            mean,
+                            variance,
+                            safety,
+                            fallback,
+                            structural,
+                            selected,
+                        )
+                    ),
+                    nominal == float(record["nominal_probability"]),
+                    int(diagnostics["count"]) == count,
+                    _close(
+                        mean,
+                        float(diagnostics["mean"]),
+                        relative=relative,
+                        absolute=absolute,
+                    ),
+                    _close(
+                        variance,
+                        float(diagnostics["variance"]),
+                        relative=relative,
+                        absolute=absolute,
+                    ),
+                    _close(
+                        probability_upper,
+                        recomputed_probability_upper,
+                        relative=relative,
+                        absolute=absolute,
+                    ),
+                    _close(
+                        reference_upper,
+                        recomputed_reference_upper,
+                        relative=relative,
+                        absolute=absolute,
+                    ),
+                    bool(certificate["certified"])
+                    == (
+                        recomputed_reference_upper
+                        <= recomputed_probability_upper
+                    ),
+                    bool(certificate["certified"]),
+                    _close(
+                        fallback,
+                        recomputed_fallback,
+                        relative=relative,
+                        absolute=absolute,
+                    ),
+                    _close(
+                        structural,
+                        recomputed_structural,
+                        relative=relative,
+                        absolute=absolute,
+                    ),
+                    _close(
+                        selected,
+                        recomputed_selected,
+                        relative=relative,
+                        absolute=absolute,
+                    ),
+                    _close(
+                        selected,
+                        float(record["design"]["design_variance"]),
+                        relative=relative,
+                        absolute=absolute,
+                    ),
+                )
+            )
+        except (KeyError, TypeError, ValueError, ZeroDivisionError, OverflowError):
+            return False
     expected_fields = {
         "schema",
         "nominal_probability",
@@ -831,10 +964,15 @@ def run(config_path: Path, source_path: Path) -> dict[str, Any]:
                 in {
                     "g11-v6-baseline-qualification-v3",
                     "g11-v6-baseline-qualification-v4",
+                    "g11-v6-baseline-qualification-v5",
                 }
             ),
             require_crude_design_certificate=(
-                source.get("protocol_id") == "g11-v6-baseline-qualification-v4"
+                source.get("protocol_id")
+                in {
+                    "g11-v6-baseline-qualification-v4",
+                    "g11-v6-baseline-qualification-v5",
+                }
             ),
         )
         for record in records

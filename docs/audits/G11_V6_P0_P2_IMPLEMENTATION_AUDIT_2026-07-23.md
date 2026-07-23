@@ -222,6 +222,14 @@ extends the same frozen rarity-band contract to crude MC via
 unchanged. See
 `G11_V6_BASELINE_V3_EMPIRICAL_RMSE_FAILURE_2026-07-23.md`.
 
+V4 then verified the crude correction but showed that using the worst-case
+`B p_upper` envelope as the defensive-CEM allocation oversampled a `1e-4` sentinel
+record by roughly 610 times relative to the minimum final count. V5 retains the
+structural envelope as an audited diagnostic and gives defensive CEM the same
+fivefold independent-pilot variance rule as pure CEM. This is a strong-baseline
+fairness correction, not a change to the primary comparator. See
+`G11_V6_BASELINE_V4_OVERCONSERVATIVE_DESIGN_2026-07-23.md`.
+
 The mandatory comparison design is now:
 
 | Contrast | Isolated contribution |

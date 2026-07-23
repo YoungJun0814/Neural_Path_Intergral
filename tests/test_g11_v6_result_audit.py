@@ -145,6 +145,35 @@ def test_v6_auditor_replays_defensive_rarity_band_certificate() -> None:
         tampered, relative=1e-13, absolute=1e-12, required=True
     )
 
+    plugin = copy.deepcopy(record)
+    unbiased_variance = float(torch.var(values, unbiased=True))
+    plugin_selected = max(5.0 * unbiased_variance, 1.0e-6)
+    plugin["design"]["design_variance"] = plugin_selected
+    plugin["defensive_design_certificate"] = {
+        "schema": "npi.g11.v6-defensive-plugin-design-certificate.v1",
+        "nominal_probability": 1.0e-3,
+        "nominal_probability_upper_multiplier": 2.0,
+        "probability_upper_bound": probability_upper,
+        "reference_certificate_z": 4.0,
+        "reference_upper_bound": 1.004e-3,
+        "certified": True,
+        "absolute_bound": 5.0,
+        "pilot_count": profile.moments.sample_count,
+        "pilot_mean": profile.moments.sample_mean,
+        "pilot_variance": unbiased_variance,
+        "variance_safety_factor": 5.0,
+        "zero_variance_fallback": 1.0e-6,
+        "structural_variance_upper_diagnostic": structural_upper,
+        "selected_design_variance": plugin_selected,
+    }
+    assert _audit_defensive_design_certificate(
+        plugin, relative=1e-13, absolute=1e-12, required=True
+    )
+    plugin["defensive_design_certificate"]["variance_safety_factor"] = 4.0
+    assert not _audit_defensive_design_certificate(
+        plugin, relative=1e-13, absolute=1e-12, required=True
+    )
+
 
 def test_v6_auditor_replays_crude_rarity_band_certificate() -> None:
     count = 4096
