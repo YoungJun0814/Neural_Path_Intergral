@@ -16,6 +16,9 @@ CALIBRATION = ROOT / "configs" / "g11_v6" / "rarity_calibration_development.yaml
 REFERENCE = ROOT / "configs" / "g11_v6" / "reference_development.yaml"
 BASELINE = ROOT / "configs" / "g11_v6" / "baseline_qualification_development.yaml"
 PRIMARY_PILOT = ROOT / "configs" / "g11_v6" / "baseline_primary_resource_pilot_v2.yaml"
+QUALIFICATION_V2 = (
+    ROOT / "configs" / "g11_v6" / "baseline_qualification_v2.yaml"
+)
 
 
 def test_v6_baseline_config_is_strict() -> None:
@@ -30,6 +33,13 @@ def test_v6_baseline_config_is_strict() -> None:
     # rather than 0.10, implements the intended upper approximately 10%.
     assert primary["training"]["elite_quantile"] == 0.90
     assert len(primary_digest) == 64
+
+    qualification, qualification_digest = _load_config(QUALIFICATION_V2)
+    assert qualification["protocol_id"] == "g11-v6-baseline-qualification-v2"
+    assert qualification["phase"] == "qualification"
+    assert qualification["frozen"]
+    assert qualification["training"]["elite_quantile"] == 0.90
+    assert len(qualification_digest) == 64
 
 
 @pytest.mark.slow
@@ -52,6 +62,8 @@ def test_v6_baseline_smoke_executes_actual_allocations(tmp_path: Path) -> None:
     assert len(result["records"]) == 6
     assert result["gates"]["complete_matrix"]
     assert result["gates"]["all_cem_training_charged"]
+    assert "all_cem_fits_converged" in result["gates"]
+    assert result["gates"]["all_cem_controls_finite_and_bounded"]
     assert not result["baseline_qualified"]
     assert {record["method"] for record in result["records"]} == {
         "crude",

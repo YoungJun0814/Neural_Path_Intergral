@@ -598,6 +598,28 @@ def run(
             == "proposal_training"
             for record in records
         ),
+        "all_cem_fits_converged": all(
+            record["method"] == "crude"
+            or (
+                isinstance(record["cem_fit"], dict)
+                and record["cem_fit"]["converged"] is True
+            )
+            for record in records
+        ),
+        "all_cem_controls_finite_and_bounded": all(
+            record["method"] == "crude"
+            or (
+                isinstance(record["cem_fit"], dict)
+                and all(
+                    math.isfinite(float(value))
+                    and abs(float(value))
+                    <= float(config["training"]["control_bound"])
+                    for segment in record["cem_fit"]["control"]
+                    for value in segment
+                )
+            )
+            for record in records
+        ),
         "all_final_seed_roles_separate": all(
             all(
                 seed["key"]["role"] == "final"
