@@ -143,6 +143,16 @@ source hash, exact totals, and amortization count directly from that artifact.
 selector-off policy, and fixed secondary-baseline configs from the same proposal
 bank, so nondeterministic wall/CPU values are never copied by hand.
 
+The final source contract is now stricter than the provisional baseline-derived
+artifact. `g11_v6_proposal_training.py` trains only on the two prespecified
+`H=0.12`, `p=1e-3` development cells, with three independent CEM fits per task. It
+does not load a reference artifact or any qualification outcome. Its formal artifact
+must reconstruct both strict ledgers, cover both task families, contain only
+converged finite bounded fits, conserve every training-cost field, and carry clean
+committed provenance. Qualification materialization rejects the older combined
+baseline/evaluation schema as a formal source, although that schema remains readable
+for historical development audits.
+
 The shared training cost now uses exact quotient/remainder apportionment. This fixes
 a real defect: 196,608 training samples are not divisible by the full confirmation
 record count `18*64=1,152`. Integer samples and floating work totals are now

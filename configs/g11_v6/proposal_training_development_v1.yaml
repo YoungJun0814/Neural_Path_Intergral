@@ -1,0 +1,23 @@
+schema: npi.g11.v6-proposal-training.config.v1
+protocol_id: g11-v6-proposal-training-development-v1
+phase: development
+frozen: false
+estimand: fixed_finest_grid
+
+# Prespecified middle-H, middle-rarity cells.  The zero/half/full bank derived
+# from these independent fits is frozen before qualification outcomes exist.
+selected_cell_ids:
+  - h012-terminal-p1e-03
+  - h012-barrier-p1e-03
+clusters: 3
+
+training:
+  segments: 2
+  initial_control: [[-0.5, -1.5], [-0.25, -0.75]]
+  paths_per_iteration: 4096
+  maximum_iterations: 8
+  elite_quantile: 0.90
+  smoothing: 0.70
+  minimum_elite_paths: 64
+  control_bound: 20.0
+  target_level_repetitions: 2

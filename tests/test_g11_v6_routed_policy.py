@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from dataclasses import asdict
 from pathlib import Path
 
 import pytest
@@ -19,6 +20,12 @@ from experiments.g11_v6_routed_policy import (
     _task_conditioned_training_source_audit,
 )
 from experiments.g11_v6_routed_policy import run as run_policy
+from src.path_integral import (
+    SeedKey,
+    SeedLedger,
+    V6WorkLedger,
+    V6WorkRecord,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 CALIBRATION = ROOT / "configs" / "g11_v6" / "rarity_calibration_development.yaml"
@@ -126,34 +133,57 @@ def test_v3_proposal_bank_is_rederived_from_its_hashed_training_source(
         "discrete_lower_barrier": [[2.0, -1.0], [4.0, -3.0]],
     }
     records = []
+    seed_ledger = SeedLedger()
+    work_ledger = V6WorkLedger()
     for index, (task, control) in enumerate(controls.items()):
+        key = SeedKey(
+            "g11-v6-test-routed-proposal-training",
+            "proposal-training",
+            f"cell-{index}:cluster-0",
+            "pure_cem",
+            0,
+            0,
+            "proposal",
+        )
+        seed = seed_ledger.allocate(key)
+        work_record = V6WorkRecord(
+            category="proposal_training",
+            method="pure_cem",
+            cell_id=f"cell-{index}",
+            attempt=0,
+            samples=10,
+            work_units=20.0 + index,
+            wall_seconds=1.0 + index,
+            cpu_seconds=2.0 + index,
+            peak_memory_bytes=0,
+            successful=True,
+        )
+        work_ledger = work_ledger.append(work_record)
         records.append(
             {
+                "cell_id": f"cell-{index}",
+                "task": task,
+                "cluster": 0,
                 "method": "pure_cem",
-                "cem_fit": {"control": control},
-                "preparation": {"core": {"task": task}},
-                "result": {
-                    "core": {"complete": True},
-                    "total_work": {
-                        "records": [
-                            {
-                                "category": "proposal_training",
-                                "samples": 10,
-                                "work_units": 20.0 + index,
-                                "wall_seconds": 1.0 + index,
-                                "cpu_seconds": 2.0 + index,
-                            }
-                        ]
-                    },
-                },
+                "seed_key": asdict(key),
+                "seed": seed,
+                "cem_fit": {"converged": True, "control": control},
+                "training_work_record": asdict(work_record),
             }
         )
     source = {
-        "schema": "npi.g11.v6-baseline-qualification.v1",
+        "schema": "npi.g11.v6-proposal-training.v1",
         "source_commit": "a" * 40,
         "dirty_worktree": False,
         "smoke": False,
         "records": records,
+        "work_ledger": work_ledger.to_dict(),
+        "work_ledger_sha256": work_ledger.sha256,
+        "seed_ledger": seed_ledger.to_dict(),
+        "seed_ledger_sha256": seed_ledger.sha256,
+        "gates": {"complete": True},
+        "formal_readiness": {"clean": True},
+        "proposal_training_qualified": True,
     }
     source_path = tmp_path / "training.json"
     source_path.write_text(json.dumps(source), encoding="utf-8")
