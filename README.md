@@ -65,6 +65,16 @@ training-inclusive total work, and 2.36 for isolated final wall time. The primar
 one-sided 95% lower ratios are 3.40, 3.45, and 3.30. Neither method hits the common
 floor. All 72 simultaneous accuracy claims pass; the minimum exact attainment lower
 bound is 0.805 and the maximum RMSE-upper/tolerance ratio is 0.778.
+The prespecified disjoint-seed Linux Docker reproduction is also complete. Its
+raw/DCS ratios are 3.37 for paired-probe variance, 3.52 for production variance,
+3.37 for final work, 1.89 for training-inclusive work, and 2.76 for final wall
+time. All mechanism and 72-claim accuracy gates pass, as do the independent Linux
+package audit and Windows--Linux reproduction audit. The required cross-environment
+effect differences are at most 1.706 combined standard errors against the frozen
+maximum of 3.0. Final-wall difference is 8.798 standard errors but was prespecified
+as diagnostic because OS and container scheduling affect it. This is a
+cross-software-environment reproduction on the same physical laptop, not an
+independent-hardware replication.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -135,6 +145,7 @@ Start with:
 - [V7 confirmation protocol](docs/plans/G11_V7_CONFIRMATION_PROTOCOL_2026-07-24.md)
 - [V7 Linux reproduction protocol](docs/plans/G11_V7_LINUX_REPRODUCTION_PROTOCOL_2026-07-24.md)
 - [V7 mechanism confirmation V1 decision](docs/audits/G11_V7_MECHANISM_CONFIRMATION_V1_DECISION_2026-07-24.md)
+- [V7 Linux reproduction V1 decision](docs/audits/G11_V7_LINUX_REPRODUCTION_V1_DECISION_2026-07-24.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 

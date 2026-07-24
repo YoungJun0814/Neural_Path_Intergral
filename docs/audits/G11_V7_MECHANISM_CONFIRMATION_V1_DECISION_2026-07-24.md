@@ -247,3 +247,21 @@ work is:
 
 The confirmed result should be presented as a **mechanism-identified amortized DCS
 path-measure estimator**, not as a quantum path integral or a neural model.
+
+## 13. Post-decision cross-environment update
+
+The prespecified disjoint-seed Linux Docker reproduction subsequently passed every
+mechanism, accuracy, package-audit, and required Windows--Linux effect-stability
+gate. The reproduction used the same clean estimator commit `80a5bc9`; all six
+pairwise intersections among the Windows/Linux probe/fixed seed sets were zero.
+
+The required cross-environment effect-difference z statistics were 1.7061 for the
+paired probe, 0.0397 for production variance, 0.2030 for final work, and 0.3355 for
+training-inclusive work, all below the frozen maximum 3.0. Final-wall difference
+was 8.7979 standard errors and remains a diagnostic rather than a scientific gate.
+
+This closes item 1 in Section 12 as a **cross-software-environment** reproduction on
+the same physical laptop. It does not close independent physical-hardware or
+external-laboratory replication. See
+`G11_V7_LINUX_REPRODUCTION_V1_DECISION_2026-07-24.md` for the complete artifact
+ledger, limitations, and decision.
