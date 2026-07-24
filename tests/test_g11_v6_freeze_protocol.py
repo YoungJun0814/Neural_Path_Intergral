@@ -57,9 +57,9 @@ def test_freeze_builder_changes_phase_and_seed_namespace_without_mutating_templa
     assert parsed["phase"] == "confirmation"
 
 
-def test_freeze_builder_updates_v3_training_matrix_without_changing_totals() -> None:
-    baseline = _yaml("baseline_primary_development_v6.yaml")
-    policy = _yaml("routed_policy_cem_anchored_development_v8.yaml")
+def test_freeze_builder_updates_v4_training_matrix_without_changing_totals() -> None:
+    baseline = _yaml("baseline_primary_development_v7.yaml")
+    policy = _yaml("routed_policy_development_v9.yaml")
     audit = _yaml("result_audit_development.yaml")
     confirmatory = _yaml("confirmatory_development.yaml")
     original_training_totals = {
@@ -83,9 +83,9 @@ def test_freeze_builder_updates_v3_training_matrix_without_changing_totals() -> 
         power_sha256="3" * 64,
     )
     frozen = payloads["routed_policy_confirmation.yaml"]
-    assert frozen["schema"] == "npi.g11.v6-routed-policy.config.v3"
+    assert frozen["schema"] == "npi.g11.v6-routed-policy.config.v4"
     assert frozen["proposal"]["training_amortization_record_count"] == 18 * 64
     assert {
         key: frozen["proposal"][key] for key in original_training_totals
     } == original_training_totals
-    assert payloads["baseline_confirmation.yaml"]["schema"].endswith(".config.v2")
+    assert payloads["baseline_confirmation.yaml"]["schema"].endswith(".config.v6")

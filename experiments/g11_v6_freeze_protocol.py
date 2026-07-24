@@ -221,6 +221,10 @@ def run(
             (
                 "npi.g11.v6-baseline-qualification.config.v1",
                 "npi.g11.v6-baseline-qualification.config.v2",
+                "npi.g11.v6-baseline-qualification.config.v3",
+                "npi.g11.v6-baseline-qualification.config.v4",
+                "npi.g11.v6-baseline-qualification.config.v5",
+                "npi.g11.v6-baseline-qualification.config.v6",
             ),
         ),
         policy_template,

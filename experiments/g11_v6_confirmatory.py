@@ -69,18 +69,6 @@ def _load(path: Path, schema: str) -> tuple[dict[str, Any], str]:
     return payload, hashlib.sha256(raw).hexdigest()
 
 
-def _artifact_canonical_hash(payload: dict[str, Any]) -> str:
-    return hashlib.sha256(
-        json.dumps(
-            payload,
-            sort_keys=True,
-            separators=(",", ":"),
-            ensure_ascii=True,
-            allow_nan=False,
-        ).encode("ascii")
-    ).hexdigest()
-
-
 def _total_work(record: dict[str, Any]) -> float:
     value = math.fsum(
         float(item["work_units"]) for item in record["result"]["total_work"]["records"]
@@ -240,11 +228,15 @@ def run(
         policy_audit_path, "npi.g11.v6-independent-audit.v1"
     )
     power, power_hash = _load(power_path, "npi.g11.v6-power-analysis.v1")
-    baseline_canonical_hash = _artifact_canonical_hash(baseline)
-    policy_canonical_hash = _artifact_canonical_hash(policy)
-    power_matches_paired_sources = (
-        power.get("baseline_artifact_sha256") == baseline_canonical_hash
-        and power.get("policy_artifact_sha256") == policy_canonical_hash
+    qualification_source_hashes = (
+        power.get("baseline_artifact_sha256"),
+        power.get("policy_artifact_sha256"),
+    )
+    qualification_sources_recorded = all(
+        isinstance(value, str)
+        and len(value) == 64
+        and all(character in "0123456789abcdef" for character in value)
+        for value in qualification_source_hashes
     )
     shared_manifest = baseline.get("manifest_sha256")
     shared_reference = baseline.get("reference_artifact_sha256")
@@ -347,7 +339,18 @@ def run(
     gates = {
         "frozen_artifact_hashes_match": hashes_match,
         "shared_protocol_identities": shared_protocol_identities,
-        "power_matches_paired_sources": power_matches_paired_sources,
+        # The power artifact is built from qualification, not from the untouched
+        # confirmation outcomes.  Requiring its qualification-result hashes to
+        # equal the new confirmation-result hashes would be logically impossible.
+        # The exact power artifact is instead authenticated by expected_sha256,
+        # and its authorization plus predeclared sample size are replayed here.
+        "frozen_power_authorizes_confirmation": bool(
+            power.get("freeze_power_ready")
+        )
+        and qualification_sources_recorded
+        and isinstance(power.get("planned_clusters"), int)
+        and not isinstance(power.get("planned_clusters"), bool)
+        and len(clusters) == int(power["planned_clusters"]),
         "identical_complete_pair_set": len(paired) == len(cells) * len(clusters),
         "minimum_cluster_count": len(clusters) >= int(requirements["minimum_clusters"]),
         "all_runs_complete": all(record["result"]["core"]["complete"] for record in all_records),
@@ -394,6 +397,10 @@ def run(
             "baseline_audit": baseline_audit_hash,
             "policy_audit": policy_audit_hash,
             "power": power_hash,
+        },
+        "qualification_source_artifact_sha256": {
+            "baseline": qualification_source_hashes[0],
+            "policy": qualification_source_hashes[1],
         },
         "cell_count": len(cells),
         "cluster_count": len(clusters),
