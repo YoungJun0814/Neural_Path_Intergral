@@ -1,0 +1,21 @@
+schema: npi.g11.v6-accuracy-multiplicity.config.v1
+protocol_id: g11-v6-accuracy-multiplicity-sensitivity-v1
+phase: post_confirmation_sensitivity
+frozen: true
+post_hoc: true
+
+statistics:
+  familywise_alpha: 0.05
+  bootstrap_repetitions: 20000
+  bootstrap_seed: 24072401
+
+accuracy:
+  rmse_engineering_multiplier: 1.25
+  minimum_target_attainment_rate: 0.60
+
+requirements:
+  expected_cells: 18
+  expected_methods: 2
+  expected_accuracy_gates_per_group: 2
+  expected_claims: 72
+  minimum_clusters: 64

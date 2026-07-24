@@ -3,8 +3,8 @@
 Date: 2026-07-24  
 Execution source: `f1249c9d7d74502efbd4ec4fcdb529c1e9e307bd`  
 Protocol: `g11-v6-confirmatory-v2`  
-Decision: confirmatory engineering claim passes; top-journal mechanism claim does
-not yet pass
+Decision: Windows confirmation and independent Linux reproduction pass;
+top-journal mechanism claim does not yet pass
 
 ## 1. Frozen design
 
@@ -68,10 +68,45 @@ threshold.  The corrected confirmatory analyzer therefore passes every
 scientific and formal gate.
 
 The concluding software validation passes CI-scope Ruff, mypy over 81 source
-files, and the full `522/522` pytest suite after adding the hardware-freeze
-checks.
+files, and the full `523/523` pytest suite after adding the hardware-freeze and
+post-hoc multiplicity-sensitivity checks.
 
-## 4. Mechanistic decomposition
+## 4. Independent Linux reproduction
+
+The reproduction used a clean in-container clone of execution source
+`f1249c9`, PyTorch 2.9.1 CPU, Python 3.10, and Linux
+`6.6.87.2-microsoft-standard-WSL2`.  Protocol V3 changed every protocol ID, so
+the Windows V2 and Linux V3 seed values and seed-key identities are disjoint.
+The reproduction matrix again contains 1,152 baseline and 1,152 policy records.
+Both Linux-side frozen independent audits pass 1,152/1,152 records, and both
+resource supplements pass.
+
+| Quantity | Windows V2 | Linux V3 |
+|---|---:|---:|
+| geometric mean pure-CEM/policy work ratio | 2.3169 | 2.3186 |
+| one-sided 95% lower ratio | 2.3004 | 2.3080 |
+| mean log ratio | 0.84024 | 0.84097 |
+| standard error | 0.00430 | 0.00275 |
+| all 36 accuracy groups pass | yes | yes |
+
+The frozen cross-environment audit reports:
+
+- canonical seed count: 25,569;
+- reproduction seed count: 25,459;
+- disjoint seed streams: pass;
+- different operating system: pass;
+- same execution source commit: pass;
+- same manifest, reference, power, and estimand: pass;
+- both scientific gates: pass; and
+- effect-difference z-score: 0.142 against the frozen maximum of 3.0.
+
+`hardware_reproduction_passed=true`.  The Linux confirmation analyzer itself
+runs from the later clean analysis commit containing the practical-threshold
+correction, while both numerical execution artifacts use the identical
+`f1249c9` estimator source.  The hardware audit checks this execution-source
+identity explicitly.
+
+## 5. Mechanistic decomposition
 
 The headline total-work result is real, but its cause must be stated exactly.
 
@@ -112,7 +147,7 @@ The honest current model name for the confirmed experiment is therefore:
 Calling the confirmed object an empirically successful Hybrid router would be
 incorrect.
 
-## 5. Theory-diagnostic result
+## 6. Theory-diagnostic result
 
 The frozen terminal-theory diagnostic at source `66e0d4a` passes:
 
@@ -135,7 +170,7 @@ Barriers remain excluded from the terminal coefficient theorem.  The
 coefficient and weak-rate arguments remain proof candidates requiring
 independent mathematical review.
 
-## 6. Deviations and corrections
+## 7. Deviations and corrections
 
 ### V1 abort
 
@@ -166,7 +201,7 @@ and a regression test was added.  The observed lower bound is 2.3004, so the
 decision is unchanged.  This correction and its timing must remain in the
 reproducibility history.
 
-## 7. Journal-level decision
+## 8. Journal-level decision
 
 This result is strong enough for a PhD-level computational chapter and supports
 a serious specialized-journal engineering claim:
@@ -182,14 +217,13 @@ journal headline because:
 1. the router and Hybrid selector collapse to one method;
 2. the DCS mechanism is masked by unequal final-sample floors;
 3. excluding proposal training reverses the work advantage;
-4. no independent Linux reproduction exists yet;
-5. the terminal coefficient/weak-rate proof has not received independent
+4. the terminal coefficient/weak-rate proof has not received independent
    mathematical review;
-6. the barrier rate theorem is open; and
-7. the confirmatory accuracy family lacks a predeclared simultaneous
+5. the barrier rate theorem is open; and
+6. the confirmatory accuracy family lacks a predeclared simultaneous
    multiplicity correction.
 
-## 8. Required next study
+## 9. Required next study
 
 The next experiment must be a new, explicitly exploratory-to-qualification V7
 mechanism study, not a reinterpretation of V2:
@@ -203,7 +237,8 @@ mechanism study, not a reinterpretation of V2:
 5. include stronger fixed-proposal, CEM, adaptive-IS, and flow/transport
    comparators where feasible;
 6. use simultaneous accuracy inference across the headline family;
-7. reproduce the final frozen protocol on Linux with disjoint seeds; and
+7. retain the completed Windows/Linux disjoint-seed reproduction in the
+   submission archive; and
 8. obtain an independent proof audit before claiming continuous-theory novelty.
 
 Until those items are complete, the defensible classification is:

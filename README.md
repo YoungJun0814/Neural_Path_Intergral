@@ -37,7 +37,9 @@ training-inclusive pure-CEM/policy geometric work ratio is 2.3169 (one-sided 95%
 lower 2.3004), and all 36 method-by-cell accuracy co-gates pass. However, every
 route selects DCS-SLIS and the advantage disappears when proposal-training work is
 excluded. The confirmed result is therefore an amortized repeated-query result,
-not evidence of a successful Hybrid selector. Linux reproduction remains open.
+not evidence of a successful Hybrid selector. A disjoint-seed Linux Docker
+reproduction also passes: its geometric ratio is 2.3186 (one-sided lower 2.3080),
+and the Windows/Linux effect difference is only 0.142 combined standard errors.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -59,7 +61,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **522/522 tests on 2026-07-24**.
+The complete local regression suite passed **523/523 tests on 2026-07-24**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finest discrete grid rather than a continuously monitored event,
