@@ -270,6 +270,18 @@ def run(
         proposal,
         proposal_training_source_path,
     )
+    if (
+        not smoke
+        and config["phase"] != "development"
+        and (
+            manifest.phase != config["phase"]
+            or not manifest.frozen
+            or manifest.smoke
+        )
+    ):
+        raise ValueError(
+            "formal V7 mechanism probes require a same-phase frozen manifest"
+        )
     cells = _smoke_cells(manifest.cells) if smoke else manifest.cells
     requirements = config["requirements"]
     if not smoke and len(cells) != int(requirements["expected_cells"]):

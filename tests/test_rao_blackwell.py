@@ -14,6 +14,7 @@ def test_orthogonal_pair_has_exact_variance_decomposition() -> None:
     diagnostics = rao_blackwell_pair_diagnostics(dcs + residual, dcs)
     assert diagnostics.residual_mean == 0.0
     assert diagnostics.dcs_residual_covariance == 0.0
+    assert diagnostics.dcs_residual_covariance_product_variance > 0.0
     assert diagnostics.dcs_residual_covariance_standard_error > 0.0
     assert diagnostics.dcs_residual_covariance_z_score == 0.0
     assert diagnostics.dcs_residual_correlation == 0.0

@@ -1,0 +1,64 @@
+schema: npi.g11.v7-mechanism-probe.config.v2
+protocol_id: g11-v7-mechanism-probe-qualification-v1
+phase: qualification
+frozen: true
+estimand: fixed_finest_grid
+
+hierarchy:
+  coarsest_steps: 8
+  finest_level: 4
+
+proposal:
+  weights:
+  - 0.15
+  - 0.35
+  - 0.5
+  task_controls:
+    terminal_left_tail:
+    - - - 0.0
+        - 0.0
+      - - 0.0
+        - 0.0
+    - - - 2.9620780444796315
+        - -1.3824888866398168
+      - - 2.4304477946707084
+        - -1.8719832517727761
+    - - - 5.924156088959263
+        - -2.7649777732796337
+      - - 4.860895589341417
+        - -3.7439665035455523
+    discrete_lower_barrier:
+    - - - 0.0
+        - 0.0
+      - - 0.0
+        - 0.0
+    - - - 3.1502656492310512
+        - -1.405401929785233
+      - - 2.1961241070492656
+        - -1.4764392270612017
+    - - - 6.3005312984621025
+        - -2.810803859570466
+      - - 4.392248214098531
+        - -2.9528784541224034
+  training_source_artifact_sha256: b74770898cc1c4896adb6a65062595d6decadbc1948ad11cc00095f61c2ebc01
+  training_derivation: componentwise_median_pure_cem_then_zero_half_full_bank
+  training_source_record_count: 6
+  training_total_samples: 98304
+  training_total_work_units: 88080384.0
+  training_total_wall_seconds: 8.343280399916694
+  training_total_cpu_seconds: 115.703125
+
+sampling:
+  clusters: 24
+  samples_per_cell_cluster: 4096
+  confidence_level: 0.95
+  engine: fft
+
+development_thresholds:
+  minimum_variance_ratio_lower: 2.0
+  maximum_absolute_residual_z: 4.5
+  maximum_absolute_orthogonality_z: 4.5
+
+requirements:
+  expected_cells: 18
+  require_verified_training_source: true

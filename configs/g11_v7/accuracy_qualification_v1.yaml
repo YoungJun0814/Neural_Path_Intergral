@@ -1,0 +1,24 @@
+schema: npi.g11.v7-accuracy.config.v1
+protocol_id: g11-v7-accuracy-qualification-v1
+phase: qualification
+frozen: true
+
+matrix:
+  expected_cells: 18
+  expected_clusters: 24
+  methods:
+  - fixed_dcs_slis
+  - fixed_raw_defensive
+
+statistics:
+  familywise_alpha: 0.05
+  bootstrap_repetitions: 50000
+  bootstrap_seed: 24072471
+
+accuracy:
+  rmse_engineering_multiplier: 1.25
+  minimum_target_attainment_rate: 0.60
+
+requirements:
+  expected_accuracy_gates_per_group: 2
+  expected_claims: 72

@@ -1,0 +1,79 @@
+schema: npi.g11.v6-secondary-baselines.config.v2
+protocol_id: g11-v7-fixed-estimators-qualification-v1
+phase: qualification
+frozen: true
+estimand: fixed_finest_grid
+methods:
+- fixed_dcs_slis
+- fixed_raw_defensive
+
+hierarchy:
+  coarsest_steps: 8
+  finest_level: 4
+
+proposal:
+  weights:
+  - 0.15
+  - 0.35
+  - 0.5
+  task_controls:
+    terminal_left_tail:
+    - - - 0.0
+        - 0.0
+      - - 0.0
+        - 0.0
+    - - - 2.9620780444796315
+        - -1.3824888866398168
+      - - 2.4304477946707084
+        - -1.8719832517727761
+    - - - 5.924156088959263
+        - -2.7649777732796337
+      - - 4.860895589341417
+        - -3.7439665035455523
+    discrete_lower_barrier:
+    - - - 0.0
+        - 0.0
+      - - 0.0
+        - 0.0
+    - - - 3.1502656492310512
+        - -1.405401929785233
+      - - 2.1961241070492656
+        - -1.4764392270612017
+    - - - 6.3005312984621025
+        - -2.810803859570466
+      - - 4.392248214098531
+        - -2.9528784541224034
+  training_source_artifact_sha256: b74770898cc1c4896adb6a65062595d6decadbc1948ad11cc00095f61c2ebc01
+  training_derivation: componentwise_median_pure_cem_then_zero_half_full_bank
+  training_source_record_count: 6
+  training_total_samples: 98304
+  training_total_work_units: 88080384.0
+  training_total_wall_seconds: 8.343280399916694
+  training_total_cpu_seconds: 115.703125
+  training_amortization_record_count: 432
+
+planning:
+  decision_mode: replicated_point_variance
+  replicates: 8
+  samples_per_replicate: 512
+  variance_statistic: mean_replicate_variance
+  zero_variance_fallback: nominal_probability_squared
+
+rarity_band_design:
+  nominal_probability_upper_multiplier: 2.0
+  reference_certificate_z: 4.0
+
+sampling:
+  clusters: 24
+  relative_sampling_rmse: 0.10
+  confidence_level: 0.95
+  minimum_final_samples: 512
+  chunk_size: 4096
+  allocation_safety_factor: 6.0
+  familywise_alpha: 0.05
+  operation_work_cap: 50000000000.0
+  engine: fft
+
+qualification_decision:
+  per_record_empirical_target_role: deferred_to_prespecified_method_cell_attainment_and_bootstrap_rmse_co_gates
+  aggregate_accuracy_protocol_id: g11-v7-accuracy-qualification-v1
