@@ -1,0 +1,111 @@
+schema: npi.g11.v8-top-journal-claim-contract.v1
+protocol_id: g11-v8-top-journal-claim-contract-v1
+date: "2026-07-25"
+phase: development
+frozen: false
+
+paper:
+  route: theory_plus_computation
+  working_title: "Defensive Conditional Path Integration for Rare Events under Rough Volatility: Exactness, Complexity, and Amortized Efficiency"
+  primary_claim: "For predeclared finite-grid rare terminal and discrete-barrier events under rough Bergomi, exact defensive-mixture DCS preserves the target expectation, removes integrated-coordinate conditional variance, and is tested against predeclared strong comparators using achieved-RMSE training-inclusive work."
+  contributions:
+    - exact_defensive_mixture_conditional_path_integration
+    - model_level_strict_improvement_or_mesh_rate_theorem
+    - frozen_strong_baseline_total_work_evidence
+
+estimand:
+  underlying_model: rough_bergomi
+  target: finite_grid_probability
+  primary_grid_steps: 128
+  continuous_monitoring: false
+  primary_tasks:
+    - terminal
+    - discrete_barrier
+  excluded_primary_tasks:
+    - hit_plus_occupation
+  nominal_probability_minimum: 1.0e-5
+  nominal_probability_maximum: 1.0e-2
+
+comparators:
+  outcome_selected_primary_comparator: false
+  roles:
+    mechanism:
+      id: fixed_raw_defensive
+      required: true
+      training_inclusive: true
+    adaptive_work:
+      id: task_tuned_pure_cem
+      required: true
+      training_inclusive: true
+    closest_published_method:
+      id: numerical_smoothing_rqmc
+      required: true
+      training_inclusive: true
+  mandatory_secondary:
+    - crude_antithetic_mc
+    - task_tuned_defensive_cem
+    - large_deviation_adaptive_is
+    - exact_likelihood_flow_is
+
+statistics:
+  inference_unit: independent_seed_cluster
+  equal_cell_weight_within_cluster: true
+  simultaneous_intervals_for_multiple_primary_comparators: true
+  reference_uncertainty_in_accuracy: true
+  provisional_gates:
+    minimum_probe_variance_ratio_lower: 2.0
+    minimum_execution_variance_ratio_lower: 2.0
+    minimum_fixed_raw_final_work_ratio_lower: 1.5
+    minimum_external_training_inclusive_work_ratio_lower: 1.2
+    minimum_exact_attainment_lower: 0.8
+    maximum_simultaneous_rmse_ratio: 1.0
+    maximum_floor_binding_fraction: 0.05
+    maximum_resource_censoring_count: 0
+    maximum_cross_phase_seed_intersection: 0
+
+cost_accounting:
+  training_inclusive: true
+  failed_attempts_charged: true
+  hyperparameter_search_charged: true
+  categories:
+    - proposal_training
+    - hyperparameter_search
+    - failed_retry
+    - screening
+    - allocation_pilot
+    - final_sampling
+    - payoff_evaluation
+    - likelihood_evaluation
+    - conditional_integration
+  heterogeneous_hardware_metrics:
+    - algorithmic_work_units
+    - standardized_hardware_wall_time
+    - actual_compute_cost
+
+flow_extension:
+  full_path_flow_is_baseline_only: true
+  residual_flow_dcs_requires_exact_density: true
+  residual_flow_dcs_requires_tractable_conditional_integral: true
+
+claim_boundaries:
+  required_scope_language:
+    - finite_grid
+    - training_inclusive
+    - predeclared_comparator
+  prohibited_claims:
+    - unbiased_continuous_barrier
+    - universal_rbergomi_optimality
+    - unconditional_rbergomi_mlmc_complexity
+    - superiority_over_all_importance_samplers
+    - neural_architecture_contribution
+    - quantum_or_feynman_path_integral
+    - successful_hybrid_router
+    - independent_physical_reproduction_already_complete
+    - exact_percentile_bootstrap_rmse_coverage
+
+phase_policy:
+  commits_per_phase: 1
+  commit_only_after_theory_audit: true
+  commit_only_after_technical_audit: true
+  commit_only_after_tests: true
+  intermediate_commits_prohibited: true

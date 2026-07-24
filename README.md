@@ -10,7 +10,7 @@
 
 ## Research status
 
-The active research object is the **V7 fixed-proposal DCS mechanism**:
+The confirmed empirical base is the **V7 fixed-proposal DCS mechanism**:
 
 > an exact Rao--Blackwell comparison of raw defensive importance sampling and
 > **D**efensive **C**ontrol-**S**pan **M**arginalized **G**aussian **I**ntegration
@@ -76,6 +76,14 @@ as diagnostic because OS and container scheduling affect it. This is a
 cross-software-environment reproduction on the same physical laptop, not an
 independent-hardware replication.
 
+V8 top-journal development has started from that confirmed base. P0 fixes the
+finite-grid estimand, three permitted contribution slots, outcome-independent
+comparator roles, training-inclusive cost categories, inferential units, prohibited
+claims, flow-extension conditions, and one-commit-per-phase policy. Its fail-closed
+machine audit and corruption tests pass. P0 is a development authorization only:
+the closest-work novelty audit, new model-level theorem, strong external baselines,
+qualification, confirmation, and independent physical reproduction remain open.
+
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
 pilot-frozen achieved-RMSE allocation, resource censoring, durable resume, fresh CEM
@@ -96,16 +104,15 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **545/545 tests on 2026-07-24**.
+The complete local regression suite passed **558/558 tests on 2026-07-25**.
 
 This repository is **not yet a finished journal submission**. The present estimator
-targets a declared finest discrete grid rather than a continuously monitored event,
-M7 lacks the strongest single-level comparator in its frozen matrix, and its three
-regimes changed H, eta, and rho together. V4 therefore adds margin-localized threshold
-theory, single-level/MLMC crossover logic, strong baselines, and one-factor-at-a-time
-qualification. V4 selects DCS-SLIS in 90/135 seed-runs and an earlier multilevel start
-in 45/135, so neither endpoint is uniformly preferred. Development, recovered, and
-qualification evidence must not be quoted as untouched confirmation.
+targets a declared finite grid rather than a continuously monitored event. V7
+isolates a strong same-proposal Rao--Blackwell mechanism, but it does not yet prove a
+new rough-volatility model-level rate or beat the predeclared closest published
+methods under frozen total-work accounting. The Linux result uses a separate software
+environment on the same laptop, not independent physical hardware. These limitations
+are explicit V8 gates and may not be hidden by relabelling prior results.
 
 Start with:
 
@@ -146,6 +153,9 @@ Start with:
 - [V7 Linux reproduction protocol](docs/plans/G11_V7_LINUX_REPRODUCTION_PROTOCOL_2026-07-24.md)
 - [V7 mechanism confirmation V1 decision](docs/audits/G11_V7_MECHANISM_CONFIRMATION_V1_DECISION_2026-07-24.md)
 - [V7 Linux reproduction V1 decision](docs/audits/G11_V7_LINUX_REPRODUCTION_V1_DECISION_2026-07-24.md)
+- [V8 top-journal implementation plan](docs/plans/G11_V8_TOP_JOURNAL_IMPLEMENTATION_PLAN_2026-07-25.md)
+- [V8 claim and estimand contract](docs/theory/G11_V8_CLAIM_AND_ESTIMAND_CONTRACT.md)
+- [V8 P0 claim-contract decision](docs/audits/G11_V8_P0_CLAIM_CONTRACT_DECISION_2026-07-25.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
@@ -503,6 +513,9 @@ and prevent selective reporting.
 | G10 | Control-span marginalized Gaussian integration | Finite-grid audits passed; 2x single-level headline failed |
 | G11 M7 V3 | Correction-focused DCS-MGI-MLMC | 640 cells complete; performance sub-gates pass; strict headline fails on one recovered I/O incident |
 | G11 V4 | Margin-localized Hybrid DCS-MGI | 27-cell frozen OAT qualification and independent audit pass; 90/135 SLIS, 45/135 multilevel |
+| G11 V6 | Amortized DCS-SLIS policy | Frozen Windows and disjoint-seed Linux software-environment results pass; selector claim falsified |
+| G11 V7 | Same-proposal Rao--Blackwell DCS | Development, qualification, confirmation, and Linux software-environment reproduction pass |
+| G11 V8 | Theory plus strong external comparators | P0 contract passes; novelty, new theorem, external comparison, and physical reproduction open |
 
 Earlier neural VFO, mixture, and residual-controller tracks were tested against strong
 baselines and stopped when their gates failed. See the phase reviews under
@@ -513,16 +526,20 @@ baselines and stopped when their gates failed. See the phase reviews under
 
 The next publication-critical steps are:
 
-1. freeze and execute actual achieved-RMSE allocations using the qualified hybrid;
-2. use a strong task-tuned SLIS baseline on every future headline cell;
-3. prove model-level coefficient, mesh-enrichment, and small-active-slope bounds, or
-   keep the V4 rate theorem explicitly conditional;
-4. freeze a new untouched achieved-RMSE seed namespace after qualification;
-5. run a second independent environment reproduction;
-6. add a continuous-time weak-bias study or keep every headline explicitly
-   finite-grid; and
-7. add a neural amortized proposal generator only if it reduces total calibration
-   cost under an independently frozen gate.
+1. complete the reproducible primary-source novelty audit and stop if the surviving
+   contribution is only renamed conditional smoothing;
+2. prove defensive-mixture exactness, the proposal-conditional DCS identity, strict
+   improvement, and finite-grid scalar-threshold lemmas;
+3. prove or explicitly downgrade barrier-mesh, weak-bias, correction-variance, and
+   end-to-end complexity claims;
+4. implement published-style conditional Monte Carlo, smoothing RQMC,
+   large-deviation IS, and exact-likelihood flow baselines under one cost contract;
+5. freeze one-factor cells, independent references, cluster-level inference,
+   simultaneous intervals, and training-inclusive work gates;
+6. complete development, independent-seed qualification, outcome-blind freeze, and
+   uncensored confirmation without reusing seeds; and
+7. reproduce the frozen effect on independent physical hardware and obtain external
+   mathematical and code review before manuscript submission.
 
 Until those items are complete, the defensible description is **PhD-level research
 prototype and strong working-paper core**, not a top-journal-ready final manuscript.
