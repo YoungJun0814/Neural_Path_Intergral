@@ -36,7 +36,7 @@ def build_publication_archive(
     proposal_training_source_path: Path,
     additional_files: dict[str, Path] | None = None,
 ) -> dict[str, Any]:
-    """Archive the V3 proposal bank, raw source, and declared evidence by raw hash."""
+    """Archive the V3/V4 proposal bank, source, and declared evidence by raw hash."""
 
     if output_path.exists():
         raise FileExistsError("publication archive refuses to overwrite an existing file")
@@ -44,9 +44,13 @@ def build_publication_archive(
     policy = yaml.safe_load(policy_raw)
     if (
         not isinstance(policy, dict)
-        or policy.get("schema") != "npi.g11.v6-routed-policy.config.v3"
+        or policy.get("schema")
+        not in {
+            "npi.g11.v6-routed-policy.config.v3",
+            "npi.g11.v6-routed-policy.config.v4",
+        }
     ):
-        raise ValueError("publication archive requires a V3 routed-policy config")
+        raise ValueError("publication archive requires a V3/V4 routed-policy config")
     training_audit = _task_conditioned_training_source_audit(
         policy["proposal"], proposal_training_source_path
     )

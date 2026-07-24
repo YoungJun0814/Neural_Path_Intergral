@@ -25,8 +25,14 @@ smoke and corruption tests pass. A two-cell, 24-cluster laptop development pilot
 passes the prespecified aggregate accuracy gates and favors the policy over pure CEM
 by a 3.13x training-inclusive geometric work ratio (one-sided 95% lower ratio 2.81x).
 The conservative forecast requires 51 clusters, so this is not powered confirmation.
-Full rare-cell qualification, untouched confirmation, and Linux reproduction have
-**not** yet been run.
+The clean-snapshot V6 primary-baseline matrix has now completed all 1,296 records
+(18 cells × 24 clusters × crude/pure-CEM/defensive-CEM), with no censoring and
+1,296/1,296 independent record audits passing. Six individual achieved-RMSE misses
+remain visible as diagnostics; all 54 prespecified method-by-cell aggregate accuracy
+co-gates pass. The V4 routed/selector-off and V2 fixed-secondary protocols remove the
+old worst-case-bound over-allocation and all-record empirical-AND gate before their
+formal runs. Full routed qualification, untouched confirmation, and Linux
+reproduction have **not** yet been run.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -48,7 +54,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **481/481 tests on 2026-07-23**.
+The complete local regression suite passed **516/516 tests on 2026-07-24**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finest discrete grid rather than a continuously monitored event,
@@ -86,6 +92,7 @@ Start with:
 - [V6 notation-to-code ledger](docs/theory/G11_V6_NOTATION_CODE_LEDGER.md)
 - [V6 terminal inverse-slope theorem](docs/theory/G11_V6_TERMINAL_SLOPE_THEOREM.md)
 - [V6 laptop development decision](docs/audits/G11_V6_LAPTOP_DEVELOPMENT_DECISION_2026-07-23.md)
+- [V6 policy V4 allocation and gate audit](docs/audits/G11_V6_POLICY_V4_ALLOCATION_AND_GATE_AUDIT_2026-07-24.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 

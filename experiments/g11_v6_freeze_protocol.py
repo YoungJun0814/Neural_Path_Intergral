@@ -90,7 +90,10 @@ def build_frozen_configs(
     policy["phase"] = "confirmation"
     policy["frozen"] = True
     policy["sampling"]["clusters"] = planned_clusters
-    if policy.get("schema") == "npi.g11.v6-routed-policy.config.v3":
+    if policy.get("schema") in {
+        "npi.g11.v6-routed-policy.config.v3",
+        "npi.g11.v6-routed-policy.config.v4",
+    }:
         policy["proposal"]["training_amortization_record_count"] = (
             manifest_cell_count * planned_clusters
         )
@@ -193,12 +196,18 @@ def run(
             "npi.g11.v6-routed-policy.config.v1",
             "npi.g11.v6-routed-policy.config.v2",
             "npi.g11.v6-routed-policy.config.v3",
+            "npi.g11.v6-routed-policy.config.v4",
         ),
     )
     proposal_training_audit = None
-    if policy_template["schema"] == "npi.g11.v6-routed-policy.config.v3":
+    if policy_template["schema"] in {
+        "npi.g11.v6-routed-policy.config.v3",
+        "npi.g11.v6-routed-policy.config.v4",
+    }:
         if proposal_training_source_path is None:
-            raise ValueError("freezing a V3 policy requires its proposal training source")
+            raise ValueError(
+                "freezing a V3/V4 policy requires its proposal training source"
+            )
         proposal_training_audit = _task_conditioned_training_source_audit(
             policy_template["proposal"], proposal_training_source_path
         )

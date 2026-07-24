@@ -46,11 +46,15 @@ def materialize_reference_config(
         raise ValueError("reference materialization requires a frozen V2 base config")
     policy, policy_hash = _load_policy_config(policy_config_path)
     if (
-        policy.get("schema") != "npi.g11.v6-routed-policy.config.v3"
+        policy.get("schema")
+        not in {
+            "npi.g11.v6-routed-policy.config.v3",
+            "npi.g11.v6-routed-policy.config.v4",
+        }
         or policy.get("phase") != "qualification"
         or policy.get("frozen") is not True
     ):
-        raise ValueError("reference materialization requires a frozen V3 policy")
+        raise ValueError("reference materialization requires a frozen V3/V4 policy")
     if not isinstance(protocol_id, str) or not protocol_id.strip():
         raise ValueError("reference protocol id must be nonempty")
     proposal = json.loads(json.dumps(policy["proposal"]))

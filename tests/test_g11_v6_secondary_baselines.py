@@ -125,8 +125,9 @@ def test_secondary_baseline_config_is_frozen_and_paired(
 ) -> None:
     paths = _suite(tmp_path)
     config, digest = _load_config(
-        paths["secondary_baselines_qualification_v1.yaml"]
+        paths["secondary_baselines_qualification_v2.yaml"]
     )
+    assert config["schema"] == "npi.g11.v6-secondary-baselines.config.v2"
     assert config["phase"] == "qualification"
     assert config["frozen"]
     assert config["methods"] == ["fixed_dcs_slis", "fixed_raw_defensive"]
@@ -139,8 +140,9 @@ def test_selector_off_policy_preserves_router_but_precludes_profile_spend(
 ) -> None:
     paths = _suite(tmp_path)
     config, _digest = load_policy(
-        paths["routed_policy_selector_off_qualification_v1.yaml"]
+        paths["routed_policy_selector_off_qualification_v2.yaml"]
     )
+    assert config["schema"] == "npi.g11.v6-routed-policy.config.v4"
     assert config["router"]["initial_screening_trials"] > 0
     assert config["router"]["maximum_hybrid_profile_work"] == 1.0
     minimum_one_profile_batch = (

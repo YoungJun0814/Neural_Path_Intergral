@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 import math
+import statistics
 from pathlib import Path
 from statistics import NormalDist
 from typing import Any
@@ -764,6 +765,447 @@ def _audit_crude_design_certificate(
         return False
 
 
+def _audit_replicated_direct_certificate(
+    record: dict[str, Any],
+    *,
+    relative: float,
+    absolute: float,
+    required: bool,
+) -> bool:
+    """Replay V2/V4 direct point-variance planning without production helpers."""
+
+    certificate = record.get("planning_certificate")
+    if certificate is None:
+        certificate = record.get("direct_planning_certificate")
+    if certificate is None:
+        return not required
+    if not isinstance(certificate, dict):
+        return False
+    expected_fields = {
+        "schema",
+        "method",
+        "planning_replicates",
+        "samples_per_replicate",
+        "variance_statistic",
+        "replicate_variances",
+        "planning_variance",
+        "pooled_count",
+        "pooled_mean",
+        "pooled_variance",
+        "variance_safety_factor",
+        "zero_variance_fallback",
+        "selected_design_variance",
+        "absolute_bound",
+        "pilot_values_within_nonnegative_bound",
+        "nominal_probability",
+        "nominal_probability_upper_multiplier",
+        "probability_upper_bound",
+        "reference_certificate_z",
+        "reference_upper_bound",
+        "structural_variance_upper_diagnostic",
+        "structural_bound_used_for_allocation",
+        "certified",
+    }
+    if set(certificate) != expected_fields:
+        return False
+    try:
+        if (
+            certificate["schema"]
+            != "npi.g11.v6-replicated-direct-plugin-certificate.v1"
+        ):
+            return False
+        replicates = int(certificate["planning_replicates"])
+        per_replicate = int(certificate["samples_per_replicate"])
+        replicate_variances = tuple(
+            float(value) for value in certificate["replicate_variances"]
+        )
+        statistic = str(certificate["variance_statistic"])
+        if (
+            replicates < 3
+            or per_replicate < 2
+            or len(replicate_variances) != replicates
+            or any(
+                not math.isfinite(value) or value < 0.0
+                for value in replicate_variances
+            )
+        ):
+            return False
+        if statistic == "mean_replicate_variance":
+            planning = statistics.fmean(replicate_variances)
+        elif statistic == "median_replicate_variance":
+            planning = statistics.median(replicate_variances)
+        else:
+            return False
+        safety = float(certificate["variance_safety_factor"])
+        fallback = float(certificate["zero_variance_fallback"])
+        selected = max(safety * planning, fallback)
+        nominal = float(certificate["nominal_probability"])
+        multiplier = float(
+            certificate["nominal_probability_upper_multiplier"]
+        )
+        probability_upper = min(1.0, multiplier * nominal)
+        reference_z = float(certificate["reference_certificate_z"])
+        reference_upper = (
+            float(record["reference_probability"])
+            + reference_z * float(record["reference_standard_error"])
+        )
+        bound = float(certificate["absolute_bound"])
+        structural = bound * probability_upper
+        method = str(certificate["method"])
+        expected_fallback = (
+            nominal * (1.0 - nominal)
+            if method == "crude"
+            else nominal**2
+        )
+        design = record.get("design")
+        if design is None:
+            design = record["preparation"]["audit_design"]
+        if not isinstance(design, dict):
+            return False
+        bounded = bool(certificate["pilot_values_within_nonnegative_bound"])
+        expected_certified = bounded and reference_upper <= probability_upper
+        return all(
+            (
+                safety >= 1.0,
+                fallback > 0.0,
+                bound > 0.0,
+                0.0 < nominal <= 1.0,
+                multiplier >= 1.0,
+                reference_z > 0.0,
+                int(certificate["pooled_count"])
+                == replicates * per_replicate,
+                int(design["pilot_count"]) == replicates * per_replicate,
+                _close(
+                    float(certificate["planning_variance"]),
+                    planning,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    fallback,
+                    expected_fallback,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    float(certificate["selected_design_variance"]),
+                    selected,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    float(design["design_variance"]),
+                    selected,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    float(certificate["pooled_mean"]),
+                    float(design["pilot_mean"]),
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    float(certificate["pooled_variance"]),
+                    float(design["pilot_variance"]),
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    float(design["absolute_bound"]),
+                    bound,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    float(certificate["probability_upper_bound"]),
+                    probability_upper,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    float(certificate["reference_upper_bound"]),
+                    reference_upper,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                _close(
+                    float(
+                        certificate[
+                            "structural_variance_upper_diagnostic"
+                        ]
+                    ),
+                    structural,
+                    relative=relative,
+                    absolute=absolute,
+                ),
+                certificate["structural_bound_used_for_allocation"] is False,
+                bool(certificate["certified"]) == expected_certified,
+                bool(certificate["certified"]),
+            )
+        )
+    except (KeyError, TypeError, ValueError, ZeroDivisionError, OverflowError):
+        return False
+
+
+def _fixed_hybrid_work_audit(
+    variances: tuple[float, ...],
+    costs: tuple[float, ...],
+    *,
+    target: float,
+    minimum_final_samples: int,
+) -> float:
+    """Independently replay the integer point-work calculation."""
+
+    root_sum = math.fsum(
+        math.sqrt(variance * cost)
+        for variance, cost in zip(variances, costs, strict=True)
+    )
+    counts = [
+        max(
+            minimum_final_samples,
+            math.ceil(root_sum * math.sqrt(variance / cost) / target)
+            if variance > 0.0
+            else minimum_final_samples,
+        )
+        for variance, cost in zip(variances, costs, strict=True)
+    ]
+    while (
+        math.fsum(
+            variance / count
+            for variance, count in zip(variances, counts, strict=True)
+        )
+        > target * (1.0 + 1e-14)
+    ):
+        best = max(
+            range(len(counts)),
+            key=lambda index: (
+                (
+                    variances[index] / counts[index]
+                    - variances[index] / (counts[index] + 1)
+                )
+                / costs[index],
+                -index,
+            ),
+        )
+        counts[best] += 1
+    return math.fsum(
+        count * cost for count, cost in zip(counts, costs, strict=True)
+    )
+
+
+def _audit_replicated_hybrid_selection(
+    record: dict[str, Any],
+    *,
+    relative: float,
+    absolute: float,
+    required: bool,
+) -> bool:
+    """Replay V4 hybrid point-work selection and design variances."""
+
+    if not required:
+        return True
+    selection = record.get("selection")
+    if selection is None:
+        return not required
+    if not isinstance(selection, dict):
+        return False
+    try:
+        if (
+            selection.get("schema")
+            != "npi.g11.v6-replicated-planning-selection.v1"
+            or selection.get("finite_sample_work_certificate") is not False
+        ):
+            return False
+        replicates = int(selection["planning_replicates"])
+        samples = int(selection["samples_per_replicate"])
+        statistic = str(selection["variance_statistic"])
+        replicate_map = selection["profile_replicate_variances"]
+        serialized_planning = selection["profile_planning_variances"]
+        if (
+            replicates < 3
+            or samples < 2
+            or int(selection["cumulative_sample_count"])
+            != replicates * samples
+            or not isinstance(replicate_map, dict)
+            or set(replicate_map) != set(serialized_planning)
+        ):
+            return False
+        planning: dict[str, float] = {}
+        for profile_id, raw_values in replicate_map.items():
+            values = tuple(float(value) for value in raw_values)
+            if len(values) != replicates or any(
+                not math.isfinite(value) or value < 0.0 for value in values
+            ):
+                return False
+            if statistic == "mean_replicate_variance":
+                planning[profile_id] = statistics.fmean(values)
+            elif statistic == "median_replicate_variance":
+                planning[profile_id] = statistics.median(values)
+            else:
+                return False
+        if not all(
+            _close(
+                planning[profile_id],
+                float(serialized_planning[profile_id]),
+                relative=relative,
+                absolute=absolute,
+            )
+            for profile_id in planning
+        ):
+            return False
+        profiles = selection["profiles"]
+        costs = {
+            str(profile["profile_id"]): float(profile["cost_per_sample"])
+            for profile in profiles
+        }
+        if set(costs) != set(planning) or any(
+            not math.isfinite(cost) or cost <= 0.0 for cost in costs.values()
+        ):
+            return False
+        if any(
+            int(profile["moments"]["sample_count"])
+            != replicates * samples
+            for profile in profiles
+        ):
+            return False
+        safety = float(selection["allocation_safety_factor"])
+        tolerance = float(
+            selection["practical_equivalence_relative_tolerance"]
+        )
+        minimum_final = int(selection["minimum_final_samples"])
+        if safety < 1.0 or tolerance < 0.0 or minimum_final < 2:
+            return False
+        target_payload = record["preparation"]["core"]["target"]
+        target = (
+            float(target_payload["nominal_probability"])
+            * float(target_payload["relative_sampling_rmse"])
+        ) ** 2
+        selector_work = float(selection["cumulative_profile_work"])
+        preprocessing_records = record["preparation"]["preprocessing_work"][
+            "records"
+        ]
+        serialized_selector_work = math.fsum(
+            float(item["work_units"])
+            for item in preprocessing_records
+            if item["category"] == "selector_profile"
+        )
+        if not _close(
+            selector_work,
+            serialized_selector_work,
+            relative=relative,
+            absolute=absolute,
+        ):
+            return False
+        common_prework = _work_total(preprocessing_records) - selector_work
+        candidate_work: dict[str, float] = {}
+        for candidate in selection["candidate_point_work"]:
+            start = int(str(candidate).split("_")[1])
+            term_ids = (f"single_{start}",) + tuple(
+                f"correction_{level}"
+                for level in range(start + 1, max(
+                    int(item.split("_")[1])
+                    for item in planning
+                    if item.startswith("single_")
+                ) + 1)
+            )
+            if any(term_id not in planning for term_id in term_ids):
+                return False
+            candidate_work[candidate] = (
+                common_prework
+                + selector_work
+                + _fixed_hybrid_work_audit(
+                    tuple(safety * planning[item] for item in term_ids),
+                    tuple(costs[item] for item in term_ids),
+                    target=target,
+                    minimum_final_samples=minimum_final,
+                )
+            )
+        if not all(
+            _close(
+                candidate_work[candidate],
+                float(selection["candidate_point_work"][candidate]),
+                relative=relative,
+                absolute=absolute,
+            )
+            for candidate in candidate_work
+        ):
+            return False
+        best = min(candidate_work, key=lambda item: (candidate_work[item], item))
+        simplest = f"start_{max(int(item.split('_')[1]) for item in candidate_work)}"
+        if set(candidate_work) != {
+            f"start_{level}"
+            for level in range(int(simplest.split("_")[1]) + 1)
+        }:
+            return False
+        selected = (
+            simplest
+            if candidate_work[simplest]
+            <= (1.0 + tolerance) * candidate_work[best]
+            else best
+        )
+        decision = selection["frozen_decision"]
+        if (
+            decision["selected_candidate"] != selected
+            or int(decision["look_index"]) != replicates - 1
+            or set(decision["surviving_candidates"]) != set(candidate_work)
+            or not _close(
+                float(decision["selected_point_work"]),
+                candidate_work[selected],
+                relative=relative,
+                absolute=absolute,
+            )
+            or not all(
+                _close(
+                    float(value),
+                    candidate_work[selected],
+                    relative=relative,
+                    absolute=absolute,
+                )
+                for value in decision["selected_work_interval"]
+            )
+            or not _close(
+                float(decision["worst_case_interval_regret_bound"]),
+                candidate_work[selected] / candidate_work[best],
+                relative=relative,
+                absolute=absolute,
+            )
+        ):
+            return False
+        start = int(selected.split("_")[1])
+        finest = max(
+            int(item.split("_")[1])
+            for item in planning
+            if item.startswith("single_")
+        )
+        selected_ids = (f"single_{start}",) + tuple(
+            f"correction_{level}" for level in range(start + 1, finest + 1)
+        )
+        allocations = record["preparation"]["core"]["allocations"]
+        if [item["profile_id"] for item in allocations] != list(selected_ids):
+            return False
+        return all(
+            _close(
+                float(allocation["design_variance"]),
+                safety * planning[profile_id],
+                relative=relative,
+                absolute=absolute,
+            )
+            for profile_id, allocation in zip(
+                selected_ids, allocations, strict=True
+            )
+        )
+    except (
+        KeyError,
+        TypeError,
+        ValueError,
+        ZeroDivisionError,
+        OverflowError,
+        IndexError,
+    ):
+        return False
+
+
 _V6_BASELINE_OPERATIONAL_GATE_NAMES = (
     "complete_matrix",
     "all_runs_complete",
@@ -783,6 +1225,29 @@ _V6_BASELINE_ALL_GATE_NAMES = (
 )
 _V6_AGGREGATE_ACCURACY_RULE = (
     "deferred_to_prespecified_method_cell_attainment_and_bootstrap_rmse_co_gates"
+)
+_V6_SECONDARY_OPERATIONAL_GATE_NAMES = (
+    "complete_matrix",
+    "all_runs_complete",
+    "no_resource_censoring",
+    "all_design_targets_attained",
+    "all_independent_audits",
+    "smoothing_pair_present",
+    "all_planning_certificates_valid",
+    "all_final_seed_roles_separate",
+)
+_V6_ROUTED_OPERATIONAL_GATE_NAMES = (
+    "complete_matrix",
+    "all_routes_resolved",
+    "all_runs_complete",
+    "all_design_targets_attained",
+    "no_resource_censoring",
+    "all_independent_audits",
+    "median_selection_fraction",
+    "p90_selection_fraction",
+    "reference_not_used_by_router_schema",
+    "all_planning_certificates_valid",
+    "all_final_seed_roles_separate",
 )
 
 
@@ -944,6 +1409,341 @@ def _audit_v6_baseline_summary(source: dict[str, Any]) -> bool:
         return False
 
 
+def _audit_v6_secondary_summary(source: dict[str, Any]) -> bool:
+    """Replay the secondary V2 operational/diagnostic gate split."""
+
+    if (
+        source.get("config_schema")
+        != "npi.g11.v6-secondary-baselines.config.v2"
+    ):
+        return True
+    try:
+        records = source["records"]
+        contract = source["qualification_contract"]
+        if not isinstance(records, list) or not isinstance(contract, dict):
+            return False
+        if set(contract) != {
+            "schema",
+            "expected_cell_ids",
+            "expected_clusters",
+            "methods",
+            "operational_gate_names",
+            "per_record_empirical_target_role",
+            "aggregate_accuracy_protocol_id",
+        }:
+            return False
+        cells = contract["expected_cell_ids"]
+        clusters = int(contract["expected_clusters"])
+        methods = contract["methods"]
+        if (
+            contract["schema"]
+            != "npi.g11.v6-secondary-qualification-contract.v1"
+            or not isinstance(cells, list)
+            or not cells
+            or len(cells) != len(set(cells))
+            or clusters < 1
+            or methods != ["fixed_dcs_slis", "fixed_raw_defensive"]
+            or source.get("methods") != methods
+            or contract["operational_gate_names"]
+            != list(_V6_SECONDARY_OPERATIONAL_GATE_NAMES)
+            or contract["per_record_empirical_target_role"]
+            != _V6_AGGREGATE_ACCURACY_RULE
+            or not isinstance(contract["aggregate_accuracy_protocol_id"], str)
+            or not contract["aggregate_accuracy_protocol_id"]
+        ):
+            return False
+        expected_keys = {
+            (cell, cluster, method)
+            for cell in cells
+            for cluster in range(clusters)
+            for method in methods
+        }
+        actual_keys = [
+            (
+                str(record["cell_id"]),
+                int(record["cluster"]),
+                str(record["method"]),
+            )
+            for record in records
+        ]
+        recomputed = {
+            "complete_matrix": len(actual_keys) == len(set(actual_keys))
+            and set(actual_keys) == expected_keys,
+            "all_runs_complete": all(
+                bool(record["result"]["core"]["complete"])
+                for record in records
+            ),
+            "no_resource_censoring": all(
+                not bool(record["result"]["core"]["resource_censored"])
+                for record in records
+            ),
+            "all_design_targets_attained": all(
+                bool(record["result"]["core"]["design_target_attained"])
+                for record in records
+            ),
+            "all_empirical_targets_attained": all(
+                bool(record["result"]["core"]["empirical_target_attained"])
+                for record in records
+            ),
+            "all_independent_audits": all(
+                bool(record["audit"]["passed"]) for record in records
+            ),
+            "smoothing_pair_present": set(methods)
+            == {"fixed_dcs_slis", "fixed_raw_defensive"},
+            "all_planning_certificates_valid": all(
+                isinstance(record.get("planning_certificate"), dict)
+                and record["planning_certificate"].get("certified") is True
+                and record["planning_certificate"].get(
+                    "structural_bound_used_for_allocation"
+                )
+                is False
+                for record in records
+            ),
+            "all_final_seed_roles_separate": all(
+                all(
+                    seed["key"]["role"] == "final"
+                    for seed in record["result"]["core"][
+                        "seed_ledger_payload"
+                    ]["records"]
+                    if seed["key"]["role"]
+                    not in {"proposal-training", "allocation-pilot"}
+                )
+                for record in records
+            ),
+        }
+        gates = source["gates"]
+        qualification = source["qualification_gates"]
+        expected_gate_names = {
+            *_V6_SECONDARY_OPERATIONAL_GATE_NAMES,
+            "all_empirical_targets_attained",
+        }
+        if (
+            set(gates) != expected_gate_names
+            or gates != recomputed
+            or qualification
+            != {
+                name: recomputed[name]
+                for name in _V6_SECONDARY_OPERATIONAL_GATE_NAMES
+            }
+        ):
+            return False
+        expected_decision = all(qualification.values()) and all(
+            bool(value) for value in source["formal_readiness"].values()
+        )
+        return (
+            bool(source["secondary_baselines_qualified"])
+            == expected_decision
+        )
+    except (KeyError, TypeError, ValueError, IndexError, OverflowError):
+        return False
+
+
+def _linear_quantile_audit(
+    values: list[float], probability: float
+) -> float | None:
+    if not values:
+        return None
+    ordered = sorted(values)
+    position = probability * (len(ordered) - 1)
+    lower = math.floor(position)
+    upper = math.ceil(position)
+    if lower == upper:
+        return ordered[lower]
+    weight = position - lower
+    return (1.0 - weight) * ordered[lower] + weight * ordered[upper]
+
+
+def _audit_v6_routed_summary(source: dict[str, Any]) -> bool:
+    """Replay the routed V4 operational/diagnostic gate split."""
+
+    if source.get("config_schema") != "npi.g11.v6-routed-policy.config.v4":
+        return True
+    try:
+        records = source["records"]
+        contract = source["qualification_contract"]
+        if not isinstance(records, list) or not isinstance(contract, dict):
+            return False
+        if set(contract) != {
+            "schema",
+            "expected_cell_ids",
+            "expected_clusters",
+            "maximum_median_selection_fraction",
+            "maximum_p90_selection_fraction",
+            "operational_gate_names",
+            "per_record_empirical_target_role",
+            "aggregate_accuracy_protocol_id",
+        }:
+            return False
+        cells = contract["expected_cell_ids"]
+        clusters = int(contract["expected_clusters"])
+        median_limit = float(
+            contract["maximum_median_selection_fraction"]
+        )
+        p90_limit = float(contract["maximum_p90_selection_fraction"])
+        if (
+            contract["schema"]
+            != "npi.g11.v6-routed-policy-qualification-contract.v1"
+            or not isinstance(cells, list)
+            or not cells
+            or len(cells) != len(set(cells))
+            or clusters < 1
+            or not 0.0 <= median_limit <= 1.0
+            or not 0.0 <= p90_limit <= 1.0
+            or contract["operational_gate_names"]
+            != list(_V6_ROUTED_OPERATIONAL_GATE_NAMES)
+            or contract["per_record_empirical_target_role"]
+            != _V6_AGGREGATE_ACCURACY_RULE
+            or not isinstance(contract["aggregate_accuracy_protocol_id"], str)
+            or not contract["aggregate_accuracy_protocol_id"]
+        ):
+            return False
+        expected_keys = {
+            (cell, cluster)
+            for cell in cells
+            for cluster in range(clusters)
+        }
+        actual_keys = [
+            (str(record["cell_id"]), int(record["cluster"]))
+            for record in records
+        ]
+        fractions = [
+            float(record["selection_work_fraction"]) for record in records
+        ]
+        median = _linear_quantile_audit(fractions, 0.5)
+        p90 = _linear_quantile_audit(fractions, 0.9)
+        planning_valid = all(
+            (
+                record["route"]["action"] == "profile_hybrid"
+                and isinstance(record.get("selection"), dict)
+                and record["selection"].get("schema")
+                == "npi.g11.v6-replicated-planning-selection.v1"
+                and record["selection"].get("finite_sample_work_certificate")
+                is False
+            )
+            or (
+                record["route"]["action"] in {"dcs_slis", "crude"}
+                and isinstance(
+                    record.get("direct_planning_certificate"), dict
+                )
+                and record["direct_planning_certificate"].get("certified")
+                is True
+                and record["direct_planning_certificate"].get(
+                    "structural_bound_used_for_allocation"
+                )
+                is False
+            )
+            for record in records
+        )
+        allowed_preparation_roles = {
+            "proposal-training",
+            "router-screening",
+            "allocation-pilot",
+            "selector-planning",
+            "selector-profile",
+        }
+        recomputed = {
+            "complete_matrix": len(actual_keys) == len(set(actual_keys))
+            and set(actual_keys) == expected_keys,
+            "all_routes_resolved": all(
+                record["route"]["action"] != "continue_screening"
+                for record in records
+            ),
+            "all_runs_complete": all(
+                bool(record["result"]["core"]["complete"])
+                for record in records
+            ),
+            "all_design_targets_attained": all(
+                bool(record["result"]["core"]["design_target_attained"])
+                for record in records
+            ),
+            "all_empirical_targets_attained": all(
+                bool(record["result"]["core"]["empirical_target_attained"])
+                for record in records
+            ),
+            "no_resource_censoring": all(
+                not bool(record["result"]["core"]["resource_censored"])
+                for record in records
+            ),
+            "all_independent_audits": all(
+                bool(record["audit"]["passed"]) for record in records
+            ),
+            "median_selection_fraction": median is not None
+            and median <= median_limit,
+            "p90_selection_fraction": p90 is not None
+            and p90 <= p90_limit,
+            "reference_not_used_by_router_schema": all(
+                all("reference" not in key for key in record["route"])
+                for record in records
+            ),
+            "all_planning_certificates_valid": planning_valid,
+            "all_final_seed_roles_separate": all(
+                all(
+                    seed["key"]["role"] == "final"
+                    for seed in record["result"]["core"][
+                        "seed_ledger_payload"
+                    ]["records"]
+                    if seed["key"]["role"]
+                    not in allowed_preparation_roles
+                )
+                for record in records
+            ),
+        }
+        summary = source["selection_fraction_summary"]
+        if median is None or p90 is None:
+            return False
+        if not (
+            _close(
+                float(summary["median"]),
+                median,
+                relative=1e-12,
+                absolute=1e-15,
+            )
+            and _close(
+                float(summary["p90"]),
+                p90,
+                relative=1e-12,
+                absolute=1e-15,
+            )
+        ):
+            return False
+        gates = source["gates"]
+        qualification = source["qualification_gates"]
+        expected_gate_names = {
+            *_V6_ROUTED_OPERATIONAL_GATE_NAMES,
+            "all_empirical_targets_attained",
+        }
+        if (
+            set(gates) != expected_gate_names
+            or gates != recomputed
+            or qualification
+            != {
+                name: recomputed[name]
+                for name in _V6_ROUTED_OPERATIONAL_GATE_NAMES
+            }
+        ):
+            return False
+        expected_decision = all(qualification.values()) and all(
+            bool(value) for value in source["formal_readiness"].values()
+        )
+        return bool(source["policy_qualified"]) == expected_decision
+    except (
+        KeyError,
+        TypeError,
+        ValueError,
+        IndexError,
+        OverflowError,
+    ):
+        return False
+
+
+def _audit_v6_summary(source: dict[str, Any]) -> bool:
+    return (
+        _audit_v6_baseline_summary(source)
+        and _audit_v6_secondary_summary(source)
+        and _audit_v6_routed_summary(source)
+    )
+
+
 def _audit_record(
     record: dict[str, Any],
     *,
@@ -951,6 +1751,8 @@ def _audit_record(
     absolute: float,
     require_defensive_design_certificate: bool = False,
     require_crude_design_certificate: bool = False,
+    require_direct_planning_certificate: bool = False,
+    require_hybrid_selection_certificate: bool = False,
 ) -> dict[str, Any]:
     preparation = record["preparation"]
     result = record["result"]
@@ -1112,6 +1914,18 @@ def _audit_record(
             absolute=absolute,
             required=require_crude_design_certificate,
         ),
+        "direct_planning_certificate": _audit_replicated_direct_certificate(
+            record,
+            relative=relative,
+            absolute=absolute,
+            required=require_direct_planning_certificate,
+        ),
+        "hybrid_selection_certificate": _audit_replicated_hybrid_selection(
+            record,
+            relative=relative,
+            absolute=absolute,
+            required=require_hybrid_selection_certificate,
+        ),
     }
     return {
         "cell_id": str(record["cell_id"]),
@@ -1156,6 +1970,22 @@ def run(config_path: Path, source_path: Path) -> dict[str, Any]:
                     "g11-v6-baseline-qualification-v6",
                 }
             ),
+            require_direct_planning_certificate=(
+                source.get("config_schema")
+                == "npi.g11.v6-secondary-baselines.config.v2"
+                or (
+                    source.get("config_schema")
+                    == "npi.g11.v6-routed-policy.config.v4"
+                    and record.get("route", {}).get("action")
+                    in {"dcs_slis", "crude"}
+                )
+            ),
+            require_hybrid_selection_certificate=(
+                source.get("config_schema")
+                == "npi.g11.v6-routed-policy.config.v4"
+                and record.get("route", {}).get("action")
+                == "profile_hybrid"
+            ),
         )
         for record in records
     ]
@@ -1167,7 +1997,7 @@ def run(config_path: Path, source_path: Path) -> dict[str, Any]:
     smoke = bool(source.get("smoke", False))
     gates = {
         "all_records_pass": all(record["passed"] for record in audits),
-        "summary_decision_recomputed": _audit_v6_baseline_summary(source),
+        "summary_decision_recomputed": _audit_v6_summary(source),
         "complete_if_required": complete or not bool(requirements["require_complete"]),
         "uncensored_if_required": uncensored
         or not bool(requirements["require_uncensored"]),

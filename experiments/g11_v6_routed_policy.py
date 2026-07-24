@@ -23,6 +23,13 @@ from experiments.g11_v6_baseline_qualification import (
     _task,
     _work_record,
 )
+from experiments.g11_v6_planning import (
+    PlanningVarianceStatistic,
+    collect_replicated_direct_pilot,
+    plugin_design_variance,
+    replicated_direct_certificate,
+    validate_replicated_planning,
+)
 from experiments.g11_v6_reference import _load_manifest
 from src.path_integral import (
     FrozenCrossoverDecision,
@@ -59,6 +66,25 @@ from src.physics_engine import RBergomiSimulator
 _SCHEMA_V1 = "npi.g11.v6-routed-policy.config.v1"
 _SCHEMA_V2 = "npi.g11.v6-routed-policy.config.v2"
 _SCHEMA_V3 = "npi.g11.v6-routed-policy.config.v3"
+_SCHEMA_V4 = "npi.g11.v6-routed-policy.config.v4"
+_REPLICATED_SCHEMAS = (_SCHEMA_V2, _SCHEMA_V3, _SCHEMA_V4)
+_TRAINING_PROVENANCE_SCHEMAS = (_SCHEMA_V3, _SCHEMA_V4)
+_AGGREGATE_ACCURACY_RULE = (
+    "deferred_to_prespecified_method_cell_attainment_and_bootstrap_rmse_co_gates"
+)
+_OPERATIONAL_QUALIFICATION_GATE_NAMES = (
+    "complete_matrix",
+    "all_routes_resolved",
+    "all_runs_complete",
+    "all_design_targets_attained",
+    "no_resource_censoring",
+    "all_independent_audits",
+    "median_selection_fraction",
+    "p90_selection_fraction",
+    "reference_not_used_by_router_schema",
+    "all_planning_certificates_valid",
+    "all_final_seed_roles_separate",
+)
 
 
 def _record_checkpoint_path(directory: Path, *, cell_id: str, cluster: int) -> Path:
@@ -376,6 +402,7 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         _SCHEMA_V1,
         _SCHEMA_V2,
         _SCHEMA_V3,
+        _SCHEMA_V4,
     ):
         raise ValueError("unsupported V6 routed-policy config")
     expected = {
@@ -391,6 +418,10 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         "sampling",
         "gates",
     }
+    if payload["schema"] == _SCHEMA_V4:
+        expected.update(
+            {"direct_planning", "rarity_band_design", "qualification_decision"}
+        )
     if set(payload) != expected:
         raise ValueError("malformed V6 routed-policy config fields")
     if payload["phase"] not in ("development", "qualification", "confirmation"):
@@ -399,7 +430,7 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         raise ValueError("qualification and confirmation policy configs must be frozen")
     if payload["estimand"] != "fixed_finest_grid":
         raise ValueError("routed policy must declare a fixed-grid estimand")
-    if payload["schema"] in (_SCHEMA_V2, _SCHEMA_V3):
+    if payload["schema"] in _REPLICATED_SCHEMAS:
         selector = payload["selector"]
         required = {
             "decision_mode",
@@ -463,7 +494,7 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
                 or any(character not in "0123456789abcdef" for character in digest)
             ):
                 raise ValueError("proposal training-source hash must be lowercase SHA-256")
-            if payload["schema"] == _SCHEMA_V3:
+            if payload["schema"] in _TRAINING_PROVENANCE_SCHEMAS:
                 if proposal["training_derivation"] != (
                     "componentwise_median_pure_cem_then_zero_half_full_bank"
                 ):
@@ -496,9 +527,98 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
     if (
         payload["phase"] != "development"
         and "task_controls" in payload["proposal"]
-        and payload["schema"] != _SCHEMA_V3
+        and payload["schema"] not in _TRAINING_PROVENANCE_SCHEMAS
     ):
         raise ValueError("formal task-conditioned policies require V3 training provenance")
+    if payload["schema"] == _SCHEMA_V4:
+        sampling = payload["sampling"]
+        if not isinstance(sampling, dict) or set(sampling) != {
+            "clusters",
+            "relative_sampling_rmse",
+            "confidence_level",
+            "minimum_final_samples",
+            "chunk_size",
+            "allocation_safety_factor",
+            "operation_work_cap",
+            "engine",
+        }:
+            raise ValueError("malformed V4 routed-policy sampling fields")
+        if (
+            isinstance(sampling["clusters"], bool)
+            or int(sampling["clusters"]) < 1
+            or not math.isfinite(
+                float(sampling["relative_sampling_rmse"])
+            )
+            or not 0.0 < float(sampling["relative_sampling_rmse"]) < 1.0
+            or not math.isfinite(float(sampling["confidence_level"]))
+            or not 0.5 < float(sampling["confidence_level"]) < 1.0
+            or int(sampling["minimum_final_samples"]) < 2
+            or int(sampling["chunk_size"]) < 1
+            or not math.isfinite(
+                float(sampling["allocation_safety_factor"])
+            )
+            or float(sampling["allocation_safety_factor"]) < 1.0
+            or not math.isfinite(float(sampling["operation_work_cap"]))
+            or float(sampling["operation_work_cap"]) <= 0.0
+            or sampling["engine"] not in {"fft", "reference"}
+        ):
+            raise ValueError("invalid V4 routed-policy sampling contract")
+        direct = payload["direct_planning"]
+        if not isinstance(direct, dict) or set(direct) != {
+            "decision_mode",
+            "replicates",
+            "samples_per_replicate",
+            "variance_statistic",
+            "dcs_zero_variance_fallback",
+            "crude_zero_variance_fallback",
+        }:
+            raise ValueError("malformed V4 direct-planning fields")
+        if direct["decision_mode"] != "replicated_point_variance":
+            raise ValueError("unsupported V4 direct-planning decision mode")
+        validate_replicated_planning(
+            replicates=direct["replicates"],
+            samples_per_replicate=direct["samples_per_replicate"],
+            variance_statistic=direct["variance_statistic"],
+        )
+        if (
+            direct["dcs_zero_variance_fallback"]
+            != "nominal_probability_squared"
+            or direct["crude_zero_variance_fallback"]
+            != "nominal_bernoulli_variance"
+        ):
+            raise ValueError("unsupported V4 direct-planning fallback")
+        rarity = payload["rarity_band_design"]
+        if not isinstance(rarity, dict) or set(rarity) != {
+            "nominal_probability_upper_multiplier",
+            "reference_certificate_z",
+        }:
+            raise ValueError("malformed V4 rarity-band certificate")
+        multiplier = rarity["nominal_probability_upper_multiplier"]
+        certificate_z = rarity["reference_certificate_z"]
+        if (
+            isinstance(multiplier, bool)
+            or not isinstance(multiplier, (int, float))
+            or not math.isfinite(float(multiplier))
+            or float(multiplier) < 1.0
+            or isinstance(certificate_z, bool)
+            or not isinstance(certificate_z, (int, float))
+            or not math.isfinite(float(certificate_z))
+            or float(certificate_z) <= 0.0
+        ):
+            raise ValueError("invalid V4 rarity-band certificate")
+        decision = payload["qualification_decision"]
+        if not isinstance(decision, dict) or set(decision) != {
+            "per_record_empirical_target_role",
+            "aggregate_accuracy_protocol_id",
+        }:
+            raise ValueError("malformed V4 qualification decision")
+        if decision["per_record_empirical_target_role"] != _AGGREGATE_ACCURACY_RULE:
+            raise ValueError("V4 policy accuracy must use aggregate co-gates")
+        if (
+            not isinstance(decision["aggregate_accuracy_protocol_id"], str)
+            or not decision["aggregate_accuracy_protocol_id"]
+        ):
+            raise ValueError("V4 aggregate accuracy protocol must be named")
     return payload, hashlib.sha256(raw).hexdigest()
 
 
@@ -510,6 +630,9 @@ class ReplicatedPlanningSelection:
     variance_statistic: str
     profile_replicate_variances: dict[str, tuple[float, ...]]
     profile_planning_variances: dict[str, float]
+    allocation_safety_factor: float
+    practical_equivalence_relative_tolerance: float
+    minimum_final_samples: int
     candidate_point_work: dict[str, float]
     cumulative_sample_count: int
     cumulative_profile_work: float
@@ -560,7 +683,12 @@ def _fixed_hybrid_work(
     return math.fsum(count * cost for count, cost in zip(counts, costs, strict=True))
 
 
-def _router_config(payload: dict[str, Any], *, smoke: bool) -> RarityRouterConfig:
+def _router_config(
+    payload: dict[str, Any],
+    *,
+    smoke: bool,
+    preserve_profile_cap: bool = False,
+) -> RarityRouterConfig:
     maximum = int(payload["maximum_screening_trials"])
     initial = int(payload["initial_screening_trials"])
     if smoke:
@@ -576,7 +704,9 @@ def _router_config(payload: dict[str, Any], *, smoke: bool) -> RarityRouterConfi
         maximum_screening_trials=maximum,
         minimum_certified_relative_saving=float(payload["minimum_certified_relative_saving"]),
         maximum_hybrid_profile_work=(
-            1.0 if smoke else float(payload["maximum_hybrid_profile_work"])
+            1.0
+            if smoke and not preserve_profile_cap
+            else float(payload["maximum_hybrid_profile_work"])
         ),
         maximum_profile_fraction=float(payload["maximum_profile_fraction"]),
         ambiguous_fallback=cast(Literal["crude", "dcs_slis"], fallback),
@@ -617,9 +747,16 @@ def _work_interval_from_profile(
     target: float,
     minimum_final_samples: int,
     point_variance_floor: float = 0.0,
+    point_variance_override: float | None = None,
 ):
     lower, upper = profile.moments.variance_interval
-    point = profile.moments.sample_variance
+    point = (
+        profile.moments.sample_variance
+        if point_variance_override is None
+        else point_variance_override
+    )
+    if not math.isfinite(point) or point < 0.0:
+        raise ValueError("routing point variance must be finite and nonnegative")
     cost = profile.cost_per_sample
     return RoutingWorkInterval(
         "dcs_slis",
@@ -676,6 +813,25 @@ def _linear_quantile(values: list[float], probability: float) -> float | None:
     return (1.0 - weight) * ordered[lower] + weight * ordered[upper]
 
 
+def _v4_smoke_cells(cells: tuple[Any, ...]) -> tuple[Any, ...]:
+    """Exercise rare routing once per task family in the V4 smoke matrix."""
+
+    tasks = sorted({str(cell.task) for cell in cells})
+    selected = []
+    for task in tasks:
+        candidates = [cell for cell in cells if str(cell.task) == task]
+        selected.append(
+            min(
+                candidates,
+                key=lambda cell: (
+                    float(cell.nominal_probability),
+                    str(cell.cell_id),
+                ),
+            )
+        )
+    return tuple(selected)
+
+
 def _replicated_planning_selection(
     *,
     config: dict[str, Any],
@@ -693,8 +849,12 @@ def _replicated_planning_selection(
     selector = config["selector"]
     replicates = 3 if smoke else int(selector["planning_replicates"])
     samples_per_replicate = 64 if smoke else int(selector["samples_per_replicate"])
-    observations = {profile_id: [] for profile_id in profile_ids}
-    replicate_variances = {profile_id: [] for profile_id in profile_ids}
+    observations: dict[str, list[torch.Tensor]] = {
+        profile_id: [] for profile_id in profile_ids
+    }
+    replicate_variances: dict[str, list[float]] = {
+        profile_id: [] for profile_id in profile_ids
+    }
     selector_work = 0.0
     selector_wall = 0.0
     selector_cpu = 0.0
@@ -787,6 +947,9 @@ def _replicated_planning_selection(
             profile_id: tuple(values) for profile_id, values in replicate_variances.items()
         },
         profile_planning_variances=planning_variances,
+        allocation_safety_factor=safety,
+        practical_equivalence_relative_tolerance=tolerance,
+        minimum_final_samples=minimum_final_samples,
         candidate_point_work=candidate_work,
         cumulative_sample_count=replicates * samples_per_replicate,
         cumulative_profile_work=selector_work,
@@ -819,13 +982,23 @@ def run(
             or manifest.smoke
         ):
             raise ValueError("formal routed policy requires a same-phase frozen manifest")
-    router_config = _router_config(config["router"], smoke=smoke)
+    router_config = _router_config(
+        config["router"],
+        smoke=smoke,
+        preserve_profile_cap=config["schema"] == _SCHEMA_V4,
+    )
     sampling = config["sampling"]
     hierarchy = config["hierarchy"]
     finest_level = int(hierarchy["finest_level"])
     if int(hierarchy["coarsest_steps"]) * 2**finest_level != manifest.cells[0].finest_steps:
         raise ValueError("routed-policy hierarchy does not match the manifest grid")
-    cells = _smoke_cells(manifest.cells) if smoke else manifest.cells
+    cells = (
+        _v4_smoke_cells(manifest.cells)
+        if smoke and config["schema"] == _SCHEMA_V4
+        else _smoke_cells(manifest.cells)
+        if smoke
+        else manifest.cells
+    )
     clusters = 1 if smoke else int(sampling["clusters"])
     relative_rmse = max(0.50, float(sampling["relative_sampling_rmse"])) if smoke else float(
         sampling["relative_sampling_rmse"]
@@ -836,7 +1009,7 @@ def run(
     proposal_training_audit: dict[str, Any] | None = None
     proposal_training_allocations: tuple[dict[str, float | int], ...] | None = None
     proposal_training_allocation_contract: dict[str, Any] | None = None
-    if config["schema"] == _SCHEMA_V3:
+    if config["schema"] in _TRAINING_PROVENANCE_SCHEMAS:
         expected_count = len(cells) * clusters
         (
             proposal_training_allocations,
@@ -911,7 +1084,10 @@ def run(
         )
         controls = tuple(
             TimePiecewiseTwoDriverControl(
-                tuple(tuple(float(value) for value in segment) for segment in schedule),
+                tuple(
+                    (float(segment[0]), float(segment[1]))
+                    for segment in schedule
+                ),
                 maturity=cell.maturity,
             )
             for schedule in schedules
@@ -966,7 +1142,7 @@ def run(
                 fitted=None,
                 defensive_weight=float(proposal_weights[0]),
                 cell=cell,
-                engine=str(sampling["engine"]),
+                engine=cast(Any, str(sampling["engine"])),
             )
             screening, units, wall, cpu = _append_screening(
                 sampler=crude_sampler,
@@ -1036,38 +1212,76 @@ def run(
                 engine=str(sampling["engine"]),
             )
             dcs_profile = None
+            dcs_replicated = None
             if route.action != "crude":
-                dcs_count = 128 if smoke else int(sampling["dcs_pilot_samples"])
-                dcs_seeds = {
-                    stream: ledger.allocate(
-                        SeedKey(
-                            str(config["protocol_id"]),
-                            "allocation-pilot",
-                            f"{cell.cell_id}:cluster-{cluster}",
-                            "dcs-slis",
-                            finest_level,
-                            0,
-                            stream,
-                        )
+                if config["schema"] == _SCHEMA_V4:
+                    direct = config["direct_planning"]
+                    dcs_replicated = collect_replicated_direct_pilot(
+                        sampler=dcs_sampler,
+                        ledger=ledger,
+                        protocol=str(config["protocol_id"]),
+                        cell_id=cell.cell_id,
+                        cluster=cluster,
+                        method="dcs-slis",
+                        profile_id=f"single_{finest_level}",
+                        level=finest_level,
+                        streams=("proposal", "labels"),
+                        replicates=(3 if smoke else int(direct["replicates"])),
+                        samples_per_replicate=(
+                            64
+                            if smoke
+                            else int(direct["samples_per_replicate"])
+                        ),
+                        variance_statistic=cast(
+                            PlanningVarianceStatistic,
+                            str(direct["variance_statistic"]),
+                        ),
                     )
-                    for stream in ("proposal", "labels")
-                }
-                dcs_cpu_started = time.process_time()
-                dcs_batch = dcs_sampler(f"single_{finest_level}", "pilot", dcs_count, dcs_seeds)
-                dcs_cpu = time.process_time() - dcs_cpu_started
+                    dcs_values = dcs_replicated.values
+                    dcs_count = int(dcs_values.numel())
+                    dcs_work_units = dcs_replicated.work_units
+                    dcs_wall = dcs_replicated.wall_seconds
+                    dcs_cpu = dcs_replicated.cpu_seconds
+                else:
+                    dcs_count = 128 if smoke else int(sampling["dcs_pilot_samples"])
+                    dcs_seeds = {
+                        stream: ledger.allocate(
+                            SeedKey(
+                                str(config["protocol_id"]),
+                                "allocation-pilot",
+                                f"{cell.cell_id}:cluster-{cluster}",
+                                "dcs-slis",
+                                finest_level,
+                                0,
+                                stream,
+                            )
+                        )
+                        for stream in ("proposal", "labels")
+                    }
+                    dcs_cpu_started = time.process_time()
+                    dcs_batch = dcs_sampler(
+                        f"single_{finest_level}",
+                        "pilot",
+                        dcs_count,
+                        dcs_seeds,
+                    )
+                    dcs_cpu = time.process_time() - dcs_cpu_started
+                    dcs_values = dcs_batch.values
+                    dcs_work_units = dcs_batch.work_units
+                    dcs_wall = dcs_batch.wall_seconds
                 work = work.append(
                     _work_record(
                         "allocation_pilot",
                         method="v6_policy",
                         cell_id=cell.cell_id,
                         samples=dcs_count,
-                        work_units=dcs_batch.work_units,
-                        wall_seconds=dcs_batch.wall_seconds,
+                        work_units=dcs_work_units,
+                        wall_seconds=dcs_wall,
                         cpu_seconds=dcs_cpu,
                     )
                 )
                 dcs_profile = update_profile_intervals(
-                    {f"single_{finest_level}": dcs_batch.values},
+                    {f"single_{finest_level}": dcs_values},
                     absolute_bounds={
                         f"single_{finest_level}": dcs_sampler.defensive_absolute_bound
                     },
@@ -1090,7 +1304,7 @@ def run(
                     minimum_final_samples=minimum_final_samples,
                     point_probability=(
                         cell.nominal_probability
-                        if config["schema"] in (_SCHEMA_V2, _SCHEMA_V3)
+                        if config["schema"] in _REPLICATED_SCHEMAS
                         else None
                     ),
                 )
@@ -1102,10 +1316,17 @@ def run(
                     point_variance_floor=(
                         cell.nominal_probability * (1.0 - cell.nominal_probability)
                         if config["schema"] in (_SCHEMA_V2, _SCHEMA_V3)
+                        else cell.nominal_probability**2
+                        if config["schema"] == _SCHEMA_V4
                         else 0.0
                     ),
+                    point_variance_override=(
+                        dcs_replicated.planning_variance
+                        if dcs_replicated is not None
+                        else None
+                    ),
                 )
-                if config["schema"] in (_SCHEMA_V2, _SCHEMA_V3):
+                if config["schema"] in _REPLICATED_SCHEMAS:
                     planning_replicates = (
                         3 if smoke else int(config["selector"]["planning_replicates"])
                     )
@@ -1147,10 +1368,11 @@ def run(
                 )
             )
 
-            selection_state = None
-            if route.action == "profile_hybrid" and config["schema"] in (
-                _SCHEMA_V2,
-                _SCHEMA_V3,
+            selection_state: Any = None
+            direct_planning_certificate = None
+            if (
+                route.action == "profile_hybrid"
+                and config["schema"] in _REPLICATED_SCHEMAS
             ):
                 selection_state, selector_work, selector_wall, selector_cpu_total = (
                     _replicated_planning_selection(
@@ -1212,7 +1434,7 @@ def run(
                     },
                     preparation_seed_ledger=ledger,
                 )
-                final_sampler = dcs_sampler
+                final_sampler: Any = dcs_sampler
             elif route.action == "profile_hybrid":
                 looks = tuple(int(value) for value in config["selector"]["looks"])
                 if smoke:
@@ -1325,12 +1547,49 @@ def run(
                 final_sampler = dcs_sampler
             elif route.action == "dcs_slis":
                 assert dcs_profile is not None
-                design = SingleTermDesign(
-                    profile_id=dcs_profile.profile_id,
-                    pilot_count=dcs_profile.moments.sample_count,
-                    pilot_mean=dcs_profile.moments.sample_mean,
-                    pilot_variance=dcs_profile.moments.sample_variance,
-                    design_variance=(
+                if config["schema"] == _SCHEMA_V4:
+                    assert dcs_replicated is not None
+                    direct = config["direct_planning"]
+                    direct_safety = (
+                        2.0
+                        if smoke
+                        else float(sampling["allocation_safety_factor"])
+                    )
+                    zero_fallback = cell.nominal_probability**2
+                    direct_design_variance = plugin_design_variance(
+                        dcs_replicated.planning_variance,
+                        safety_factor=direct_safety,
+                        zero_variance_fallback=zero_fallback,
+                    )
+                    rarity = config["rarity_band_design"]
+                    direct_planning_certificate = replicated_direct_certificate(
+                        dcs_replicated,
+                        method="dcs_slis",
+                        variance_statistic=cast(
+                            PlanningVarianceStatistic,
+                            str(direct["variance_statistic"]),
+                        ),
+                        safety_factor=direct_safety,
+                        zero_variance_fallback=zero_fallback,
+                        selected_design_variance=direct_design_variance,
+                        absolute_bound=dcs_sampler.defensive_absolute_bound,
+                        nominal_probability=cell.nominal_probability,
+                        nominal_probability_upper_multiplier=float(
+                            rarity["nominal_probability_upper_multiplier"]
+                        ),
+                        reference_probability=reference_probability,
+                        reference_standard_error=reference_se,
+                        reference_certificate_z=float(
+                            rarity["reference_certificate_z"]
+                        ),
+                    )
+                    if not direct_planning_certificate["certified"]:
+                        raise ValueError(
+                            "V4 direct DCS planning certificate failed for "
+                            f"{cell.cell_id}:{cluster}"
+                        )
+                else:
+                    direct_design_variance = (
                         max(
                             2.0 * dcs_profile.moments.sample_variance,
                             cell.nominal_probability**2,
@@ -1338,7 +1597,21 @@ def run(
                         if smoke
                         else float(sampling["allocation_safety_factor"])
                         * dcs_profile.moments.variance_interval[1]
+                    )
+                design = SingleTermDesign(
+                    profile_id=dcs_profile.profile_id,
+                    pilot_count=dcs_profile.moments.sample_count,
+                    pilot_mean=dcs_profile.moments.sample_mean,
+                    pilot_variance=(
+                        float(
+                            torch.var(
+                                dcs_replicated.values, unbiased=True
+                            )
+                        )
+                        if dcs_replicated is not None
+                        else dcs_profile.moments.sample_variance
                     ),
+                    design_variance=direct_design_variance,
                     cost_per_sample=dcs_profile.cost_per_sample,
                     absolute_bound=dcs_sampler.defensive_absolute_bound,
                 )
@@ -1365,16 +1638,104 @@ def run(
                 )
                 final_sampler = dcs_sampler
             elif route.action == "crude":
-                design = _design_from_pilot(
-                    "crude",
-                    screening,
-                    cost_per_sample=crude_sampler.cost,
-                    nominal_probability=cell.nominal_probability,
-                    confidence_level=router_config.confidence_level,
-                    pure_safety=1.0,
-                    defensive_bound=1.0,
-                    bounded_alpha=float(config["selector"]["familywise_alpha"]),
-                )
+                if config["schema"] == _SCHEMA_V4:
+                    direct = config["direct_planning"]
+                    crude_replicated = collect_replicated_direct_pilot(
+                        sampler=crude_sampler,
+                        ledger=ledger,
+                        protocol=str(config["protocol_id"]),
+                        cell_id=cell.cell_id,
+                        cluster=cluster,
+                        method="crude-allocation",
+                        profile_id="crude",
+                        level=finest_level,
+                        streams=("proposal",),
+                        replicates=(3 if smoke else int(direct["replicates"])),
+                        samples_per_replicate=(
+                            64
+                            if smoke
+                            else int(direct["samples_per_replicate"])
+                        ),
+                        variance_statistic=cast(
+                            PlanningVarianceStatistic,
+                            str(direct["variance_statistic"]),
+                        ),
+                    )
+                    work = work.append(
+                        _work_record(
+                            "allocation_pilot",
+                            method="v6_policy",
+                            cell_id=cell.cell_id,
+                            samples=int(crude_replicated.values.numel()),
+                            work_units=crude_replicated.work_units,
+                            wall_seconds=crude_replicated.wall_seconds,
+                            cpu_seconds=crude_replicated.cpu_seconds,
+                        )
+                    )
+                    direct_safety = (
+                        2.0
+                        if smoke
+                        else float(sampling["allocation_safety_factor"])
+                    )
+                    zero_fallback = cell.nominal_probability * (
+                        1.0 - cell.nominal_probability
+                    )
+                    direct_design_variance = plugin_design_variance(
+                        crude_replicated.planning_variance,
+                        safety_factor=direct_safety,
+                        zero_variance_fallback=zero_fallback,
+                    )
+                    design = SingleTermDesign(
+                        profile_id="crude",
+                        pilot_count=int(crude_replicated.values.numel()),
+                        pilot_mean=float(torch.mean(crude_replicated.values)),
+                        pilot_variance=float(
+                            torch.var(crude_replicated.values, unbiased=True)
+                        ),
+                        design_variance=direct_design_variance,
+                        cost_per_sample=crude_sampler.cost,
+                        absolute_bound=1.0,
+                    )
+                    rarity = config["rarity_band_design"]
+                    direct_planning_certificate = replicated_direct_certificate(
+                        crude_replicated,
+                        method="crude",
+                        variance_statistic=cast(
+                            PlanningVarianceStatistic,
+                            str(direct["variance_statistic"]),
+                        ),
+                        safety_factor=direct_safety,
+                        zero_variance_fallback=zero_fallback,
+                        selected_design_variance=direct_design_variance,
+                        absolute_bound=1.0,
+                        nominal_probability=cell.nominal_probability,
+                        nominal_probability_upper_multiplier=float(
+                            rarity["nominal_probability_upper_multiplier"]
+                        ),
+                        reference_probability=reference_probability,
+                        reference_standard_error=reference_se,
+                        reference_certificate_z=float(
+                            rarity["reference_certificate_z"]
+                        ),
+                    )
+                    if not direct_planning_certificate["certified"]:
+                        raise ValueError(
+                            "V4 direct crude planning certificate failed for "
+                            f"{cell.cell_id}:{cluster}"
+                        )
+                else:
+                    design = _design_from_pilot(
+                        "crude",
+                        screening,
+                        cost_per_sample=crude_sampler.cost,
+                        nominal_probability=cell.nominal_probability,
+                        confidence_level=router_config.confidence_level,
+                        pure_safety=1.0,
+                        defensive_bound=1.0,
+                        bounded_alpha=float(
+                            config["selector"]["familywise_alpha"]
+                        ),
+                    )
                 prepared = prepare_v6_direct_policy(
                     HybridTarget(
                         f"{cell.cell_id}:v6-policy",
@@ -1461,6 +1822,7 @@ def run(
                         ),
                     },
                     "selection": None if selection_state is None else asdict(selection_state),
+                    "direct_planning_certificate": direct_planning_certificate,
                     "selection_work_fraction": selection_fraction,
                     "preparation": v6_policy_preparation_to_dict(prepared),
                     "result": asdict(result),
@@ -1507,6 +1869,45 @@ def run(
             all("reference" not in key for key in record["route"])
             for record in records
         ),
+        "all_planning_certificates_valid": all(
+            (
+                record["route"]["action"] == "profile_hybrid"
+                and isinstance(record.get("selection"), dict)
+                and record["selection"].get("schema")
+                == "npi.g11.v6-replicated-planning-selection.v1"
+                and record["selection"].get("finite_sample_work_certificate")
+                is False
+            )
+            or (
+                record["route"]["action"] in {"dcs_slis", "crude"}
+                and isinstance(record.get("direct_planning_certificate"), dict)
+                and record["direct_planning_certificate"].get("certified") is True
+                and record["direct_planning_certificate"].get(
+                    "structural_bound_used_for_allocation"
+                )
+                is False
+            )
+            for record in records
+        )
+        if config["schema"] == _SCHEMA_V4
+        else True,
+        "all_final_seed_roles_separate": all(
+            all(
+                seed["key"]["role"] == "final"
+                for seed in record["result"]["core"]["seed_ledger_payload"][
+                    "records"
+                ]
+                if seed["key"]["role"]
+                not in {
+                    "proposal-training",
+                    "router-screening",
+                    "allocation-pilot",
+                    "selector-planning",
+                    "selector-profile",
+                }
+            )
+            for record in records
+        ),
     }
     provenance = source_provenance()
     formal = {
@@ -1526,6 +1927,34 @@ def run(
             )
         ),
     }
+    qualification_gates = (
+        {
+            name: gates[name]
+            for name in _OPERATIONAL_QUALIFICATION_GATE_NAMES
+        }
+        if config["schema"] == _SCHEMA_V4
+        else dict(gates)
+    )
+    qualification_contract = None
+    if config["schema"] == _SCHEMA_V4:
+        qualification_contract = {
+            "schema": "npi.g11.v6-routed-policy-qualification-contract.v1",
+            "expected_cell_ids": [cell.cell_id for cell in cells],
+            "expected_clusters": clusters,
+            "maximum_median_selection_fraction": float(
+                config["gates"]["maximum_median_selection_fraction"]
+            ),
+            "maximum_p90_selection_fraction": float(
+                config["gates"]["maximum_p90_selection_fraction"]
+            ),
+            "operational_gate_names": list(
+                _OPERATIONAL_QUALIFICATION_GATE_NAMES
+            ),
+            "per_record_empirical_target_role": _AGGREGATE_ACCURACY_RULE,
+            "aggregate_accuracy_protocol_id": config[
+                "qualification_decision"
+            ]["aggregate_accuracy_protocol_id"],
+        }
     return {
         "schema": "npi.g11.v6-routed-policy.v1",
         "protocol_id": config["protocol_id"],
@@ -1545,8 +1974,11 @@ def run(
         "records": records,
         "selection_fraction_summary": {"median": median_fraction, "p90": p90_fraction},
         "gates": gates,
+        "qualification_gates": qualification_gates,
+        "qualification_contract": qualification_contract,
         "formal_readiness": formal,
-        "policy_qualified": all(gates.values()) and all(formal.values()),
+        "policy_qualified": all(qualification_gates.values())
+        and all(formal.values()),
         "seed_ledger": master_ledger.to_dict(),
         "seed_ledger_sha256": master_ledger.sha256,
         "environment": runtime_provenance(dtype="torch.float64"),
