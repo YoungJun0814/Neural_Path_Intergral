@@ -139,7 +139,10 @@ It passed with zero failures.  Its SHA-256 is
 
 A separate post-confirmation phase-seed auditor also binds the qualification and
 confirmation probe/fixed artifacts and checks all six pairwise intersections.  It
-is an additional provenance audit, not a new outcome gate.
+passed with counts 864, 18,058, 2,304, and 48,200 and zero intersection in every
+pair.  Its SHA-256 is
+`a535cf2d962f8628d78a76577a9f4a0f5f3ff91c2e2e2ad885f87473e115ed1b`.
+It is an additional provenance audit, not a new outcome gate.
 
 ## 8. Artifact ledger
 
@@ -154,6 +157,7 @@ is an additional provenance audit, not a new outcome gate.
 | Joint mechanism/work analysis | `c4dd42f85976eeb03d1fb73aa949886d3e4c56d3c473e4342c3ad05703af8997` |
 | Simultaneous accuracy | `8b5a40422a36a6e32da17cc3d87a80bc483b2f84b01d364170e465ec501853ca` |
 | Independent aggregate audit | `06f5b68342b291c72458eb13ccd0db2ac911d98e75210452acc9c1553e5ae141` |
+| Cross-phase seed audit | `a535cf2d962f8628d78a76577a9f4a0f5f3ff91c2e2e2ad885f87473e115ed1b` |
 
 ## 9. Deviations and operational incidents
 
