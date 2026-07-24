@@ -10,11 +10,12 @@
 
 ## Research status
 
-The active research object is the **V6 routed DCS-MGI policy**:
+The active research object is the **V7 fixed-proposal DCS mechanism**:
 
-> a pilot-measurable choice among crude MC, DCS-SLIS, and budget-admissible Hybrid
-> **D**efensive **C**ontrol-**S**pan **M**arginalized **G**aussian **I**ntegration,
-> always followed by independent achieved-RMSE final samples.
+> an exact Rao--Blackwell comparison of raw defensive importance sampling and
+> **D**efensive **C**ontrol-**S**pan **M**arginalized **G**aussian **I**ntegration
+> under the same frozen proposal, followed by independent achieved-RMSE final
+> samples and training-inclusive work accounting.
 
 V6 now implements strict rare-cell manifests, reference separation, a target-leakage-
 free rarity router, profiling caps, matched crude/pure-CEM/defensive-CEM baselines,
@@ -55,8 +56,15 @@ raw/DCS ratios are 3.40 for the common-path probe variance, 3.54 for production
 variance, 3.45 for final sampling work, 1.90 for training-inclusive total work, and
 2.51 for isolated final wall time; the respective primary one-sided lower ratios
 are 3.31, 3.44, and 3.33. This isolates a DCS Rao--Blackwell benefit under the same
-proposal rather than proposal amortization alone. Qualification is not untouched
-confirmation; a separately frozen 64-cluster, new-seed confirmation remains next.
+proposal rather than proposal amortization alone. The separately frozen 64-cluster,
+new-seed confirmation is now complete. All 1,152 paired records and 2,304 fixed
+estimator records pass their independent audits, and a separate aggregate auditor
+reports zero failures. Confirmatory raw/DCS geometric ratios are 3.44 for paired
+probe variance, 3.52 for production variance, 3.36 for final work, 1.88 for
+training-inclusive total work, and 2.36 for isolated final wall time. The primary
+one-sided 95% lower ratios are 3.40, 3.45, and 3.30. Neither method hits the common
+floor. All 72 simultaneous accuracy claims pass; the minimum exact attainment lower
+bound is 0.805 and the maximum RMSE-upper/tolerance ratio is 0.778.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -78,7 +86,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **540/540 tests on 2026-07-24**.
+The complete local regression suite passed **542/542 tests on 2026-07-24**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finest discrete grid rather than a continuously monitored event,
@@ -125,6 +133,7 @@ Start with:
 - [V7 qualification protocol](docs/plans/G11_V7_QUALIFICATION_PROTOCOL_2026-07-24.md)
 - [V7 mechanism qualification V1 decision](docs/audits/G11_V7_MECHANISM_QUALIFICATION_V1_DECISION_2026-07-24.md)
 - [V7 confirmation protocol](docs/plans/G11_V7_CONFIRMATION_PROTOCOL_2026-07-24.md)
+- [V7 mechanism confirmation V1 decision](docs/audits/G11_V7_MECHANISM_CONFIRMATION_V1_DECISION_2026-07-24.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
