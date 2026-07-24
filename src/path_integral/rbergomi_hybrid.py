@@ -16,6 +16,7 @@ from src.path_integral.rbergomi_mlmc_sampler import (
     CorrectionMethod,
     RBergomiMLMCSampler,
     RBergomiMLMCSamplerConfig,
+    RBergomiRawDCSPairBatch,
     SamplingRole,
     SimulationEngine,
 )
@@ -123,6 +124,33 @@ class RBergomiHybridTermSampler:
         if kind == "single":
             return self._single_samplers[level](0, sampling_role, count, seeds)
         return self._correction_sampler(level, sampling_role, count, seeds)
+
+    def sample_raw_dcs_pair(
+        self,
+        profile_id: str,
+        role: str,
+        count: int,
+        seeds: Mapping[str, int],
+    ) -> RBergomiRawDCSPairBatch:
+        """Return matched raw/DCS values for a mechanism diagnostic."""
+
+        if role not in {"pilot", "final"}:
+            raise ValueError("hybrid sampling role must be pilot or final")
+        sampling_role = cast(SamplingRole, role)
+        kind, level = self._parse(profile_id)
+        if kind == "single":
+            return self._single_samplers[level].sample_raw_dcs_pair(
+                0,
+                sampling_role,
+                count,
+                seeds,
+            )
+        return self._correction_sampler.sample_raw_dcs_pair(
+            level,
+            sampling_role,
+            count,
+            seeds,
+        )
 
     def cost_per_sample(self, profile_id: str) -> float:
         _kind, level = self._parse(profile_id)

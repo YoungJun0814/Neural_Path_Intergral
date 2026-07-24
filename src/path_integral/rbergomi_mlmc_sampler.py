@@ -57,6 +57,35 @@ class RBergomiMLMCSamplerConfig:
             raise ValueError("G11 research-evidence sampling requires torch.float64")
 
 
+@dataclass(frozen=True)
+class RBergomiRawDCSPairBatch:
+    """Raw and Rao--Blackwellized contributions from one identical path batch."""
+
+    raw_values: torch.Tensor
+    dcs_values: torch.Tensor
+    work_units: float
+    wall_seconds: float
+
+    def __post_init__(self) -> None:
+        if (
+            self.raw_values.ndim != 1
+            or self.dcs_values.shape != self.raw_values.shape
+            or self.raw_values.numel() < 1
+            or self.raw_values.dtype != torch.float64
+            or self.dcs_values.dtype != torch.float64
+            or not torch.isfinite(self.raw_values).all()
+            or not torch.isfinite(self.dcs_values).all()
+        ):
+            raise ValueError("paired raw/DCS values must be matching finite float64 vectors")
+        if (
+            not math.isfinite(self.work_units)
+            or self.work_units <= 0.0
+            or not math.isfinite(self.wall_seconds)
+            or self.wall_seconds < 0.0
+        ):
+            raise ValueError("paired raw/DCS work measurements are invalid")
+
+
 class RBergomiMLMCSampler:
     """Generate exact level-zero or adjacent terms from fully declared seeds."""
 
@@ -102,7 +131,8 @@ class RBergomiMLMCSampler:
         count: int,
         seeds: Mapping[str, int],
     ) -> LevelBatch:
-        del role
+        if role not in {"pilot", "final"}:
+            raise ValueError("rBergomi sampling role must be pilot or final")
         if level < 0 or count < 1:
             raise ValueError("level must be nonnegative and count must be positive")
         if set(seeds) != {"proposal", "labels"}:
@@ -126,14 +156,19 @@ class RBergomiMLMCSampler:
             )
             if self.config.require_natural_component:
                 self._validate_natural_component(level_sample.all_expert_controls)
-            level_evaluation = evaluate_rbergomi_dcs_level(
-                level_sample, task=self.task, rho=self.simulator.rho
-            )
-            values = (
-                level_evaluation.raw_contribution
-                if self.config.method in {"raw", "raw_defensive"}
-                else level_evaluation.marginalized_contribution
-            )
+            if self.config.method in {"raw", "raw_defensive"}:
+                hard_event = self.task.hard_event(
+                    level_sample.paths.spot,
+                    level_sample.paths.step_dt,
+                )
+                values = hard_event.to(self.config.dtype) * torch.exp(
+                    level_sample.mixture_log_likelihood
+                )
+            else:
+                level_evaluation = evaluate_rbergomi_dcs_level(
+                    level_sample, task=self.task, rho=self.simulator.rho
+                )
+                values = level_evaluation.marginalized_contribution
         else:
             coupled_sample = simulate_coupled_rbergomi_mixture(
                 self.simulator,
@@ -149,20 +184,103 @@ class RBergomiMLMCSampler:
             )
             if self.config.require_natural_component:
                 self._validate_natural_component(coupled_sample.all_expert_controls)
-            adjacent_evaluation = evaluate_rbergomi_dcs_adjacent(
-                coupled_sample, task=self.task, rho=self.simulator.rho
-            )
-            values = (
-                adjacent_evaluation.raw_correction
-                if self.config.method in {"raw", "raw_defensive"}
-                else adjacent_evaluation.marginalized_correction
-            )
+            if self.config.method in {"raw", "raw_defensive"}:
+                fine_event = self.task.hard_event(
+                    coupled_sample.paths.fine.spot,
+                    coupled_sample.paths.fine.step_dt,
+                )
+                coarse_event = self.task.hard_event(
+                    coupled_sample.paths.coarse.spot,
+                    coupled_sample.paths.coarse.step_dt,
+                )
+                values = (
+                    fine_event.to(self.config.dtype)
+                    - coarse_event.to(self.config.dtype)
+                ) * torch.exp(coupled_sample.mixture_log_likelihood)
+            else:
+                adjacent_evaluation = evaluate_rbergomi_dcs_adjacent(
+                    coupled_sample, task=self.task, rho=self.simulator.rho
+                )
+                values = adjacent_evaluation.marginalized_correction
         elapsed = time.perf_counter() - start
         if not torch.isfinite(values).all():
             raise FloatingPointError("rBergomi MLMC term became nonfinite")
         operation_proxy = count * fine_steps * max(1.0, math.log2(fine_steps))
         return LevelBatch(
             values.detach().clone(),
+            work_units=float(operation_proxy),
+            wall_seconds=elapsed,
+        )
+
+    def sample_raw_dcs_pair(
+        self,
+        level: int,
+        role: SamplingRole,
+        count: int,
+        seeds: Mapping[str, int],
+    ) -> RBergomiRawDCSPairBatch:
+        """Evaluate raw and exact conditional contributions on the same paths.
+
+        This is a mechanism-diagnostic path.  It intentionally computes both
+        contributions and must not be used to report the isolated runtime of
+        either production estimator.
+        """
+
+        if not self.config.require_natural_component:
+            raise ValueError("paired DCS diagnostics require a defensive natural component")
+        if role not in {"pilot", "final"}:
+            raise ValueError("rBergomi sampling role must be pilot or final")
+        if level < 0 or count < 1:
+            raise ValueError("level must be nonnegative and count must be positive")
+        if set(seeds) != {"proposal", "labels"}:
+            raise ValueError("rBergomi sampler requires proposal and label streams")
+        torch.manual_seed(seeds["proposal"])
+        label_generator = torch.Generator(device="cpu").manual_seed(seeds["labels"])
+        fine_steps = self.config.coarsest_steps * 2**level
+        start = time.perf_counter()
+        if level == 0:
+            level_sample = simulate_rbergomi_mixture(
+                self.simulator,
+                self.controls,
+                self.weights,
+                spot=self.config.spot,
+                maturity=self.config.maturity,
+                dt=self.config.maturity / fine_steps,
+                num_paths=count,
+                dtype=self.config.dtype,
+                label_generator=label_generator,
+                engine=self.config.engine,
+            )
+            self._validate_natural_component(level_sample.all_expert_controls)
+            evaluation = evaluate_rbergomi_dcs_level(
+                level_sample, task=self.task, rho=self.simulator.rho
+            )
+            raw_values = evaluation.raw_contribution
+            dcs_values = evaluation.marginalized_contribution
+        else:
+            coupled_sample = simulate_coupled_rbergomi_mixture(
+                self.simulator,
+                self.controls,
+                self.weights,
+                spot=self.config.spot,
+                maturity=self.config.maturity,
+                fine_steps=fine_steps,
+                num_paths=count,
+                dtype=self.config.dtype,
+                label_generator=label_generator,
+                engine=self.config.engine,
+            )
+            self._validate_natural_component(coupled_sample.all_expert_controls)
+            evaluation_adjacent = evaluate_rbergomi_dcs_adjacent(
+                coupled_sample, task=self.task, rho=self.simulator.rho
+            )
+            raw_values = evaluation_adjacent.raw_correction
+            dcs_values = evaluation_adjacent.marginalized_correction
+        elapsed = time.perf_counter() - start
+        operation_proxy = count * fine_steps * max(1.0, math.log2(fine_steps))
+        return RBergomiRawDCSPairBatch(
+            raw_values=raw_values.detach().clone(),
+            dcs_values=dcs_values.detach().clone(),
             work_units=float(operation_proxy),
             wall_seconds=elapsed,
         )

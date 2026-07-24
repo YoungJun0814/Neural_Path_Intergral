@@ -153,6 +153,10 @@ from .policy_allocation import (
 )
 from .policy_audit import V6PolicyAudit, audit_v6_policy
 from .potentials import terminal_left_tail_potential
+from .rao_blackwell import (
+    RaoBlackwellPairDiagnostics,
+    rao_blackwell_pair_diagnostics,
+)
 from .rarity_router import (
     FrozenRarityRoute,
     HybridProfileOpportunity,
@@ -214,6 +218,7 @@ from .rbergomi_mixture import (
 from .rbergomi_mlmc_sampler import (
     RBergomiMLMCSampler,
     RBergomiMLMCSamplerConfig,
+    RBergomiRawDCSPairBatch,
 )
 from .rbergomi_multilevel import (
     CoupledRBergomiMixtureSample,
@@ -319,6 +324,8 @@ __all__ = [
     "RBergomiMixtureSample",
     "RBergomiMLMCSampler",
     "RBergomiMLMCSamplerConfig",
+    "RBergomiRawDCSPairBatch",
+    "RaoBlackwellPairDiagnostics",
     "RBergomiDCSAdjacentEvaluation",
     "RBergomiDCSLevelEvaluation",
     "RBergomiThresholdCouplingDiagnostics",
@@ -483,6 +490,7 @@ __all__ = [
     "defensive_moment_upper_bounds",
     "optimal_sampling_work_coefficient",
     "ratio_candidate_stability",
+    "rao_blackwell_pair_diagnostics",
     "run_mlmc",
     "save_mlmc_checkpoint",
     "CorrectionRateObservation",

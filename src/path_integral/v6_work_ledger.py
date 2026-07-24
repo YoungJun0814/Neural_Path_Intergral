@@ -20,6 +20,7 @@ V6WorkCategory = Literal[
     "failed_attempt",
     "retry",
     "audit",
+    "mechanism_probe",
 ]
 
 _CATEGORIES = {
@@ -34,6 +35,7 @@ _CATEGORIES = {
     "failed_attempt",
     "retry",
     "audit",
+    "mechanism_probe",
 }
 
 

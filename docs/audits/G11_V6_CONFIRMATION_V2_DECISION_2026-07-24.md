@@ -106,6 +106,22 @@ correction, while both numerical execution artifacts use the identical
 `f1249c9` estimator source.  The hardware audit checks this execution-source
 identity explicitly.
 
+### 4.1 Post-hoc family-wise accuracy sensitivity
+
+A separately frozen post-confirmation sensitivity applies a Bonferroni nominal
+family-wise alpha of 0.05 across all 72 accuracy claims: 18 cells, two methods,
+and two gates per method-by-cell group.  Both environments pass.  The minimum
+simultaneous attainment lower bound is 0.8310 in both datasets against 0.60.
+The maximum simultaneous RMSE-upper/tolerance ratio is 0.6974 on Windows and
+0.6317 on Linux.
+
+This materially reduces concern that the accuracy conclusion is an artifact of
+unadjusted per-group intervals.  It does not erase the protocol timing:
+the simultaneous procedure was not in the original V2 freeze, and the RMSE
+upper bound remains a percentile-bootstrap engineering bound rather than an
+exact finite-sample coverage theorem.  See
+`G11_V6_ACCURACY_MULTIPLICITY_SENSITIVITY_2026-07-24.md`.
+
 ## 5. Mechanistic decomposition
 
 The headline total-work result is real, but its cause must be stated exactly.
@@ -220,8 +236,9 @@ journal headline because:
 4. the terminal coefficient/weak-rate proof has not received independent
    mathematical review;
 5. the barrier rate theorem is open; and
-6. the confirmatory accuracy family lacks a predeclared simultaneous
-   multiplicity correction.
+6. the original confirmatory accuracy family lacks a predeclared simultaneous
+   multiplicity correction; the passing post-hoc sensitivity cannot repair
+   that protocol-timing limitation.
 
 ## 9. Required next study
 

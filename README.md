@@ -40,6 +40,12 @@ excluded. The confirmed result is therefore an amortized repeated-query result,
 not evidence of a successful Hybrid selector. A disjoint-seed Linux Docker
 reproduction also passes: its geometric ratio is 2.3186 (one-sided lower 2.3080),
 and the Windows/Linux effect difference is only 0.142 combined standard errors.
+A post-hoc 72-claim Bonferroni sensitivity passes in both environments, but it
+is explicitly not presented as part of the original pre-outcome freeze.
+V7 mechanism-first development is now implemented: the raw comparator no longer
+executes hidden DCS arithmetic, a common-path raw/DCS Rao--Blackwell probe is
+available, and an equal-proposal/equal-floor achieved-RMSE protocol is fixed before
+development outcomes are inspected.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -61,7 +67,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **523/523 tests on 2026-07-24**.
+The complete local regression suite passed **532/532 tests on 2026-07-24**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finest discrete grid rather than a continuously monitored event,
@@ -101,6 +107,9 @@ Start with:
 - [V6 laptop development decision](docs/audits/G11_V6_LAPTOP_DEVELOPMENT_DECISION_2026-07-23.md)
 - [V6 policy V4 allocation and gate audit](docs/audits/G11_V6_POLICY_V4_ALLOCATION_AND_GATE_AUDIT_2026-07-24.md)
 - [V6 confirmation V2 decision](docs/audits/G11_V6_CONFIRMATION_V2_DECISION_2026-07-24.md)
+- [V6 post-hoc accuracy-multiplicity sensitivity](docs/audits/G11_V6_ACCURACY_MULTIPLICITY_SENSITIVITY_2026-07-24.md)
+- [V7 mechanism-first implementation plan](docs/plans/G11_V7_MECHANISM_FIRST_IMPLEMENTATION_PLAN_2026-07-24.md)
+- [V7 Rao--Blackwell mechanism contract](docs/theory/G11_V7_RAO_BLACKWELL_MECHANISM_CONTRACT.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 

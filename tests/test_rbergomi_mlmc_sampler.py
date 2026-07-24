@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 import torch
 
+import src.path_integral.rbergomi_mlmc_sampler as sampler_module
 from src.path_integral import (
     FixedFinestGridTarget,
     MLMCHierarchy,
@@ -14,6 +15,7 @@ from src.path_integral import (
     TimePiecewiseTwoDriverControl,
     execute_mlmc,
     prepare_mlmc,
+    rao_blackwell_pair_diagnostics,
 )
 from src.physics_engine import RBergomiSimulator
 
@@ -123,3 +125,63 @@ def test_raw_single_shift_baseline_can_explicitly_drop_defensive_component() -> 
             method="dcs_mgi",
             require_natural_component=False,
         )
+
+
+@pytest.mark.parametrize("level", [0, 1])
+def test_raw_fast_path_and_dcs_path_match_same_path_pair(level: int) -> None:
+    seeds = {"proposal": 6_010_101 + level, "labels": 6_010_201 + level}
+    raw = _sampler("raw_defensive")(
+        level,
+        "pilot",
+        512,
+        seeds,
+    ).values
+    dcs = _sampler("dcs_mgi")(
+        level,
+        "pilot",
+        512,
+        seeds,
+    ).values
+    pair = _sampler("dcs_mgi").sample_raw_dcs_pair(
+        level,
+        "pilot",
+        512,
+        seeds,
+    )
+    assert torch.allclose(raw, pair.raw_values, atol=3e-16, rtol=0.0)
+    assert torch.equal(dcs, pair.dcs_values)
+    diagnostics = rao_blackwell_pair_diagnostics(
+        pair.raw_values,
+        pair.dcs_values,
+    )
+    assert diagnostics.count == 512
+    assert abs(diagnostics.variance_decomposition_error) <= 1e-13
+
+
+def test_raw_fast_path_does_not_invoke_dcs_evaluator(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fail(*_args, **_kwargs):
+        raise AssertionError("raw path called the DCS evaluator")
+
+    monkeypatch.setattr(sampler_module, "evaluate_rbergomi_dcs_level", fail)
+    monkeypatch.setattr(sampler_module, "evaluate_rbergomi_dcs_adjacent", fail)
+    for level in (0, 1):
+        seeds = {
+            "proposal": 6_020_101 + level,
+            "labels": 6_020_201 + level,
+        }
+        values = _sampler("raw_defensive")(
+            level,
+            "pilot",
+            64,
+            seeds,
+        ).values
+        assert values.shape == (64,)
+        with pytest.raises(AssertionError, match="called the DCS"):
+            _sampler("dcs_mgi")(
+                level,
+                "pilot",
+                64,
+                seeds,
+            )
