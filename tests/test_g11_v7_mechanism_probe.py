@@ -13,6 +13,9 @@ from experiments.g11_v6_secondary_baselines import (
 from experiments.g11_v7_mechanism_analysis import (
     _load_config as load_analysis_config,
 )
+from experiments.g11_v7_mechanism_analysis import (
+    _wall,
+)
 from experiments.g11_v7_mechanism_probe import _load_config
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -66,3 +69,20 @@ def test_v7_joint_analysis_predeclares_mechanism_thresholds() -> None:
     assert thresholds["minimum_final_work_ratio_lower"] == 1.2
     assert thresholds["maximum_floor_fraction_per_method"] == 0.10
     assert len(digest) == 64
+
+
+def test_v7_wall_time_sums_every_durable_final_chunk() -> None:
+    record = {
+        "result": {
+            "core": {
+                "work": {
+                    "entries": [
+                        {"role": "allocation_pilot", "wall_seconds": 3.0},
+                        {"role": "final", "wall_seconds": 1.25},
+                        {"role": "final", "wall_seconds": 2.75},
+                    ]
+                }
+            }
+        }
+    }
+    assert _wall(record, "final") == 4.0

@@ -166,9 +166,13 @@ def _wall(record: dict[str, Any], role: str) -> float:
         for entry in record["result"]["core"]["work"]["entries"]
         if entry["role"] == role
     ]
-    if len(values) != 1 or not math.isfinite(values[0]) or values[0] <= 0.0:
-        raise ValueError(f"record requires one positive {role} wall-time entry")
-    return values[0]
+    if (
+        not values
+        or any(not math.isfinite(value) or value < 0.0 for value in values)
+        or math.fsum(values) <= 0.0
+    ):
+        raise ValueError(f"record requires positive finite {role} wall-time")
+    return math.fsum(values)
 
 
 def _seed_values(payload: dict[str, Any]) -> set[int]:
