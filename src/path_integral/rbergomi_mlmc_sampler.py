@@ -255,7 +255,13 @@ class RBergomiMLMCSampler:
             evaluation = evaluate_rbergomi_dcs_level(
                 level_sample, task=self.task, rho=self.simulator.rho
             )
-            raw_values = evaluation.raw_contribution
+            hard_event = self.task.hard_event(
+                level_sample.paths.spot,
+                level_sample.paths.step_dt,
+            )
+            raw_values = hard_event.to(self.config.dtype) * torch.exp(
+                level_sample.mixture_log_likelihood
+            )
             dcs_values = evaluation.marginalized_contribution
         else:
             coupled_sample = simulate_coupled_rbergomi_mixture(
@@ -274,7 +280,18 @@ class RBergomiMLMCSampler:
             evaluation_adjacent = evaluate_rbergomi_dcs_adjacent(
                 coupled_sample, task=self.task, rho=self.simulator.rho
             )
-            raw_values = evaluation_adjacent.raw_correction
+            fine_event = self.task.hard_event(
+                coupled_sample.paths.fine.spot,
+                coupled_sample.paths.fine.step_dt,
+            )
+            coarse_event = self.task.hard_event(
+                coupled_sample.paths.coarse.spot,
+                coupled_sample.paths.coarse.step_dt,
+            )
+            raw_values = (
+                fine_event.to(self.config.dtype)
+                - coarse_event.to(self.config.dtype)
+            ) * torch.exp(coupled_sample.mixture_log_likelihood)
             dcs_values = evaluation_adjacent.marginalized_correction
         elapsed = time.perf_counter() - start
         operation_proxy = count * fine_steps * max(1.0, math.log2(fine_steps))

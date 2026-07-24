@@ -148,7 +148,7 @@ def test_raw_fast_path_and_dcs_path_match_same_path_pair(level: int) -> None:
         512,
         seeds,
     )
-    assert torch.allclose(raw, pair.raw_values, atol=3e-16, rtol=0.0)
+    assert torch.equal(raw, pair.raw_values)
     assert torch.equal(dcs, pair.dcs_values)
     diagnostics = rao_blackwell_pair_diagnostics(
         pair.raw_values,
