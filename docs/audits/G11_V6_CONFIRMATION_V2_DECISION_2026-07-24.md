@@ -68,7 +68,8 @@ threshold.  The corrected confirmatory analyzer therefore passes every
 scientific and formal gate.
 
 The concluding software validation passes CI-scope Ruff, mypy over 81 source
-files, and the full `520/520` pytest suite.
+files, and the full `522/522` pytest suite after adding the hardware-freeze
+checks.
 
 ## 4. Mechanistic decomposition
 
