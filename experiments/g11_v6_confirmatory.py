@@ -336,6 +336,7 @@ def run(
         and policy_audit["gates"]["all_records_pass"]
     )
     lower_ratio = efficiency["one_sided_lower_geometric_mean_ratio"]
+    practical_ratio = float(statistics["practical_geometric_mean_ratio"])
     gates = {
         "frozen_artifact_hashes_match": hashes_match,
         "shared_protocol_identities": shared_protocol_identities,
@@ -361,8 +362,9 @@ def run(
         "all_accuracy_co_gates": all(
             record["attainment_gate"] and record["rmse_gate"] for record in accuracy
         ),
-        "one_sided_efficiency_lower_exceeds_one": lower_ratio is not None
-        and float(lower_ratio) > 1.0,
+        "one_sided_efficiency_lower_exceeds_practical_ratio": (
+            lower_ratio is not None and float(lower_ratio) > practical_ratio
+        ),
         "powered_cluster_count": power["forecast"] is not None
         and len(clusters)
         >= int(power["forecast"]["required_clusters_normal_approximation"]),
@@ -407,9 +409,7 @@ def run(
         "paired_records": paired,
         "equal_cell_cluster_log_ratios": cluster_effects,
         "primary_efficiency": efficiency,
-        "practical_geometric_mean_ratio": float(
-            statistics["practical_geometric_mean_ratio"]
-        ),
+        "practical_geometric_mean_ratio": practical_ratio,
         "accuracy": accuracy,
         "gates": gates,
         "formal_readiness": formal,

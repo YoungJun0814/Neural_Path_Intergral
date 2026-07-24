@@ -30,9 +30,14 @@ The clean-snapshot V6 primary-baseline matrix has now completed all 1,296 record
 1,296/1,296 independent record audits passing. Six individual achieved-RMSE misses
 remain visible as diagnostics; all 54 prespecified method-by-cell aggregate accuracy
 co-gates pass. The V4 routed/selector-off and V2 fixed-secondary protocols remove the
-old worst-case-bound over-allocation and all-record empirical-AND gate before their
-formal runs. Full routed qualification, untouched confirmation, and Linux
-reproduction have **not** yet been run.
+old worst-case-bound over-allocation and all-record empirical-AND gate. The frozen
+V4 qualification and 64-cluster V2 confirmation are now complete. All 2,304
+confirmation records and both 1,152-record independent audits pass. The
+training-inclusive pure-CEM/policy geometric work ratio is 2.3169 (one-sided 95%
+lower 2.3004), and all 36 method-by-cell accuracy co-gates pass. However, every
+route selects DCS-SLIS and the advantage disappears when proposal-training work is
+excluded. The confirmed result is therefore an amortized repeated-query result,
+not evidence of a successful Hybrid selector. Linux reproduction remains open.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -54,7 +59,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **516/516 tests on 2026-07-24**.
+The complete local regression suite passed **520/520 tests on 2026-07-24**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finest discrete grid rather than a continuously monitored event,
@@ -93,6 +98,7 @@ Start with:
 - [V6 terminal inverse-slope theorem](docs/theory/G11_V6_TERMINAL_SLOPE_THEOREM.md)
 - [V6 laptop development decision](docs/audits/G11_V6_LAPTOP_DEVELOPMENT_DECISION_2026-07-23.md)
 - [V6 policy V4 allocation and gate audit](docs/audits/G11_V6_POLICY_V4_ALLOCATION_AND_GATE_AUDIT_2026-07-24.md)
+- [V6 confirmation V2 decision](docs/audits/G11_V6_CONFIRMATION_V2_DECISION_2026-07-24.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
