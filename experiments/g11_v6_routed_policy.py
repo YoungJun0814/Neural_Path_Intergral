@@ -792,6 +792,16 @@ def _crude_work_interval(
         if point_probability is None
         else point_probability * (1.0 - point_probability)
     )
+    if not math.isfinite(point) or point < 0.0:
+        raise ValueError("crude routing point variance must be finite and nonnegative")
+    # In replicated V4 planning the frozen nominal probability is the point
+    # design, while the exact screening interval supplies uncertainty bounds.
+    # A rare but valid screening realization can exclude that nominal point
+    # (for example, two hits in 256 trials when p_nominal=1e-4).  The work
+    # interval must therefore be the conservative envelope of both sources,
+    # rather than constructing an invalid lower > point interval.
+    lower = min(lower, point)
+    upper = max(upper, point)
     return RoutingWorkInterval(
         "crude",
         preprocessing_work + max(minimum_final_samples, lower / target) * cost,

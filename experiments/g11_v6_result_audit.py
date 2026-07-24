@@ -240,6 +240,30 @@ def _audit_router(record: dict[str, Any]) -> bool:
 
     crude = inputs["crude_work"]
     dcs = inputs["dcs_work"]
+    for expected_method, item in (("crude", crude), ("dcs_slis", dcs)):
+        if item is None:
+            continue
+        if (
+            not isinstance(item, dict)
+            or set(item) != {"method", "lower", "point", "upper"}
+            or item["method"] != expected_method
+        ):
+            return False
+        try:
+            work_lower = float(item["lower"])
+            work_point = float(item["point"])
+            work_upper = float(item["upper"])
+        except (TypeError, ValueError):
+            return False
+        if (
+            not all(
+                math.isfinite(value)
+                for value in (work_lower, work_point, work_upper)
+            )
+            or work_lower < 0.0
+            or not work_lower <= work_point <= work_upper
+        ):
+            return False
     available = [item for item in (crude, dcs) if item is not None]
     default = "crude" if rarity_class == "moderate" else "dcs_slis"
     if available:

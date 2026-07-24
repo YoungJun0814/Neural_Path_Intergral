@@ -48,9 +48,16 @@ def build_frozen_configs(
     manifest_sha256: str,
     reference_sha256: str,
     power_sha256: str,
+    protocol_version: int = 1,
 ) -> tuple[dict[str, dict[str, Any]], dict[str, str]]:
     """Return deterministic same-design confirmation configs and their hashes."""
 
+    if (
+        isinstance(protocol_version, bool)
+        or not isinstance(protocol_version, int)
+        or protocol_version < 1
+    ):
+        raise ValueError("confirmation protocol version must be a positive integer")
     if isinstance(planned_clusters, bool) or planned_clusters < 3:
         raise ValueError("a powered confirmation requires at least three clusters")
     if (
@@ -80,13 +87,13 @@ def build_frozen_configs(
         raise ValueError("freeze input must be an unfrozen development template")
 
     baseline = json.loads(json.dumps(baseline_template))
-    baseline["protocol_id"] = "g11-v6-baseline-confirmation-v1"
+    baseline["protocol_id"] = f"g11-v6-baseline-confirmation-v{protocol_version}"
     baseline["phase"] = "confirmation"
     baseline["frozen"] = True
     baseline["sampling"]["clusters"] = planned_clusters
 
     policy = json.loads(json.dumps(policy_template))
-    policy["protocol_id"] = "g11-v6-routed-policy-confirmation-v1"
+    policy["protocol_id"] = f"g11-v6-routed-policy-confirmation-v{protocol_version}"
     policy["phase"] = "confirmation"
     policy["frozen"] = True
     policy["sampling"]["clusters"] = planned_clusters
@@ -99,7 +106,9 @@ def build_frozen_configs(
         )
 
     audit = json.loads(json.dumps(audit_template))
-    audit["protocol_id"] = "g11-v6-independent-audit-confirmation-v1"
+    audit["protocol_id"] = (
+        f"g11-v6-independent-audit-confirmation-v{protocol_version}"
+    )
     audit["frozen"] = True
 
     hashes = {
@@ -111,7 +120,7 @@ def build_frozen_configs(
         "audit_config": _sha256(_yaml_bytes(audit)),
     }
     confirmatory = json.loads(json.dumps(confirmatory_template))
-    confirmatory["protocol_id"] = "g11-v6-confirmatory-v1"
+    confirmatory["protocol_id"] = f"g11-v6-confirmatory-v{protocol_version}"
     confirmatory["phase"] = "confirmation"
     confirmatory["frozen"] = True
     confirmatory["expected_sha256"] = hashes
@@ -149,6 +158,7 @@ def run(
     power_path: Path,
     output_directory: Path,
     proposal_training_source_path: Path | None = None,
+    protocol_version: int = 1,
 ) -> dict[str, Any]:
     provenance = source_provenance()
     if provenance["dirty_worktree"]:
@@ -235,6 +245,7 @@ def run(
         manifest_sha256=manifest.sha256,
         reference_sha256=reference_hash,
         power_sha256=_sha256(power_raw),
+        protocol_version=protocol_version,
     )
     output_directory.mkdir(parents=True, exist_ok=True)
     targets = {name: output_directory / name for name in payloads}
@@ -244,8 +255,9 @@ def run(
     for name, payload in payloads.items():
         targets[name].write_bytes(_yaml_bytes(payload))
     receipt = {
-        "schema": "npi.g11.v6-freeze-receipt.v1",
+        "schema": "npi.g11.v6-freeze-receipt.v2",
         "source_commit": provenance["source_commit"],
+        "protocol_version": protocol_version,
         "planned_clusters": planned_clusters,
         "manifest_cell_count": len(manifest.cells),
         "frozen_protocol_sha256": hashes,
@@ -287,6 +299,7 @@ def main() -> None:
     parser.add_argument("--power", type=Path, required=True)
     parser.add_argument("--output-directory", type=Path, required=True)
     parser.add_argument("--proposal-training-source", type=Path)
+    parser.add_argument("--protocol-version", type=int, default=1)
     arguments = parser.parse_args()
     receipt = run(
         baseline_template_path=arguments.baseline_template,
@@ -298,6 +311,7 @@ def main() -> None:
         power_path=arguments.power,
         output_directory=arguments.output_directory,
         proposal_training_source_path=arguments.proposal_training_source,
+        protocol_version=arguments.protocol_version,
     )
     print(json.dumps(receipt, sort_keys=True))
 

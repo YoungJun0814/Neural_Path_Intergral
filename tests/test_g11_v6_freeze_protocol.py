@@ -89,3 +89,26 @@ def test_freeze_builder_updates_v4_training_matrix_without_changing_totals() -> 
         key: frozen["proposal"][key] for key in original_training_totals
     } == original_training_totals
     assert payloads["baseline_confirmation.yaml"]["schema"].endswith(".config.v6")
+
+
+def test_freeze_builder_versions_every_seed_namespace() -> None:
+    payloads, _hashes = build_frozen_configs(
+        _yaml("baseline_primary_development_v7.yaml"),
+        _yaml("routed_policy_development_v9.yaml"),
+        _yaml("result_audit_development.yaml"),
+        _yaml("confirmatory_development.yaml"),
+        planned_clusters=64,
+        manifest_cell_count=18,
+        manifest_sha256="1" * 64,
+        reference_sha256="2" * 64,
+        power_sha256="3" * 64,
+        protocol_version=2,
+    )
+    assert payloads["baseline_confirmation.yaml"]["protocol_id"].endswith("-v2")
+    assert payloads["routed_policy_confirmation.yaml"]["protocol_id"].endswith(
+        "-v2"
+    )
+    assert payloads["result_audit_confirmation.yaml"]["protocol_id"].endswith(
+        "-v2"
+    )
+    assert payloads["confirmatory.yaml"]["protocol_id"].endswith("-v2")

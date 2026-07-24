@@ -90,6 +90,24 @@ def test_router_work_interval_charges_the_execution_floor_after_zero_hits() -> N
     assert interval.upper > interval.point
 
 
+def test_router_work_interval_envelopes_nominal_point_excluded_by_screening() -> None:
+    values = torch.zeros(256, dtype=torch.float64)
+    values[:2] = 1.0
+    interval = _crude_work_interval(
+        values,
+        cost=10.0,
+        preprocessing_work=100.0,
+        target=1e-8,
+        confidence_level=0.99,
+        minimum_final_samples=4096,
+        point_probability=1e-4,
+    )
+    expected_point = 100.0 + (1e-4 * (1.0 - 1e-4) / 1e-8) * 10.0
+    assert interval.lower == pytest.approx(expected_point)
+    assert interval.point == pytest.approx(expected_point)
+    assert interval.upper > interval.point
+
+
 def test_v3_shared_training_apportionment_conserves_nondivisible_totals() -> None:
     proposal = {
         "training_amortization_record_count": 6,

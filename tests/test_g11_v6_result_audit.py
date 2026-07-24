@@ -14,6 +14,7 @@ from experiments.g11_v6_result_audit import (
     _audit_crude_design_certificate,
     _audit_defensive_design_certificate,
     _audit_record,
+    _audit_router,
     _audit_v6_baseline_summary,
     _load_config,
     run,
@@ -88,6 +89,36 @@ def test_v6_independent_audit_config_is_strict() -> None:
     config, digest = _load_config(CONFIG)
     assert "npi.g11.v6-routed-policy.v1" in config["accepted_source_schemas"]
     assert len(digest) == 64
+
+
+def test_v6_router_audit_rejects_unordered_work_interval() -> None:
+    record = {
+        "route": {},
+        "router_inputs": {
+            "config": {
+                "probability_cutoff": 0.05,
+                "confidence_level": 0.99,
+                "initial_screening_trials": 256,
+                "maximum_screening_trials": 1024,
+                "minimum_certified_relative_saving": 0.10,
+                "maximum_hybrid_profile_work": 5.0e8,
+                "maximum_profile_fraction": 0.40,
+                "ambiguous_fallback": "dcs_slis",
+            },
+            "successes": 2,
+            "trials": 256,
+            "screening_work": 256.0,
+            "crude_work": {
+                "method": "crude",
+                "lower": 2.0,
+                "point": 1.0,
+                "upper": 3.0,
+            },
+            "dcs_work": None,
+            "hybrid_opportunity": None,
+        },
+    }
+    assert not _audit_router(record)
 
 
 def test_v6_baseline_summary_defers_random_per_record_misses() -> None:
