@@ -17,20 +17,24 @@ from experiments.g11_v7_mechanism_probe import _load_config
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "configs" / "g11_v7" / "mechanism_probe_development_v1.yaml"
+CONFIG_V2 = ROOT / "configs" / "g11_v7" / "mechanism_probe_development_v2.yaml"
 FIXED_CONFIG = (
     ROOT / "configs" / "g11_v7" / "fixed_estimators_development_v1.yaml"
 )
 ANALYSIS_CONFIG = (
-    ROOT / "configs" / "g11_v7" / "mechanism_analysis_development_v1.yaml"
+    ROOT / "configs" / "g11_v7" / "mechanism_analysis_development_v2.yaml"
 )
 
 
 def test_v7_mechanism_probe_config_is_strict_and_development_only() -> None:
-    config, digest = _load_config(CONFIG)
+    config, digest = _load_config(CONFIG_V2)
     assert config["phase"] == "development"
     assert not config["frozen"]
     assert config["sampling"]["clusters"] == 8
     assert config["sampling"]["samples_per_cell_cluster"] == 4096
+    assert config["development_thresholds"][
+        "maximum_absolute_orthogonality_z"
+    ] == 4.5
     assert config["requirements"]["expected_cells"] == 18
     assert len(digest) == 64
 

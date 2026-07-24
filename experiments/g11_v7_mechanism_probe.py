@@ -36,7 +36,8 @@ from src.path_integral import (
 from src.path_integral.provenance import runtime_provenance, source_provenance
 from src.physics_engine import RBergomiSimulator
 
-_SCHEMA = "npi.g11.v7-mechanism-probe.config.v1"
+_SCHEMA_V1 = "npi.g11.v7-mechanism-probe.config.v1"
+_SCHEMA_V2 = "npi.g11.v7-mechanism-probe.config.v2"
 _PROPOSAL_FIELDS = {
     "weights",
     "task_controls",
@@ -68,7 +69,10 @@ def _strict_probability(value: object, field: str) -> float:
 def _load_config(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     payload = yaml.safe_load(raw)
-    if not isinstance(payload, dict) or payload.get("schema") != _SCHEMA:
+    if not isinstance(payload, dict) or payload.get("schema") not in {
+        _SCHEMA_V1,
+        _SCHEMA_V2,
+    }:
         raise ValueError("unsupported V7 mechanism-probe config")
     if set(payload) != {
         "schema",
@@ -174,15 +178,24 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
     if confidence <= 0.5 or sampling["engine"] not in {"fft", "reference"}:
         raise ValueError("invalid V7 mechanism sampling contract")
     thresholds = payload["development_thresholds"]
-    if not isinstance(thresholds, dict) or set(thresholds) != {
+    expected_thresholds = {
         "minimum_variance_ratio_lower",
         "maximum_absolute_residual_z",
-        "maximum_absolute_orthogonality_correlation",
-    }:
+        (
+            "maximum_absolute_orthogonality_correlation"
+            if payload["schema"] == _SCHEMA_V1
+            else "maximum_absolute_orthogonality_z"
+        ),
+    }
+    if not isinstance(thresholds, dict) or set(thresholds) != expected_thresholds:
         raise ValueError("malformed V7 development thresholds")
     ratio = thresholds["minimum_variance_ratio_lower"]
     residual_z = thresholds["maximum_absolute_residual_z"]
-    correlation = thresholds["maximum_absolute_orthogonality_correlation"]
+    orthogonality = thresholds[
+        "maximum_absolute_orthogonality_correlation"
+        if payload["schema"] == _SCHEMA_V1
+        else "maximum_absolute_orthogonality_z"
+    ]
     if (
         isinstance(ratio, bool)
         or not isinstance(ratio, (int, float))
@@ -190,9 +203,13 @@ def _load_config(path: Path) -> tuple[dict[str, Any], str]:
         or isinstance(residual_z, bool)
         or not isinstance(residual_z, (int, float))
         or float(residual_z) <= 0.0
-        or isinstance(correlation, bool)
-        or not isinstance(correlation, (int, float))
-        or not 0.0 < float(correlation) < 1.0
+        or isinstance(orthogonality, bool)
+        or not isinstance(orthogonality, (int, float))
+        or float(orthogonality) <= 0.0
+        or (
+            payload["schema"] == _SCHEMA_V1
+            and float(orthogonality) >= 1.0
+        )
     ):
         raise ValueError("invalid V7 development thresholds")
     requirements = payload["requirements"]
@@ -415,6 +432,10 @@ def run(
         else 0.0
         for record in records
     )
+    maximum_orthogonality_z = max(
+        abs(float(record["diagnostics"]["dcs_residual_covariance_z_score"]))
+        for record in records
+    )
     raw_lower_ratio = effect["one_sided_lower_raw_over_dcs_variance_ratio"]
     aggregate_variance_gate = smoke or (
         isinstance(raw_lower_ratio, (int, float))
@@ -444,11 +465,14 @@ def run(
             else maximum_residual_z
             <= float(thresholds["maximum_absolute_residual_z"])
         ),
-        "orthogonality_diagnostic": (
-            True
-            if smoke
-            else maximum_orthogonality_correlation
+        "orthogonality_diagnostic": True
+        if smoke
+        else (
+            maximum_orthogonality_correlation
             <= float(thresholds["maximum_absolute_orthogonality_correlation"])
+            if config["schema"] == _SCHEMA_V1
+            else maximum_orthogonality_z
+            <= float(thresholds["maximum_absolute_orthogonality_z"])
         ),
     }
     provenance = source_provenance()
@@ -464,6 +488,7 @@ def run(
     return {
         "schema": "npi.g11.v7-mechanism-probe.v1",
         "protocol_id": config["protocol_id"],
+        "config_schema": config["schema"],
         "phase": config["phase"],
         "smoke": smoke,
         "config_sha256": config_hash,
@@ -476,6 +501,7 @@ def run(
         "maximum_absolute_orthogonality_correlation": (
             maximum_orthogonality_correlation
         ),
+        "maximum_absolute_orthogonality_z": maximum_orthogonality_z,
         "gates": gates,
         "formal_readiness": formal,
         "development_mechanism_passed": all(gates.values()),

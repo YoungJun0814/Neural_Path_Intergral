@@ -21,6 +21,8 @@ class RaoBlackwellPairDiagnostics:
     dcs_variance: float
     residual_variance: float
     dcs_residual_covariance: float
+    dcs_residual_covariance_standard_error: float
+    dcs_residual_covariance_z_score: float
     dcs_residual_correlation: float | None
     raw_over_dcs_variance_ratio: float
     variance_decomposition_error: float
@@ -59,7 +61,21 @@ def rao_blackwell_pair_diagnostics(
     residual_variance = float(torch.var(residual, unbiased=True))
     centered_dcs = dcs_values - dcs_mean
     centered_residual = residual - residual_mean
-    covariance = float(torch.dot(centered_dcs, centered_residual) / (count - 1))
+    covariance_products = centered_dcs * centered_residual
+    covariance = float(torch.sum(covariance_products) / (count - 1))
+    covariance_standard_error = float(
+        torch.std(covariance_products, unbiased=True)
+        / math.sqrt(count)
+        * count
+        / (count - 1)
+    )
+    covariance_z_score = (
+        0.0
+        if covariance_standard_error == 0.0 and covariance == 0.0
+        else math.inf
+        if covariance_standard_error == 0.0
+        else covariance / covariance_standard_error
+    )
     scale = math.sqrt(dcs_variance * residual_variance)
     correlation = None if scale == 0.0 else covariance / scale
     variance_ratio = (
@@ -83,6 +99,8 @@ def rao_blackwell_pair_diagnostics(
         dcs_variance=dcs_variance,
         residual_variance=residual_variance,
         dcs_residual_covariance=covariance,
+        dcs_residual_covariance_standard_error=covariance_standard_error,
+        dcs_residual_covariance_z_score=covariance_z_score,
         dcs_residual_correlation=correlation,
         raw_over_dcs_variance_ratio=variance_ratio,
         variance_decomposition_error=decomposition_error,

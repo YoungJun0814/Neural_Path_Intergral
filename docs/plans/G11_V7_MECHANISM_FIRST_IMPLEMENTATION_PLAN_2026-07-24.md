@@ -118,7 +118,7 @@ speedup.
 ### 4.1 Paired probe
 
 Config:
-`configs/g11_v7/mechanism_probe_development_v1.yaml`
+`configs/g11_v7/mechanism_probe_development_v2.yaml`
 
 - 18 cells;
 - 8 clusters;
@@ -127,9 +127,14 @@ Config:
 - one-sided 95% cluster-level inference;
 - development lower raw/DCS variance-ratio threshold: 1.5;
 - maximum absolute per-record residual z diagnostic: 4.5;
-- maximum absolute DCS/residual correlation diagnostic: 0.12.
+- maximum absolute DCS/residual covariance z diagnostic: 4.5.
 
-The last two are development falsification thresholds.  A future formal family
+V1 used a raw maximum-correlation gate and failed.  That statistic was
+ill-scaled in the rarest heavy-tailed cells, so V1 remains retired and V2 uses a
+new protocol and seed namespace.  See
+`G11_V7_MECHANISM_PROBE_V1_FAILURE_2026-07-24.md`.
+
+The two z thresholds are development falsification thresholds.  A future formal family
 must use a predeclared simultaneous procedure rather than copying these maxima
 without power analysis.
 
@@ -153,7 +158,7 @@ native V7 receipt and independent audit before qualification.
 ### 4.3 Joint analysis
 
 Config:
-`configs/g11_v7/mechanism_analysis_development_v1.yaml`
+`configs/g11_v7/mechanism_analysis_development_v2.yaml`
 
 Development passes only if:
 
