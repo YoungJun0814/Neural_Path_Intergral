@@ -133,6 +133,11 @@ from .mlmc import (
     run_mlmc,
     save_mlmc_checkpoint,
 )
+from .mlmc_complexity import (
+    MLMCComplexityCertificate,
+    conservative_terminal_rbergomi_complexity,
+    mlmc_complexity_certificate,
+)
 from .multilevel_crossover import (
     MultilevelCrossoverDecision,
     TotalWorkCrossoverDecision,
@@ -396,6 +401,9 @@ __all__ = [
     "gaussian_two_tail_probability",
     "scalar_threshold_strictness_certificate",
     "log_mixture_q_over_p",
+    "MLMCComplexityCertificate",
+    "mlmc_complexity_certificate",
+    "conservative_terminal_rbergomi_complexity",
     "linear_threshold_conditional_probability",
     "evaluate_marginal_likelihood",
     "evaluate_marginalized_function",

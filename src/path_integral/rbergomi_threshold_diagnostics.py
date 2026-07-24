@@ -42,6 +42,8 @@ class RBergomiThresholdCouplingDiagnostics:
     coarse_numerator_envelope: torch.Tensor
     common_candidate_error: torch.Tensor
     common_candidate_error_bound: torch.Tensor
+    coarse_active_coefficient_defect: torch.Tensor
+    common_active_switch_defect: torch.Tensor
     mesh_enrichment_defect: torch.Tensor
     threshold_error_bound: torch.Tensor
     fine_active_index: torch.Tensor
@@ -49,6 +51,7 @@ class RBergomiThresholdCouplingDiagnostics:
     fine_active_time: torch.Tensor
     coarse_active_time: torch.Tensor
     maximum_good_event_bound_violation: float
+    maximum_signed_decomposition_residual: float
     maximum_exact_decomposition_violation: float
 
 
@@ -119,9 +122,11 @@ def evaluate_rbergomi_threshold_coupling(
     """Decompose an adjacent terminal/barrier threshold error path by path.
 
     The common-grid candidate error is bounded on the event where every relevant
-    affine slope is at least ``denominator_floor``.  For a barrier, the remaining
-    term is the exact nonnegative increase caused by fine-only monitoring times.
-    The returned theoretical bound is asserted only on ``good_event``.
+    affine slope is at least ``denominator_floor``. For a barrier, the signed
+    threshold difference is also decomposed exactly into the coefficient defect at
+    the coarse active index, the common-grid active-index switch, and the
+    nonnegative fine-only mesh enrichment. The returned probabilistic-rate bound is
+    asserted only on ``good_event``.
     """
 
     fine_steps, coarse_steps = _validate_adjacent_affine_paths(
@@ -154,6 +159,8 @@ def evaluate_rbergomi_threshold_coupling(
         )
         fine_threshold = (fine_n / fine_b)[:, 0]
         coarse_threshold = (coarse_n / coarse_b)[:, 0]
+        coefficient_defect = fine_threshold - coarse_threshold
+        active_switch_defect = torch.zeros(path_count, device=device, dtype=dtype)
         mesh_defect = torch.zeros(path_count, device=device, dtype=dtype)
         finite_threshold = torch.ones(path_count, device=device, dtype=torch.bool)
         initially_hit = torch.zeros(path_count, device=device, dtype=torch.bool)
@@ -199,7 +206,17 @@ def evaluate_rbergomi_threshold_coupling(
         ):
             raise AssertionError("common-grid candidate diagnostics disagree")
         finite_fine_threshold, fine_argmax = torch.max(fine_candidates, dim=1)
+        fine_common_threshold, _ = torch.max(fine_common_candidates, dim=1)
         finite_coarse_threshold, coarse_argmax = torch.max(coarse_candidates, dim=1)
+        coarse_active_fine_candidate = torch.gather(
+            fine_common_candidates,
+            1,
+            coarse_argmax.unsqueeze(1),
+        ).squeeze(1)
+        coefficient_defect = coarse_active_fine_candidate - finite_coarse_threshold
+        active_switch_defect = (
+            fine_common_threshold - coarse_active_fine_candidate
+        )
         fine_threshold = torch.where(
             initially_hit,
             torch.full_like(finite_fine_threshold, math.inf),
@@ -214,6 +231,16 @@ def evaluate_rbergomi_threshold_coupling(
             initially_hit,
             torch.zeros_like(aggregate.mesh_enrichment_defect),
             aggregate.mesh_enrichment_defect,
+        )
+        coefficient_defect = torch.where(
+            initially_hit,
+            torch.zeros_like(coefficient_defect),
+            coefficient_defect,
+        )
+        active_switch_defect = torch.where(
+            initially_hit,
+            torch.zeros_like(active_switch_defect),
+            active_switch_defect,
         )
         fine_active_index = torch.where(initially_hit, 0, fine_argmax + 1)
         coarse_active_index = torch.where(initially_hit, 0, coarse_argmax + 1)
@@ -245,7 +272,16 @@ def evaluate_rbergomi_threshold_coupling(
         torch.zeros_like(threshold_error),
     )
     exact_bound = combine_common_and_mesh_defect(common_candidate_error, mesh_defect)
-    exact_violation = torch.clamp(threshold_error - exact_bound, min=0.0)
+    deterministic_bound_violation = torch.clamp(
+        threshold_error - exact_bound,
+        min=0.0,
+    )
+    signed_decomposition_residual = torch.abs(
+        signed_difference
+        - coefficient_defect
+        - active_switch_defect
+        - mesh_defect
+    )
     fine_active_time = fine_active_index.to(dtype=dtype) * fine_step_dt
     coarse_active_time = coarse_active_index.to(dtype=dtype) * coarse_step_dt
 
@@ -264,6 +300,8 @@ def evaluate_rbergomi_threshold_coupling(
         coarse_numerator_envelope=ratio.coarse_numerator_envelope,
         common_candidate_error=common_candidate_error,
         common_candidate_error_bound=common_candidate_bound,
+        coarse_active_coefficient_defect=coefficient_defect,
+        common_active_switch_defect=active_switch_defect,
         mesh_enrichment_defect=mesh_defect,
         threshold_error_bound=threshold_bound,
         fine_active_index=fine_active_index,
@@ -271,5 +309,13 @@ def evaluate_rbergomi_threshold_coupling(
         fine_active_time=fine_active_time,
         coarse_active_time=coarse_active_time,
         maximum_good_event_bound_violation=float(torch.amax(good_violation)),
-        maximum_exact_decomposition_violation=float(torch.amax(exact_violation)),
+        maximum_signed_decomposition_residual=float(
+            torch.amax(signed_decomposition_residual)
+        ),
+        maximum_exact_decomposition_violation=float(
+            torch.maximum(
+                torch.amax(signed_decomposition_residual),
+                torch.amax(deterministic_bound_violation),
+            )
+        ),
     )

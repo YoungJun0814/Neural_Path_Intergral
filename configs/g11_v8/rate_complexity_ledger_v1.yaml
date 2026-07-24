@@ -1,0 +1,120 @@
+schema: npi.g11.v8-rate-complexity-ledger.v1
+protocol_id: g11-v8-rate-complexity-ledger-v1
+date: "2026-07-25"
+phase: p3_development
+outcome_data_used: false
+theorem_ledger_sha256: 94301f1680805daec34e8219700a303dc71154f06ea758eb0a76adece2e8c2cb
+proof_document: docs/theory/G11_V8_P3_RATE_AND_COMPLEXITY_AUDIT.md
+proof_document_sha256: 49728440a8e2043c821dc444c67771a5c25c31cf8911674eaa8e1dce08456c92
+
+finite_grid_decomposition:
+  status: proved_pathwise
+  task_scope:
+    - terminal_threshold
+    - discrete_barrier_hit
+  signed_terms:
+    - coarse_active_coefficient_defect
+    - common_active_switch_defect
+    - mesh_enrichment_defect
+  initially_hit_convention: all_terms_zero_and_threshold_positive_infinity
+  code_evidence:
+    - src/path_integral/rbergomi_threshold_diagnostics.py
+  test_evidence:
+    - tests/test_rbergomi_threshold_diagnostics.py
+    - tests/test_g11_v8_mlmc_complexity.py
+
+terminal_rate_chain:
+  status: conditional_pending_external_proof_review
+  scope: strict_lognormal_terminal_rbergomi_with_positive_common_direction
+  public_rate: r_equals_H_minus_epsilon
+  constraints:
+    - 0_less_H_less_one_half
+    - 0_less_epsilon_less_H
+    - deterministic_bounded_grid_aligned_controls
+    - positive_unit_direction_with_uniform_grid_scaled_l1_mass
+    - exact_adjacent_BLP_coupling
+    - fixed_positive_defensive_mass
+    - fixed_finite_mixture_control_bank_and_integration_rank
+  weak_bias:
+    symbol: alpha
+    value: r
+    evidence: conditional
+  correction_variance:
+    symbol: beta
+    value: 2r
+    evidence: conditional
+  sample_cost:
+    symbol: gamma
+    value: 1
+    log_power: 1
+    evidence: proved_internal
+  compatibility_condition: alpha_at_least_half_min_beta_gamma
+  regime: beta_less_gamma
+  conditional_complexity:
+    epsilon_polynomial_exponent: 1_over_r
+    epsilon_log_power: 1
+  unconditional_claim_authorized: false
+  code_evidence:
+    - src/path_integral/mlmc_complexity.py
+    - src/path_integral/rbergomi_fft.py
+    - src/path_integral/rbergomi_theory_diagnostics.py
+  test_evidence:
+    - tests/test_g11_v8_mlmc_complexity.py
+    - tests/test_rbergomi_fft.py
+    - tests/test_rbergomi_theory_diagnostics.py
+
+barrier_rate:
+  status: open_finite_grid_experiment_only
+  exact_finite_grid_identity_available: true
+  weak_bias_exponent: open
+  correction_variance_exponent: open
+  complexity_claim_authorized: false
+  unresolved_obligations:
+    - coarse_active_coefficient_rate
+    - early_active_time_small_slope_control
+    - common_active_index_switch_rate
+    - fine_only_mesh_enrichment_rate
+    - continuous_monitoring_crossing_bias_if_claimed
+
+evidence_policy:
+  statuses:
+    - proved_internal
+    - proved_external
+    - conditional
+    - empirical
+    - open
+  empirical_slopes_are_proof: false
+  missing_compatibility_returns_exponent: false
+  rate_promotion_requires_new_bound_review_artifact: true
+
+external_proof_obligations:
+  - common_probability_space_and_filtration
+  - implementation_specific_BLP_volterra_estimate
+  - lognormal_moments_and_BDG_price_transfer
+  - measurable_affine_coefficient_decomposition
+  - continuous_terminal_limit_with_common_L2_direction
+
+claim_levels:
+  C4_terminal_model_rate: conditional
+  C4_barrier_model_rate: open
+  C5_terminal_sampling_complexity: conditional
+  C5_barrier_sampling_complexity: prohibited
+  C5_training_inclusive_end_to_end_complexity: open
+  training_inclusive_superiority: open_experimental
+
+prohibited_claims:
+  - unconditional_terminal_weak_bias
+  - unconditional_terminal_mlmc_complexity
+  - barrier_rate_inherited_from_terminal
+  - continuous_barrier_exactness
+  - empirical_slope_proves_asymptotic_rate
+  - rough_regime_epsilon_minus_two_complexity
+  - training_inclusive_superiority_from_rate_algebra
+
+decision:
+  status: conditional_pass_with_scope_downgrade
+  p4_baseline_framework_authorized: true
+  terminal_math_theory_complete: false
+  barrier_rate_theory_complete: false
+  submission_complexity_claim_authorized: false
+  external_proof_review_required: true
