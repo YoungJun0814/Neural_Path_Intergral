@@ -1,206 +1,293 @@
 # 현재 모델과 구현 결과 가이드
 
-Date: 2026-07-22
+작성일: 2026-07-24
+현재 핵심 모델: **고정 제안분포 기반 DCS 경로적분 희귀사건 추정기**
 
-## 1. 결론부터
+## 1. 한 문장 설명
 
-현재 모델은 신경망 자체가 아니라 **Margin-aware Hybrid DCS-MGI**다. 쉽게 말하면
-rough Bergomi 경로에서 희귀사건을 일으키는 핵심 가우시안 방향을 찾아 그 방향은
-수치 샘플링하지 않고 정확히 적분한 뒤, 남은 문제에 대해서는 단일레벨 중요도
-샘플링과 여러 MLMC 시작점 중 총비용이 가장 작은 구성을 선택하는 모델이다.
+우리 모델은 rough Bergomi 같은 기억 의존 확률모형에서 아주 드문 금융
+사건의 확률을 계산할 때, 사건을 잘 발생시키는 경로분포로 표본을 옮긴 뒤
+정확한 likelihood로 보정하고, 남아 있는 핵심 가우시안 잡음 한 방향을
+수치 표본 대신 해석적으로 적분하여 분산과 계산량을 줄이는 방법이다.
 
-이 선택은 사후 설명이 아니라 frozen V4 자격시험의 직접적인 결론이다. 135개
-seed-run 중 90개는 가장 미세한 격자의 DCS 단일레벨 방식, 45개는 어떤 형태의
-multilevel 방식이 더 낮은 예측 총비용을 보였다. 따라서 현재 근거로는 “항상 MLMC”도,
-“항상 단일레벨”도 올바르지 않다.
+현재 확인된 핵심은 “새로운 신경망 구조”가 아니라 다음 결합이다.
 
-## 2. 우리가 계산하는 문제
+1. 방어적 가우시안 혼합 importance sampling;
+2. exact balance-mixture likelihood;
+3. control-span 조건부 가우시안 적분(DCS-MGI);
+4. 필요하면 fine/coarse 경로를 결합하는 MLMC; 그리고
+5. 학습·계획·최종 표본 비용을 분리하지 않고 합산하는 평가 규약.
 
-rBergomi와 같은 rough-volatility 모델에서 다음과 같은 매우 작은 확률을 계산한다.
+## 2. 쉬운 비유
 
-- 만기 가격이 임계값 아래로 내려갈 확률;
-- 관측 구간 중 한 번이라도 barrier를 통과할 확률; 그리고
-- 개발 단계에서는 hit-plus-occupation 같은 경로 의존 사건.
+희귀사건을 복권 당첨이라고 생각하자. 일반 Monte Carlo는 원래 확률대로
+복권을 계속 사기 때문에 매우 많은 표본이 필요하다. Importance sampling은
+당첨이 더 자주 나오는 판매점에서 복권을 사되, 그 판매점에서 샀다는 사실을
+정확한 가중치로 보정한다.
 
-목표 확률이 `1e-6`이면 일반 Monte Carlo는 8,192개 경로에서 사건을 한 번도 보지
-못하는 경우가 흔하다. 사건을 더 자주 만들도록 Brownian 경로의 법칙을 이동시키되,
-exact likelihood로 보정하여 원래 확률을 추정하는 것이 importance sampling이다.
+Raw 추정기는 복권 번호의 마지막 한 자리까지 매번 무작위로 뽑는다. DCS는
+나머지 번호가 주어졌을 때 마지막 한 자리가 당첨을 만드는 확률을 정규분포
+CDF로 정확히 계산한다. 따라서 기대값은 같지만 불필요한 마지막 무작위성이
+사라진다. 이것이 Rao--Blackwell 분산감소 메커니즘이다.
 
-현재 논문의 estimand는 **선언된 128-step 유한 시간격자의 확률**이다. 연속 감시
-barrier 확률이나 `dt -> 0` 극한을 이미 해결했다고 주장하지 않는다.
+## 3. 우리가 계산하는 대상
 
-## 3. 모델의 네 가지 핵심 부품
+현재 estimand는 연속시간 극한이 아니라 **미리 선언한 128-step 유한 격자에서의
+확률**이다.
 
-### 3.1 Defensive importance sampling
+- 만기 가격이 임계값 아래인 사건;
+- 관측 시점 중 한 번이라도 하단 barrier를 통과한 사건; 그리고
+- 일부 개발 연구의 hit-plus-occupation 경로 사건.
 
-제안분포는 자연분포 성분과 두 개의 이동된 가우시안 성분을 섞는다. 자연분포의
-비중 `delta > 0`을 유지하므로 target/proposal likelihood가 `1/delta`를 넘지 않는다.
-선택된 component의 likelihood만 쓰지 않고 모든 component를 합한 exact
-balance-mixture likelihood를 사용한다. self-normalization은 하지 않는다.
+그러므로 현재 결과를 “연속 감시 barrier 확률을 편향 없이 추정한다”고
+표현하면 이론적으로 틀리다. 논문에서는 finite-grid estimand를 제목, 정리,
+실험표에 일관되게 명시해야 한다.
 
-### 3.2 Control-span Gaussian integration, DCS-MGI
+## 4. 모델의 수학적 구조
 
-표준 가우시안 입력을
+### 4.1 목표 법칙과 방어적 제안분포
 
-`X = U Z + R`
+표준화된 가우시안 입력을 \(X\sim P=\mathcal N(0,I)\)라 하자. 실제 표본은
+다음 혼합분포에서 생성한다.
 
-로 분해한다. `Z`는 사건과 proposal control을 직접 움직이는 저차원 좌표이고 `R`은
-직교 residual이다. terminal과 discrete barrier 사건은 `R`이 주어지면
+\[
+Q=\sum_{j=0}^{J-1}\pi_j\mathcal N(m_j,I),\qquad
+m_0=0,\quad \pi_0=\delta>0.
+\]
 
-`1{Z <= A(R)}`
+영 이동 성분을 양의 확률로 남기기 때문에 likelihood ratio가 경로별로
+\(1/\delta\) 이하라는 방어적 상한을 갖는다. 선택된 혼합성분 하나의 밀도만
+사용하지 않고 전체 혼합밀도를 사용한다.
 
-형태의 스칼라 threshold 사건으로 정확히 바뀐다. 따라서 `Z`를 Monte Carlo로 뽑지
-않고 조건부 정규 CDF로 적분한다. 이는 근사적인 soft-event 대체가 아니라 선언된
-유한 격자 사건에 대한 정확한 Rao--Blackwellization이다.
+\[
+L(x)=\frac{dP}{dQ}(x)
+=\left[
+\sum_j\pi_j
+\exp\!\left(m_j^\mathsf Tx-\frac12\lVert m_j\rVert^2\right)
+\right]^{-1}.
+\]
 
-### 3.3 Coupled multilevel corrections
+Self-normalized importance sampling은 쓰지 않는다. 최종 추정량은
+\(L(X)f(X)\)의 일반 산술평균이다.
 
-격자 `8, 16, 32, 64, 128` step에서 인접한 fine/coarse 값을 같은 fine 확률공간,
-proposal, label, likelihood와 가우시안 좌표로 계산한다. 그 결과
+### 4.2 DCS-MGI
 
-`E[Y_L] = E[Y_l0] + sum E[Y_l - Y_(l-1)]`
+제안분포의 이동방향과 사건을 직접 움직이는 단위방향을 모아
 
-의 telescoping identity가 유한 격자에서 정확히 유지된다.
+\[
+X=UZ+R
+\]
 
-### 3.4 Total-work crossover
+로 분해한다. \(Z\)는 저차원 control-span 좌표이고 \(R\)은 직교 residual이다.
+구현된 terminal과 discrete-barrier 사건은 \(R\)이 주어졌을 때
 
-시작 레벨 `l0`마다 연속 최적할당의 online-work 계수
+\[
+\mathbf 1\{Z\le A(R)\}
+\]
 
-`K_l0 = (sqrt(V_l0 C_l0) + sum_(l>l0) sqrt(V_delta,l C_delta,l))^2`
+꼴의 스칼라 임계 사건으로 정확히 바뀐다. DCS는
+\(L(UZ+R)\mathbf 1\{Z\le A(R)\}\)를 \(Z\)에 대해 해석적으로 적분한다.
 
-를 계산한다. 요청 sampling variance가 `epsilon^2`일 때 비교량은
+\[
+Y_{\mathrm{DCS}}(R)
+=E_Q[Y_{\mathrm{raw}}(Z,R)\mid R].
+\]
 
-`W_l0 = P_profile + K_l0 / epsilon^2`
+따라서
 
-다. 가장 미세한 시작 `l0=L`은 DCS-SLIS이므로 항상 후보에 포함한다. proposal 학습,
-profile, tuning 비용은 한 번씩만 포함한다. 사건을 보지 못해 baseline의 경험분산이
-0이 된 경우에는 그 방법을 0비용 승자로 만들지 않고 **사용 불가**로 처리한다.
+\[
+E_Q[Y_{\mathrm{DCS}}]=E_Q[Y_{\mathrm{raw}}],
+\qquad
+\operatorname{Var}(Y_{\mathrm{DCS}})
+\le \operatorname{Var}(Y_{\mathrm{raw}}).
+\]
 
-## 4. 전체 구조
+이 부등식은 구조적으로 정확하지만, 감소량이 항상 실무적으로 클 것까지
+보장하지는 않는다. 그래서 동일 경로·동일 제안분포 paired probe로 감소량을
+직접 측정했다.
+
+### 4.3 MLMC
+
+여러 격자를 사용할 때 fine 경로에서 coarse 경로를 일관되게 만들고, proposal,
+label, likelihood와 control coordinate를 공유한다.
+
+\[
+E[Y_L]
+=E[Y_{\ell_0}]
++\sum_{\ell=\ell_0+1}^{L}E[Y_\ell-Y_{\ell-1}].
+\]
+
+이 telescoping은 선언된 유한 격자에서 정확하다. V6 확인시험에서는 모든
+경우가 finest-level DCS-SLIS를 선택했으므로, 현재 가장 강한 실증 결과의
+핵심은 MLMC router가 아니라 DCS와 proposal 학습비 상각이다.
+
+## 5. 현재 실행 파이프라인
 
 ```mermaid
 flowchart TD
-    A["rBergomi / Gaussian Volterra target law"] --> B["Defensive Gaussian-mixture proposal"]
-    B --> C["Exact balance likelihood"]
-    C --> D["X = UZ + R"]
-    D --> E["Conditional scalar threshold A(R)"]
-    E --> F["Analytically integrate Z: DCS-MGI"]
-    F --> G["Profile every single level and adjacent correction"]
-    G --> H["Include DCS-SLIS and all MLMC starts"]
-    H --> I["Choose minimum preprocessing-inclusive total work"]
-    I --> J["Frozen final allocation, estimate, SE and provenance"]
+    A["고정 rBergomi 셀과 128-step estimand"] --> B["검증된 task별 제안분포 bank"]
+    B --> C["방어적 혼합 표본과 exact likelihood"]
+    C --> D["Raw 또는 DCS 관측값"]
+    D --> E["독립 planning 표본으로 분산 추정"]
+    E --> F["요청 RMSE에 맞춘 정수 표본수 동결"]
+    F --> G["독립 final seed로 최종 추정"]
+    G --> H["정확도·work·wall time·provenance 감사"]
 ```
 
-현재까지는 `J` 직전의 qualification까지 끝났다. 즉 어떤 구성을 최종 실험에 사용할지
-선택하는 profile 연구는 완료됐지만, 그 선택으로 목표 RMSE를 실제 달성하는 대규모
-untouched confirmation은 아직 남아 있다.
+현재 논문 헤드라인 후보는 router가 아니라
+**mechanism-identified amortized DCS path-integral estimator**다.
 
-## 5. V4에서 실제로 확인된 것
+- `mechanism-identified`: 동일 제안분포의 raw와 비교하여 DCS 자체 효과를
+  분리했다.
+- `amortized`: 여러 질의에 제안분포 학습비를 나누어 부담한다.
+- `path-integral`: 경로 법칙 아래의 기대값을 조건부 적분한다는 뜻이다.
+  Feynman 양자 경로적분을 구현했다는 뜻이 아니다.
 
-V4는 base `(H, eta, rho)=(0.12, 1.1, -0.6)`에서 한 번에 한 파라미터만 바꾼
-27개 cell을 사용했다. 각 cell은 5개 독립 seed, level/method당 8,192개 profile
-경로, 상대 RMSE 10%, 20%, 30%를 평가했다.
+## 6. V6가 증명한 것과 못한 것
 
-| 결과 | 값 |
-|---|---:|
-| cell / seed-run | 27 / 135 |
-| 독립 reference의 4 combined SE 이내 | 135 / 135 |
-| DCS-SLIS 선택 | 90 / 135 |
-| full MLMC 선택 | 13 / 135 |
-| 중간 MLMC 시작 선택 | 32 / 135 |
-| reference 최대 absolute z | 2.466 |
+64-cluster V6 확인시험에서 pure CEM 대비 정책의 training-inclusive 기하평균
+work 비율은 2.3169배였고 one-sided 95% 하한은 2.3004배였다. Linux의 새 시드
+재현에서도 2.3186배, 하한 2.3080배였다.
 
-H만 0.30으로 바꾼 smoother regime에서 20개 run 중 13개가 full MLMC를 선택했다.
-다른 regime은 주로 DCS-SLIS를 선택했다. 이는 smoother path에서 correction decay가
-MLMC 비용을 정당화할 수 있다는 유력한 메커니즘 증거다. 두 H 값과 제한된 event를
-본 결과이므로 H에 대한 보편 정리는 아니다.
+하지만 모든 route가 DCS-SLIS를 선택했고 proposal-training 비용을 제외하면
+장점이 사라졌다. 따라서 V6는 다음만 지지한다.
 
-base 네 cell에서 학습비용을 포함한 CEM-SLIS와 비교했을 때, 상대 RMSE 20%의
-CEM/best-DCS 기하평균 총비용 비율은 1.47x--1.89x였다. CEM이 없는 나머지 cell까지
-이 결과를 확장해서 주장하면 안 된다.
+> 동일한 task 계열을 반복 계산할 때, 미리 학습한 제안분포를 재사용하는
+> DCS 방식이 매번 CEM을 다시 학습하는 것보다 유리하다.
 
-## 6. M7 실패와 V4 통과를 함께 읽는 법
+V6만으로는 DCS 조건부 적분 자체가 raw 추정량보다 좋은지 분리하지 못했다.
 
-M7 V3는 640개 cell을 모두 계산했고 DCS target attainment 91.41%, 254개
-matched-RMSE cell에서 raw/DCS work ratio 16.52x를 얻었다. 그러나 한 Windows
-checkpoint `PermissionError`가 사전 선언된 no-failure gate에 남았고 임시 파일에서
-수동 복구했으므로 strict headline은 실패다. 이 수치는 recovered evidence이지
-untouched confirmation이 아니다.
+## 7. V7 자격검증이 새로 증명한 것
 
-또한 M7의 low/base/high regime은 H, eta, rho를 동시에 바꿨다. V4는 이 confounding을
-one-factor-at-a-time 설계로 제거했고, strongest single-level comparator와 base CEM을
-추가했다. V4의 pass는 M7 strict fail을 소급해서 pass로 바꾸지 않는다.
+V7은 같은 proposal, mixture weight, 셀, 목표 RMSE, 최종 표본 floor를 사용한
+fixed raw와 fixed DCS를 비교했다. 18개 셀과 24개 독립 cluster에서 모든
+사전 선언 gate와 독립 재계산 감사가 통과했다.
 
-## 7. 선택한 이론과 보장 범위
+| Raw/DCS 지표 | 기하평균 비율 | one-sided 95% 하한 |
+|---|---:|---:|
+| 동일 경로 probe 분산 | 3.3977 | 3.3071 |
+| production 실행 분산 | 3.5376 | 3.4359 |
+| final sampling work | 3.4529 | 3.3287 |
+| training 포함 전체 work | 1.9033 | 1.8551 |
+| final wall time | 2.5088 | 2.4172 |
 
-V4에 맞는 이론은 **margin-localized threshold stability**다. fine/coarse threshold의
-분모가 `kappa` 이상인 good event에서는 numerator error, denominator error,
-mesh/rank enrichment defect로 threshold 차이를 제한한다. 분모가 작아지는 bad event는
-버리지 않고 확률항으로 moment bound에 남긴다.
+공통 512표본 floor에 걸린 방법은 없었다. 즉 표본 floor 때문에 생긴 가짜
+비율이 아니다. V7은 V6에서 남았던 중요한 질문에 다음처럼 답한다.
 
-그 결과 defensive likelihood 아래에서 DCS correction의 second moment는 good-event
-threshold defect에 대해 quadratic bound를, raw correction은 linear bound를 갖는다.
-이 정리는 결정론적 비율 부등식, max/min aggregation, bad-event split 수준에서 증명·구현·
-테스트됐다.
+> 제안분포 재사용 효과만 있는 것이 아니다. 동일 proposal에서도 DCS가
+> 조건부 가우시안 잡음을 제거하여 약 3.5배의 분산감소를 만든다.
 
-아직 증명하지 않은 model-level 항목은 다음과 같다.
+이 결과는 아직 qualification이다. 새로운 시드의 별도 64-cluster
+confirmation 전에는 “최종 확인된 V7 효과”라고 부르면 안 된다.
 
-- rBergomi coefficient error와 small active slope의 수렴률;
-- rare threshold에 충분히 균일한 barrier mesh-enrichment rate;
-- occupation 사건의 grid-dependent rank-change rate;
-- continuous-monitoring weak-bias rate; 그리고
-- 모든 파라미터와 사건에서의 uniform superiority.
+## 8. 정확성과 통계적 주의점
 
-따라서 현재 rate 정리는 명시적인 조건부 정리이지 경험적 regression을 증명으로
-포장한 것이 아니다.
+V7 자격검증은 18셀 × 2방법 × 2종류, 총 72개 정확도 주장을 하나의 family로
+묶고 Bonferroni FWER 0.05를 적용했다.
 
-## 8. 여기서 “path integral”과 “neural”의 의미
+- 목표달성률: exact Clopper--Pearson 하한;
+- RMSE: 고정 seed 50,000회 percentile bootstrap 상한;
+- 최소 목표달성률 하한: 0.6633, 기준 0.60 초과;
+- 최대 RMSE 상한/허용치: 0.7546, 기준 1 미만.
 
-현재 모델은 Feynman 양자 경로적분을 사용하지 않는다. 경로 전체 위의 확률측도 변환,
-조건부 적분, multilevel telescoping을 사용한다는 의미의 path-measure estimator다.
-검증되지 않은 양자 용어를 추가하면 수학적 정합성과 논문 신뢰도가 오히려 나빠진다.
+DCS의 세 그룹에서 개별 cluster 24개 중 23개가 표본별 목표를 달성했다.
+이는 숨기지 않는다. 사전에 정한 최종 판정은 개별 Boolean의 AND가 아니라
+method-cell 단위의 목표달성률과 RMSE 동시 gate였고 그 gate는 모두 통과했다.
+다만 0.6633 대 0.60의 여유가 작으므로 확인시험은 64 cluster로 수행해야 한다.
 
-신경망 기반 VFO와 residual controller는 저장소의 연구 역사에서 강한 baseline에
-패배하여 중단됐다. 향후 neural component를 넣는다면 여러 파라미터·event에 대해
-proposal을 amortize하여 **학습비용 포함 총비용**을 줄이는 경우에만 정당하다. 현재
-exactness theorem과 V4 성과를 neural contribution이라고 부르면 안 된다.
+## 9. 현재 이론적으로 확실한 것
 
-## 9. 지금 논문 수준은 어디인가
+| 주장 | 상태 | 범위 |
+|---|---|---|
+| exact balance-mixture likelihood | 증명·테스트 완료 | 동일 공분산 가우시안 이동 혼합 |
+| 방어적 likelihood 상한 | 증명·테스트 완료 | 영 이동 성분의 양의 weight 필요 |
+| DCS 조건부기대 identity | 증명·oracle test 완료 | 구현된 유한차원 threshold 사건 |
+| Rao--Blackwell 분산 비증가 | 정확한 정리 | 제곱적분 가능성 아래 |
+| 유한격자 MLMC telescoping | 증명·테스트 완료 | 선언된 fine-to-coarse map |
+| terminal inverse-slope 음의 moment | 현재 방향족에서 증명 | 양의 piecewise 방향 |
+| DCS correction rate | 조건부 상한 | threshold \(L^2\) rate 가정 필요 |
+| 전체 MLMC complexity | 조건부 corollary | bias·variance·cost exponent 필요 |
 
-현재는 **박사급 연구 프로토타입이자 강한 working-paper core**다. exactness,
-falsification discipline, 독립 감사, 강한 baseline 일부, 새로운 localized analysis를
-갖췄다. 하지만 top-tier journal의 최종 논문이라고 부르기에는 다음이 부족하다.
+## 10. 아직 열려 있는 이론 문제
 
-1. profile로 예측한 비용이 아니라 실제 achieved-RMSE allocation;
-2. headline cell당 10--20개 이상의 독립 cluster;
-3. 모든 headline cell의 task-tuned SLIS/CEM 또는 frozen amortized baseline;
-4. 독립 머신에서의 주 결과 재현;
-5. 실제 wall time과 operation proxy의 동시 보고;
-6. continuous-time bias budget 또는 제목부터 결론까지 일관된 finite-grid 범위; 그리고
-7. terminal부터 시작하는 rBergomi model-level rate theorem.
+1. discrete barrier의 mesh-enrichment와 small-slope 사건을 함께 제어하는
+   model-level rate theorem;
+2. 연속 감시 확률과 128-step estimand 사이의 weak-bias budget;
+3. 더 넓은 \(H,\eta,\rho,T\) 영역에서 상수가 폭발하지 않는 조건;
+4. occupation 사건의 rank-change 확률률;
+5. 정리 문서에 대한 독립적인 외부 수학 검토.
 
-이 항목을 새 seed namespace로 사전 동결해 성공하면 SIAM Journal on Financial
-Mathematics나 강한 computational/quantitative finance journal에 경쟁력 있는 논문이
-될 가능성이 있다. 더 높은 수학 저널을 목표로 한다면 model-level rate와 weak-bias
-이론이 핵심이고, ML/AI venue를 목표로 한다면 amortized neural proposal이 강한
-baseline을 training-inclusive work로 이겨야 한다.
+이 항목을 증명하지 않은 상태에서 “rough Bergomi 전체에서 최적 complexity”나
+“연속시간 unbiased”를 주장하면 오류다.
 
-## 10. 주요 파일과 재현
+## 11. 기술적 안전장치
 
-- `src/path_integral/threshold_stability.py`: localized threshold/moment bound
-- `src/path_integral/multilevel_crossover.py`: SLIS/MLMC total-work 선택
-- `src/path_integral/rbergomi_dcs_mlmc.py`: rBergomi DCS threshold adapter
-- `src/path_integral/rbergomi_mlmc_sampler.py`: coupled sampler
-- `experiments/g11_v4_crossover_qualification.py`: frozen V4 실행기
-- `experiments/g11_v4_crossover_audit.py`: 독립 결과 재계산 감사기
-- `docs/theory/G11_MARGIN_LOCALIZED_THRESHOLD_STABILITY.md`: 이론
-- `docs/audits/G11_V4_CROSSOVER_QUALIFICATION_DECISION_2026-07-22.md`: 최종 해석
+- adaptedness 위반을 막는 causal control schedule;
+- mixture 전체를 사용하는 exact likelihood;
+- pilot과 final seed 분리;
+- mechanism probe, planning, final seed namespace 분리;
+- 결과를 보기 전 config와 source commit 동결;
+- 모든 expected record와 중복 seed 검사;
+- checkpoint/resume 후 wall-time chunk 합산;
+- raw-only fast path에서 DCS 실행 금지;
+- production analyzer와 계산식을 공유하지 않는 JSON 독립 감사;
+- 실패·censoring·hash drift 시 fail-closed 판정.
+
+## 12. 현재 학술 수준의 객관적 평가
+
+현재 상태는 **박사논문의 강한 핵심 장 또는 전문 금융수학·계산확률 저널의
+working-paper core**로 볼 수 있다. 정확성 규약, 반증 우선 gate, 메커니즘
+분리, 독립 감사가 일반적인 실험 프로젝트보다 강하다.
+
+그러나 top-tier 저널 완성본은 아니다. 최소한 다음이 남았다.
+
+1. 64-cluster 새 시드 V7 confirmation;
+2. 그 confirmation의 독립 재계산 감사;
+3. 다른 OS·하드웨어에서 V7 재현;
+4. task-tuned CEM, adaptive IS, 가능하면 flow/transport 계열과 동일한
+   training-inclusive 비교;
+5. barrier/mesh 이론 강화 또는 finite-grid 범위를 명확히 제한한 정리;
+6. 외부 proof review;
+7. 최신 선행연구를 재현 가능한 검색 로그와 novelty matrix로 갱신.
+
+이 가운데 1--3이 성공하면 전문 저널 투고 가능성이 실질적으로 높아진다.
+1--7과 명확한 새 정리가 결합되어야 Mathematical Finance 또는 동급의
+최상위권을 현실적으로 논의할 수 있다.
+
+## 13. 코드 위치
+
+- `src/path_integral/rbergomi_mlmc_sampler.py`: raw, DCS, paired sampler;
+- `src/path_integral/rao_blackwell.py`: paired moment와 orthogonality 진단;
+- `experiments/g11_v7_mechanism_probe.py`: common-path mechanism probe;
+- `experiments/g11_v7_mechanism_probe_audit.py`: 독립 probe 감사;
+- `experiments/g11_v6_secondary_baselines.py`: fixed raw/DCS achieved-RMSE 실행;
+- `experiments/g11_v7_mechanism_analysis.py`: 분산·work·wall-time 결합 분석;
+- `experiments/g11_v7_accuracy_analysis.py`: 72-claim 정확도 분석;
+- `experiments/g11_v7_qualification_audit.py`: 전체 패키지 독립 재계산 감사;
+- `docs/theory/G11_V7_RAO_BLACKWELL_MECHANISM_CONTRACT.md`: 이론 계약;
+- `docs/audits/G11_V7_MECHANISM_QUALIFICATION_V1_DECISION_2026-07-24.md`:
+  자격검증 최종 판정.
+
+## 14. 재현 명령
 
 ```bash
 python -m pytest -q
 
-python -m experiments.g11_v4_crossover_audit \
-  --config configs/g11_v4_crossover_qualification.yaml \
-  --result results/g11_v4_crossover_qualification_v1_2026-07-22.json \
-  --output results/g11_v4_crossover_audit_local.json
+python -m experiments.g11_v7_qualification_audit \
+  --freeze <freeze.json> \
+  --probe-config configs/g11_v7/mechanism_probe_qualification_v1.yaml \
+  --fixed-config configs/g11_v7/fixed_estimators_qualification_v1.yaml \
+  --analysis-config configs/g11_v7/mechanism_analysis_qualification_v1.yaml \
+  --accuracy-config configs/g11_v7/accuracy_qualification_v1.yaml \
+  --probe <probe.json> \
+  --probe-audit <probe.audit.json> \
+  --fixed <fixed.json> \
+  --fixed-audit <fixed.audit.json> \
+  --resources <fixed.resources.json> \
+  --analysis <analysis.json> \
+  --accuracy <accuracy.json> \
+  --output <qualification.audit.json>
 ```
+
+실제 논문 수치는 반드시 freeze receipt, source commit, artifact SHA-256과 함께
+인용해야 한다.

@@ -48,8 +48,15 @@ available, and an equal-proposal/equal-floor achieved-RMSE protocol is fixed bef
 development outcomes are inspected. The corrected V2 development study passes:
 raw/DCS empirical variance, final-work, training-inclusive-work, and final-wall
 geometric ratios are 3.64, 3.59, 1.89, and 2.59 respectively; neither method hits
-the common floor. These are 8-cluster development results, and a separate
-24-cluster qualification protocol is frozen before new outcomes.
+the common floor. The separately frozen 24-cluster qualification has also completed.
+All mechanism, work, floor, provenance, and 72-claim simultaneous-accuracy gates
+pass, as does an independent aggregate recomputation audit. The qualification
+raw/DCS ratios are 3.40 for the common-path probe variance, 3.54 for production
+variance, 3.45 for final sampling work, 1.90 for training-inclusive total work, and
+2.51 for isolated final wall time; the respective primary one-sided lower ratios
+are 3.31, 3.44, and 3.33. This isolates a DCS Rao--Blackwell benefit under the same
+proposal rather than proposal amortization alone. Qualification is not untouched
+confirmation; a separately frozen 64-cluster, new-seed confirmation remains next.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -71,7 +78,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **538/538 tests on 2026-07-24**.
+The complete local regression suite passed **540/540 tests on 2026-07-24**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finest discrete grid rather than a continuously monitored event,
@@ -116,6 +123,8 @@ Start with:
 - [V7 Rao--Blackwell mechanism contract](docs/theory/G11_V7_RAO_BLACKWELL_MECHANISM_CONTRACT.md)
 - [V7 mechanism development V2 decision](docs/audits/G11_V7_MECHANISM_DEVELOPMENT_V2_DECISION_2026-07-24.md)
 - [V7 qualification protocol](docs/plans/G11_V7_QUALIFICATION_PROTOCOL_2026-07-24.md)
+- [V7 mechanism qualification V1 decision](docs/audits/G11_V7_MECHANISM_QUALIFICATION_V1_DECISION_2026-07-24.md)
+- [V7 confirmation protocol](docs/plans/G11_V7_CONFIRMATION_PROTOCOL_2026-07-24.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
