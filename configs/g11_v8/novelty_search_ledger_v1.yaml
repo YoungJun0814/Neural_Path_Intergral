@@ -1,0 +1,459 @@
+schema: npi.g11.v8-novelty-search-ledger.v1
+protocol_id: g11-v8-novelty-search-ledger-v1
+date: "2026-07-25"
+search_cutoff_date: "2026-07-25"
+phase: p1_development
+outcome_data_used: false
+
+interfaces:
+  - id: arxiv
+    name: arXiv abstract and primary manuscript pages
+    access_date: "2026-07-25"
+  - id: publisher
+    name: Publisher and DOI landing pages
+    access_date: "2026-07-25"
+  - id: ssrn
+    name: SSRN author manuscript page
+    access_date: "2026-07-25"
+  - id: web_primary
+    name: Web search restricted to original papers and author-hosted records
+    access_date: "2026-07-25"
+
+families:
+  - id: rough_bergomi_conditional_mc
+    required: true
+  - id: numerical_smoothing_qmc_asgq_mlmc
+    required: true
+  - id: multilevel_importance_sampling
+    required: true
+  - id: balance_multiple_importance_sampling
+    required: true
+  - id: large_deviation_and_cem_is
+    required: true
+  - id: adaptive_mixture_importance_sampling
+    required: true
+  - id: exact_density_flow_importance_sampling
+    required: true
+  - id: rough_weak_error_and_mlmc
+    required: true
+  - id: learning_enhanced_control_variates
+    required: true
+
+queries:
+  - id: q01
+    interface_id: web_primary
+    executed_on: "2026-07-25"
+    text: site:arxiv.org rough Bergomi conditional Monte Carlo variance reduction McCrickerd Pakkanen
+    family_ids: [rough_bergomi_conditional_mc]
+  - id: q02
+    interface_id: web_primary
+    executed_on: "2026-07-25"
+    text: site:arxiv.org numerical smoothing quasi Monte Carlo rough Bergomi rare event conditional integration
+    family_ids: [numerical_smoothing_qmc_asgq_mlmc]
+  - id: q03
+    interface_id: web_primary
+    executed_on: "2026-07-25"
+    text: site:arxiv.org large deviation adaptive importance sampling rare events Tong Stadler
+    family_ids: [large_deviation_and_cem_is]
+  - id: q04
+    interface_id: web_primary
+    executed_on: "2026-07-25"
+    text: site:arxiv.org normalizing flow importance sampling rare event exact likelihood 2025
+    family_ids: [exact_density_flow_importance_sampling]
+  - id: q05
+    interface_id: web_primary
+    executed_on: "2026-07-25"
+    text: site:arxiv.org rough volatility neural control variate Monte Carlo 2024 2025
+    family_ids: [learning_enhanced_control_variates]
+  - id: q06
+    interface_id: web_primary
+    executed_on: "2026-07-25"
+    text: site:arxiv.org rough Bergomi rare event importance sampling barrier probability
+    family_ids: [large_deviation_and_cem_is, rough_weak_error_and_mlmc]
+  - id: q07
+    interface_id: web_primary
+    executed_on: "2026-07-25"
+    text: site:arxiv.org Gaussian mixture Rao-Blackwell importance sampling marginalization subspace
+    family_ids: [adaptive_mixture_importance_sampling, balance_multiple_importance_sampling]
+  - id: q08
+    interface_id: web_primary
+    executed_on: "2026-07-25"
+    text: site:arxiv.org rough Bergomi weak approximation barrier option multilevel 2025
+    family_ids: [rough_weak_error_and_mlmc]
+  - id: q09
+    interface_id: web_primary
+    executed_on: "2026-07-25"
+    text: rough Bergomi control variates Monte Carlo paper
+    family_ids: [rough_bergomi_conditional_mc, learning_enhanced_control_variates]
+  - id: q10
+    interface_id: web_primary
+    executed_on: "2026-07-25"
+    text: rough volatility neural control variate
+    family_ids: [learning_enhanced_control_variates]
+  - id: q11
+    interface_id: web_primary
+    executed_on: "2026-07-25"
+    text: rough Bergomi deep control variate
+    family_ids: [learning_enhanced_control_variates]
+  - id: q12
+    interface_id: web_primary
+    executed_on: "2026-07-25"
+    text: rough Bergomi rare event simulation importance sampling
+    family_ids: [large_deviation_and_cem_is, multilevel_importance_sampling]
+
+sources:
+  - id: mccrickerd_pakkanen_2018
+    family_ids: [rough_bergomi_conditional_mc]
+    title: Turbocharging Monte Carlo pricing for the rough Bergomi model
+    authors: [Ryan McCrickerd, Mikko S. Pakkanen]
+    year: 2018
+    source_type: journal_article
+    primary_url: https://arxiv.org/abs/1708.02563
+    version: arXiv v3
+    doi: https://doi.org/10.1080/14697688.2018.1459812
+    model_class: conditionally lognormal stochastic volatility with rough Bergomi experiments
+    event_or_payoff: European option prices and implied volatilities
+    proposal: no rare-event importance proposal
+    density_contract: not applicable
+    conditional_integration: conditional lognormal pricing plus control variates and antithetics
+    theorem_or_analysis: runtime-adjusted empirical variance analysis
+    work_accounting: measured runtime for pricing estimators
+    code_availability: public_repository_known
+    material_overlap: rough Bergomi conditional expectation and runtime-aware variance reduction
+    material_nonoverlap: no defensive balance mixture, rare path event, or residual mixture likelihood
+    baseline_role: secondary
+    peer_review_status: published
+    source_primary: true
+
+  - id: bayer_benhammouda_tempone_rbergomi_qmc_2020
+    family_ids: [numerical_smoothing_qmc_asgq_mlmc, rough_weak_error_and_mlmc]
+    title: Hierarchical adaptive sparse grids and quasi Monte Carlo for option pricing under the rough Bergomi model
+    authors: [Christian Bayer, Chiheb Ben Hammouda, Raul Tempone]
+    year: 2020
+    source_type: journal_article
+    primary_url: https://arxiv.org/abs/1812.08533
+    version: arXiv v7
+    doi: https://doi.org/10.1080/14697688.2020.1744700
+    model_class: rough Bergomi
+    event_or_payoff: smooth European option payoff
+    proposal: Gaussian input with Brownian bridge for effective-dimension reduction
+    density_contract: target Gaussian quadrature measure
+    conditional_integration: conditional lognormal representation, not event-span mixture marginalization
+    theorem_or_analysis: hierarchical quadrature analysis with empirical weak-rate conjecture
+    work_accounting: computational work and time comparisons
+    code_availability: not_confirmed
+    material_overlap: rough Bergomi QMC, ASGQ, Brownian bridge, and Richardson extrapolation
+    material_nonoverlap: no rare indicator, defensive mixture, or exact residual likelihood
+    baseline_role: secondary
+    peer_review_status: published
+    source_primary: true
+
+  - id: bayer_benhammouda_tempone_smoothing_qmc_2023
+    family_ids: [numerical_smoothing_qmc_asgq_mlmc]
+    title: Numerical Smoothing with Hierarchical Adaptive Sparse Grids and Quasi-Monte Carlo Methods for Efficient Option Pricing
+    authors: [Christian Bayer, Chiheb Ben Hammouda, Raul Tempone]
+    year: 2023
+    source_type: journal_article
+    primary_url: https://arxiv.org/abs/2111.01874
+    version: arXiv v2
+    doi: https://doi.org/10.1080/14697688.2022.2135455
+    model_class: discretized stochastic differential equations
+    event_or_payoff: nonsmooth option, distribution, Greek, and risk functionals
+    proposal: target input law with hierarchical transformations
+    density_contract: no importance likelihood
+    conditional_integration: root finding plus one-dimensional numerical integration in a chosen variable
+    theorem_or_analysis: smoothness of the preintegrated remaining-dimensional integrand
+    work_accounting: quadrature error and computational comparisons; no learned-proposal training
+    code_availability: not_confirmed
+    material_overlap: one-variable preintegration followed by RQMC or ASGQ
+    material_nonoverlap: no defensive Gaussian shift mixture or bounded residual balance likelihood
+    baseline_role: primary_closest_method
+    peer_review_status: published
+    source_primary: true
+
+  - id: bayer_benhammouda_tempone_smoothing_mlmc_2024
+    family_ids: [numerical_smoothing_qmc_asgq_mlmc, rough_weak_error_and_mlmc]
+    title: Multilevel Monte Carlo with Numerical Smoothing for Robust and Efficient Computation of Probabilities and Densities
+    authors: [Christian Bayer, Chiheb Ben Hammouda, Raul Tempone]
+    year: 2024
+    source_type: journal_article
+    primary_url: https://arxiv.org/abs/2003.05708
+    version: arXiv v4
+    doi: null
+    model_class: discretized stochastic differential equations
+    event_or_payoff: probabilities, discontinuous payoffs, and densities
+    proposal: target input law
+    density_contract: no importance likelihood
+    conditional_integration: root finding and one-dimensional numerical integration
+    theorem_or_analysis: MLMC variance, kurtosis, robustness, and complexity under stated assumptions
+    work_accounting: numerical work comparisons; no proposal-training cost
+    code_availability: not_confirmed
+    material_overlap: conditional smoothing of discontinuous multilevel corrections
+    material_nonoverlap: no defensive mixture or rough Bergomi rare path-event specialization
+    baseline_role: primary_theory_boundary
+    peer_review_status: published
+    source_primary: true
+
+  - id: giles_2008
+    family_ids: [rough_weak_error_and_mlmc]
+    title: Multilevel Monte Carlo Path Simulation
+    authors: [Michael B. Giles]
+    year: 2008
+    source_type: journal_article
+    primary_url: https://people.maths.ox.ac.uk/gilesm/files/opre.pdf
+    version: published manuscript
+    doi: https://doi.org/10.1287/opre.1070.0496
+    model_class: stochastic differential equation discretizations
+    event_or_payoff: path-dependent financial payoffs
+    proposal: target coupled paths
+    density_contract: no importance likelihood
+    conditional_integration: payoff-specific conditioning in examples
+    theorem_or_analysis: canonical MLMC bias-variance-cost complexity theorem
+    work_accounting: asymptotic sampling work
+    code_availability: author_examples_available
+    material_overlap: MLMC allocation and alpha-beta-gamma complexity regimes
+    material_nonoverlap: no rough Volterra defensive importance mixture
+    baseline_role: theory_boundary
+    peer_review_status: published
+    source_primary: true
+
+  - id: sbert_elvira_2022
+    family_ids: [balance_multiple_importance_sampling]
+    title: Generalizing the Balance Heuristic Estimator in Multiple Importance Sampling
+    authors: [Mateu Sbert, Victor Elvira]
+    year: 2022
+    source_type: journal_article
+    primary_url: https://arxiv.org/abs/1903.11908
+    version: arXiv v3
+    doi: null
+    model_class: generic Monte Carlo integration
+    event_or_payoff: generic integrands
+    proposal: multiple proposal distributions
+    density_contract: balance-heuristic mixture denominator and generalized unbiased estimators
+    conditional_integration: none
+    theorem_or_analysis: variance comparison and upper bounds
+    work_accounting: sampling variance; no training-inclusive workflow
+    code_availability: not_confirmed
+    material_overlap: exact multiple-proposal balance denominators
+    material_nonoverlap: no Gaussian subspace marginalization or rough path event
+    baseline_role: theory_boundary
+    peer_review_status: published
+    source_primary: true
+
+  - id: cappe_douc_guillin_marin_robert_2008
+    family_ids: [adaptive_mixture_importance_sampling]
+    title: Adaptive Importance Sampling in General Mixture Classes
+    authors: [Olivier Cappe, Randal Douc, Arnaud Guillin, Jean-Michel Marin, Christian P. Robert]
+    year: 2008
+    source_type: journal_article
+    primary_url: https://arxiv.org/abs/0710.4242
+    version: arXiv v4
+    doi: null
+    model_class: generic Monte Carlo integration
+    event_or_payoff: generic integrands
+    proposal: adaptively updated mixture weights and component parameters
+    density_contract: evaluable mixture density
+    conditional_integration: Rao-Blackwellization of mixture-component adaptation
+    theorem_or_analysis: convergence and adaptive-mixture efficiency analysis
+    work_accounting: empirical computation; not a training-inclusive rare-event contract
+    code_availability: not_confirmed
+    material_overlap: mixture adaptation and a Rao-Blackwellization device
+    material_nonoverlap: Rao-Blackwellization is not event-driving Gaussian-span integration
+    baseline_role: novelty_boundary
+    peer_review_status: published
+    source_primary: true
+
+  - id: tong_stadler_2022
+    family_ids: [large_deviation_and_cem_is]
+    title: Large deviation theory-based adaptive importance sampling for rare events in high dimensions
+    authors: [Shanyin Tong, Georg Stadler]
+    year: 2022
+    source_type: preprint
+    primary_url: https://arxiv.org/abs/2209.06278
+    version: arXiv v3
+    doi: null
+    model_class: high-dimensional expensive numerical models
+    event_or_payoff: rare failure probabilities
+    proposal: large-deviation initialization plus cross-entropy Gaussian biasing in an informative subspace
+    density_contract: ordinary importance weights for Gaussian biasing proposals
+    conditional_integration: none
+    theorem_or_analysis: large-deviation-informed subspace and empirical efficiency
+    work_accounting: adaptive samples are reused; complete external training contract must be reconstructed
+    code_availability: not_confirmed
+    material_overlap: rare-event subspace search, Gaussian CEM, and adaptive importance sampling
+    material_nonoverlap: no rough Volterra DCS conditional integration
+    baseline_role: secondary_required
+    peer_review_status: preprint
+    source_primary: true
+
+  - id: ben_amar_ben_rached_tempone_2026
+    family_ids: [multilevel_importance_sampling, large_deviation_and_cem_is]
+    title: Hierarchical Importance Sampling for Estimating Occupation Time for SDE Solutions
+    authors: [Eya Ben Amar, Nadhir Ben Rached, Raul Tempone]
+    year: 2026
+    source_type: preprint
+    primary_url: https://arxiv.org/abs/2509.13950
+    version: arXiv v2
+    doi: null
+    model_class: Markov stochastic differential equations with HJB control
+    event_or_payoff: rare right tail of occupation time
+    proposal: stochastic-control importance sampling
+    density_contract: single common likelihood in the multilevel correction
+    conditional_integration: no Gaussian proposal-span marginalization
+    theorem_or_analysis: SLIS-MLIS crossover and extended work-complexity results
+    work_accounting: HJB preprocessing cost included in total work
+    code_availability: not_confirmed
+    material_overlap: occupation-time IS, common-likelihood MLIS, and preprocessing-inclusive work
+    material_nonoverlap: no defensive deterministic Gaussian mixture or rough non-Markovian path
+    baseline_role: theory_boundary
+    peer_review_status: preprint
+    source_primary: true
+
+  - id: gao_zhang_daniel_boning_2023
+    family_ids: [exact_density_flow_importance_sampling]
+    title: Rare Event Probability Learning by Normalizing Flows
+    authors: [Zhengqi Gao, Dinghuai Zhang, Luca Daniel, Duane S. Boning]
+    year: 2023
+    source_type: preprint
+    primary_url: https://arxiv.org/abs/2310.19167
+    version: arXiv v1
+    doi: null
+    model_class: generic continuous rare-event benchmarks
+    event_or_payoff: nested rare-event probabilities
+    proposal: sequence of normalizing-flow proposals trained on nested subset events
+    density_contract: tractable flow proposal density used in ordinary importance sampling
+    conditional_integration: none
+    theorem_or_analysis: empirical ten-case study
+    work_accounting: proposal learning is described; V8 must reconstruct full training-inclusive cost
+    code_availability: not_confirmed
+    material_overlap: flexible learned rare-event proposal with evaluable importance weights
+    material_nonoverlap: no rough path model or analytic event-coordinate integration
+    baseline_role: secondary_required
+    peer_review_status: preprint
+    source_primary: true
+
+  - id: kruse_tzikas_delecki_arief_kochenderfer_2025
+    family_ids: [exact_density_flow_importance_sampling, large_deviation_and_cem_is]
+    title: Enhanced Importance Sampling through Latent Space Exploration in Normalizing Flows
+    authors: [Liam A. Kruse, Alexandros E. Tzikas, Harrison Delecki, Mansur M. Arief, Mykel J. Kochenderfer]
+    year: 2025
+    source_type: conference_paper
+    primary_url: https://arxiv.org/abs/2501.03394
+    version: arXiv v2
+    doi: null
+    model_class: simulation-based robotics safety models
+    event_or_payoff: rare failures
+    proposal: adaptive proposal search in the latent space of an invertible normalizing flow
+    density_contract: change-of-variables flow density and importance weighting
+    conditional_integration: none
+    theorem_or_analysis: empirical safety case studies
+    work_accounting: training and search described; V8 must impose its own common ledger
+    code_availability: not_confirmed
+    material_overlap: flow-based latent rare-event proposal exploration
+    material_nonoverlap: no rough volatility or DCS residual factorization
+    baseline_role: secondary
+    peer_review_status: published
+    source_primary: true
+
+  - id: bayer_hall_tempone_2022
+    family_ids: [rough_weak_error_and_mlmc]
+    title: Weak error rates for option pricing under linear rough volatility
+    authors: [Christian Bayer, Eric Joseph Hall, Raul Tempone]
+    year: 2022
+    source_type: journal_article
+    primary_url: https://arxiv.org/abs/2009.01219
+    version: arXiv v3
+    doi: null
+    model_class: linear rough Stein-Stein volatility
+    event_or_payoff: sufficiently regular option payoffs
+    proposal: target law
+    density_contract: no importance likelihood
+    conditional_integration: none
+    theorem_or_analysis: Euler weak rate H plus one-half and special quadratic rate one
+    work_accounting: discretization analysis
+    code_availability: not_confirmed
+    material_overlap: rigorous weak-error methodology for a linear rough model
+    material_nonoverlap: explicitly does not prove nonlinear rough Bergomi rare-indicator bias
+    baseline_role: theory_boundary
+    peer_review_status: published
+    source_primary: true
+
+  - id: bourgey_de_marco_2025
+    family_ids: [rough_weak_error_and_mlmc]
+    title: Multilevel Monte Carlo simulation for VIX options in the rough Bergomi model
+    authors: [Florian Bourgey, Stefano De Marco]
+    year: 2025
+    source_type: preprint
+    primary_url: https://arxiv.org/abs/2105.05356
+    version: arXiv v3
+    doi: null
+    model_class: rough Bergomi forward variance
+    event_or_payoff: VIX option payoff
+    proposal: target correlated Gaussian sampling
+    density_contract: no importance likelihood
+    conditional_integration: analytic control variate, not event-span mixture marginalization
+    theorem_or_analysis: rectangle and trapezoidal MLMC complexity
+    work_accounting: asymptotic sampling cost and numerical work
+    code_availability: not_confirmed
+    material_overlap: rough Bergomi MLMC and rough-model control variates
+    material_nonoverlap: VIX functional is not a rare spot-path barrier event
+    baseline_role: theory_boundary
+    peer_review_status: preprint
+    source_primary: true
+
+  - id: jouravlev_2025
+    family_ids: [learning_enhanced_control_variates]
+    title: Learning-Enhanced Control Variates for Option Pricing under Rough Volatility
+    authors: [Igor Jouravlev]
+    year: 2025
+    source_type: working_paper
+    primary_url: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5668450
+    version: posted 2025-12-02
+    doi: https://doi.org/10.2139/ssrn.5668450
+    model_class: rough Bergomi with rough Heston cross-check
+    event_or_payoff: European and path-dependent option payoffs
+    proposal: target Monte Carlo with pilot-trained centered control variates
+    density_contract: no importance likelihood
+    conditional_integration: conditional-expectation controls are comparators, not the learned mechanism
+    theorem_or_analysis: independent-pilot unbiasedness and empirical equal-wall-time comparison
+    work_accounting: equal wall clock reported
+    code_availability: not_confirmed
+    material_overlap: learning-enhanced rough-volatility variance reduction with pilot separation
+    material_nonoverlap: no rare probability IS or defensive residual likelihood
+    baseline_role: secondary
+    peer_review_status: working_paper
+    source_primary: true
+
+close_exclusions:
+  - id: generic_quantum_path_integrals
+    title: Quantum and Feynman path-integral algorithms
+    primary_url: null
+    reason: different mathematical estimand and no classical exact-likelihood rare-event baseline match
+  - id: direct_neural_pricing_surrogates
+    title: Direct neural option-pricing surrogates
+    primary_url: null
+    reason: approximate prices do not provide an exact ordinary-mean rare-event estimator
+  - id: markovian_rough_lifts
+    title: Markovian approximations of rough volatility
+    primary_url: https://arxiv.org/abs/2007.02113
+    reason: relevant simulator family but not an event-coordinate conditional importance estimator
+
+decision:
+  status: conditional_pass
+  full_combination_found: false
+  component_prior_art_acknowledged: true
+  candidate_contribution: exact integration of an event-driving deterministic Gaussian shift span inside a defensive balance mixture, yielding an exact bounded residual likelihood and a rough-Volterra finite-grid strict-efficiency or rate theorem
+  claims_forbidden:
+    - first_conditional_monte_carlo_under_rough_bergomi
+    - first_numerical_smoothing_of_discontinuous_payoffs
+    - first_qmc_under_rough_bergomi
+    - first_mlmc_under_rough_volatility
+    - first_balance_mixture_importance_sampler
+    - first_mixture_rao_blackwellization
+    - first_large_deviation_or_cem_rare_event_sampler
+    - first_flow_based_rare_event_importance_sampler
+    - first_learning_enhanced_rough_volatility_variance_reduction
+    - unconditional_top_journal_novelty
+  external_expert_review_required: true
+  submission_novelty_authorized: false
+  p2_theory_implementation_authorized: true

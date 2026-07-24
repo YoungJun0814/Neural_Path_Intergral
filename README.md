@@ -104,7 +104,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **558/558 tests on 2026-07-25**.
+The complete local regression suite passed **575/575 tests on 2026-07-25**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finite grid rather than a continuously monitored event. V7
@@ -156,6 +156,8 @@ Start with:
 - [V8 top-journal implementation plan](docs/plans/G11_V8_TOP_JOURNAL_IMPLEMENTATION_PLAN_2026-07-25.md)
 - [V8 claim and estimand contract](docs/theory/G11_V8_CLAIM_AND_ESTIMAND_CONTRACT.md)
 - [V8 P0 claim-contract decision](docs/audits/G11_V8_P0_CLAIM_CONTRACT_DECISION_2026-07-25.md)
+- [V8 reproducible novelty matrix](docs/literature/G11_V8_NOVELTY_MATRIX_2026-07-25.md)
+- [V8 P1 novelty decision](docs/audits/G11_V8_P1_NOVELTY_DECISION_2026-07-25.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
