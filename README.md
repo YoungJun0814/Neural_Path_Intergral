@@ -79,10 +79,14 @@ independent-hardware replication.
 V8 top-journal development has started from that confirmed base. P0 fixes the
 finite-grid estimand, three permitted contribution slots, outcome-independent
 comparator roles, training-inclusive cost categories, inferential units, prohibited
-claims, flow-extension conditions, and one-commit-per-phase policy. Its fail-closed
-machine audit and corruption tests pass. P0 is a development authorization only:
-the closest-work novelty audit, new model-level theorem, strong external baselines,
-qualification, confirmation, and independent physical reproduction remain open.
+claims, flow-extension conditions, and one-commit-per-phase policy. P1 completes a
+reproducible 14-source closest-work audit and narrows novelty to the exact defensive
+residual identity plus a new strict-efficiency or rough-path result. P2 now proves a
+strict positive conditional-variance lower bound for finite scalar thresholds and
+binds terminal/barrier threshold oracles. All three phases are development
+authorizations only: the rough-model mesh/weak-bias theorem, strong external
+baselines, qualification, confirmation, and independent physical reproduction remain
+open.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -104,7 +108,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **575/575 tests on 2026-07-25**.
+The complete local regression suite passed **605/605 tests on 2026-07-25**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finite grid rather than a continuously monitored event. V7
@@ -158,6 +162,8 @@ Start with:
 - [V8 P0 claim-contract decision](docs/audits/G11_V8_P0_CLAIM_CONTRACT_DECISION_2026-07-25.md)
 - [V8 reproducible novelty matrix](docs/literature/G11_V8_NOVELTY_MATRIX_2026-07-25.md)
 - [V8 P1 novelty decision](docs/audits/G11_V8_P1_NOVELTY_DECISION_2026-07-25.md)
+- [V8 finite-grid strictness theorems](docs/theory/G11_V8_FINITE_GRID_STRICTNESS_THEOREMS.md)
+- [V8 P2 theorem decision](docs/audits/G11_V8_P2_THEOREM_DECISION_2026-07-25.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 

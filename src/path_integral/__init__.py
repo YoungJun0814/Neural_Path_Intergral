@@ -43,6 +43,10 @@ from .gaussian_mixture_oracle import (
     gaussian_symmetric_mixture_second_moment,
     gaussian_two_tail_probability,
 )
+from .gaussian_mixture_strictness import (
+    ScalarThresholdStrictnessCertificate,
+    scalar_threshold_strictness_certificate,
+)
 from .gaussian_oracles import (
     gaussian_exponential_tilt_log_normalizer,
     gaussian_exponential_tilt_optimal_control,
@@ -320,6 +324,7 @@ __all__ = [
     "GaussianExcursionSpec",
     "GaussianMixtureSample",
     "GaussianMixtureShiftSpec",
+    "ScalarThresholdStrictnessCertificate",
     "LeanRBergomiControl",
     "RBergomiMixtureSample",
     "RBergomiMLMCSampler",
@@ -389,6 +394,7 @@ __all__ = [
     "gaussian_symmetric_mixture_log_q_over_p",
     "gaussian_symmetric_mixture_second_moment",
     "gaussian_two_tail_probability",
+    "scalar_threshold_strictness_certificate",
     "log_mixture_q_over_p",
     "linear_threshold_conditional_probability",
     "evaluate_marginal_likelihood",

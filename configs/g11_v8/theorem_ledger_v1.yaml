@@ -1,0 +1,124 @@
+schema: npi.g11.v8-theorem-ledger.v1
+protocol_id: g11-v8-theorem-ledger-v1
+date: "2026-07-25"
+phase: p2_development
+outcome_data_used: false
+claim_contract_sha256: f73d2f1b89aebefa710e0315e0f0f8b1415062ec1595c2a86d2d457c613281cd
+novelty_ledger_sha256: b3f31276194eee08333fd1d7c5eef68ea678a3e3c6840b2a6101316d4d820f19
+proof_document: docs/theory/G11_V8_FINITE_GRID_STRICTNESS_THEOREMS.md
+proof_document_sha256: f1c0ce6db158c962dbe72e07ffefb19ae76b5032a23bb82d5d3c5f7a909d83fd
+
+theorems:
+  - id: T-V8-1
+    title: exact defensive-mixture likelihood
+    status: proved_finite_dimensional
+    scope: finite-dimensional identity-covariance deterministic Gaussian-shift mixture
+    assumptions:
+      - positive normalized mixture weights
+      - natural zero-mean component with positive mass
+      - bounded finite-grid event indicator
+    conclusion: exact ordinary-mean estimator, pathwise likelihood bound, and square integrability
+    code_evidence:
+      - src/path_integral/mixture.py
+      - src/path_integral/gaussian_span_marginalization.py
+    test_evidence:
+      - tests/test_gaussian_span_marginalization.py
+      - tests/test_g11_v8_finite_grid_theorems.py
+    external_review_required: true
+
+  - id: T-V8-2
+    title: proposal-conditional DCS identity
+    status: proved_finite_dimensional
+    scope: exact target-over-mixture likelihood followed by target conditional integration
+    assumptions:
+      - deterministic orthonormal integration span
+      - exact full and residual mixture likelihoods
+      - no clipping or self-normalization
+    conclusion: DCS equals the proposal conditional expectation of the raw contribution
+    code_evidence:
+      - src/path_integral/gaussian_span_marginalization.py
+      - src/path_integral/rbergomi_dcs_mlmc.py
+    test_evidence:
+      - tests/test_gaussian_span_marginalization.py
+      - tests/test_rbergomi_dcs_mlmc.py
+    external_review_required: true
+
+  - id: T-V8-3
+    title: exact Rao-Blackwell variance decomposition
+    status: proved_finite_dimensional
+    scope: square-integrable raw contribution under the identical proposal
+    assumptions:
+      - T-V8-1
+      - T-V8-2
+    conclusion: raw variance equals DCS variance plus expected conditional variance
+    code_evidence:
+      - src/path_integral/rao_blackwell.py
+    test_evidence:
+      - tests/test_g11_v7_mechanism_probe.py
+      - tests/test_g11_v8_finite_grid_theorems.py
+    external_review_required: true
+
+  - id: T-V8-4
+    title: strict scalar-threshold improvement and localized lower bound
+    status: proved_with_explicit_scope
+    scope: rank-one finite scalar threshold under a positive Gaussian mixture
+    assumptions:
+      - finite threshold on a residual set of positive probability
+      - finite deterministic projected component means
+      - positive mixture weights
+      - defensive square-integrability contract
+    conclusion: pointwise positive conditional-variance lower bound and strict population variance reduction
+    code_evidence:
+      - src/path_integral/gaussian_mixture_strictness.py
+    test_evidence:
+      - tests/test_g11_v8_finite_grid_theorems.py
+    external_review_required: true
+
+  - id: T-V8-5
+    title: terminal and discrete-barrier scalar thresholds
+    status: proved_finite_grid
+    scope: finite monitoring grid with strictly positive post-initial affine slopes
+    assumptions:
+      - finite log-spot intercepts
+      - zero time-zero slope
+      - strictly positive post-initial slopes
+      - closed downside event convention
+    conclusion: exact finite terminal threshold and finite barrier maximum unless hit at time zero
+    code_evidence:
+      - src/path_integral/rbergomi_dcs_mlmc.py
+    test_evidence:
+      - tests/test_rbergomi_dcs_mlmc.py
+      - tests/test_g11_v8_finite_grid_theorems.py
+    external_review_required: true
+
+claim_levels:
+  C0_finite_grid_target: proved
+  C1_finite_grid_exactness: proved
+  C2_variance_nonincrease: proved
+  C3_strict_improvement: proved_for_finite_scalar_thresholds
+  C4_model_mesh_or_rate: open
+  C5_end_to_end_mlmc_complexity: prohibited
+
+open_obligations:
+  - nonlinear_rbergomi_weak_bias
+  - discrete_barrier_fine_only_mesh_crossings
+  - correction_variance_model_rate
+  - per_sample_cost_exponent
+  - rare_event_asymptotic_ratio
+  - external_mathematical_review
+
+prohibited_claims:
+  - continuous_monitoring_exactness
+  - unconditional_rbergomi_weak_rate
+  - barrier_mesh_rate_without_fine_only_crossings
+  - exact_rate_doubling_without_matching_lower_bound
+  - end_to_end_mlmc_complexity_without_alpha_beta_gamma
+  - universal_or_uniform_variance_ratio
+  - training_inclusive_superiority_from_theory_alone
+
+decision:
+  status: conditional_pass
+  p3_mesh_and_complexity_implementation_authorized: true
+  submission_theory_authorized: false
+  top_journal_theory_complete: false
+  external_proof_review_required: true

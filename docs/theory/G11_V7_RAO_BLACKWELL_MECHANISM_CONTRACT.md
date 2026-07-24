@@ -78,7 +78,7 @@ and
 \[
 \operatorname{Var}_Q(Y)
 =\operatorname{Var}_Q(D)
-E_Q[\operatorname{Var}_Q(Y\mid R)]
++E_Q[\operatorname{Var}_Q(Y\mid R)]
 \geq \operatorname{Var}_Q(D).
 \]
 
