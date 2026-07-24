@@ -86,7 +86,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **542/542 tests on 2026-07-24**.
+The complete local regression suite passed **545/545 tests on 2026-07-24**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finest discrete grid rather than a continuously monitored event,
@@ -133,6 +133,7 @@ Start with:
 - [V7 qualification protocol](docs/plans/G11_V7_QUALIFICATION_PROTOCOL_2026-07-24.md)
 - [V7 mechanism qualification V1 decision](docs/audits/G11_V7_MECHANISM_QUALIFICATION_V1_DECISION_2026-07-24.md)
 - [V7 confirmation protocol](docs/plans/G11_V7_CONFIRMATION_PROTOCOL_2026-07-24.md)
+- [V7 Linux reproduction protocol](docs/plans/G11_V7_LINUX_REPRODUCTION_PROTOCOL_2026-07-24.md)
 - [V7 mechanism confirmation V1 decision](docs/audits/G11_V7_MECHANISM_CONFIRMATION_V1_DECISION_2026-07-24.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)

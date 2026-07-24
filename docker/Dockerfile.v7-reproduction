@@ -1,0 +1,23 @@
+FROM python:3.10-slim
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir \
+        --index-url https://download.pytorch.org/whl/cpu \
+        torch==2.9.1 \
+    && pip install --no-cache-dir \
+        numpy==1.26.4 \
+        scipy==1.15.3 \
+        PyYAML==6.0.3 \
+        psutil==5.9.0
+
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    OMP_NUM_THREADS=16 \
+    MKL_NUM_THREADS=16
+
+ENTRYPOINT ["python"]
