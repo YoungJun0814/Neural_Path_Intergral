@@ -33,7 +33,9 @@ from src.path_integral.provenance import runtime_provenance, source_provenance
 from src.physics_engine import RBergomiSimulator
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA = "npi.g11.v8-p7-development-calibration.v1"
+P7_SCHEMA = "npi.g11.v8-p7-development-calibration.v1"
+P5_THRESHOLD_SCHEMA = "npi.g11.v8-p5-threshold-calibration-execution.v1"
+SCHEMA = P7_SCHEMA
 ROOT_KEYS = {
     "schema",
     "protocol_id",
@@ -62,12 +64,25 @@ def _sha(path: Path) -> str:
 def load_config(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     config = yaml.safe_load(raw.decode("utf-8"))
-    if not isinstance(config, dict) or config.get("schema") != SCHEMA:
-        raise ValueError("unexpected P7 calibration schema")
+    if not isinstance(config, dict) or config.get("schema") not in {
+        P7_SCHEMA,
+        P5_THRESHOLD_SCHEMA,
+    }:
+        raise ValueError("unexpected V8 calibration schema")
     if set(config) != ROOT_KEYS:
         raise ValueError("malformed P7 calibration root fields")
-    if config.get("phase") != "p7_development" or config.get("outcome_data_used") is not False:
-        raise ValueError("P7 calibration must be outcome-blind development")
+    if config.get("outcome_data_used") is not False:
+        raise ValueError("V8 calibration must be outcome-blind")
+    if config["schema"] == P7_SCHEMA and (
+        config.get("phase") != "p7_development"
+        or config.get("seed_namespace") != "v8-p7-development"
+    ):
+        raise ValueError("P7 calibration phase or seed namespace is invalid")
+    if config["schema"] == P5_THRESHOLD_SCHEMA and (
+        config.get("phase") != "p5_threshold_calibration"
+        or config.get("seed_namespace") != "p5-threshold-calibration-development"
+    ):
+        raise ValueError("P5 threshold-calibration phase or seed namespace is invalid")
     if config.get("estimand") != "fixed_finest_grid_probability":
         raise ValueError("P7 calibration must declare a fixed finite-grid estimand")
     p5 = ROOT / "configs/g11_v8/p5_reference_matrix_design_v1.yaml"
@@ -88,8 +103,6 @@ def load_config(path: Path) -> tuple[dict[str, Any], str]:
         raise ValueError("P7 calibration task matrix must match P5")
     if probabilities != [0.01, 0.001, 0.0001, 0.00001]:
         raise ValueError("P7 calibration probability matrix must match P5")
-    if config.get("seed_namespace") != "v8-p7-development":
-        raise ValueError("P7 calibration seed namespace must match P6")
     return config, hashlib.sha256(raw).hexdigest()
 
 
@@ -208,6 +221,7 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
         raise ValueError("P7 proposal controls and mixture weights disagree")
     steps = int(config["grid"]["steps"])
     expected_cells = len(hursts) * len(tasks) * len(probabilities)
+    role_prefix = "p7" if config["schema"] == P7_SCHEMA else "p5-threshold"
     critical = NormalDist().inv_cdf(
         1.0 - float(config["gates"]["familywise_alpha"]) / (2.0 * expected_cells)
     )
@@ -238,7 +252,7 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
                 proposal_seed, label_seed = _seeds(
                     ledger,
                     protocol_id=str(config["protocol_id"]),
-                    role=f"p7-calibration-{task}",
+                    role=f"{role_prefix}-calibration-{task}",
                     hurst=float(hurst_value),
                     replicate=offset // batch_size,
                 )
@@ -284,7 +298,7 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
                 proposal_seed, label_seed = _seeds(
                     ledger,
                     protocol_id=str(config["protocol_id"]),
-                    role=f"p7-validation-{task_name}",
+                    role=f"{role_prefix}-validation-{task_name}",
                     hurst=float(hurst_value),
                     replicate=offset // batch_size,
                 )
@@ -382,9 +396,13 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
                 )
     provenance = source_provenance()
     manifest = {
-        "schema": "npi.g11.v8-p7-candidate-threshold-manifest.v1",
+        "schema": (
+            "npi.g11.v8-p7-candidate-threshold-manifest.v1"
+            if config["schema"] == P7_SCHEMA
+            else "npi.g11.v8-p5-threshold-manifest.v1"
+        ),
         "protocol_id": str(config["protocol_id"]),
-        "phase": "development",
+        "phase": str(config["phase"]),
         "frozen": False,
         "source_commit": (
             str(provenance["source_commit"])
@@ -411,9 +429,12 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
             for cell in cells
         ),
         "calibration_validation_seed_roles_disjoint": all(
-            not record.key.role.startswith("p7-calibration")
+            not record.key.role.startswith(f"{role_prefix}-calibration")
             or all(
-                other.key.role != record.key.role.replace("p7-calibration", "p7-validation")
+                other.key.role
+                != record.key.role.replace(
+                    f"{role_prefix}-calibration", f"{role_prefix}-validation"
+                )
                 or other.seed != record.seed
                 for other in ledger.records
             )
@@ -421,7 +442,11 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
         ),
     }
     return {
-        "schema": "npi.g11.v8-p7-development-calibration.v1",
+        "schema": (
+            "npi.g11.v8-p7-development-calibration.v1"
+            if config["schema"] == P7_SCHEMA
+            else "npi.g11.v8-p5-threshold-calibration.v1"
+        ),
         "protocol_id": config["protocol_id"],
         "config_sha256": config_hash,
         "smoke": smoke,
@@ -456,7 +481,11 @@ def main() -> None:
     except (FloatingPointError, ValueError) as error:
         config_hash = hashlib.sha256(args.config.read_bytes()).hexdigest()
         result = {
-            "schema": "npi.g11.v8-p7-development-calibration-failure.v1",
+            "schema": (
+                "npi.g11.v8-p7-development-calibration-failure.v1"
+                if args.config.read_text(encoding="utf-8").find(P7_SCHEMA) >= 0
+                else "npi.g11.v8-p5-threshold-calibration-failure.v1"
+            ),
             "config_sha256": config_hash,
             "smoke": args.smoke,
             "passed": False,

@@ -17,6 +17,7 @@ from experiments.g11_v8_p7_calibration import (
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "configs" / "g11_v8" / "p7_development_calibration_v1.yaml"
+P5_THRESHOLD_CONFIG = ROOT / "configs" / "g11_v8" / "p5_threshold_calibration_execution_v1.yaml"
 RESULT = ROOT / "results" / "g11_v8_p7_calibration_development_v1_2026-07-27.json"
 
 
@@ -27,6 +28,14 @@ def test_p7_calibration_config_binds_the_v8_matrix_and_statistics() -> None:
     assert config["model"]["hurst_values"] == [0.05, 0.12, 0.20]
     assert config["nominal_probabilities"][-1] == 1e-5
     assert config["decision"]["performance_claim_authorized"] is False
+    assert len(digest) == 64
+
+
+def test_p5_threshold_config_uses_the_p5_namespace_not_development_namespace() -> None:
+    config, digest = load_config(P5_THRESHOLD_CONFIG)
+    assert config["phase"] == "p5_threshold_calibration"
+    assert config["seed_namespace"] == "p5-threshold-calibration-development"
+    assert config["schema"] == "npi.g11.v8-p5-threshold-calibration-execution.v1"
     assert len(digest) == 64
 
 
