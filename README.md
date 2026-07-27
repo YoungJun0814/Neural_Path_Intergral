@@ -102,6 +102,10 @@ P6 now fixes cluster-level inference, a five-endpoint simultaneous efficiency fa
 a 192-claim simultaneous accuracy family, no-deletion/no-censoring rules, and distinct
 P7--P11 namespaces. Its 32/48-cluster calculations are declared pre-outcome planning
 scenarios rather than observed power or performance evidence.
+P7 now has a V8-specific, task-separated finite-grid calibration runner. Its initial
+overaggressive proposal is recorded as a numerical-stability failure; the corrected
+24-cell development calibration passes all gates, but is deliberately marked
+dirty-source development evidence and cannot support a reference or performance claim.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -185,6 +189,7 @@ Start with:
 - [V8 P4 framework decision](docs/audits/G11_V8_P4_BASELINE_FRAMEWORK_DECISION_2026-07-25.md)
 - [V8 P5 outcome-blind reference/matrix design](docs/audits/G11_V8_P5_MATRIX_DESIGN_DECISION_2026-07-27.md)
 - [V8 P6 statistical-design decision](docs/audits/G11_V8_P6_STATISTICAL_DESIGN_DECISION_2026-07-27.md)
+- [V8 P7 numerical-stability and calibration decision](docs/audits/G11_V8_P7_NUMERICAL_STABILITY_NOTE_2026-07-27.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 

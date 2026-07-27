@@ -1,0 +1,58 @@
+schema: npi.g11.v8-p7-development-calibration.v1
+protocol_id: g11-v8-p7-development-calibration-v1
+date: "2026-07-27"
+phase: p7_development
+outcome_data_used: false
+p5_reference_matrix_design_sha256: 7c92468bec444a04e0b1fbecbb09e09e325bf4d002b03496aa913816b8d34b4e
+p6_statistical_design_sha256: 408c1a925634da8195dee6372b7416e6c58e6174c3ee933081247db97a4f84e8
+seed_namespace: v8-p7-development
+estimand: fixed_finest_grid_probability
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  xi: 0.04
+  eta: 1.5
+  rho: -0.7
+  hurst_values: [0.05, 0.12, 0.20]
+grid:
+  steps: 128
+tasks:
+  terminal_left_tail: {kind: terminal}
+  discrete_lower_barrier: {kind: barrier}
+nominal_probabilities: [0.01, 0.001, 0.0001, 0.00001]
+
+proposal:
+  weights: [0.15, 0.35, 0.50]
+  task_controls:
+    terminal_left_tail:
+      - [[0.0, 0.0]]
+      - [[3.0, -1.5]]
+      - [[4.5, -2.25]]
+    discrete_lower_barrier:
+      - [[0.0, 0.0]]
+      - [[3.2, -1.5]]
+      - [[4.5, -2.25]]
+
+sampling:
+  calibration_paths: 131072
+  validation_paths: 65536
+  batch_size: 2048
+  engine: fft
+  smoke_calibration_paths: 4096
+  smoke_validation_paths: 4096
+  smoke_hurst_count: 1
+  smoke_probability_count: 2
+
+gates:
+  familywise_alpha: 0.05
+  probability_band_lower_factor: 0.40
+  probability_band_upper_factor: 2.50
+  maximum_relative_standard_error: 0.40
+  maximum_normalization_z: 4.0
+
+decision:
+  status: development_calibration_execution_authorized
+  calibrated_thresholds_hash_bound: false
+  independent_reference_execution_complete: false
+  performance_claim_authorized: false
