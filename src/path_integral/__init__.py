@@ -1,6 +1,21 @@
 """Path-integral control primitives and analytic verification oracles."""
 
 from .action import brownian_log_likelihood, log_tilted_weight, path_action
+from .baseline_framework import (
+    BASELINE_METHODS,
+    BaselineAllocationPlan,
+    BaselineCostLedger,
+    BaselineEstimateArtifact,
+    BaselineLifecycleAudit,
+    FrozenBaselineProposal,
+    audit_baseline_lifecycle,
+    evaluate_baseline_log_q_over_p,
+    finalize_baseline_estimate,
+    freeze_baseline_proposal,
+    ordinary_is_contributions,
+    plan_baseline_allocation,
+    sample_baseline_proposal,
+)
 from .black_scholes_oracles import (
     BlackScholesDiscreteBarrierOracle,
     black_scholes_continuous_lower_barrier_probability,
@@ -316,6 +331,19 @@ from .v6_protocol import (
 from .v6_work_ledger import V6WorkLedger, V6WorkRecord
 
 __all__ = [
+    "BASELINE_METHODS",
+    "BaselineAllocationPlan",
+    "BaselineCostLedger",
+    "BaselineEstimateArtifact",
+    "BaselineLifecycleAudit",
+    "FrozenBaselineProposal",
+    "audit_baseline_lifecycle",
+    "evaluate_baseline_log_q_over_p",
+    "finalize_baseline_estimate",
+    "freeze_baseline_proposal",
+    "ordinary_is_contributions",
+    "plan_baseline_allocation",
+    "sample_baseline_proposal",
     "ConstantPICEFit",
     "CEMAnchoredResidualControl",
     "ConstantTwoDriverControl",

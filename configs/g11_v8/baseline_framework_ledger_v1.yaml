@@ -1,0 +1,104 @@
+schema: npi.g11.v8-baseline-framework-ledger.v1
+protocol_id: g11-v8-baseline-framework-ledger-v1
+date: "2026-07-25"
+phase: p4_development
+outcome_data_used: false
+rate_complexity_ledger_sha256: a2e5e617077d26b06913fabffde290347482c3ad9db7a3909591dcf77d0cba22
+framework_document: docs/theory/G11_V8_P4_STRONG_BASELINE_FRAMEWORK.md
+framework_document_sha256: fa1d8e48d426af3d1f9f2614e699467f276cec16b661d86a20fa867f25150ac1
+
+lifecycle:
+  stages:
+    - train
+    - plan
+    - estimate
+    - audit
+  proposal_frozen_before_pilot: true
+  integer_allocation_frozen_before_final: true
+  training_pilot_final_seeds_disjoint: true
+  self_normalization_allowed: false
+  likelihood_clipping_allowed: false
+
+methods:
+  - id: crude_mc
+    family: target_gaussian
+    inferential_unit: iid_path
+    training: none
+    likelihood_semantics: target_no_weight
+  - id: antithetic_mc
+    family: target_gaussian
+    inferential_unit: antithetic_pair
+    training: none
+    likelihood_semantics: target_no_weight
+  - id: conditional_rbergomi
+    family: target_gaussian
+    inferential_unit: iid_path
+    training: none
+    likelihood_semantics: target_conditional_integral
+  - id: pure_cem
+    family: gaussian_shift
+    inferential_unit: iid_path
+    training: fresh_task_tuned
+    likelihood_semantics: exact_dP_over_dQ
+  - id: defensive_cem
+    family: gaussian_mixture_shift
+    inferential_unit: iid_path
+    training: fresh_task_tuned
+    likelihood_semantics: exact_balance_mixture_dP_over_dQ
+  - id: smoothing_rqmc
+    family: rqmc_target_gaussian
+    inferential_unit: rqmc_randomization
+    training: none
+    likelihood_semantics: target_marginals_no_joint_iid_weight
+  - id: ld_subspace_is
+    family: gaussian_mixture_shift
+    inferential_unit: iid_path
+    training: fresh_task_tuned
+    likelihood_semantics: exact_balance_mixture_dP_over_dQ
+  - id: flow_is
+    family: coupling_flow
+    inferential_unit: iid_path
+    training: fresh_task_tuned
+    likelihood_semantics: exact_inverse_jacobian_dP_over_dQ
+
+flow_constraint:
+  bounded_nonlinear_triangular_coupling: true
+  exact_inverse: true
+  exact_log_jacobian: true
+  role: baseline_only
+  dcs_extension_claim_authorized: false
+
+cost_categories:
+  - training_samples
+  - optimizer_steps
+  - hyperparameter_trials
+  - failed_restarts
+  - screening_samples
+  - planning_samples
+  - final_samples
+  - likelihood_evaluations
+  - cdf_calls
+  - quadrature_calls
+  - algorithmic_work_units
+  - wall_seconds
+  - cpu_seconds
+  - gpu_seconds
+  - peak_memory_bytes
+  - compute_cost_usd
+  - energy_kwh
+  - measurement_mode
+
+evidence:
+  code:
+    - src/path_integral/baseline_framework.py
+  tests:
+    - tests/test_g11_v8_baseline_framework.py
+
+decision:
+  status: framework_oracle_pass
+  all_method_likelihood_oracles_required: true
+  all_method_cost_oracles_required: true
+  numerical_performance_qualified: false
+  fresh_ld_and_flow_training_runs_complete: false
+  p5_reference_matrix_authorized: true
+  superiority_claim_authorized: false
