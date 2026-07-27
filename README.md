@@ -112,9 +112,11 @@ run is retained as a **failed precision receipt**: its two estimators agree and 
 likelihood-normalization checks, but the median-pilot allocation misses the fixed 2%
 reference-standard-error contract in 37/48 method--cell estimates. V2 is explicitly
 marked V1-informed development work: it replaces that allocation rule with a
-pre-final maximum-pilot-variance rule and distinct seeds. A fresh-seed outcome-blind
-freeze will still be required after development; its full result and every performance
-claim remain open.
+pre-final maximum-pilot-variance rule and distinct seeds. Its first full laptop
+execution was interrupted after 6.9+ wall-clock hours without a terminal result, so
+the V2 namespace is burned and a sharded/accelerated fresh-seed execution is required.
+A fresh-seed outcome-blind freeze will still be required after development; its full
+result and every performance claim remain open.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,

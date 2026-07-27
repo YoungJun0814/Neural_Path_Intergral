@@ -1,0 +1,16 @@
+{
+  "schema": "npi.g11.v8-p5-independent-reference-v2-interruption-receipt.v1",
+  "status": "resource_interrupted_no_terminal_result",
+  "source_commit": "ea2ffa2546ecda4646c9b27c2dbebbe66274edfd",
+  "dirty_worktree_at_launch": false,
+  "config_sha256": "7f73b13db13c403f33e0eafe16af67647e5be5bfabd0e16b7b8222f794fdee04",
+  "threshold_binding_sha256": "9000876f39b370457fe7a4c5e367c078712bb72505927a8642b090451af79218",
+  "reference_seed_namespace": "p5-reference-v2",
+  "wall_seconds_before_interruption_at_least": 24812.5,
+  "observed_process_cpu_seconds_before_interruption": 76767.71875,
+  "terminal_result_written": false,
+  "partial_result_interpreted": false,
+  "namespace_reuse_permitted": false,
+  "development_reference_complete": false,
+  "performance_claim_authorized": false
+}

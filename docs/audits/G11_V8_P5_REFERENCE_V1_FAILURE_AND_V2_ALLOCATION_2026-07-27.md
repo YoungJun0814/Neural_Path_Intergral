@@ -51,3 +51,22 @@ V2 must still pass the same complete-matrix, two-method precision, no-censoring,
 normalization, independent-agreement, and seed-separation gates. Its only permitted
 use is to test the revised allocation. A later clean, fresh-seed, outcome-blind freeze
 must repeat the validated rule before any P5 performance comparison can be authorized.
+
+## V2 laptop interruption
+
+The first V2 execution started from clean commit
+`ea2ffa2546ecda4646c9b27c2dbebbe66274edfd`. It was stopped after at least 24,812.5
+seconds of wall time (about 6.9 hours) and 76,767.7 observed CPU seconds (about 21.3
+CPU hours). The program writes its output atomically only at terminal completion, so
+there is no result file, no partial estimate, and no gate outcome to interpret.
+
+The generated V2 stream is nevertheless treated as **burned**. It must not be restarted
+with the same `p5-reference-v2` namespace: a future execution needs a new protocol ID
+and namespace, durable checkpointing, and separate per-cell/shard result audits before
+any fragments can be aggregated. The machine-readable interruption receipt is
+[`g11_v8_p5_independent_reference_v2_interruption_receipt_2026-07-27.json`](../../results/g11_v8_p5_independent_reference_v2_interruption_receipt_2026-07-27.json).
+
+This is a hardware/resource limitation of the current laptop execution, not a
+numerical pass, numerical failure, or model-performance result. The next execution
+must be planned for an external multi-core CPU or a separately GPU-validated runner;
+the present runner is explicitly CPU-only and must not be represented as GPU-validated.
