@@ -1,0 +1,30 @@
+{
+  "schema": "npi.g11.v8-p5-independent-reference-v1-failure-receipt.v1",
+  "status": "precision_gate_failed",
+  "full_output_external_sha256": "107c88649c7d3621fb4755960c2be3f0d0bd89208298774f16d5fdf9578b523e",
+  "full_output_bytes": 1930787,
+  "source_commit": "760b3dc40c1cc5b2542a041dad035c4271444546",
+  "dirty_worktree": false,
+  "config_sha256": "25c03f41315dec2225af5efa2ed0024c554d85dc9ffd3e46e89b823e765b4c1b",
+  "threshold_binding_sha256": "9000876f39b370457fe7a4c5e367c078712bb72505927a8642b090451af79218",
+  "threshold_manifest_sha256": "165e2107a031e55acefe55cec5888e23ea8f648a072d0a0a28833ca969451ef8",
+  "seed_ledger_sha256": "4291390e32dbb08aebbedb9a956d0c253fd411d2a63b8acd3dd53639b3c2e5a6",
+  "cells": 24,
+  "method_estimates": 48,
+  "method_estimates_passing_se_contract": 11,
+  "method_estimates_failing_se_contract": 37,
+  "worst_standard_error_over_target": 3.732558773963376,
+  "worst_cell": "h0.05-discrete_lower_barrier-p1e-05",
+  "worst_method": "raw_crosscheck",
+  "gates": {
+    "complete_reference_matrix": true,
+    "all_dcs_target_standard_errors": false,
+    "all_raw_target_standard_errors": false,
+    "no_reference_resource_censoring": true,
+    "all_independent_methods_agree": true,
+    "all_likelihood_normalizations": true,
+    "reference_final_seed_namespaces_disjoint": true
+  },
+  "reference_complete": false,
+  "performance_claim_authorized": false
+}

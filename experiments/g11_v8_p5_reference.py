@@ -29,7 +29,9 @@ from src.path_integral.provenance import runtime_provenance, source_provenance
 from src.physics_engine import RBergomiSimulator
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA = "npi.g11.v8-p5-independent-reference-execution.v1"
+SCHEMA_V1 = "npi.g11.v8-p5-independent-reference-execution.v1"
+SCHEMA_V2 = "npi.g11.v8-p5-independent-reference-execution.v2"
+SUPPORTED_SCHEMAS = {SCHEMA_V1, SCHEMA_V2}
 RESULT_SCHEMA = "npi.g11.v8-p5-independent-reference.v1"
 ROOT_KEYS = {
     "schema",
@@ -55,14 +57,21 @@ def _sha(path: Path) -> str:
 def load_reference_config(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     config = yaml.safe_load(raw.decode("utf-8"))
-    if not isinstance(config, dict) or config.get("schema") != SCHEMA:
+    if not isinstance(config, dict) or config.get("schema") not in SUPPORTED_SCHEMAS:
         raise ValueError("unexpected P5 reference-execution schema")
     if set(config) != ROOT_KEYS:
         raise ValueError("malformed P5 reference-execution root fields")
-    if config.get("phase") != "p5_reference_execution" or config.get("outcome_data_used") is not False:
-        raise ValueError("P5 reference execution must be outcome-blind")
-    if config.get("reference_seed_namespace") != "p5-reference":
-        raise ValueError("P5 reference namespace must be fixed")
+    if config.get("phase") != "p5_reference_execution":
+        raise ValueError("P5 reference execution phase is invalid")
+    if config["schema"] == SCHEMA_V1 and config.get("outcome_data_used") is not False:
+        raise ValueError("P5 reference V1 must be outcome-blind")
+    if config["schema"] == SCHEMA_V2 and config.get("outcome_data_used") is not True:
+        raise ValueError("P5 reference V2 must disclose its V1-informed allocation change")
+    expected_namespace = (
+        "p5-reference" if config["schema"] == SCHEMA_V1 else "p5-reference-v2"
+    )
+    if config.get("reference_seed_namespace") != expected_namespace:
+        raise ValueError("P5 reference namespace must be fixed by schema version")
     if config.get("final_method_seed_namespace") != "p5-final-method":
         raise ValueError("P5 final namespace must remain distinct")
     contract = config.get("reference_contract")
@@ -85,6 +94,22 @@ def load_reference_config(path: Path) -> tuple[dict[str, Any], str]:
     if int(sampling.get("maximum_final_samples", 0)) < int(
         sampling.get("minimum_final_samples", 0)):
         raise ValueError("P5 reference final-sample bounds are invalid")
+    statistic = sampling.get("allocation_variance_statistic", "median_replicate_variance")
+    if statistic not in {"median_replicate_variance", "maximum_replicate_variance"}:
+        raise ValueError("unsupported P5 reference allocation variance statistic")
+    if config["schema"] == SCHEMA_V1 and statistic != "median_replicate_variance":
+        raise ValueError("P5 reference V1 requires its historical median-pilot rule")
+    if config["schema"] == SCHEMA_V2 and statistic != "maximum_replicate_variance":
+        raise ValueError("P5 reference V2 requires the conservative maximum-pilot rule")
+    if float(sampling.get("allocation_safety_factor", 0.0)) < 1.0:
+        raise ValueError("P5 reference allocation safety factor must be at least one")
+    if config["schema"] == SCHEMA_V2 and (
+        int(sampling["pilot_replicates"]) != 8
+        or int(sampling["pilot_samples_per_replicate"]) != 32768
+        or int(sampling["maximum_final_samples"]) != 8388608
+        or float(sampling["allocation_safety_factor"]) != 6.0
+    ):
+        raise ValueError("P5 reference V2 conservative allocation contract is invalid")
     return config, hashlib.sha256(raw).hexdigest()
 
 
@@ -153,12 +178,12 @@ def _draw_values(
     replicate: int,
     count: int,
     ledger: SeedLedger,
+    protocol_id: str,
 ) -> tuple[torch.Tensor, torch.Tensor]:
     task_name = str(cell["task"])
-    protocol = "g11-v8-p5-independent-reference-execution-v1"
     proposal_seed, label_seed = _seeds(
         ledger,
-        protocol_id=protocol,
+        protocol_id=protocol_id,
         method=method,
         stage=stage,
         cell_id=str(cell["cell_id"]),
@@ -204,6 +229,7 @@ def _reference_method(
     sampling: dict[str, Any],
     target_standard_error: float,
     smoke: bool,
+    protocol_id: str,
 ) -> tuple[dict[str, Any], SeedLedger]:
     pilot_replicates = int(sampling["pilot_replicates"])
     pilot_count = int(
@@ -237,9 +263,17 @@ def _reference_method(
             replicate=replicate,
             count=pilot_count,
             ledger=ledger,
+            protocol_id=protocol_id,
         )
         pilot_variances.append(float(torch.var(values, unbiased=True)))
-    design_variance = statistics.median(pilot_variances)
+    variance_statistic = str(
+        sampling.get("allocation_variance_statistic", "median_replicate_variance")
+    )
+    design_variance = (
+        statistics.median(pilot_variances)
+        if variance_statistic == "median_replicate_variance"
+        else max(pilot_variances)
+    )
     requested = max(
         minimum_final,
         math.ceil(
@@ -263,6 +297,7 @@ def _reference_method(
             replicate=offset // chunk_size,
             count=count,
             ledger=ledger,
+            protocol_id=protocol_id,
         )
         moments.update(values)
         normalization.update(weights)
@@ -280,7 +315,7 @@ def _reference_method(
             "pilot_replicates": pilot_replicates,
             "pilot_samples_per_replicate": pilot_count,
             "pilot_variances": pilot_variances,
-            "allocation_variance_statistic": "median_replicate_variance",
+            "allocation_variance_statistic": variance_statistic,
             "allocation_design_variance": design_variance,
             "requested_final_samples": requested,
             "final_samples": final_count,
@@ -331,6 +366,7 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
             sampling=config["sampling"],
             target_standard_error=target_se,
             smoke=smoke,
+            protocol_id=str(config["protocol_id"]),
         )
         raw, raw_ledger = _reference_method(
             threshold_config=threshold_config,
@@ -339,6 +375,7 @@ def run(config_path: Path, *, smoke: bool = False) -> dict[str, Any]:
             sampling=config["sampling"],
             target_standard_error=target_se,
             smoke=smoke,
+            protocol_id=str(config["protocol_id"]),
         )
         ledgers.extend((dcs_ledger, raw_ledger))
         agreement = reference_agreement(

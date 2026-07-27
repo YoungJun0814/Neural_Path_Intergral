@@ -1,0 +1,38 @@
+schema: npi.g11.v8-p5-independent-reference-execution.v2
+protocol_id: g11-v8-p5-independent-reference-execution-v2
+date: "2026-07-27"
+phase: p5_reference_execution
+# V1's observed precision failure selected this stronger allocation rule. V2 is
+# development-only; a later fresh-seed freeze is required for a formal comparison.
+outcome_data_used: true
+threshold_binding: configs/g11_v8/p5_threshold_manifest_binding_v1.yaml
+threshold_binding_sha256: 9000876f39b370457fe7a4c5e367c078712bb72505927a8642b090451af79218
+reference_seed_namespace: p5-reference-v2
+final_method_seed_namespace: p5-final-method
+
+reference_contract:
+  methods: [dcs_reference, raw_crosscheck]
+  final_relative_rmse_design_target: 0.20
+  maximum_reference_se_fraction_of_final_target: 0.10
+  maximum_combined_z_score: 4.0
+  independent_method_streams_required: true
+  reference_uncertainty_enters_accuracy_calculation: true
+
+sampling:
+  # Final count is determined before the final stream begins. The largest independent
+  # pilot variance, rather than a median, keeps a rare high-variance pilot visible.
+  pilot_replicates: 8
+  pilot_samples_per_replicate: 32768
+  minimum_final_samples: 8192
+  maximum_final_samples: 8388608
+  chunk_size: 4096
+  allocation_safety_factor: 6.0
+  allocation_variance_statistic: maximum_replicate_variance
+  engine: fft
+  smoke_pilot_samples_per_replicate: 512
+  smoke_maximum_final_samples: 8192
+
+decision:
+  status: v1_informed_development_reference_execution_v2_authorized
+  actual_references_complete: false
+  performance_claim_authorized: false

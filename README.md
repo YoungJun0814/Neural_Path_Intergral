@@ -107,9 +107,14 @@ overaggressive proposal is recorded as a numerical-stability failure; the correc
 24-cell development calibration passes all gates, but is deliberately marked
 dirty-source development evidence and cannot support a reference or performance claim.
 The P5 threshold manifest is now separately recalibrated on clean source in the P5
-namespace and hash-bound before references. The independent DCS/raw reference runner
-is implemented, but its smoke output is deliberately censored and no full reference
-result or performance claim has yet been accepted.
+namespace and hash-bound before references. The first clean full DCS/raw reference
+run is retained as a **failed precision receipt**: its two estimators agree and pass
+likelihood-normalization checks, but the median-pilot allocation misses the fixed 2%
+reference-standard-error contract in 37/48 method--cell estimates. V2 is explicitly
+marked V1-informed development work: it replaces that allocation rule with a
+pre-final maximum-pilot-variance rule and distinct seeds. A fresh-seed outcome-blind
+freeze will still be required after development; its full result and every performance
+claim remain open.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
