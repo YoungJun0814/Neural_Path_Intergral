@@ -98,6 +98,10 @@ P5 now locks the outcome-blind 24-cell primary matrix, independent two-method
 references, six-way seed separation, reference-precision limit, and exact eight-method
 comparator roster. Threshold calibration, reference execution, and every V8
 performance claim remain open.
+P6 now fixes cluster-level inference, a five-endpoint simultaneous efficiency family,
+a 192-claim simultaneous accuracy family, no-deletion/no-censoring rules, and distinct
+P7--P11 namespaces. Its 32/48-cluster calculations are declared pre-outcome planning
+scenarios rather than observed power or performance evidence.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -180,6 +184,7 @@ Start with:
 - [V8 P4 strong-baseline framework](docs/theory/G11_V8_P4_STRONG_BASELINE_FRAMEWORK.md)
 - [V8 P4 framework decision](docs/audits/G11_V8_P4_BASELINE_FRAMEWORK_DECISION_2026-07-25.md)
 - [V8 P5 outcome-blind reference/matrix design](docs/audits/G11_V8_P5_MATRIX_DESIGN_DECISION_2026-07-27.md)
+- [V8 P6 statistical-design decision](docs/audits/G11_V8_P6_STATISTICAL_DESIGN_DECISION_2026-07-27.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 

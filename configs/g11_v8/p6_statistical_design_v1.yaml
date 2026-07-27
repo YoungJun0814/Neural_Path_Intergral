@@ -1,0 +1,105 @@
+schema: npi.g11.v8-p6-statistical-design.v1
+protocol_id: g11-v8-p6-statistical-design-v1
+date: "2026-07-27"
+phase: p6_development
+outcome_data_used: false
+claim_contract_sha256: f73d2f1b89aebefa710e0315e0f0f8b1415062ec1595c2a86d2d457c613281cd
+p5_reference_matrix_design_sha256: 7c92468bec444a04e0b1fbecbb09e09e325bf4d002b03496aa913816b8d34b4e
+
+inference:
+  unit: independent_seed_cluster
+  within_cluster_cell_aggregation: equal_weight_mean_log_ratio
+  path_level_pseudoreplication_allowed: false
+  primary_grid_steps: 128
+  primary_cell_count: 24
+
+primary_methods:
+  estimator: defensive_conditional_path_integration
+  comparators:
+    - fixed_raw_defensive
+    - task_tuned_pure_cem
+    - numerical_smoothing_rqmc
+
+efficiency_family:
+  familywise_alpha: 0.025
+  multiplicity: bonferroni
+  interval: one_sided_student_t_lower
+  target_power: 0.80
+  endpoints:
+    - id: raw_probe_variance
+      metric: equal_proposal_probe_variance_ratio
+      comparator: fixed_raw_defensive
+      minimum_lower_ratio: 2.0
+      planning_true_ratio: 2.6
+      planning_cluster_log_sd: 0.35
+    - id: raw_execution_variance
+      metric: equal_proposal_execution_variance_ratio
+      comparator: fixed_raw_defensive
+      minimum_lower_ratio: 2.0
+      planning_true_ratio: 2.6
+      planning_cluster_log_sd: 0.35
+    - id: raw_final_work
+      metric: final_sampling_work_ratio
+      comparator: fixed_raw_defensive
+      minimum_lower_ratio: 1.5
+      planning_true_ratio: 2.1
+      planning_cluster_log_sd: 0.40
+    - id: pure_cem_training_inclusive_work
+      metric: training_inclusive_work_ratio
+      comparator: task_tuned_pure_cem
+      minimum_lower_ratio: 1.2
+      planning_true_ratio: 1.55
+      planning_cluster_log_sd: 0.35
+    - id: smoothing_rqmc_training_inclusive_work
+      metric: training_inclusive_work_ratio
+      comparator: numerical_smoothing_rqmc
+      minimum_lower_ratio: 1.2
+      planning_true_ratio: 1.55
+      planning_cluster_log_sd: 0.35
+
+accuracy_family:
+  familywise_alpha: 0.025
+  multiplicity: bonferroni
+  methods:
+    - defensive_conditional_path_integration
+    - fixed_raw_defensive
+    - task_tuned_pure_cem
+    - numerical_smoothing_rqmc
+  method_cell_claims: 2
+  expected_claim_count: 192
+  exact_attainment:
+    method: one_sided_clopper_pearson_lower
+    minimum_lower_bound: 0.80
+  rmse:
+    method: cluster_bootstrap_upper
+    coverage_description: nominal_simultaneous_bootstrap_upper
+    maximum_upper_to_tolerance_ratio: 1.0
+    bootstrap_repetitions: 100000
+
+cluster_design:
+  p8_qualification_clusters: 32
+  p10_confirmation_clusters: 48
+  confirmation_power_source: pre_outcome_normal_approximation_only
+  confirmation_reestimation_after_p8: prohibited
+  p8_may_only_authorize_or_block_p9: true
+
+seed_namespaces:
+  p7_development: v8-p7-development
+  p8_qualification: v8-p8-qualification
+  p9_freeze_receipt: v8-p9-freeze-receipt
+  p10_confirmation: v8-p10-confirmation
+  p10_bootstrap: v8-p10-bootstrap
+  p11_independent_hardware: v8-p11-independent-hardware
+
+failure_rules:
+  resource_censoring_allowed_for_primary_claim: false
+  incomplete_record_deletion_allowed: false
+  failed_retry_cost_charged: true
+  cross_phase_seed_intersection_maximum: 0
+
+decision:
+  status: statistical_design_pass_p7_falsification_authorized
+  actual_power_estimated: false
+  p7_falsification_authorized: true
+  p8_qualification_authorized: false
+  performance_claim_authorized: false
