@@ -1,0 +1,75 @@
+schema: npi.g11.v8-p5-reference-matrix-design.v1
+protocol_id: g11-v8-p5-reference-matrix-design-v1
+date: "2026-07-27"
+phase: p5_development
+outcome_data_used: false
+baseline_framework_ledger_sha256: ebd314dc1b6f9d6fc0eb0f7285a912491fd5f4b562ac81b1ea564fd57ded81f0
+
+primary_model:
+  spot: 100.0
+  maturity: 1.0
+  xi: 0.04
+  eta: 1.5
+  rho: -0.7
+  hurst_values: [0.05, 0.12, 0.20]
+primary_tasks:
+  - terminal_left_tail
+  - discrete_lower_barrier
+nominal_probabilities: [0.01, 0.001, 0.0001, 0.00001]
+threshold_policy:
+  calibration_required_before_reference: true
+  calibration_seed_namespace: p5-threshold-calibration-development
+  calibration_must_be_independent_of_reference_and_final: true
+  calibrated_threshold_is_bound_by_hash: true
+
+reference_contract:
+  estimand: fixed_finest_grid
+  methods: [dcs_reference, raw_crosscheck]
+  separate_code_paths_from_final_methods: true
+  reference_seed_namespace: p5-reference
+  final_seed_namespace: p5-reference-final
+  maximum_reference_se_fraction_of_final_target: 0.10
+  reference_uncertainty_enters_accuracy_calculation: true
+  minimum_crosscheck_methods: 2
+  maximum_combined_z_score: 4.0
+
+baseline_matrix:
+  methods:
+    - crude_mc
+    - antithetic_mc
+    - conditional_rbergomi
+    - pure_cem
+    - defensive_cem
+    - smoothing_rqmc
+    - ld_subspace_is
+    - flow_is
+  fresh_training_per_task_and_cell: true
+  training_seed_namespace: p5-training
+  pilot_seed_namespace: p5-pilot
+  final_seed_namespace: p5-final-method
+
+robustness_one_factor_at_a_time:
+  hurst: [0.05, 0.30]
+  eta: [0.8, 2.2]
+  rho: [-0.3, -0.9]
+  maturity: [0.25, 2.0]
+  barrier_monitoring_steps: [64, 512]
+
+mesh_matrix:
+  steps: [32, 64, 128, 256, 512]
+  diagnostics:
+    - coefficient
+    - active_time
+    - fine_only_crossing
+    - threshold
+    - weak_bias
+    - correction_variance
+    - cost
+
+decision:
+  status: matrix_design_pass_reference_execution_open
+  primary_cell_count: 24
+  actual_thresholds_bound: false
+  actual_references_complete: false
+  p6_statistical_design_authorized: true
+  performance_claim_authorized: false

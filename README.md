@@ -94,6 +94,10 @@ P4 now supplies a common frozen train/plan/estimate/audit framework for eight
 baseline families, including independent-randomization RQMC inference and an exact
 nonlinear coupling-flow density. This is an oracle/framework result only; fresh
 task-tuned LD/flow runs and all numerical performance comparisons remain open.
+P5 now locks the outcome-blind 24-cell primary matrix, independent two-method
+references, six-way seed separation, reference-precision limit, and exact eight-method
+comparator roster. Threshold calibration, reference execution, and every V8
+performance claim remain open.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -175,6 +179,7 @@ Start with:
 - [V8 P3 rate/complexity decision](docs/audits/G11_V8_P3_RATE_COMPLEXITY_DECISION_2026-07-25.md)
 - [V8 P4 strong-baseline framework](docs/theory/G11_V8_P4_STRONG_BASELINE_FRAMEWORK.md)
 - [V8 P4 framework decision](docs/audits/G11_V8_P4_BASELINE_FRAMEWORK_DECISION_2026-07-25.md)
+- [V8 P5 outcome-blind reference/matrix design](docs/audits/G11_V8_P5_MATRIX_DESIGN_DECISION_2026-07-27.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
