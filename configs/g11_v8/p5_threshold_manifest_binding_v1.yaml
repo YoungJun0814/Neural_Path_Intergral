@@ -1,0 +1,21 @@
+schema: npi.g11.v8-p5-threshold-manifest-binding.v1
+protocol_id: g11-v8-p5-threshold-manifest-binding-v1
+date: "2026-07-27"
+phase: p5_threshold_bound
+outcome_data_used: false
+p5_reference_matrix_design_sha256: 7c92468bec444a04e0b1fbecbb09e09e325bf4d002b03496aa913816b8d34b4e
+p6_statistical_design_sha256: 408c1a925634da8195dee6372b7416e6c58e6174c3ee933081247db97a4f84e8
+threshold_calibration_config: configs/g11_v8/p5_threshold_calibration_execution_v1.yaml
+threshold_calibration_config_sha256: e0f43a26fb45f9694cccf76036b19fc2dd9fab428891fc2fd6a191ab8d78e70c
+threshold_calibration_result: results/g11_v8_p5_threshold_calibration_v1_2026-07-27.json
+threshold_calibration_result_sha256: 27eabb261d079a8e67fb9389f492c532eb51d7c387ce3907437cfe9e5085ddb6
+threshold_manifest_sha256: 165e2107a031e55acefe55cec5888e23ea8f648a072d0a0a28833ca969451ef8
+calibration_source_commit: fd9b6046568a2de8fb2f5abbe7f5f7b8d33ace4a
+reference_seed_namespace: p5-reference
+final_method_seed_namespace: p5-final-method
+
+decision:
+  status: threshold_manifest_bound_reference_execution_open
+  calibrated_thresholds_hash_bound: true
+  independent_reference_execution_complete: false
+  performance_claim_authorized: false
