@@ -3,9 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+import torch
 import yaml
 
-from experiments.g11_v8_p5_reference import load_reference_config
+from experiments.g11_v8_p5_reference import _update_moments_from_batch, load_reference_config
+from src.path_integral import OnlineMoments
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "configs" / "g11_v8" / "p5_independent_reference_execution_v1.yaml"
@@ -35,6 +37,16 @@ def test_p5_reference_v2_rejects_undisclosed_outcome_use(tmp_path: Path) -> None
     path.write_text(yaml.safe_dump(payload, sort_keys=False), encoding="utf-8")
     with pytest.raises(ValueError, match="disclose"):
         load_reference_config(path)
+
+
+def test_p5_reference_batch_moments_preserve_mean_and_unbiased_variance() -> None:
+    values = torch.tensor([0.25, -0.75, 1.5, 2.0, -1.0], dtype=torch.float64)
+    moments = OnlineMoments()
+    _update_moments_from_batch(moments, values[:2])
+    _update_moments_from_batch(moments, values[2:])
+    assert moments.count == values.numel()
+    assert moments.mean == pytest.approx(float(values.mean()))
+    assert moments.variance == pytest.approx(float(torch.var(values, unbiased=True)))
 
 
 def test_p5_reference_config_rejects_changed_method_roster(tmp_path: Path) -> None:

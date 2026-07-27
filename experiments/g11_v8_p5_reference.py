@@ -150,6 +150,22 @@ def _method_values(sample: Any, *, task: Any, rho: float, method: ReferenceMetho
     return values
 
 
+def _update_moments_from_batch(moments: OnlineMoments, values: torch.Tensor) -> None:
+    """Merge one float64 batch using the same Welford sufficient statistics.
+
+    Final reference chunks are fixed before their stream begins.  Batching changes
+    neither the ordinary sample mean nor the unbiased sample-variance definition; it
+    only avoids a Python loop over every simulated path.
+    """
+    data = values.detach().to(device="cpu", dtype=torch.float64).reshape(-1)
+    if data.numel() == 0 or not torch.isfinite(data).all():
+        raise FloatingPointError("P5 reference moments require a nonempty finite batch")
+    batch_mean = float(torch.mean(data))
+    centered = data - batch_mean
+    batch_m2 = float(torch.sum(centered * centered))
+    moments.merge(OnlineMoments(count=int(data.numel()), mean=batch_mean, m2=batch_m2))
+
+
 def _seeds(
     ledger: SeedLedger,
     *,
@@ -299,8 +315,8 @@ def _reference_method(
             ledger=ledger,
             protocol_id=protocol_id,
         )
-        moments.update(values)
-        normalization.update(weights)
+        _update_moments_from_batch(moments, values)
+        _update_moments_from_batch(normalization, weights)
         chunks.append({"offset": offset, "count": count})
     standard_error = math.sqrt(moments.variance / moments.count)
     normalization_se = math.sqrt(normalization.variance / normalization.count)
