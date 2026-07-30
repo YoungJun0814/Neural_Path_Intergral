@@ -1,0 +1,27 @@
+{
+  "checks": {
+    "allocation_and_gates_exact": true,
+    "barrier_selected_terminal_missing": true,
+    "candidate_roster_exact": true,
+    "decision_fail_closed": true,
+    "formal_clean_execution": true,
+    "rank_one_structure_exact": true,
+    "schema_protocol_config_exact": true,
+    "seed_roster_exact_and_unique": true
+  },
+  "config_sha256": "cd0e3ed4d71edb27515535eaf81ff9f4454ca367347f67cf1132a942a39f3c8a",
+  "decision": {
+    "barrier_raw_development_selection_available": true,
+    "final_execution_authorized": false,
+    "new_full_pilot_authorized": false,
+    "performance_claim_authorized": false,
+    "proposal_manifest_freeze_authorized": false,
+    "status": "dense_amplitude_audit_pass",
+    "terminal_raw_redesign_required": true
+  },
+  "failures": [],
+  "passed": true,
+  "result_canonical_sha256": "159ed98e86fbfa61d9c4fc27b7fb433abdc094cdcae4f2cc4019f7611a61f57e",
+  "result_file_sha256": "aa193fa711dd073a4d5c4c603c90111bfcc9f0d70c45896df7c54bfd57215000",
+  "schema": "npi.g11.v8-p5-dense-amplitude-proposal-audit.v1"
+}
