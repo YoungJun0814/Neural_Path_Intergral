@@ -1,0 +1,24 @@
+{
+  "authorization_sha256": "db733a636d4f21180bb8b33c691101c9add1a28ac06556b5817fa629ec9c9f9d",
+  "checks": {
+    "all_bound_inputs_and_implementation_pass": true,
+    "benchmark_gates_pass": true,
+    "benchmark_roster_and_seeds_exact": true,
+    "clean_production_size_benchmark": true,
+    "decision_fail_closed": true,
+    "final_remains_closed": true,
+    "forecasts_exactly_recomputed": true,
+    "formal_pilot_authorized_exactly": true,
+    "only_local_pilot_resource_feasible": true
+  },
+  "decision": {
+    "final_execution_authorized": false,
+    "formal_pilot_execution_authorized": true,
+    "performance_claim_authorized": false,
+    "reference_complete": false,
+    "status": "formal_pilot_authorization_pass"
+  },
+  "failures": [],
+  "passed": true,
+  "schema": "npi.g11.v8-p5-reference-resource-audit.v1"
+}

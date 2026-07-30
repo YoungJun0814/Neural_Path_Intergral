@@ -131,6 +131,12 @@ keys prevent benchmark/pilot/final stream reuse. A full 24-cell synthetic lifecy
 falsification passes, but its sufficient statistics are analytic test inputs rather
 than empirical reference evidence. A clean-source resource benchmark and all formal
 R2 reference computation remain open.
+The clean production-size R2b resource benchmark now passes at 32,768 paths per
+observation. It predicts about 0.43 wall-hours for the complete laptop pilot roster
+with a factor-two safety margin, so formal pilots are authorized under a frozen
+implementation-hash manifest. The cap-level final forecast is about 13.79 laptop
+hours and remains prohibited. External forecasts are planning-only until repeated
+on the actual external node.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -152,7 +158,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **763/763 tests on 2026-07-31**.
+The complete local regression suite passed **765/765 tests on 2026-07-31**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finite grid rather than a continuously monitored event. V7
@@ -170,6 +176,7 @@ Start with:
 - [V8 R1 sharded-reference theory](docs/theory/G11_V8_R1_REFERENCE_SHARD_THEORY.md)
 - [V8 R1 infrastructure decision](docs/audits/G11_V8_R1_REFERENCE_INFRASTRUCTURE_DECISION_2026-07-31.md)
 - [V8 R2a sharded-reference implementation decision](docs/audits/G11_V8_R2A_SHARDED_REFERENCE_IMPLEMENTATION_2026-07-31.md)
+- [V8 R2b reference resource decision](docs/audits/G11_V8_R2B_REFERENCE_RESOURCE_DECISION_2026-07-31.md)
 - [G11 implementation and error audit](docs/audits/G11_IMPLEMENTATION_AND_ERROR_AUDIT_2026-07-19.md)
 - [Theorem statements](docs/theory/G11_THEOREMS.md) and [proof audit](docs/theory/G11_PROOF_AUDIT.md)
 - [M7 freeze-readiness review](docs/audits/G11_M7_FREEZE_READINESS_2026-07-19.md)
