@@ -1,0 +1,241 @@
+{
+  "checks": {
+    "candidate_gates_self_consistent": true,
+    "candidate_roster_exact": true,
+    "config_protocol_and_clean_source_exact": true,
+    "decision_fail_closed": true,
+    "falsification_exact": true,
+    "grouped_component_order_detected": true,
+    "seed_ledger_unique": true,
+    "strict_json_and_schema_exact": true
+  },
+  "config_sha256": "312f82bbf7a788c3704c878c5b9985fbd7faa773109cf155b448124606be836b",
+  "decision": {
+    "candidate_promoted": false,
+    "final_execution_authorized": false,
+    "new_formal_pilot_authorized": false,
+    "performance_claim_authorized": false,
+    "permuted_block_protocol_required": true,
+    "proposal_manifest_build_authorized": false,
+    "status": "production_scale_falsification_and_block_order_defect_confirmed",
+    "submission_authorized": false,
+    "v2_training_namespace_burned": true,
+    "v2_validation_namespace_burned": true
+  },
+  "failures": [],
+  "grouped_order_diagnostics": {
+    "h0.05-terminal_left_tail-p1e-04/raw/profile_broad": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 141.4255319148936,
+      "mean_raw_nonzero_by_stored_block": [
+        11.75,
+        227.875,
+        1577.75,
+        255.0,
+        807.0,
+        1107.0,
+        234.75,
+        1661.75
+      ]
+    },
+    "h0.05-terminal_left_tail-p1e-04/raw/profile_compact": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 22.00761904761905,
+      "mean_raw_nonzero_by_stored_block": [
+        65.625,
+        463.125,
+        1444.25,
+        372.625,
+        973.125,
+        1021.625,
+        481.0,
+        1435.625
+      ]
+    },
+    "h0.05-terminal_left_tail-p1e-04/raw/profile_dense": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 119.73809523809524,
+      "mean_raw_nonzero_by_stored_block": [
+        10.5,
+        212.875,
+        1225.75,
+        244.625,
+        592.25,
+        973.75,
+        252.0,
+        1257.25
+      ]
+    },
+    "h0.05-terminal_left_tail-p1e-05/raw/profile_broad": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 571.5,
+      "mean_raw_nonzero_by_stored_block": [
+        2.75,
+        123.875,
+        1350.875,
+        184.125,
+        638.125,
+        969.625,
+        152.25,
+        1571.625
+      ]
+    },
+    "h0.05-terminal_left_tail-p1e-05/raw/profile_compact": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 45.71966527196653,
+      "mean_raw_nonzero_by_stored_block": [
+        29.875,
+        285.625,
+        1156.75,
+        250.5,
+        732.0,
+        829.875,
+        366.25,
+        1365.875
+      ]
+    },
+    "h0.05-terminal_left_tail-p1e-05/raw/profile_dense": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 416.09090909090907,
+      "mean_raw_nonzero_by_stored_block": [
+        2.75,
+        125.0,
+        977.625,
+        135.25,
+        439.375,
+        769.625,
+        183.125,
+        1144.25
+      ]
+    },
+    "h0.12-discrete_lower_barrier-p1e-05/raw/profile_broad": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 474.6666666666667,
+      "mean_raw_nonzero_by_stored_block": [
+        3.75,
+        151.25,
+        1582.625,
+        234.0,
+        724.0,
+        1058.875,
+        190.875,
+        1780.0
+      ]
+    },
+    "h0.12-discrete_lower_barrier-p1e-05/raw/profile_compact": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 41.173202614379086,
+      "mean_raw_nonzero_by_stored_block": [
+        38.25,
+        356.0,
+        1389.625,
+        277.625,
+        842.375,
+        920.5,
+        430.125,
+        1574.875
+      ]
+    },
+    "h0.12-discrete_lower_barrier-p1e-05/raw/profile_dense": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 363.37931034482756,
+      "mean_raw_nonzero_by_stored_block": [
+        3.625,
+        144.125,
+        1183.25,
+        171.25,
+        489.375,
+        877.375,
+        216.625,
+        1317.25
+      ]
+    },
+    "h0.20-discrete_lower_barrier-p1e-04/raw/profile_broad": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 178.54255319148936,
+      "mean_raw_nonzero_by_stored_block": [
+        11.75,
+        308.75,
+        1933.875,
+        319.125,
+        1030.875,
+        1326.25,
+        346.5,
+        2097.875
+      ]
+    },
+    "h0.20-discrete_lower_barrier-p1e-04/raw/profile_compact": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 18.880299251870323,
+      "mean_raw_nonzero_by_stored_block": [
+        100.25,
+        635.0,
+        1860.125,
+        487.125,
+        1230.0,
+        1296.75,
+        682.625,
+        1892.75
+      ]
+    },
+    "h0.20-discrete_lower_barrier-p1e-04/raw/profile_dense": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 116.39473684210526,
+      "mean_raw_nonzero_by_stored_block": [
+        14.25,
+        302.75,
+        1614.125,
+        297.625,
+        786.0,
+        1137.75,
+        389.25,
+        1658.625
+      ]
+    },
+    "h0.20-terminal_left_tail-p1e-05/raw/profile_broad": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 412.43243243243245,
+      "mean_raw_nonzero_by_stored_block": [
+        4.625,
+        179.5,
+        1726.25,
+        261.5,
+        880.75,
+        1229.375,
+        211.625,
+        1907.5
+      ]
+    },
+    "h0.20-terminal_left_tail-p1e-05/raw/profile_compact": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 36.98108108108108,
+      "mean_raw_nonzero_by_stored_block": [
+        46.25,
+        422.125,
+        1591.625,
+        347.0,
+        1014.75,
+        1136.875,
+        490.875,
+        1710.375
+      ]
+    },
+    "h0.20-terminal_left_tail-p1e-05/raw/profile_dense": {
+      "grouped_order_signature": true,
+      "maximum_to_minimum_mean_count_ratio": 348.0,
+      "mean_raw_nonzero_by_stored_block": [
+        4.125,
+        174.75,
+        1301.25,
+        246.75,
+        583.75,
+        1079.875,
+        235.25,
+        1435.5
+      ]
+    }
+  },
+  "passed": true,
+  "result_file_sha256": "4c2bdfff7f6f30be6d3699365f619e0719beb37a664c8ddc397cd5f08df39797",
+  "schema": "npi.g11.v8-p5-production-scale-proposal-audit.v1"
+}
