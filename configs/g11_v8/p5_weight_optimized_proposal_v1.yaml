@@ -1,0 +1,106 @@
+schema: npi.g11.v8-p5-weight-optimized-proposal.v1
+protocol_id: g11-v8-p5-weight-optimized-proposal-v1
+date: "2026-07-31"
+phase: r2_weight_optimized_and_dcs_grid_development
+design_informed_by_prior_development_outcomes: true
+current_namespace_outcomes_inspected_before_freeze: false
+weight_training_namespace: v8-r2-weight-optimized-proposal-training-v1
+validation_namespace: v8-r2-weight-optimized-proposal-validation-v1
+
+prior_result:
+  path: results/g11_v8_p5_production_scale_proposal_v3_2026-07-31.json
+  sha256: 61db7a1812df93c2a601c31dc47ac9d60de0846f1ab7f2626b48f50681f97aa6
+prior_audit:
+  path: results/g11_v8_p5_production_scale_proposal_audit_v2_2026-07-31.json
+  sha256: c8054c443784c2e90ad4250b146220ea8b2ba389a02c7dfdb63280be305b239c
+threshold_binding:
+  path: configs/g11_v8/p5_threshold_manifest_binding_v2.yaml
+  sha256: 638b872cd660180dca20f6572c3ad0b3b84ef747ef29839bd152f0d73d7e3762
+
+retained_requirements:
+  - cell_id: h0.12-terminal_left_tail-p1e-05
+    method: dcs_reference
+  - cell_id: h0.20-discrete_lower_barrier-p1e-04
+    method: raw_crosscheck
+  - cell_id: h0.20-terminal_left_tail-p1e-05
+    method: raw_crosscheck
+
+raw_weight_optimization:
+  - cell_id: h0.05-terminal_left_tail-p1e-04
+    source_candidate_id: h0.05-terminal_left_tail-p1e-04/raw/profile_compact
+  - cell_id: h0.05-terminal_left_tail-p1e-05
+    source_candidate_id: h0.05-terminal_left_tail-p1e-05/raw/profile_refined
+  - cell_id: h0.12-discrete_lower_barrier-p1e-05
+    source_candidate_id: h0.12-discrete_lower_barrier-p1e-05/raw/profile_broad
+
+dcs_candidate_grids:
+  - cell_id: h0.12-discrete_lower_barrier-p1e-03
+    source_training_replicates: [0, 2]
+    families:
+      - id: dense08
+        scales: [0.0, 0.35, 0.50, 0.65, 0.80, 0.95, 1.10, 1.25]
+        weights: [0.08, 0.05, 0.08, 0.12, 0.18, 0.20, 0.17, 0.12]
+      - id: dense12
+        scales: [0.0, 0.35, 0.50, 0.65, 0.80, 0.95, 1.10, 1.25]
+        weights: [0.12, 0.04, 0.07, 0.11, 0.17, 0.19, 0.16, 0.14]
+      - id: focused075
+        scales: [0.0, 0.30, 0.45, 0.60, 0.75, 0.90, 1.05, 1.20]
+        weights: [0.08, 0.05, 0.08, 0.14, 0.20, 0.20, 0.15, 0.10]
+  - cell_id: h0.05-terminal_left_tail-p1e-05
+    source_training_replicates: [1, 0]
+    families:
+      - id: focused08
+        scales: [0.0, 0.30, 0.45, 0.60, 0.70, 0.80, 0.90, 1.00]
+        weights: [0.08, 0.05, 0.08, 0.14, 0.19, 0.20, 0.16, 0.10]
+      - id: focused_center
+        scales: [0.0, 0.30, 0.45, 0.60, 0.70, 0.80, 0.90, 1.00]
+        weights: [0.08, 0.03, 0.06, 0.12, 0.20, 0.24, 0.18, 0.09]
+      - id: focused12
+        scales: [0.0, 0.30, 0.45, 0.60, 0.70, 0.80, 0.90, 1.00]
+        weights: [0.12, 0.04, 0.07, 0.13, 0.18, 0.20, 0.16, 0.10]
+      - id: low_mid
+        scales: [0.0, 0.20, 0.35, 0.50, 0.65, 0.75, 0.85, 0.95]
+        weights: [0.08, 0.04, 0.08, 0.14, 0.20, 0.22, 0.16, 0.08]
+
+weight_training:
+  replicates: 4
+  paths_per_replicate: 32768
+  engine: fft
+  iterations: 500
+  learning_rate: 0.05
+  natural_weight: 0.08
+  minimum_nonnatural_weight: 0.005
+  smoke_replicates: 1
+  smoke_paths_per_replicate: 512
+  smoke_iterations: 10
+
+validation:
+  replicates: 8
+  paths_per_replicate: 32768
+  blocks_per_replicate: 8
+  block_partition: independent_seeded_uniform_permutation_before_equal_slicing
+  engine: fft
+  allocation_safety_factor: 6.0
+  maximum_final_samples: 8388608
+  maximum_requested_to_cap_ratio: 0.50
+  minimum_raw_nonzero_per_replicate: 1024
+  minimum_raw_nonzero_per_block: 64
+  maximum_likelihood_normalization_absolute_z: 4.0
+  maximum_block_variance_to_median_ratio: 30.0
+  maximum_full_contribution_share: 0.05
+  maximum_block_contribution_share: 0.25
+  smoke_raw_cells: 1
+  smoke_dcs_cells: 1
+  smoke_dcs_families: 1
+  smoke_replicates: 2
+  smoke_paths_per_replicate: 512
+  smoke_blocks_per_replicate: 4
+
+decision:
+  status: weight_optimized_proposal_development_open
+  selected_proposals_frozen: false
+  proposal_manifest_build_authorized: false
+  new_formal_pilot_authorized: false
+  final_execution_authorized: false
+  performance_claim_authorized: false
+  submission_authorized: false

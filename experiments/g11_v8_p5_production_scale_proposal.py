@@ -618,7 +618,11 @@ def _evaluate_candidate(
             )
         )
         permutation_seed: int | None = None
-        if config["schema"] == SCHEMA_V3:
+        if (
+            config["schema"] == SCHEMA_V3
+            or validation.get("block_partition")
+            == "independent_seeded_uniform_permutation_before_equal_slicing"
+        ):
             permutation_key, permutation_seed = _seed(
                 config,
                 stage="validation-block-permutation",
