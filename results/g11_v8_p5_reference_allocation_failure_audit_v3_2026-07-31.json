@@ -1,0 +1,27 @@
+{
+  "checks": {
+    "allocation_exactly_reconstructed": true,
+    "complete_unique_pilot_roster": true,
+    "config_and_binding_exact": true,
+    "entry_matrix_exact": true,
+    "final_gate_closed": true,
+    "package_hash_exact": true,
+    "resource_failure_nonempty": true,
+    "schemas_exact": true
+  },
+  "decision": {
+    "final_execution_authorized": false,
+    "final_namespace_opened": false,
+    "new_reference_design_required": true,
+    "performance_claim_authorized": false,
+    "pilot_namespace_burned": true,
+    "reference_complete": false,
+    "status": "r2_development_allocation_resource_failure",
+    "submission_authorized": false
+  },
+  "failure_receipt_sha256": "c7ad871ca4450b28db0a99bc8ac18da4883bef441e4a3bfd40811c425f7dffc0",
+  "failures": [],
+  "passed": true,
+  "pilot_package_sha256": "2cd31b61c97c63d743cde8b3117fd361ed74099d1f94be6c1ad562b8746ae18a",
+  "schema": "npi.g11.v8-p5-reference-allocation-failure-audit.v1"
+}
