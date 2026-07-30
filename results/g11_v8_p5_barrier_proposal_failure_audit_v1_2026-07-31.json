@@ -1,0 +1,171 @@
+{
+  "cell_and_method_optima": [
+    {
+      "all_method_optima_pass": true,
+      "best_joint_candidate_id": "current_constant_mixture",
+      "best_joint_requested_to_cap_ratio": 0.33739662170410156,
+      "cell_id": "h0.12-discrete_lower_barrier-p1e-04",
+      "method_optima": {
+        "dcs_reference": {
+          "candidate_id": "current_constant_mixture",
+          "projected_cap_pass": true,
+          "projected_final_samples": 755561,
+          "requested_to_cap_ratio": 0.09006989002227783
+        },
+        "raw_crosscheck": {
+          "candidate_id": "current_constant_mixture",
+          "projected_cap_pass": true,
+          "projected_final_samples": 2830288,
+          "requested_to_cap_ratio": 0.33739662170410156
+        }
+      }
+    },
+    {
+      "all_method_optima_pass": false,
+      "best_joint_candidate_id": "mid_loaded_rank_one",
+      "best_joint_requested_to_cap_ratio": 1.1850577592849731,
+      "cell_id": "h0.20-discrete_lower_barrier-p1e-05",
+      "method_optima": {
+        "dcs_reference": {
+          "candidate_id": "decaying_rank_one",
+          "projected_cap_pass": true,
+          "projected_final_samples": 2831729,
+          "requested_to_cap_ratio": 0.33756840229034424
+        },
+        "raw_crosscheck": {
+          "candidate_id": "mid_loaded_rank_one",
+          "projected_cap_pass": false,
+          "projected_final_samples": 9940985,
+          "requested_to_cap_ratio": 1.1850577592849731
+        }
+      }
+    },
+    {
+      "all_method_optima_pass": true,
+      "best_joint_candidate_id": "current_constant_mixture",
+      "best_joint_requested_to_cap_ratio": 0.6167315244674683,
+      "cell_id": "h0.05-discrete_lower_barrier-p1e-04",
+      "method_optima": {
+        "dcs_reference": {
+          "candidate_id": "current_constant_mixture",
+          "projected_cap_pass": true,
+          "projected_final_samples": 1289634,
+          "requested_to_cap_ratio": 0.15373635292053223
+        },
+        "raw_crosscheck": {
+          "candidate_id": "current_constant_mixture",
+          "projected_cap_pass": true,
+          "projected_final_samples": 5173519,
+          "requested_to_cap_ratio": 0.6167315244674683
+        }
+      }
+    },
+    {
+      "all_method_optima_pass": false,
+      "best_joint_candidate_id": "mid_loaded_rank_one",
+      "best_joint_requested_to_cap_ratio": 3.160281181335449,
+      "cell_id": "h0.05-discrete_lower_barrier-p1e-05",
+      "method_optima": {
+        "dcs_reference": {
+          "candidate_id": "mid_loaded_rank_one",
+          "projected_cap_pass": false,
+          "projected_final_samples": 12810197,
+          "requested_to_cap_ratio": 1.5270944833755493
+        },
+        "raw_crosscheck": {
+          "candidate_id": "current_constant_mixture",
+          "projected_cap_pass": true,
+          "projected_final_samples": 5154078,
+          "requested_to_cap_ratio": 0.6144139766693115
+        }
+      }
+    },
+    {
+      "all_method_optima_pass": true,
+      "best_joint_candidate_id": "mid_loaded_rank_one",
+      "best_joint_requested_to_cap_ratio": 1.3716161251068115,
+      "cell_id": "h0.05-terminal_left_tail-p1e-05",
+      "method_optima": {
+        "dcs_reference": {
+          "candidate_id": "decaying_rank_one",
+          "projected_cap_pass": true,
+          "projected_final_samples": 3726570,
+          "requested_to_cap_ratio": 0.4442417621612549
+        },
+        "raw_crosscheck": {
+          "candidate_id": "current_constant_mixture",
+          "projected_cap_pass": true,
+          "projected_final_samples": 4225924,
+          "requested_to_cap_ratio": 0.5037693977355957
+        }
+      }
+    },
+    {
+      "all_method_optima_pass": true,
+      "best_joint_candidate_id": "front_loaded_rank_one",
+      "best_joint_requested_to_cap_ratio": 0.6108380556106567,
+      "cell_id": "h0.12-discrete_lower_barrier-p1e-05",
+      "method_optima": {
+        "dcs_reference": {
+          "candidate_id": "front_loaded_rank_one",
+          "projected_cap_pass": true,
+          "projected_final_samples": 5124081,
+          "requested_to_cap_ratio": 0.6108380556106567
+        },
+        "raw_crosscheck": {
+          "candidate_id": "current_constant_mixture",
+          "projected_cap_pass": true,
+          "projected_final_samples": 4277324,
+          "requested_to_cap_ratio": 0.5098967552185059
+        }
+      }
+    }
+  ],
+  "checks": {
+    "allocation_formula_exact": true,
+    "candidate_gate_logic_exact": true,
+    "candidate_roster_exact": true,
+    "clean_frozen_source": true,
+    "config_and_namespace_exact": true,
+    "decision_fail_closed": true,
+    "development_provenance_exact": true,
+    "entry_matrix_exact": true,
+    "formal_sampling_roster_exact": true,
+    "method_specific_reuse_also_falsified": true,
+    "no_proposal_passed": true,
+    "schema_and_protocol_exact": true,
+    "seed_roster_exact_and_unique": true
+  },
+  "config_sha256": "4069f62a2f51fc3316b29700da3c734af24c2f674b71d6bc0e8af7de1b29e36b",
+  "decision": {
+    "existing_candidate_reuse_authorized": false,
+    "final_execution_authorized": false,
+    "new_cell_tuned_proposal_required": true,
+    "new_full_pilot_authorized": false,
+    "performance_claim_authorized": false,
+    "status": "rank_one_candidate_roster_falsified"
+  },
+  "failing_method_optima": [
+    {
+      "candidate_id": "mid_loaded_rank_one",
+      "cell_id": "h0.20-discrete_lower_barrier-p1e-05",
+      "method": "raw_crosscheck",
+      "projected_cap_pass": false,
+      "projected_final_samples": 9940985,
+      "requested_to_cap_ratio": 1.1850577592849731
+    },
+    {
+      "candidate_id": "mid_loaded_rank_one",
+      "cell_id": "h0.05-discrete_lower_barrier-p1e-05",
+      "method": "dcs_reference",
+      "projected_cap_pass": false,
+      "projected_final_samples": 12810197,
+      "requested_to_cap_ratio": 1.5270944833755493
+    }
+  ],
+  "failures": [],
+  "passed": true,
+  "result_canonical_sha256": "405dbdd33cb2568a5330edf74392a5c8a6a8d63cbdf8058bd320313a8b37b117",
+  "result_file_sha256": "1abe057952af5d4687b72f7266e82a22346cd1ff0ede51a356053ab011894286",
+  "schema": "npi.g11.v8-p5-barrier-reference-proposal-failure-audit.v1"
+}

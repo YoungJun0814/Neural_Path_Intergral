@@ -1,0 +1,4215 @@
+{
+  "candidates": [
+    {
+      "candidate_id": "current_constant_mixture",
+      "entries": [
+        {
+          "allocation_design_variance": 5.037066704153282e-07,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-04",
+          "method": "dcs_reference",
+          "projected_cap_pass": true,
+          "projected_final_samples": 755561,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.0335038776723627,
+            0.04230111335128192,
+            0.025124154260634617,
+            0.030923452339201928
+          ],
+          "replicate_means": [
+            9.856744292518677e-05,
+            0.00010884814833711646,
+            0.00010141990442002897,
+            9.195044656844054e-05
+          ],
+          "replicate_variances": [
+            3.1390811778799336e-07,
+            5.037066704153282e-07,
+            2.993797608260781e-07,
+            3.268007542597331e-07
+          ],
+          "requested_to_cap_ratio": 0.09006989002227783,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 1.8868585276632536e-06,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-04",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": true,
+          "projected_final_samples": 2830288,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            4269,
+            4369,
+            4320,
+            4355
+          ],
+          "replicate_max_absolute_contributions": [
+            0.0910415298116309,
+            0.02295256040346701,
+            0.01893022700291701,
+            0.014992438214017885
+          ],
+          "replicate_means": [
+            0.00011992843532412651,
+            9.822649032444915e-05,
+            8.970212349869074e-05,
+            7.27355210686203e-05
+          ],
+          "replicate_variances": [
+            1.8868585276632536e-06,
+            5.21474815551647e-07,
+            3.2870131848072734e-07,
+            1.8702762100660408e-07
+          ],
+          "requested_to_cap_ratio": 0.33739662170410156,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 3.0202451251183936e-07,
+          "cell_id": "h0.20-discrete_lower_barrier-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 45303677,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.04949926103777446,
+            0.006430925351585971,
+            0.011790227198800289,
+            0.010717685115891377
+          ],
+          "replicate_means": [
+            1.6207163563110947e-05,
+            9.83263761125332e-06,
+            1.2674571345296748e-05,
+            1.2169764499185491e-05
+          ],
+          "replicate_variances": [
+            3.0202451251183936e-07,
+            6.429134380169379e-09,
+            2.2738526190411068e-08,
+            2.6150130389864216e-08
+          ],
+          "requested_to_cap_ratio": 5.400619149208069,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 6.984754504698848e-07,
+          "cell_id": "h0.20-discrete_lower_barrier-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 104771318,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            3146,
+            3140,
+            3156,
+            3169
+          ],
+          "replicate_max_absolute_contributions": [
+            0.0071993991980511506,
+            0.00777287410011747,
+            0.0745340275769441,
+            0.0034626511803099945
+          ],
+          "replicate_means": [
+            1.1995451122706376e-05,
+            1.1053780480942366e-05,
+            2.2021051139945053e-05,
+            8.699575837046976e-06
+          ],
+          "replicate_variances": [
+            2.0984499583796457e-08,
+            1.6682230027881804e-08,
+            6.984754504698848e-07,
+            5.244861474678134e-09
+          ],
+          "requested_to_cap_ratio": 12.48971438407898,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 8.597558753590531e-07,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-04",
+          "method": "dcs_reference",
+          "projected_cap_pass": true,
+          "projected_final_samples": 1289634,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.07687431912815626,
+            0.03680922003354846,
+            0.057692151882251796,
+            0.054544625694735
+          ],
+          "replicate_means": [
+            8.424526901107197e-05,
+            8.328544248147908e-05,
+            8.17873855540348e-05,
+            8.744527818170812e-05
+          ],
+          "replicate_variances": [
+            8.597558753590531e-07,
+            5.230662644702039e-07,
+            6.539460577619934e-07,
+            5.628878036385709e-07
+          ],
+          "requested_to_cap_ratio": 0.15373635292053223,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 3.4490123022950282e-06,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-04",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": true,
+          "projected_final_samples": 5173519,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            4065,
+            4121,
+            3997,
+            3999
+          ],
+          "replicate_max_absolute_contributions": [
+            0.05224425972504938,
+            0.12865788254438948,
+            0.06585558718589743,
+            0.0243158671653605
+          ],
+          "replicate_means": [
+            7.541536309867828e-05,
+            9.912709393884046e-05,
+            7.274732654946282e-05,
+            7.383873967565371e-05
+          ],
+          "replicate_variances": [
+            6.223819572362104e-07,
+            3.4490123022950282e-06,
+            8.214554247013746e-07,
+            4.0980203337749314e-07
+          ],
+          "requested_to_cap_ratio": 0.6167315244674683,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 3.9483264367047994e-07,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 59224897,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.056551836544378134,
+            0.002710901985234303,
+            0.004007136810741989,
+            0.008210990994506982
+          ],
+          "replicate_means": [
+            1.6674071437313584e-05,
+            8.318972347355258e-06,
+            8.780081431016062e-06,
+            9.715971093749106e-06
+          ],
+          "replicate_variances": [
+            3.9483264367047994e-07,
+            3.15112522988425e-09,
+            5.214715273164508e-09,
+            1.1702210006951449e-08
+          ],
+          "requested_to_cap_ratio": 7.060157895088196,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 3.4360517142471425e-08,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": true,
+          "projected_final_samples": 5154078,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            2972,
+            2967,
+            2934,
+            2922
+          ],
+          "replicate_max_absolute_contributions": [
+            0.015058497180275006,
+            0.0040082816880040156,
+            0.01427367028059084,
+            0.004135833480290124
+          ],
+          "replicate_means": [
+            1.0255803346517878e-05,
+            8.957031942460354e-06,
+            1.0318711878672504e-05,
+            9.531053406307845e-06
+          ],
+          "replicate_variances": [
+            3.4116267579181146e-08,
+            9.656956255192405e-09,
+            3.4360517142471425e-08,
+            1.2846736391665692e-08
+          ],
+          "requested_to_cap_ratio": 0.6144139766693115,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 1.4278254717647083e-07,
+          "cell_id": "h0.05-terminal_left_tail-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 21417383,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.003058458748821156,
+            0.03359860336498732,
+            0.0031417099473371184,
+            0.005613488882024057
+          ],
+          "replicate_means": [
+            9.092571872275345e-06,
+            1.4069802292609116e-05,
+            1.0106352363251242e-05,
+            9.249619133214189e-06
+          ],
+          "replicate_variances": [
+            3.2999159272424183e-09,
+            1.4278254717647083e-07,
+            5.567015245070669e-09,
+            7.2642174452711155e-09
+          ],
+          "requested_to_cap_ratio": 2.55315101146698,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 2.817282629366222e-08,
+          "cell_id": "h0.05-terminal_left_tail-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": true,
+          "projected_final_samples": 4225924,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            3046,
+            3059,
+            3082,
+            3047
+          ],
+          "replicate_max_absolute_contributions": [
+            0.003882338616772062,
+            0.012898432466437319,
+            0.005811218381230595,
+            0.0032784519005773618
+          ],
+          "replicate_means": [
+            7.342550761426856e-06,
+            1.0739840843373102e-05,
+            1.0361150833600184e-05,
+            8.319509010179078e-06
+          ],
+          "replicate_variances": [
+            3.828911744959902e-09,
+            2.817282629366222e-08,
+            1.5825153564968276e-08,
+            5.135762627918112e-09
+          ],
+          "requested_to_cap_ratio": 0.5037693977355957,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 5.8958828409429743e-08,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 8843825,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.0014972159480769996,
+            0.021697855442357673,
+            0.003074906633401012,
+            0.0023410737151427926
+          ],
+          "replicate_means": [
+            9.462381661383087e-06,
+            1.1470100527978412e-05,
+            1.0602611215825915e-05,
+            9.665457242061662e-06
+          ],
+          "replicate_variances": [
+            2.038721800283525e-09,
+            5.8958828409429743e-08,
+            4.622321715354901e-09,
+            2.3008768734281524e-09
+          ],
+          "requested_to_cap_ratio": 1.054266095161438,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 2.8515489195158546e-08,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": true,
+          "projected_final_samples": 4277324,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            3141,
+            3219,
+            3129,
+            3191
+          ],
+          "replicate_max_absolute_contributions": [
+            0.002113233305886635,
+            0.002474170698032437,
+            0.010978018940009129,
+            0.005962313133992195
+          ],
+          "replicate_means": [
+            7.717839826039382e-06,
+            8.356819379174112e-06,
+            1.188014918194829e-05,
+            8.839373761815546e-06
+          ],
+          "replicate_variances": [
+            3.550035816033062e-09,
+            5.197159798087013e-09,
+            2.8515489195158546e-08,
+            7.916412278017935e-09
+          ],
+          "requested_to_cap_ratio": 0.5098967552185059,
+          "target_standard_error": 2.0000000000000004e-07
+        }
+      ],
+      "gates": {
+        "all_projected_caps_pass": false,
+        "all_raw_coverage_pass": true,
+        "likelihood_normalization_pass": true,
+        "worst_ratio_pass": false
+      },
+      "normalization_mean": 1.0106656292513914,
+      "normalization_standard_error": 0.005108353634570998,
+      "normalization_z": 2.0878799735420173,
+      "passes": false,
+      "schedules": [
+        [
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        [
+          [
+            3.2,
+            -1.5
+          ]
+        ],
+        [
+          [
+            4.5,
+            -2.25
+          ]
+        ]
+      ],
+      "weights": [
+        0.15,
+        0.35,
+        0.5
+      ],
+      "worst_requested_to_cap_ratio": 12.48971438407898
+    },
+    {
+      "candidate_id": "front_loaded_rank_one",
+      "entries": [
+        {
+          "allocation_design_variance": 7.218644034954742e-07,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-04",
+          "method": "dcs_reference",
+          "projected_cap_pass": true,
+          "projected_final_samples": 1082797,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.03961952175791435,
+            0.06109071752645619,
+            0.03903688100786622,
+            0.04067506447197533
+          ],
+          "replicate_means": [
+            7.48789353488458e-05,
+            7.319021893998467e-05,
+            7.505117900832091e-05,
+            8.256872213493548e-05
+          ],
+          "replicate_variances": [
+            6.620362437665546e-07,
+            7.218644034954742e-07,
+            5.12400843405709e-07,
+            6.876672748807261e-07
+          ],
+          "requested_to_cap_ratio": 0.12907946109771729,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 7.264706440001534e-06,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-04",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 10897060,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            3820,
+            3734,
+            3794,
+            3826
+          ],
+          "replicate_max_absolute_contributions": [
+            0.0361620250095964,
+            0.23234160425298525,
+            0.10830647928654888,
+            0.05622982859552846
+          ],
+          "replicate_means": [
+            7.318594510677284e-05,
+            9.415735449993932e-05,
+            8.53959051846233e-05,
+            7.709213082225068e-05
+          ],
+          "replicate_variances": [
+            7.673329836762187e-07,
+            7.264706440001534e-06,
+            4.094820745855701e-06,
+            9.376293355048528e-07
+          ],
+          "requested_to_cap_ratio": 1.2990307807922363,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 1.621026792542607e-06,
+          "cell_id": "h0.20-discrete_lower_barrier-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 243154019,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.03447806342253862,
+            0.11487748800801147,
+            0.0070753370638448635,
+            0.007048710588003424
+          ],
+          "replicate_means": [
+            1.0320173065161377e-05,
+            2.2225484678147055e-05,
+            7.144322716909926e-06,
+            7.544593171985845e-06
+          ],
+          "replicate_variances": [
+            1.4972737349273095e-07,
+            1.621026792542607e-06,
+            1.3691491804762426e-08,
+            1.2792434708647651e-08
+          ],
+          "requested_to_cap_ratio": 28.986217856407166,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 1.0374157463034432e-05,
+          "cell_id": "h0.20-discrete_lower_barrier-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 1556123620,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            2743,
+            2727,
+            2752,
+            2723
+          ],
+          "replicate_max_absolute_contributions": [
+            0.0323563691831938,
+            0.29096706838937975,
+            0.025054798506211524,
+            0.005238590090286837
+          ],
+          "replicate_means": [
+            1.2131823146672224e-05,
+            4.557952260401701e-05,
+            7.375388012089128e-06,
+            4.702055330457482e-06
+          ],
+          "replicate_variances": [
+            1.5891181873243036e-07,
+            1.0374157463034432e-05,
+            8.012787251645462e-08,
+            5.233298727254702e-09
+          ],
+          "requested_to_cap_ratio": 185.5043911933899,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 6.972895866883236e-06,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-04",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 10459344,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.1739924187849598,
+            0.12104356695882433,
+            0.019655945670673244,
+            0.07607828306395284
+          ],
+          "replicate_means": [
+            0.0001317114068036865,
+            6.71626780003227e-05,
+            6.621547005095018e-05,
+            9.166971051914873e-05
+          ],
+          "replicate_variances": [
+            6.972895866883236e-06,
+            2.0002658212094083e-06,
+            2.9636517018458775e-07,
+            1.861056595096574e-06
+          ],
+          "requested_to_cap_ratio": 1.2468509674072266,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 6.967152710772958e-06,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-04",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 10450730,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            3572,
+            3668,
+            3525,
+            3523
+          ],
+          "replicate_max_absolute_contributions": [
+            0.1916781207101143,
+            0.11147068112735092,
+            0.056685097089928256,
+            0.0672318526080376
+          ],
+          "replicate_means": [
+            0.00011383322777721157,
+            6.036795995582688e-05,
+            5.8622528030281895e-05,
+            7.438379411811391e-05
+          ],
+          "replicate_variances": [
+            6.967152710772958e-06,
+            1.8396942349652677e-06,
+            7.035656172165732e-07,
+            1.2671509562862422e-06
+          ],
+          "requested_to_cap_ratio": 1.2458240985870361,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 1.2171685658928057e-07,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 18257529,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.011298654759943285,
+            0.01635485932144457,
+            0.03034203188598625,
+            0.020723299846748647
+          ],
+          "replicate_means": [
+            1.107305453748683e-05,
+            8.422720945612107e-06,
+            1.099191375626464e-05,
+            8.562984832020886e-06
+          ],
+          "replicate_variances": [
+            3.125607664098452e-08,
+            4.3594994175563876e-08,
+            1.2171685658928057e-07,
+            5.953492012692987e-08
+          ],
+          "requested_to_cap_ratio": 2.1764670610427856,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 1.7742499152790826e-07,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 26613749,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            2643,
+            2547,
+            2689,
+            2558
+          ],
+          "replicate_max_absolute_contributions": [
+            0.033998940134550286,
+            0.010673374377260623,
+            0.03407636926533841,
+            0.004738573378921204
+          ],
+          "replicate_means": [
+            1.256672010482029e-05,
+            7.208814963415321e-06,
+            1.1931486365805389e-05,
+            5.893863269643684e-06
+          ],
+          "replicate_variances": [
+            1.7007554829525564e-07,
+            2.6472644020725272e-08,
+            1.7742499152790826e-07,
+            9.726273013428587e-09
+          ],
+          "requested_to_cap_ratio": 3.172606110572815,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 3.093407146193443e-06,
+          "cell_id": "h0.05-terminal_left_tail-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 464011072,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.021225695855412473,
+            0.003187056125098739,
+            0.029545524880010682,
+            0.15847547654089136
+          ],
+          "replicate_means": [
+            1.0103094958585725e-05,
+            5.512083589290644e-06,
+            1.057401851788621e-05,
+            2.7176307395279328e-05
+          ],
+          "replicate_variances": [
+            8.091152807860861e-08,
+            4.626562378576073e-09,
+            1.3091691829575429e-07,
+            3.093407146193443e-06
+          ],
+          "requested_to_cap_ratio": 55.314430236816406,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 2.198525176782278e-06,
+          "cell_id": "h0.05-terminal_left_tail-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 329778777,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            2433,
+            2447,
+            2469,
+            2504
+          ],
+          "replicate_max_absolute_contributions": [
+            0.00787896505935186,
+            0.013517985478143374,
+            0.05553150900875872,
+            0.1331500912395996
+          ],
+          "replicate_means": [
+            6.250619688326404e-06,
+            6.335069840604914e-06,
+            1.0856147242341855e-05,
+            2.3397351449420964e-05
+          ],
+          "replicate_variances": [
+            1.9754229581165127e-08,
+            2.7855168822819846e-08,
+            3.831531630623193e-07,
+            2.198525176782278e-06
+          ],
+          "requested_to_cap_ratio": 39.31269371509552,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 3.4160538646704555e-08,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": true,
+          "projected_final_samples": 5124081,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.0029264872603589733,
+            0.003699300544882756,
+            0.007708099433522483,
+            0.014155220981621554
+          ],
+          "replicate_means": [
+            5.545385839958671e-06,
+            7.0927812864585914e-06,
+            6.590425916231512e-06,
+            9.3898526764824e-06
+          ],
+          "replicate_variances": [
+            3.6630316072129575e-09,
+            5.6557061371611396e-09,
+            1.1758555840465952e-08,
+            3.4160538646704555e-08
+          ],
+          "requested_to_cap_ratio": 0.6108380556106567,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 2.9965639182556914e-08,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": true,
+          "projected_final_samples": 4494846,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            2624,
+            2746,
+            2677,
+            2679
+          ],
+          "replicate_max_absolute_contributions": [
+            0.003640733381003699,
+            0.003770592647446071,
+            0.014117018740917064,
+            0.006410359437879311
+          ],
+          "replicate_means": [
+            4.8250375723974235e-06,
+            5.600930763046081e-06,
+            6.779324428434416e-06,
+            6.921084843933749e-06
+          ],
+          "replicate_variances": [
+            6.305100397573505e-09,
+            6.727181192785021e-09,
+            2.9965639182556914e-08,
+            1.3622088439514897e-08
+          ],
+          "requested_to_cap_ratio": 0.5358273983001709,
+          "target_standard_error": 2.0000000000000004e-07
+        }
+      ],
+      "gates": {
+        "all_projected_caps_pass": false,
+        "all_raw_coverage_pass": true,
+        "likelihood_normalization_pass": true,
+        "worst_ratio_pass": false
+      },
+      "normalization_mean": 1.000920783983289,
+      "normalization_standard_error": 0.005917402149996441,
+      "normalization_z": 0.1556061190280164,
+      "passes": false,
+      "schedules": [
+        [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        [
+          [
+            3.5,
+            -1.75
+          ],
+          [
+            3.0,
+            -1.5
+          ],
+          [
+            1.0,
+            -0.5
+          ],
+          [
+            0.25,
+            -0.125
+          ]
+        ],
+        [
+          [
+            5.6,
+            -2.8
+          ],
+          [
+            4.8,
+            -2.4
+          ],
+          [
+            1.6,
+            -0.8
+          ],
+          [
+            0.4,
+            -0.2
+          ]
+        ],
+        [
+          [
+            7.7,
+            -3.85
+          ],
+          [
+            6.6,
+            -3.3
+          ],
+          [
+            2.2,
+            -1.1
+          ],
+          [
+            0.55,
+            -0.275
+          ]
+        ]
+      ],
+      "weights": [
+        0.1,
+        0.25,
+        0.35,
+        0.3
+      ],
+      "worst_requested_to_cap_ratio": 185.5043911933899
+    },
+    {
+      "candidate_id": "mid_loaded_rank_one",
+      "entries": [
+        {
+          "allocation_design_variance": 2.674758289236789e-06,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-04",
+          "method": "dcs_reference",
+          "projected_cap_pass": true,
+          "projected_final_samples": 4012138,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.020051435062725456,
+            0.12776396859867303,
+            0.05713916772908137,
+            0.02238050599015062
+          ],
+          "replicate_means": [
+            9.345543993134627e-05,
+            0.00011257734379635459,
+            9.923894881988967e-05,
+            9.873950901533724e-05
+          ],
+          "replicate_variances": [
+            3.4465273879726964e-07,
+            2.674758289236789e-06,
+            9.333788915265355e-07,
+            4.347286800390781e-07
+          ],
+          "requested_to_cap_ratio": 0.4782841205596924,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 1.5416325563330898e-05,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-04",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 23124489,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            3290,
+            3367,
+            3297,
+            3340
+          ],
+          "replicate_max_absolute_contributions": [
+            0.0396769568906545,
+            0.34230468253895047,
+            0.01964995532438107,
+            0.06959741682226094
+          ],
+          "replicate_means": [
+            8.774746817842943e-05,
+            0.00013648738970761665,
+            7.681059950729783e-05,
+            8.048473537151818e-05
+          ],
+          "replicate_variances": [
+            7.807291983250203e-07,
+            1.5416325563330898e-05,
+            4.096244534702896e-07,
+            9.594158236320018e-07
+          ],
+          "requested_to_cap_ratio": 2.756653904914856,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 4.3122334547111294e-08,
+          "cell_id": "h0.20-discrete_lower_barrier-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": true,
+          "projected_final_samples": 6468351,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.006931266232119192,
+            0.011931727877546388,
+            0.01498887479557794,
+            0.006688810598324206
+          ],
+          "replicate_means": [
+            1.1028711659863957e-05,
+            1.1098259121985626e-05,
+            1.2295497863845663e-05,
+            1.0299438556998126e-05
+          ],
+          "replicate_variances": [
+            1.580566884348784e-08,
+            3.662450943885762e-08,
+            4.3122334547111294e-08,
+            1.6471382847585698e-08
+          ],
+          "requested_to_cap_ratio": 0.7710875272750854,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 6.627322740867135e-08,
+          "cell_id": "h0.20-discrete_lower_barrier-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 9940985,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            2259,
+            2303,
+            2297,
+            2268
+          ],
+          "replicate_max_absolute_contributions": [
+            0.008396120300539876,
+            0.006735098346951217,
+            0.019028777187855565,
+            0.018263144931728606
+          ],
+          "replicate_means": [
+            1.0721067319674111e-05,
+            8.786133840470452e-06,
+            1.0993399745783212e-05,
+            1.0193356282171468e-05
+          ],
+          "replicate_variances": [
+            2.9357559944674305e-08,
+            1.2586303870142534e-08,
+            6.627322740867135e-08,
+            5.422615264872377e-08
+          ],
+          "requested_to_cap_ratio": 1.1850577592849731,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 1.2414672264034673e-05,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-04",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 18622009,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.08944673507985387,
+            0.04385863943415796,
+            0.057335928479655456,
+            0.29035186566881555
+          ],
+          "replicate_means": [
+            9.41604097020589e-05,
+            7.35683447797268e-05,
+            8.931872055832857e-05,
+            0.0001278392843767988
+          ],
+          "replicate_variances": [
+            1.5051624924449762e-06,
+            4.879720734303782e-07,
+            8.794957337702576e-07,
+            1.2414672264034673e-05
+          ],
+          "requested_to_cap_ratio": 2.2199164628982544,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 5.01128786650977e-05,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-04",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 75169318,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            3124,
+            3142,
+            3243,
+            3158
+          ],
+          "replicate_max_absolute_contributions": [
+            0.11962363739934558,
+            0.020449588459262515,
+            0.13034490428374854,
+            0.6327723019793986
+          ],
+          "replicate_means": [
+            9.702848624305608e-05,
+            6.1029080450984715e-05,
+            8.015574604561185e-05,
+            0.00014859986930832223
+          ],
+          "replicate_variances": [
+            2.6131509527952155e-06,
+            3.2991858064141577e-07,
+            2.437707839799182e-06,
+            5.01128786650977e-05
+          ],
+          "requested_to_cap_ratio": 8.960880994796753,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 8.540130824184786e-08,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 12810197,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.0032994740744804025,
+            0.014076837884799458,
+            0.025421368423414893,
+            0.015839246297172087
+          ],
+          "replicate_means": [
+            8.330212470283551e-06,
+            1.0674677431511357e-05,
+            1.1247911357470897e-05,
+            9.14039219522469e-06
+          ],
+          "replicate_variances": [
+            5.885932743611146e-09,
+            4.161364027362291e-08,
+            8.540130824184786e-08,
+            3.749075570622977e-08
+          ],
+          "requested_to_cap_ratio": 1.5270944833755493,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 1.7673572954865503e-07,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 26510360,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            2210,
+            2242,
+            2227,
+            2226
+          ],
+          "replicate_max_absolute_contributions": [
+            0.009219784495172802,
+            0.023746237355878424,
+            0.028396074049724655,
+            0.004486623599051337
+          ],
+          "replicate_means": [
+            8.980270941756729e-06,
+            1.0478201709830049e-05,
+            1.4834178976453413e-05,
+            6.666126229217554e-06
+          ],
+          "replicate_variances": [
+            2.120598101869208e-08,
+            7.617468082181766e-08,
+            1.7673572954865503e-07,
+            7.32353805518248e-09
+          ],
+          "requested_to_cap_ratio": 3.160281181335449,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 7.068437208886094e-08,
+          "cell_id": "h0.05-terminal_left_tail-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 10602656,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.006212570255108321,
+            0.017170046253887506,
+            0.00618198148677763,
+            0.003362214426374656
+          ],
+          "replicate_means": [
+            9.389557059304908e-06,
+            1.213816941221434e-05,
+            8.886332854520369e-06,
+            8.230627058270394e-06
+          ],
+          "replicate_variances": [
+            1.3937720801466506e-08,
+            7.068437208886094e-08,
+            1.2238912033172733e-08,
+            5.022858924985331e-09
+          ],
+          "requested_to_cap_ratio": 1.2639350891113281,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 7.670633280571559e-08,
+          "cell_id": "h0.05-terminal_left_tail-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 11505950,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            2119,
+            2141,
+            2048,
+            2160
+          ],
+          "replicate_max_absolute_contributions": [
+            0.009607607553921165,
+            0.023581927716716036,
+            0.004788515294130102,
+            0.012583441471510593
+          ],
+          "replicate_means": [
+            7.914577050335937e-06,
+            1.0159329456143443e-05,
+            6.471848768257658e-06,
+            7.846491821067487e-06
+          ],
+          "replicate_variances": [
+            1.987272479777083e-08,
+            7.670633280571559e-08,
+            8.502950471421071e-09,
+            2.4899937896280155e-08
+          ],
+          "requested_to_cap_ratio": 1.3716161251068115,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 2.028964982865697e-07,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 30434475,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.012032170855581108,
+            0.009007228360233112,
+            0.036808449684085684,
+            0.003531911973725276
+          ],
+          "replicate_means": [
+            1.1890551749343706e-05,
+            1.2178562981182917e-05,
+            1.7097175186590446e-05,
+            8.597859630892174e-06
+          ],
+          "replicate_variances": [
+            2.6684391990888425e-08,
+            2.7243571495446043e-08,
+            2.028964982865697e-07,
+            5.670509974135069e-09
+          ],
+          "requested_to_cap_ratio": 3.628072142601013,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 2.5743759545452023e-07,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 38615640,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            2351,
+            2374,
+            2338,
+            2316
+          ],
+          "replicate_max_absolute_contributions": [
+            0.017227382173218002,
+            0.02950836478423226,
+            0.007477557563308674,
+            0.011465007006297503
+          ],
+          "replicate_means": [
+            1.2273487625914491e-05,
+            1.8454135227521912e-05,
+            1.0734718359357216e-05,
+            7.93883399171375e-06
+          ],
+          "replicate_variances": [
+            5.576348744935592e-08,
+            2.5743759545452023e-07,
+            2.3804141656069228e-08,
+            2.12437664995276e-08
+          ],
+          "requested_to_cap_ratio": 4.6033430099487305,
+          "target_standard_error": 2.0000000000000004e-07
+        }
+      ],
+      "gates": {
+        "all_projected_caps_pass": false,
+        "all_raw_coverage_pass": true,
+        "likelihood_normalization_pass": true,
+        "worst_ratio_pass": false
+      },
+      "normalization_mean": 1.0019769470301683,
+      "normalization_standard_error": 0.005761456467866946,
+      "normalization_z": 0.34313320619433324,
+      "passes": false,
+      "schedules": [
+        [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        [
+          [
+            1.0,
+            -0.5
+          ],
+          [
+            3.0,
+            -1.5
+          ],
+          [
+            3.0,
+            -1.5
+          ],
+          [
+            0.5,
+            -0.25
+          ]
+        ],
+        [
+          [
+            1.6,
+            -0.8
+          ],
+          [
+            4.8,
+            -2.4
+          ],
+          [
+            4.8,
+            -2.4
+          ],
+          [
+            0.8,
+            -0.4
+          ]
+        ],
+        [
+          [
+            2.2,
+            -1.1
+          ],
+          [
+            6.6,
+            -3.3
+          ],
+          [
+            6.6,
+            -3.3
+          ],
+          [
+            1.1,
+            -0.55
+          ]
+        ]
+      ],
+      "weights": [
+        0.1,
+        0.25,
+        0.35,
+        0.3
+      ],
+      "worst_requested_to_cap_ratio": 8.960880994796753
+    },
+    {
+      "candidate_id": "decaying_rank_one",
+      "entries": [
+        {
+          "allocation_design_variance": 4.585181221803255e-06,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-04",
+          "method": "dcs_reference",
+          "projected_cap_pass": true,
+          "projected_final_samples": 6877772,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.18074414402515512,
+            0.09633405355854456,
+            0.04556851459727532,
+            0.11561087634983748
+          ],
+          "replicate_means": [
+            0.00010963200416743252,
+            0.00010591154722117737,
+            8.135512370434277e-05,
+            0.00011346863131673338
+          ],
+          "replicate_variances": [
+            4.585181221803255e-06,
+            2.0079372426390254e-06,
+            5.121181039484916e-07,
+            2.500772910327982e-06
+          ],
+          "requested_to_cap_ratio": 0.8198943138122559,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 6.5061876160103105e-06,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-04",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 9759282,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            5067,
+            5104,
+            5102,
+            5122
+          ],
+          "replicate_max_absolute_contributions": [
+            0.2138530366659763,
+            0.04030369276919645,
+            0.04320642452512844,
+            0.06952613726897484
+          ],
+          "replicate_means": [
+            0.0001035440810378542,
+            7.833042858930402e-05,
+            6.931868756659631e-05,
+            8.234685535762716e-05
+          ],
+          "replicate_variances": [
+            6.5061876160103105e-06,
+            8.412153361213657e-07,
+            5.677879849459794e-07,
+            1.472185163885847e-06
+          ],
+          "requested_to_cap_ratio": 1.1633970737457275,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 1.8878188005770868e-08,
+          "cell_id": "h0.20-discrete_lower_barrier-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": true,
+          "projected_final_samples": 2831729,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.0033539164119655678,
+            0.006849332312893625,
+            0.009244536736605857,
+            0.008976845909992662
+          ],
+          "replicate_means": [
+            9.09905756911813e-06,
+            1.036051452373819e-05,
+            1.0405253593721932e-05,
+            1.0936451146714521e-05
+          ],
+          "replicate_variances": [
+            5.752033811700688e-09,
+            1.4098186126016251e-08,
+            1.6968111945774988e-08,
+            1.8878188005770868e-08
+          ],
+          "requested_to_cap_ratio": 0.33756840229034424,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 7.08352060619456e-08,
+          "cell_id": "h0.20-discrete_lower_barrier-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 10625281,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            4385,
+            4450,
+            4357,
+            4470
+          ],
+          "replicate_max_absolute_contributions": [
+            0.009294264280624558,
+            0.018139454966087227,
+            0.0071218658565518735,
+            0.011653847790324717
+          ],
+          "replicate_means": [
+            1.0023570971922766e-05,
+            1.0049479438431902e-05,
+            9.176127971906031e-06,
+            1.0391797701904151e-05
+          ],
+          "replicate_variances": [
+            3.162502284460104e-08,
+            7.08352060619456e-08,
+            2.071080550238309e-08,
+            4.0196905153956945e-08
+          ],
+          "requested_to_cap_ratio": 1.2666321992874146,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 3.044602281496774e-06,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-04",
+          "method": "dcs_reference",
+          "projected_cap_pass": true,
+          "projected_final_samples": 4566904,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.036862921670362,
+            0.043939678815443695,
+            0.04109509112350688,
+            0.09637386389055663
+          ],
+          "replicate_means": [
+            7.460301929314503e-05,
+            7.396790029230825e-05,
+            7.212681112266345e-05,
+            0.00010419239591692658
+          ],
+          "replicate_variances": [
+            5.02650247470098e-07,
+            5.710241300894223e-07,
+            5.38779482082371e-07,
+            3.044602281496774e-06
+          ],
+          "requested_to_cap_ratio": 0.5444173812866211,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 1.832457493877253e-05,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-04",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 27486863,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            4964,
+            4975,
+            5050,
+            4993
+          ],
+          "replicate_max_absolute_contributions": [
+            0.047276152302648033,
+            0.13471446725198544,
+            0.012186749413868577,
+            0.370701522968249
+          ],
+          "replicate_means": [
+            7.487496115696168e-05,
+            6.710655719138119e-05,
+            4.343269543804779e-05,
+            0.00011689109012090725
+          ],
+          "replicate_variances": [
+            1.000301339956028e-06,
+            2.5650592695083288e-06,
+            1.3972016697889877e-07,
+            1.832457493877253e-05
+          ],
+          "requested_to_cap_ratio": 3.2766894102096558,
+          "target_standard_error": 2.0000000000000003e-06
+        },
+        {
+          "allocation_design_variance": 1.1432854786133998e-06,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 171492822,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.030489805041103345,
+            0.02301890387323183,
+            0.0964572318115375,
+            0.002919511285429277
+          ],
+          "replicate_means": [
+            1.3139081971325544e-05,
+            1.0798452612209648e-05,
+            1.973940391276594e-05,
+            6.988063134157936e-06
+          ],
+          "replicate_variances": [
+            1.3107410452641455e-07,
+            8.752932351011315e-08,
+            1.1432854786133998e-06,
+            5.111670986019448e-09
+          ],
+          "requested_to_cap_ratio": 20.44353747367859,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 1.1935173315110862e-07,
+          "cell_id": "h0.05-discrete_lower_barrier-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 17902760,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            4270,
+            4190,
+            4301,
+            4280
+          ],
+          "replicate_max_absolute_contributions": [
+            0.013012437414256242,
+            0.02854164166392462,
+            0.02860749140406039,
+            0.01001070818426804
+          ],
+          "replicate_means": [
+            9.923382093652653e-06,
+            7.782811963187296e-06,
+            1.1051933676866903e-05,
+            8.579548935763202e-06
+          ],
+          "replicate_variances": [
+            4.29332933802515e-08,
+            1.0262549734674584e-07,
+            1.1935173315110862e-07,
+            2.792712773968014e-08
+          ],
+          "requested_to_cap_ratio": 2.1341753005981445,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 2.484379649275116e-08,
+          "cell_id": "h0.05-terminal_left_tail-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": true,
+          "projected_final_samples": 3726570,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.00191726512856642,
+            0.006653093991542875,
+            0.010021837632187542,
+            0.011247685723264327
+          ],
+          "replicate_means": [
+            7.1482586788758414e-06,
+            1.1153923950859774e-05,
+            1.0327869843446723e-05,
+            8.365893158096536e-06
+          ],
+          "replicate_variances": [
+            3.891836158141573e-09,
+            2.0972505292469627e-08,
+            2.484379649275116e-08,
+            1.9806105210138398e-08
+          ],
+          "requested_to_cap_ratio": 0.4442417621612549,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 5.949377906912507e-07,
+          "cell_id": "h0.05-terminal_left_tail-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": false,
+          "projected_final_samples": 89240669,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            4210,
+            4239,
+            4218,
+            4256
+          ],
+          "replicate_max_absolute_contributions": [
+            0.005976902313069502,
+            0.05821108547681117,
+            0.009906470978138971,
+            0.04435307975411812
+          ],
+          "replicate_means": [
+            7.418672255115023e-06,
+            2.2342864525440023e-05,
+            8.515271083040127e-06,
+            1.1494234920793752e-05
+          ],
+          "replicate_variances": [
+            1.4824980267051046e-08,
+            5.949377906912507e-07,
+            2.775932879600235e-08,
+            2.467856505399234e-07
+          ],
+          "requested_to_cap_ratio": 10.638316750526428,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 6.564510687459539e-08,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-05",
+          "method": "dcs_reference",
+          "projected_cap_pass": false,
+          "projected_final_samples": 9846767,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": null,
+          "replicate_max_absolute_contributions": [
+            0.012315473666608729,
+            0.021698499400689342,
+            0.006441295048773354,
+            0.0035005300768311057
+          ],
+          "replicate_means": [
+            1.1898760263225167e-05,
+            1.1619018102819765e-05,
+            8.496670077777094e-06,
+            7.42270517025866e-06
+          ],
+          "replicate_variances": [
+            3.452157961580751e-08,
+            6.564510687459539e-08,
+            8.682236648511184e-09,
+            5.188442750226795e-09
+          ],
+          "requested_to_cap_ratio": 1.1738260984420776,
+          "target_standard_error": 2.0000000000000004e-07
+        },
+        {
+          "allocation_design_variance": 4.8755040366363576e-08,
+          "cell_id": "h0.12-discrete_lower_barrier-p1e-05",
+          "method": "raw_crosscheck",
+          "projected_cap_pass": true,
+          "projected_final_samples": 7313257,
+          "raw_coverage_pass": true,
+          "raw_nonzero_counts": [
+            4387,
+            4393,
+            4424,
+            4260
+          ],
+          "replicate_max_absolute_contributions": [
+            0.010034297387624288,
+            0.014242026883221993,
+            0.004283825124239908,
+            0.0061226971123402455
+          ],
+          "replicate_means": [
+            6.99007842000284e-06,
+            1.1096124082736582e-05,
+            6.397132325703971e-06,
+            6.65436353673234e-06
+          ],
+          "replicate_variances": [
+            1.85543337393923e-08,
+            4.8755040366363576e-08,
+            8.245712121030616e-09,
+            1.1319356115381223e-08
+          ],
+          "requested_to_cap_ratio": 0.8718081712722778,
+          "target_standard_error": 2.0000000000000004e-07
+        }
+      ],
+      "gates": {
+        "all_projected_caps_pass": false,
+        "all_raw_coverage_pass": true,
+        "likelihood_normalization_pass": true,
+        "worst_ratio_pass": false
+      },
+      "normalization_mean": 0.9950998161310141,
+      "normalization_standard_error": 0.006070997666516583,
+      "normalization_z": -0.8071463930898805,
+      "passes": false,
+      "schedules": [
+        [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        [
+          [
+            3.6,
+            -1.8
+          ],
+          [
+            2.7,
+            -1.35
+          ],
+          [
+            1.8,
+            -0.9
+          ],
+          [
+            0.9,
+            -0.45
+          ]
+        ],
+        [
+          [
+            6.0,
+            -3.0
+          ],
+          [
+            4.5,
+            -2.25
+          ],
+          [
+            3.0,
+            -1.5
+          ],
+          [
+            1.5,
+            -0.75
+          ]
+        ],
+        [
+          [
+            8.0,
+            -4.0
+          ],
+          [
+            6.0,
+            -3.0
+          ],
+          [
+            4.0,
+            -2.0
+          ],
+          [
+            2.0,
+            -1.0
+          ]
+        ],
+        [
+          [
+            9.6,
+            -4.8
+          ],
+          [
+            7.2,
+            -3.6
+          ],
+          [
+            4.8,
+            -2.4
+          ],
+          [
+            2.4,
+            -1.2
+          ]
+        ]
+      ],
+      "weights": [
+        0.1,
+        0.2,
+        0.25,
+        0.25,
+        0.2
+      ],
+      "worst_requested_to_cap_ratio": 20.44353747367859
+    }
+  ],
+  "cells": [
+    "h0.12-discrete_lower_barrier-p1e-04",
+    "h0.20-discrete_lower_barrier-p1e-05",
+    "h0.05-discrete_lower_barrier-p1e-04",
+    "h0.05-discrete_lower_barrier-p1e-05",
+    "h0.05-terminal_left_tail-p1e-05",
+    "h0.12-discrete_lower_barrier-p1e-05"
+  ],
+  "config_sha256": "4069f62a2f51fc3316b29700da3c734af24c2f674b71d6bc0e8af7de1b29e36b",
+  "current_namespace_outcomes_inspected_before_freeze": false,
+  "decision": {
+    "final_execution_authorized": false,
+    "new_full_pilot_authorized": false,
+    "performance_claim_authorized": false,
+    "selected_proposal_frozen": false,
+    "status": "barrier_proposal_falsification_fail"
+  },
+  "design_informed_by_prior_development_outcomes": true,
+  "dirty_worktree": false,
+  "environment": {
+    "cuda": "12.8",
+    "deterministic_algorithms": false,
+    "dtype": "torch.float64",
+    "os": "Windows-11-10.0.26200-SP0",
+    "packages": {
+      "PyYAML": "6.0.3",
+      "numpy": "2.1.3",
+      "psutil": "5.9.0",
+      "scipy": "1.15.3"
+    },
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "python": "3.13.5",
+    "pytorch": "2.9.1+cu128",
+    "torch_threads": 16
+  },
+  "namespace": "v8-r2-barrier-proposal-falsification-v1",
+  "passed": false,
+  "paths_per_replicate": 8192,
+  "protocol_id": "g11-v8-p5-barrier-reference-proposal-falsification-v1",
+  "replicates": 4,
+  "schema": "npi.g11.v8-p5-barrier-reference-proposal-falsification-result.v1",
+  "seed_count": 192,
+  "seed_records": [
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2821926645669411035
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3671894785966588299
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5553100280915450964
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2274656419113207075
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3803370984078717582
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8719629590843211475
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7847020546670213742
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4162930245648035688
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7220933255097254357
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3558870019648617607
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2020853555164408739
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1701521912165306726
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8639571705236764030
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 451138177573172739
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4563921409771818196
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3129335197442622584
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4194473419335519432
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 428070669550446068
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4004404586907177397
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5000854609947340940
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7631625440437238389
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3156340359902701242
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 966128949861407227
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 553379079061125995
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7058703171391290129
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7514326700295269730
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5296166741915998464
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8811326792642471763
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7890712861787258663
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4285480146184966382
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6561870384879439194
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6247183407249822642
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4864880333932172628
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8810871226864500627
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 50271178922548531
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8625968434996383765
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6637657328587713083
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3155802409765273284
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6897383533671270549
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1939552057154736025
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5018255248321761985
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1772377476371555720
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8952402919349922644
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4417217735879482860
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8874843452691433759
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2576632446553804477
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2978231565464178405
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/current_constant_mixture",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8884130578315138777
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3049550072724740539
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1338259260220033084
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7969727996209817174
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3406197448842590850
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4439534046875455798
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3284836282275189099
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6893263286205006881
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8305105280189705093
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5214313616876985149
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4127756096805728359
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7071509483163849282
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5476736548895289738
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1635538880520700742
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8341836937899150410
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4534574505035306016
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7992592947585161228
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8279760723448036036
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8405376255895710720
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3603681801496532193
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 757656465979436063
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 647244799560156236
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3653988366981176842
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4342955204375198895
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8607329710996067800
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 315683801090163945
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7047988184320352844
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6223687901994593397
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1219279121360046308
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 333983582865637333
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 300872563088050206
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4075272674116474527
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6298694744088279838
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5610170869950781735
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7770162944676295514
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2034738512079819582
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7758048820235785693
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5355897212797249541
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 432142799383939780
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8035819682719304125
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2008524660167243759
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6773623712284883144
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3345296149119953627
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4305767184958738518
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 9117074901441614332
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 312836466847625409
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6960040255355737183
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 159448776438900942
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/front_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2348846231579605661
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1356357747021429320
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 256890634833269638
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8104102771488423153
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 9161774800925537814
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5214786742040870303
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4728395793741427139
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5830857871305460465
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8888426984253310225
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8192362935353762519
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1837588256332001671
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7650285491253114025
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7561746502497259259
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2527876665474247532
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8709221221736363255
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7400618477095232187
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1017544668842740591
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 401998778202546378
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5516687307467129842
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5675038357533719842
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6546494993490101206
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2774548420273440216
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8104166697317810464
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4686947184600109491
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4931756180146263766
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6493867243865688454
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8981328620870615547
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5136202155466024445
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1083005021199718318
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1318202834814116545
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2518375447922107973
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4595891884176779207
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 537787414502056235
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8549299557124446837
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4000043293883539733
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2133458033947551577
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8764469850677639416
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7730510008674291441
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8913091820828385284
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6533061846931930482
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3115245916289723186
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6837919146493923439
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1145592486853958850
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1879778017834568668
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 897814992339828963
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1684619879122461791
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4307618107815162678
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2327583697546210088
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/mid_loaded_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2967011654596223324
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 10650714931573899
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2444308618040824944
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7415829818519191641
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8771952063897084384
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7871072190354504985
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 792499076365101990
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4390060508122519056
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7831237139315436425
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4398697535466109876
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4627143910836901160
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3217950594291672178
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 9142328419357506665
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2691128088136837661
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2831777141284947607
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6865552406697685135
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.20-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6495665296972650071
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5613990931248224797
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 0,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 4562984322943947973
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2824125039153813358
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 1,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8611672512590805563
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8674267102542868436
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 2,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5886825325519343713
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 860788532861174882
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-04",
+        "replicate": 3,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3633585997869886676
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5285202573484870626
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 21001804947724708
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 958926686499773836
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1553694142470985964
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8996783591531093489
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7397756926063339399
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8997457809046898456
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5249318990798205361
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 450460071543894715
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5510994308009920017
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5794603784306637618
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 7222135891509742323
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2355757221001937144
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1762737523020588626
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2080717292919348577
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.05-terminal_left_tail-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1933145534435986838
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1538078493378791429
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 0,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8572483811822226337
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 6530693814287829620
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 1,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 8921873225497722210
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 5727661610693109554
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 2,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 1902775744683064988
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "proposal",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 3726536305638915943
+    },
+    {
+      "key": {
+        "level": 0,
+        "protocol": "g11-v8-p5-barrier-reference-proposal-falsification-v1/v8-r2-barrier-proposal-falsification-v1",
+        "regime": "h0.12-discrete_lower_barrier-p1e-05",
+        "replicate": 3,
+        "role": "proposal-falsification/decaying_rank_one",
+        "stream": "labels",
+        "task": "paired-dcs-raw"
+      },
+      "seed": 2004453604560664136
+    }
+  ],
+  "selected_candidate_id": null,
+  "smoke": false,
+  "source_commit": "67ea406350cfcea0a388597b8f48b0f83c2bf899"
+}
