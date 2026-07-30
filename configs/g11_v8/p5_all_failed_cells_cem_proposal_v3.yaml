@@ -1,0 +1,106 @@
+schema: npi.g11.v8-p5-cell-tuned-cem-proposal.v3
+protocol_id: g11-v8-p5-cell-tuned-cem-proposal-v3
+date: "2026-07-31"
+phase: r2_all_failed_cells_reference_proposal_development
+design_informed_by_prior_development_outcomes: true
+current_namespace_outcomes_inspected_before_freeze: false
+training_namespace: v8-r2-cell-tuned-cem-training-v3
+validation_namespace: v8-r2-cell-tuned-cem-validation-v3
+
+barrier_proposal_result:
+  path: results/g11_v8_p5_barrier_proposal_falsification_v1_2026-07-31.json
+  sha256: 1abe057952af5d4687b72f7266e82a22346cd1ff0ede51a356053ab011894286
+barrier_proposal_failure_audit:
+  path: results/g11_v8_p5_barrier_proposal_failure_audit_v1_2026-07-31.json
+  sha256: 0606e6add9df1abedf683d8cd9bf0e5bb14228f6e4f1166de215d525b1cdd48c
+prior_execution_failure:
+  path: results/g11_v8_p5_cell_tuned_cem_proposal_execution_failure_v1_2026-07-31.json
+  sha256: fe4ee0de301a12f445cbe1f342cfc6f9e5a5601e4f79132ee03ddcbd9f9293c0
+prior_cell_tuned_result:
+  path: results/g11_v8_p5_cell_tuned_cem_proposal_v2_2026-07-31.json
+  sha256: b55330ff3fd8adf4b60bcf3dced3eef4e4c7e0ad3bd094ec60b956331005b2d0
+prior_cell_tuned_audit:
+  path: results/g11_v8_p5_cell_tuned_cem_proposal_audit_v1_2026-07-31.json
+  sha256: 9f11f4a5d3b96c0fba3987b4f4ea855962e74b92a59ed0746f13042d5e8c8697
+threshold_binding:
+  path: configs/g11_v8/p5_threshold_manifest_binding_v2.yaml
+  sha256: 638b872cd660180dca20f6572c3ad0b3b84ef747ef29839bd152f0d73d7e3762
+
+cells:
+  - cell_id: h0.05-terminal_left_tail-p1e-05
+    target_methods: [raw_crosscheck]
+    initial_control: &initial
+      - [2.2, -1.1]
+      - [6.6, -3.3]
+      - [6.6, -3.3]
+      - [1.1, -0.55]
+  - cell_id: h0.05-discrete_lower_barrier-p1e-04
+    target_methods: [dcs_reference, raw_crosscheck]
+    initial_control: *initial
+  - cell_id: h0.05-discrete_lower_barrier-p1e-05
+    target_methods: [dcs_reference, raw_crosscheck]
+    initial_control: *initial
+  - cell_id: h0.12-terminal_left_tail-p1e-04
+    target_methods: [dcs_reference, raw_crosscheck]
+    initial_control: *initial
+  - cell_id: h0.12-discrete_lower_barrier-p1e-04
+    target_methods: [raw_crosscheck]
+    initial_control: *initial
+  - cell_id: h0.12-discrete_lower_barrier-p1e-05
+    target_methods: [raw_crosscheck]
+    initial_control: *initial
+  - cell_id: h0.20-terminal_left_tail-p1e-04
+    target_methods: [raw_crosscheck]
+    initial_control: *initial
+  - cell_id: h0.20-discrete_lower_barrier-p1e-05
+    target_methods: [raw_crosscheck]
+    initial_control: *initial
+
+training:
+  training_seed_replicates: 3
+  paths_per_iteration: 16384
+  maximum_iterations: 8
+  elite_quantile: 0.90
+  smoothing: 0.50
+  minimum_elite_paths: 256
+  control_bound: 12.0
+  target_level_repetitions: 2
+  price_driver_sign: negative
+  minimum_price_driver_magnitude: 0.05
+  smoke_training_seed_replicates: 1
+  smoke_paths_per_iteration: 512
+  smoke_maximum_iterations: 2
+
+proposal_families:
+  - id: low_amplitude
+    scales: [0.0, 0.25, 0.50, 0.75]
+    weights: [0.15, 0.20, 0.30, 0.35]
+  - id: centered_amplitude
+    scales: [0.0, 0.50, 0.75, 1.00]
+    weights: [0.10, 0.20, 0.35, 0.35]
+  - id: guarded_amplitude
+    scales: [0.0, 0.35, 0.70, 1.05]
+    weights: [0.15, 0.20, 0.35, 0.30]
+
+validation:
+  replicates: 8
+  paths_per_replicate: 8192
+  engine: fft
+  allocation_safety_factor: 6.0
+  maximum_final_samples: 8388608
+  selected_method_maximum_requested_to_cap_ratio: 0.50
+  minimum_raw_nonzero_contributions_per_replicate: 256
+  maximum_likelihood_normalization_absolute_z: 4.0
+  maximum_replicate_variance_to_median_ratio: 20.0
+  maximum_single_contribution_share: 0.10
+  smoke_cells: 1
+  smoke_proposal_families: 1
+  smoke_replicates: 2
+  smoke_paths_per_replicate: 512
+
+decision:
+  status: all_failed_cells_cem_development_open
+  selected_proposal_frozen: false
+  new_full_pilot_authorized: false
+  final_execution_authorized: false
+  performance_claim_authorized: false

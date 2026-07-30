@@ -29,14 +29,35 @@ from src.training import fit_rbergomi_piecewise_cem
 
 SCHEMA_V1 = "npi.g11.v8-p5-cell-tuned-cem-proposal.v1"
 SCHEMA_V2 = "npi.g11.v8-p5-cell-tuned-cem-proposal.v2"
-SUPPORTED_SCHEMAS = {SCHEMA_V1, SCHEMA_V2}
+SCHEMA_V3 = "npi.g11.v8-p5-cell-tuned-cem-proposal.v3"
+SUPPORTED_SCHEMAS = {SCHEMA_V1, SCHEMA_V2, SCHEMA_V3}
 RESULT_SCHEMAS = {
     SCHEMA_V1: "npi.g11.v8-p5-cell-tuned-cem-proposal-result.v1",
     SCHEMA_V2: "npi.g11.v8-p5-cell-tuned-cem-proposal-result.v2",
+    SCHEMA_V3: "npi.g11.v8-p5-cell-tuned-cem-proposal-result.v3",
 }
 EXPECTED_TARGETS = {
     "h0.20-discrete_lower_barrier-p1e-05": "raw_crosscheck",
     "h0.05-discrete_lower_barrier-p1e-05": "dcs_reference",
+}
+EXPECTED_V3_TARGETS = {
+    "h0.05-terminal_left_tail-p1e-05": ["raw_crosscheck"],
+    "h0.05-discrete_lower_barrier-p1e-04": [
+        "dcs_reference",
+        "raw_crosscheck",
+    ],
+    "h0.05-discrete_lower_barrier-p1e-05": [
+        "dcs_reference",
+        "raw_crosscheck",
+    ],
+    "h0.12-terminal_left_tail-p1e-04": [
+        "dcs_reference",
+        "raw_crosscheck",
+    ],
+    "h0.12-discrete_lower_barrier-p1e-04": ["raw_crosscheck"],
+    "h0.12-discrete_lower_barrier-p1e-05": ["raw_crosscheck"],
+    "h0.20-terminal_left_tail-p1e-04": ["raw_crosscheck"],
+    "h0.20-discrete_lower_barrier-p1e-05": ["raw_crosscheck"],
 }
 
 
@@ -66,9 +87,16 @@ def load_cell_tuned_config(path: Path) -> tuple[dict[str, Any], str]:
         "threshold_binding",
     ):
         _bound_path(config.get(field))
-    version = 1 if config["schema"] == SCHEMA_V1 else 2
-    if version == 2:
+    version = {
+        SCHEMA_V1: 1,
+        SCHEMA_V2: 2,
+        SCHEMA_V3: 3,
+    }[config["schema"]]
+    if version >= 2:
         _bound_path(config.get("prior_execution_failure"))
+    if version == 3:
+        _bound_path(config.get("prior_cell_tuned_result"))
+        _bound_path(config.get("prior_cell_tuned_audit"))
     if (
         config.get("design_informed_by_prior_development_outcomes") is not True
         or config.get("current_namespace_outcomes_inspected_before_freeze") is not False
@@ -79,11 +107,23 @@ def load_cell_tuned_config(path: Path) -> tuple[dict[str, Any], str]:
     ):
         raise ValueError("cell-tuned proposal provenance contract is invalid")
     cells = config.get("cells")
-    if (
-        not isinstance(cells, list)
-        or {cell.get("cell_id"): cell.get("target_method") for cell in cells}
-        != EXPECTED_TARGETS
-    ):
+    actual_targets = (
+        {
+            cell.get("cell_id"): cell.get("target_methods")
+            for cell in cells
+        }
+        if version == 3 and isinstance(cells, list)
+        else {
+            cell.get("cell_id"): cell.get("target_method")
+            for cell in cells
+        }
+        if isinstance(cells, list)
+        else {}
+    )
+    expected_targets: dict[str, Any] = (
+        EXPECTED_V3_TARGETS if version == 3 else EXPECTED_TARGETS
+    )
+    if not isinstance(cells, list) or actual_targets != expected_targets:
         raise ValueError("cell-tuned proposal must target the two audited failures")
     for cell in cells:
         initial = cell.get("initial_control")
@@ -140,9 +180,12 @@ def load_cell_tuned_config(path: Path) -> tuple[dict[str, Any], str]:
             or not math.isclose(sum(float(weight) for weight in weights), 1.0)
         ):
             raise ValueError("cell-tuned defensive mixture is invalid")
+    expected_replicates = 8 if version == 3 else 6
+    expected_ratio = 0.50 if version == 3 else 0.75
+    expected_raw_count = 256 if version == 3 else 20
     if (
         not isinstance(validation, dict)
-        or int(validation.get("replicates", 0)) != 6
+        or int(validation.get("replicates", 0)) != expected_replicates
         or int(validation.get("paths_per_replicate", 0)) != 8192
         or validation.get("engine") != "fft"
         or float(validation.get("allocation_safety_factor", 0.0)) != 6.0
@@ -152,15 +195,30 @@ def load_cell_tuned_config(path: Path) -> tuple[dict[str, Any], str]:
                 "selected_method_maximum_requested_to_cap_ratio", 0.0
             )
         )
-        != 0.75
+        != expected_ratio
         or int(
             validation.get("minimum_raw_nonzero_contributions_per_replicate", 0)
         )
-        != 20
+        != expected_raw_count
         or float(
             validation.get("maximum_likelihood_normalization_absolute_z", 0.0)
         )
         != 4.0
+        or (
+            version == 3
+            and (
+                float(
+                    validation.get(
+                        "maximum_replicate_variance_to_median_ratio", 0.0
+                    )
+                )
+                != 20.0
+                or float(
+                    validation.get("maximum_single_contribution_share", 0.0)
+                )
+                != 0.10
+            )
+        )
         or not isinstance(decision, dict)
         or decision.get("new_full_pilot_authorized") is not False
         or decision.get("final_execution_authorized") is not False
@@ -321,7 +379,7 @@ def _evaluate_candidate(
     context: Any,
     *,
     cell: dict[str, Any],
-    target_method: str,
+    target_methods: list[str],
     candidate_id: str,
     schedules: list[list[list[float]]],
     weights: list[float],
@@ -344,6 +402,9 @@ def _evaluate_candidate(
         method: [] for method in REFERENCE_METHODS
     }
     method_maxima: dict[str, list[float]] = {
+        method: [] for method in REFERENCE_METHODS
+    }
+    method_contribution_shares: dict[str, list[float]] = {
         method: [] for method in REFERENCE_METHODS
     }
     raw_nonzero_counts: list[int] = []
@@ -401,12 +462,31 @@ def _evaluate_candidate(
             method_variances[method].append(float(torch.var(values, unbiased=True)))
             method_means[method].append(float(torch.mean(values)))
             method_maxima[method].append(float(torch.max(torch.abs(values))))
+            absolute_sum = float(torch.sum(torch.abs(values)))
+            method_contribution_shares[method].append(
+                float(torch.max(torch.abs(values))) / absolute_sum
+                if absolute_sum > 0.0
+                else math.inf
+            )
             if method == "raw_crosscheck":
                 raw_nonzero_counts.append(int(torch.count_nonzero(values)))
     target_standard_error = 0.10 * 0.20 * float(cell["nominal_probability"])
     entries = []
     for method in REFERENCE_METHODS:
         design_variance = max(method_variances[method])
+        ordered_variances = sorted(method_variances[method])
+        middle = len(ordered_variances) // 2
+        median_variance = (
+            0.5
+            * (ordered_variances[middle - 1] + ordered_variances[middle])
+            if len(ordered_variances) % 2 == 0
+            else ordered_variances[middle]
+        )
+        variance_to_median = (
+            design_variance / median_variance
+            if median_variance > 0.0
+            else (1.0 if design_variance == 0.0 else math.inf)
+        )
         requested = max(
             8192,
             math.ceil(
@@ -422,6 +502,10 @@ def _evaluate_candidate(
                 "replicate_variances": method_variances[method],
                 "replicate_means": method_means[method],
                 "replicate_max_absolute_contributions": method_maxima[method],
+                "replicate_maximum_contribution_shares": (
+                    method_contribution_shares[method]
+                ),
+                "replicate_variance_to_median_ratio": variance_to_median,
                 "allocation_design_variance": design_variance,
                 "projected_final_samples": requested,
                 "requested_to_cap_ratio": requested
@@ -449,28 +533,56 @@ def _evaluate_candidate(
         if normalization.standard_error > 0.0
         else (0.0 if normalization.mean == 1.0 else math.inf)
     )
-    target_entry = next(entry for entry in entries if entry["method"] == target_method)
-    gates = {
-        "target_method_margin_pass": float(target_entry["requested_to_cap_ratio"])
-        <= float(
-            validation["selected_method_maximum_requested_to_cap_ratio"]
-        ),
+    common_gates = {
         "raw_coverage_pass": next(
             entry for entry in entries if entry["method"] == "raw_crosscheck"
         )["raw_coverage_pass"],
         "likelihood_normalization_pass": abs(normalization_z)
         <= float(validation["maximum_likelihood_normalization_absolute_z"]),
     }
+    method_gates = {
+        method: {
+            "target_method_margin_pass": float(entry["requested_to_cap_ratio"])
+            <= float(
+                validation["selected_method_maximum_requested_to_cap_ratio"]
+            ),
+            "replicate_variance_stability_pass": float(
+                entry["replicate_variance_to_median_ratio"]
+            )
+            <= float(
+                validation.get(
+                    "maximum_replicate_variance_to_median_ratio", math.inf
+                )
+            ),
+            "single_contribution_concentration_pass": max(
+                float(value)
+                for value in entry["replicate_maximum_contribution_shares"]
+            )
+            <= float(
+                validation.get("maximum_single_contribution_share", math.inf)
+            ),
+        }
+        for method in target_methods
+        for entry in entries
+        if entry["method"] == method
+    }
+    gates = {
+        **common_gates,
+        "all_target_methods_pass": all(
+            all(values.values()) for values in method_gates.values()
+        ),
+    }
     return {
         "candidate_id": candidate_id,
         "cell_id": cell["cell_id"],
-        "target_method": target_method,
+        "target_methods": target_methods,
         "weights": weights,
         "schedules": schedules,
         "entries": entries,
         "normalization_mean": normalization.mean,
         "normalization_standard_error": normalization.standard_error,
         "normalization_z": normalization_z,
+        "method_gates": method_gates,
         "gates": gates,
         "passes": all(gates.values()),
     }
@@ -517,6 +629,11 @@ def run_cell_tuned_proposal(
         specification = next(
             cell for cell in cells if cell["cell_id"] == fit["cell_id"]
         )
+        target_methods = (
+            list(specification["target_methods"])
+            if config["schema"] == SCHEMA_V3
+            else [str(specification["target_method"])]
+        )
         cell = context.cells_by_id[fit["cell_id"]]
         profile = tuple(
             (float(pair[0]), float(pair[1])) for pair in fit["control"]
@@ -531,7 +648,7 @@ def run_cell_tuned_proposal(
                     config,
                     context,
                     cell=cell,
-                    target_method=str(specification["target_method"]),
+                    target_methods=target_methods,
                     candidate_id=candidate_id,
                     schedules=_scaled_schedules(profile, family["scales"]),
                     weights=[float(weight) for weight in family["weights"]],
@@ -543,13 +660,21 @@ def run_cell_tuned_proposal(
                 candidate = {
                     "candidate_id": candidate_id,
                     "cell_id": cell["cell_id"],
-                    "target_method": specification["target_method"],
+                    "target_methods": target_methods,
                     "weights": [float(weight) for weight in family["weights"]],
                     "schedules": _scaled_schedules(profile, family["scales"]),
                     "entries": [],
                     "normalization_mean": None,
                     "normalization_standard_error": None,
                     "normalization_z": None,
+                    "method_gates": {
+                        method: {
+                            "target_method_margin_pass": False,
+                            "replicate_variance_stability_pass": False,
+                            "single_contribution_concentration_pass": False,
+                        }
+                        for method in target_methods
+                    },
                     "gates": {
                         "finite_paths_and_contributions": False,
                         "target_method_margin_pass": False,
@@ -564,36 +689,62 @@ def run_cell_tuned_proposal(
                 }
             candidates.append(candidate)
     selected: dict[str, dict[str, Any]] = {}
+    required_selection_count = 0
     for specification in cells:
-        passing = [
-            candidate
-            for candidate in candidates
-            if candidate["cell_id"] == specification["cell_id"]
-            and candidate["passes"]
-        ]
-        if not passing:
-            continue
-        target_method = specification["target_method"]
-        selected_candidate = min(
-            passing,
-            key=lambda candidate: next(
-                entry["requested_to_cap_ratio"]
-                for entry in candidate["entries"]
-                if entry["method"] == target_method
-            ),
+        target_methods = (
+            list(specification["target_methods"])
+            if config["schema"] == SCHEMA_V3
+            else [str(specification["target_method"])]
         )
-        selected[str(specification["cell_id"])] = {
-            "target_method": target_method,
-            "candidate_id": selected_candidate["candidate_id"],
-            "weights": selected_candidate["weights"],
-            "schedules": selected_candidate["schedules"],
-            "target_method_entry": next(
-                entry
-                for entry in selected_candidate["entries"]
-                if entry["method"] == target_method
-            ),
-        }
-    passed = len(selected) == len(cells)
+        cell_selected: dict[str, Any] = {}
+        for target_method in target_methods:
+            required_selection_count += 1
+            passing = [
+                candidate
+                for candidate in candidates
+                if candidate["cell_id"] == specification["cell_id"]
+                and candidate.get("numerical_failure") is None
+                and candidate["gates"]["raw_coverage_pass"]
+                and candidate["gates"]["likelihood_normalization_pass"]
+                and all(candidate["method_gates"][target_method].values())
+            ]
+            if not passing:
+                continue
+            selected_candidate = min(
+                passing,
+                key=lambda candidate: next(
+                    entry["requested_to_cap_ratio"]
+                    for entry in candidate["entries"]
+                    if entry["method"] == target_method
+                ),
+            )
+            cell_selected[target_method] = {
+                "candidate_id": selected_candidate["candidate_id"],
+                "weights": selected_candidate["weights"],
+                "schedules": selected_candidate["schedules"],
+                "target_method_entry": next(
+                    entry
+                    for entry in selected_candidate["entries"]
+                    if entry["method"] == target_method
+                ),
+                "method_gates": selected_candidate["method_gates"][
+                    target_method
+                ],
+            }
+        if config["schema"] == SCHEMA_V3:
+            selected[str(specification["cell_id"])] = cell_selected
+        elif cell_selected:
+            only_method = target_methods[0]
+            selected[str(specification["cell_id"])] = {
+                "target_method": only_method,
+                **cell_selected[only_method],
+            }
+    selected_count = (
+        sum(len(methods) for methods in selected.values())
+        if config["schema"] == SCHEMA_V3
+        else len(selected)
+    )
+    passed = selected_count == required_selection_count
     all_seeds = [record["seed"] for record in seed_records]
     if len(all_seeds) != len(set(all_seeds)):
         raise RuntimeError("cell-tuned training and validation seeds overlap")

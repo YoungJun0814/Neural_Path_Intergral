@@ -12,6 +12,7 @@ from experiments.g11_v8_p5_cell_tuned_cem_proposal import (
 
 CONFIG = ROOT / "configs/g11_v8/p5_cell_tuned_cem_proposal_v1.yaml"
 CONFIG_V2 = ROOT / "configs/g11_v8/p5_cell_tuned_cem_proposal_v2.yaml"
+CONFIG_V3 = ROOT / "configs/g11_v8/p5_all_failed_cells_cem_proposal_v3.yaml"
 
 
 def test_cell_tuned_cem_contract_is_frozen_and_fail_closed() -> None:
@@ -26,6 +27,15 @@ def test_cell_tuned_cem_contract_is_frozen_and_fail_closed() -> None:
     assert config_v2["training_namespace"].endswith("-v2")
     assert config_v2["validation_namespace"].endswith("-v2")
     assert config_v2["prior_execution_failure"]["sha256"]
+
+    config_v3, digest_v3 = load_cell_tuned_config(CONFIG_V3)
+    assert len(digest_v3) == 64
+    assert len(config_v3["cells"]) == 8
+    assert sum(len(cell["target_methods"]) for cell in config_v3["cells"]) == 11
+    assert config_v3["validation"]["replicates"] == 8
+    assert (
+        config_v3["validation"]["maximum_single_contribution_share"] == 0.10
+    )
 
 
 def test_cell_tuned_training_and_validation_seeds_are_disjoint() -> None:
