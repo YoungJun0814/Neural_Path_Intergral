@@ -16,7 +16,10 @@ from experiments.g11_v8_p5_production_scale_proposal import (
     load_production_scale_config,
 )
 
-AUDIT_SCHEMA = "npi.g11.v8-p5-production-scale-proposal-audit.v1"
+AUDIT_SCHEMAS = {
+    2: "npi.g11.v8-p5-production-scale-proposal-audit.v1",
+    3: "npi.g11.v8-p5-production-scale-proposal-audit.v2",
+}
 
 
 def _sha256(path: Path) -> str:
@@ -58,6 +61,15 @@ def audit_production_scale_result(
     result = json.loads(raw.decode("utf-8"))
     if not isinstance(result, dict):
         raise ValueError("production-scale result must be a mapping")
+    result_schema = result.get("schema")
+    if not isinstance(result_schema, str):
+        raise ValueError("production-scale result schema is malformed")
+    version = {
+        "npi.g11.v8-p5-production-scale-proposal-result.v2": 2,
+        "npi.g11.v8-p5-production-scale-proposal-result.v3": 3,
+    }.get(result_schema)
+    if version is None:
+        raise ValueError("unsupported production-scale result audit version")
     candidates = result.get("candidates")
     seed_records = result.get("seed_records")
     if not isinstance(candidates, list) or not isinstance(seed_records, list):
@@ -101,9 +113,50 @@ def audit_production_scale_result(
         == all(bool(value) for value in candidate["gates"].values())
         for candidate in candidates
     )
+    expected_candidate_count = 24 if version == 2 else 35
+    expected_raw_candidate_count = 15 if version == 2 else 20
+    expected_dcs_candidate_count = 9 if version == 2 else 15
+    expected_seed_count = 405 if version == 2 else 861
+    passing_by_requirement: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for candidate in candidates:
+        if isinstance(candidate, dict) and candidate.get("passes") is True:
+            key = (str(candidate["cell_id"]), str(candidate["method"]))
+            passing_by_requirement.setdefault(key, []).append(candidate)
+    expected_selected = {
+        key: min(
+            values,
+            key=lambda candidate: float(candidate["requested_to_cap_ratio"]),
+        )["candidate_id"]
+        for key, values in passing_by_requirement.items()
+    }
+    actual_selected = {
+        (str(cell_id), str(method)): selected["candidate_id"]
+        for cell_id, methods in result.get("selected_proposals", {}).items()
+        for method, selected in methods.items()
+    }
+    block_partition_pass = (
+        all(
+            signature["grouped_order_signature"]
+            for signature in grouped_signatures.values()
+        )
+        if version == 2
+        else all(
+            float(signature["maximum_to_minimum_mean_count_ratio"]) < 2.0
+            for signature in grouped_signatures.values()
+        )
+        and result.get("validation_design", {}).get("block_partition")
+        == "independent_seeded_uniform_permutation_before_equal_slicing"
+        and all(
+            replicate.get("block_permutation_seed") is not None
+            for candidate in candidates
+            if isinstance(candidate, dict)
+            for replicate in candidate.get("replicates", [])
+        )
+    )
+    expected_selected_count = 0 if version == 2 else 3
     checks = {
         "strict_json_and_schema_exact": result.get("schema")
-        == "npi.g11.v8-p5-production-scale-proposal-result.v2"
+        == f"npi.g11.v8-p5-production-scale-proposal-result.v{version}"
         and _all_json_finite(result),
         "config_protocol_and_clean_source_exact": result.get("config_sha256")
         == config_sha256
@@ -111,25 +164,23 @@ def audit_production_scale_result(
         and result.get("dirty_worktree") is False
         and isinstance(result.get("source_commit"), str)
         and len(result["source_commit"]) == 40,
-        "candidate_roster_exact": len(candidates) == 24
+        "candidate_roster_exact": len(candidates) == expected_candidate_count
         and len(candidate_ids) == len(set(candidate_ids))
-        and len(raw_candidates) == 15
-        and len(dcs_candidates) == 9
+        and len(raw_candidates) == expected_raw_candidate_count
+        and len(dcs_candidates) == expected_dcs_candidate_count
         and {str(candidate["cell_id"]) for candidate in raw_candidates}
         == raw_cells
         and {str(candidate["cell_id"]) for candidate in dcs_candidates}
         == dcs_cells,
-        "seed_ledger_unique": len(seeds) == 405 and len(seeds) == len(set(seeds)),
+        "seed_ledger_unique": len(seeds) == expected_seed_count
+        and len(seeds) == len(set(seeds)),
         "candidate_gates_self_consistent": candidate_gate_consistency,
         "falsification_exact": result.get("passed") is False
-        and int(result.get("selected_count", -1)) == 0
+        and int(result.get("selected_count", -1)) == expected_selected_count
         and int(result.get("required_selection_count", -1)) == 8
-        and result.get("selected_proposals") == {},
-        "grouped_component_order_detected": bool(grouped_signatures)
-        and all(
-            signature["grouped_order_signature"]
-            for signature in grouped_signatures.values()
-        ),
+        and actual_selected == expected_selected,
+        "block_partition_diagnostic_exact": bool(grouped_signatures)
+        and block_partition_pass,
         "decision_fail_closed": result.get("decision", {}).get(
             "proposal_manifest_build_authorized"
         )
@@ -141,7 +192,7 @@ def audit_production_scale_result(
     }
     failures = sorted(name for name, passed in checks.items() if not passed)
     return {
-        "schema": AUDIT_SCHEMA,
+        "schema": AUDIT_SCHEMAS[version],
         "config_sha256": config_sha256,
         "result_file_sha256": _sha256(result_path),
         "checks": checks,
@@ -150,13 +201,18 @@ def audit_production_scale_result(
         "passed": not failures,
         "decision": {
             "status": (
-                "production_scale_falsification_and_block_order_defect_confirmed"
+                (
+                    "production_scale_falsification_and_block_order_defect_confirmed"
+                    if version == 2
+                    else "permuted_block_partial_falsification_confirmed"
+                )
                 if not failures
                 else "production_scale_audit_failure"
             ),
-            "v2_training_namespace_burned": True,
-            "v2_validation_namespace_burned": True,
-            "permuted_block_protocol_required": True,
+            f"v{version}_training_namespace_burned": True,
+            f"v{version}_validation_namespace_burned": True,
+            "permuted_block_protocol_required": version == 2,
+            "proposal_weight_optimization_required": version == 3,
             "candidate_promoted": False,
             "proposal_manifest_build_authorized": False,
             "new_formal_pilot_authorized": False,
