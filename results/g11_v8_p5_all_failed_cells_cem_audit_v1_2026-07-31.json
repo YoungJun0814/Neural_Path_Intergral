@@ -1,0 +1,43 @@
+{
+  "checks": {
+    "allocation_formula_exact": true,
+    "candidate_roster_exact": true,
+    "decision_fail_closed": true,
+    "diagnostic_gates_exact": true,
+    "fit_roster_and_constraints_exact": true,
+    "formal_clean_execution": true,
+    "nine_of_eleven_requirements_pass": true,
+    "rank_one_schedules_exact": true,
+    "schema_protocol_config_exact": true,
+    "seed_roster_exact_and_unique": true,
+    "selection_rule_exact": true,
+    "two_missing_requirements_exact": true
+  },
+  "config_sha256": "37b94425ba9d501090517dd0e521c33f7b9d6929affb182de282066820f11945",
+  "decision": {
+    "final_execution_authorized": false,
+    "new_full_pilot_authorized": false,
+    "partial_selections_are_development_only": true,
+    "performance_claim_authorized": false,
+    "proposal_manifest_freeze_authorized": false,
+    "status": "all_failed_cells_cem_audit_pass",
+    "targeted_dense_mixture_development_required": true
+  },
+  "failures": [],
+  "missing_requirements": [
+    {
+      "cell_id": "h0.05-discrete_lower_barrier-p1e-05",
+      "method": "raw_crosscheck"
+    },
+    {
+      "cell_id": "h0.05-terminal_left_tail-p1e-05",
+      "method": "raw_crosscheck"
+    }
+  ],
+  "passed": true,
+  "required_requirement_count": 11,
+  "result_canonical_sha256": "fad6672b45d9003dbc2dc413903f7a165205296a31164af8364e0ac00eadb93e",
+  "result_file_sha256": "1f8f7ce2b4f43bfb4a230d4ffde37573f53a76cc39a8d5b641155c3de59aa67f",
+  "schema": "npi.g11.v8-p5-all-failed-cells-cem-audit.v1",
+  "selected_requirement_count": 9
+}
