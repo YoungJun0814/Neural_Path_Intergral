@@ -1,0 +1,162 @@
+schema: npi.g11.v8-completion-status-ledger.v1
+protocol_id: g11-v8-completion-status-ledger-v1
+date: "2026-07-31"
+phase: r0_status_freeze
+baseline_repository_commit: 134d15350ee8f40ff5d32395aa27991cd15ed0de
+design_informed_by_prior_development_outcomes: true
+current_namespace_outcomes_inspected_before_freeze: false
+
+artifacts:
+  - id: p0_claim_contract
+    path: configs/g11_v8/top_journal_claim_contract_v1.yaml
+    sha256: f73d2f1b89aebefa710e0315e0f0f8b1415062ec1595c2a86d2d457c613281cd
+    status: conditional
+    evidence_class: development_contract
+    performance_authorized: false
+  - id: p1_novelty_ledger
+    path: configs/g11_v8/novelty_search_ledger_v1.yaml
+    sha256: b3f31276194eee08333fd1d7c5eef68ea678a3e3c6840b2a6101316d4d820f19
+    status: conditional
+    evidence_class: primary_source_ledger
+    performance_authorized: false
+  - id: p2_theorem_ledger
+    path: configs/g11_v8/theorem_ledger_v1.yaml
+    sha256: 94301f1680805daec34e8219700a303dc71154f06ea758eb0a76adece2e8c2cb
+    status: conditional
+    evidence_class: finite_grid_proof_ledger
+    performance_authorized: false
+  - id: p3_rate_complexity_ledger
+    path: configs/g11_v8/rate_complexity_ledger_v1.yaml
+    sha256: a2e5e617077d26b06913fabffde290347482c3ad9db7a3909591dcf77d0cba22
+    status: conditional
+    evidence_class: scope_downgraded_theory_audit
+    performance_authorized: false
+  - id: p4_baseline_framework_ledger
+    path: configs/g11_v8/baseline_framework_ledger_v1.yaml
+    sha256: ebd314dc1b6f9d6fc0eb0f7285a912491fd5f4b562ac81b1ea564fd57ded81f0
+    status: conditional
+    evidence_class: framework_oracle
+    performance_authorized: false
+  - id: p5_reference_matrix_design
+    path: configs/g11_v8/p5_reference_matrix_design_v1.yaml
+    sha256: 7c92468bec444a04e0b1fbecbb09e09e325bf4d002b03496aa913816b8d34b4e
+    status: passed
+    evidence_class: outcome_blind_design
+    performance_authorized: false
+  - id: p5_threshold_binding
+    path: configs/g11_v8/p5_threshold_manifest_binding_v1.yaml
+    sha256: 9000876f39b370457fe7a4c5e367c078712bb72505927a8642b090451af79218
+    status: passed
+    evidence_class: clean_hash_bound_threshold
+    performance_authorized: false
+  - id: p6_statistical_design
+    path: configs/g11_v8/p6_statistical_design_v1.yaml
+    sha256: 408c1a925634da8195dee6372b7416e6c58e6174c3ee933081247db97a4f84e8
+    status: passed
+    evidence_class: pre_outcome_planning
+    performance_authorized: false
+  - id: p7_development_config
+    path: configs/g11_v8/p7_development_calibration_v1.yaml
+    sha256: 078eece405da59041c7c2edc9c976868d86f7baf419fa3cd645af3841a7a71df
+    status: passed
+    evidence_class: development_protocol
+    performance_authorized: false
+  - id: p7_development_result
+    path: results/g11_v8_p7_calibration_development_v1_2026-07-27.json
+    sha256: 141900b52fc8ae3580009e4b08afb4f10d4bbfebba3f37c3847b0a18aace578c
+    status: conditional
+    evidence_class: dirty_source_development_result
+    performance_authorized: false
+  - id: p5_threshold_calibration_result
+    path: results/g11_v8_p5_threshold_calibration_v1_2026-07-27.json
+    sha256: 27eabb261d079a8e67fb9389f492c532eb51d7c387ce3907437cfe9e5085ddb6
+    status: passed
+    evidence_class: clean_threshold_calibration
+    performance_authorized: false
+  - id: p5_reference_v1_receipt
+    path: results/g11_v8_p5_independent_reference_v1_failure_receipt_2026-07-27.json
+    sha256: 9692bd15df28d2ca0f852c393c203ae02d4ba8630982f5499f015d6bc1afe988
+    status: failed
+    evidence_class: precision_failure_receipt
+    performance_authorized: false
+  - id: p5_reference_v2_receipt
+    path: results/g11_v8_p5_independent_reference_v2_interruption_receipt_2026-07-27.json
+    sha256: 7c5f2f38b52a28d03d4fa609df4149a22e9d0560e7aa000c84dd25c9aeead2e5
+    status: interrupted
+    evidence_class: resource_interruption_receipt
+    performance_authorized: false
+  - id: completion_technical_plan
+    path: docs/plans/G11_V8_COMPLETION_IMPLEMENTATION_PLAN_2026-07-31.md
+    sha256: 1a75fc2a2cb3edfefc5735b5c5895cf56e47640a45c7efcd471cdb8722a6424b
+    status: passed
+    evidence_class: implementation_plan
+    performance_authorized: false
+  - id: completion_korean_plan
+    path: docs/plans/G11_V8_COMPLETION_IMPLEMENTATION_PLAN_KO_2026-07-31.md
+    sha256: b1356c33492315c23d4da35376f245928e544113851f7f811544e3983bda49fc
+    status: passed
+    evidence_class: implementation_plan
+    performance_authorized: false
+
+burned_namespaces:
+  - id: p5-threshold-calibration-development
+    terminal_status: completed
+    reusable: false
+    reason: threshold calibration streams consumed
+  - id: p5-reference
+    terminal_status: failed
+    reusable: false
+    reason: V1 reference precision gates failed after outcomes were inspected
+  - id: p5-reference-v2
+    terminal_status: interrupted
+    reusable: false
+    reason: V2 process consumed an uncheckpointed prefix before resource interruption
+  - id: v8-p7-development
+    terminal_status: completed
+    reusable: false
+    reason: P7 development calibration outcomes inspected
+
+reserved_namespaces:
+  - v8-r1-reference-smoke
+  - v8-r2-reference-development
+  - v8-r2-reference-qualification
+  - v8-p8-qualification
+  - v8-p9-freeze-receipt
+  - v8-p10-confirmation
+  - v8-p10-bootstrap
+  - v8-p11-independent-hardware
+
+open_obligations:
+  - sharded_checkpointed_reference_infrastructure
+  - fresh_high_precision_reference
+  - production_strong_external_baselines
+  - p7_falsification_benchmark
+  - quantitative_or_model_level_new_theorem
+  - updated_primary_source_novelty_review
+  - p8_independent_seed_qualification
+  - p9_outcome_blind_freeze
+  - p10_uncensored_confirmation
+  - p11_independent_physical_hardware
+  - external_mathematical_review
+  - external_code_review
+  - claim_to_evidence_manuscript_audit
+
+authorized_actions:
+  - r1_reference_infrastructure_implementation
+  - t1_novelty_and_theory_development
+
+prohibited_claims:
+  - full_p5_reference_complete
+  - external_comparator_superiority
+  - unconditional_rbergomi_mlmc_complexity
+  - continuous_barrier_exactness
+  - independent_physical_reproduction_complete
+  - top_journal_submission_ready
+
+decision:
+  status: r0_status_freeze_ready
+  next_blocking_phase: r1_reference_infrastructure
+  performance_claim_authorized: false
+  p8_qualification_authorized: false
+  p9_freeze_authorized: false
+  submission_authorized: false

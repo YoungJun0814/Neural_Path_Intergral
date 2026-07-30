@@ -202,6 +202,9 @@ Start with:
 - [V8 P6 statistical-design decision](docs/audits/G11_V8_P6_STATISTICAL_DESIGN_DECISION_2026-07-27.md)
 - [V8 P7 numerical-stability and calibration decision](docs/audits/G11_V8_P7_NUMERICAL_STABILITY_NOTE_2026-07-27.md)
 - [V8 P5 threshold-manifest binding decision](docs/audits/G11_V8_P5_THRESHOLD_BINDING_DECISION_2026-07-27.md)
+- [V8 completion implementation plan (Korean)](docs/plans/G11_V8_COMPLETION_IMPLEMENTATION_PLAN_KO_2026-07-31.md)
+- [V8 completion technical specification](docs/plans/G11_V8_COMPLETION_IMPLEMENTATION_PLAN_2026-07-31.md)
+- [V8 R0 completion baseline](docs/audits/G11_V8_COMPLETION_BASELINE_2026-07-31.md)
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
