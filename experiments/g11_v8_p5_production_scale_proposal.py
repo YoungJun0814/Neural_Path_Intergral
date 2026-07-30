@@ -35,10 +35,12 @@ from src.training import fit_rbergomi_piecewise_cem
 
 SCHEMA_V1 = "npi.g11.v8-p5-production-scale-proposal.v1"
 SCHEMA_V2 = "npi.g11.v8-p5-production-scale-proposal.v2"
-SUPPORTED_SCHEMAS = {SCHEMA_V1, SCHEMA_V2}
+SCHEMA_V3 = "npi.g11.v8-p5-production-scale-proposal.v3"
+SUPPORTED_SCHEMAS = {SCHEMA_V1, SCHEMA_V2, SCHEMA_V3}
 RESULT_SCHEMAS = {
     SCHEMA_V1: "npi.g11.v8-p5-production-scale-proposal-result.v1",
     SCHEMA_V2: "npi.g11.v8-p5-production-scale-proposal-result.v2",
+    SCHEMA_V3: "npi.g11.v8-p5-production-scale-proposal-result.v3",
 }
 RAW_METHOD = "raw_crosscheck"
 DCS_METHOD = "dcs_reference"
@@ -88,7 +90,11 @@ def load_production_scale_config(path: Path) -> tuple[dict[str, Any], str]:
     config = yaml.safe_load(raw.decode("utf-8"))
     if not isinstance(config, dict) or config.get("schema") not in SUPPORTED_SCHEMAS:
         raise ValueError("unexpected production-scale proposal schema")
-    version = 1 if config["schema"] == SCHEMA_V1 else 2
+    version = {
+        SCHEMA_V1: 1,
+        SCHEMA_V2: 2,
+        SCHEMA_V3: 3,
+    }[config["schema"]]
     failure_path = _bound_path(config.get("allocation_failure"))
     audit_path = _bound_path(config.get("allocation_failure_audit"))
     _bound_path(config.get("threshold_binding"))
@@ -111,6 +117,30 @@ def load_production_scale_config(path: Path) -> tuple[dict[str, Any], str]:
             is not True
         ):
             raise ValueError("V1 execution failure does not authorize V2 recovery")
+    if version == 3:
+        prior_result_path = _bound_path(config.get("prior_result"))
+        prior_audit_path = _bound_path(config.get("prior_audit"))
+        prior_result = json.loads(prior_result_path.read_text(encoding="utf-8"))
+        prior_audit = json.loads(prior_audit_path.read_text(encoding="utf-8"))
+        if (
+            not isinstance(prior_result, dict)
+            or prior_result.get("passed") is not False
+            or not isinstance(prior_audit, dict)
+            or prior_audit.get("passed") is not True
+            or prior_audit.get("decision", {}).get(
+                "permuted_block_protocol_required"
+            )
+            is not True
+            or prior_audit.get("decision", {}).get(
+                "v2_training_namespace_burned"
+            )
+            is not True
+            or prior_audit.get("decision", {}).get(
+                "v2_validation_namespace_burned"
+            )
+            is not True
+        ):
+            raise ValueError("V2 falsification audit does not authorize V3")
     audit = json.loads(audit_path.read_text(encoding="utf-8"))
     if (
         not isinstance(audit, dict)
@@ -171,13 +201,28 @@ def load_production_scale_config(path: Path) -> tuple[dict[str, Any], str]:
         or float(training.get("minimum_price_driver_magnitude", 0.0)) != 0.05
     ):
         raise ValueError("production-scale CEM training contract changed")
+    expected_raw_family_ids = (
+        [
+            "profile_compact",
+            "profile_broad",
+            "profile_dense",
+            "profile_refined",
+        ]
+        if version == 3
+        else ["profile_compact", "profile_broad", "profile_dense"]
+    )
+    expected_dcs_family_ids = (
+        ["rank_one_dense", "rank_one_low", "rank_one_focused"]
+        if version == 3
+        else ["rank_one_dense"]
+    )
     if (
         not isinstance(raw_families, list)
         or [family.get("id") for family in raw_families]
-        != ["profile_compact", "profile_broad", "profile_dense"]
+        != expected_raw_family_ids
         or not isinstance(dcs_families, list)
         or [family.get("id") for family in dcs_families]
-        != ["rank_one_dense"]
+        != expected_dcs_family_ids
     ):
         raise ValueError("production-scale proposal family roster changed")
     for family in raw_families:
@@ -203,6 +248,19 @@ def load_production_scale_config(path: Path) -> tuple[dict[str, Any], str]:
             or not math.isclose(sum(float(weight) for weight in weights), 1.0)
         ):
             raise ValueError("DCS rank-one family is malformed")
+        target_cells = family.get("target_cells")
+        if version == 3 and (
+            not isinstance(target_cells, list)
+            or not target_cells
+            or not set(str(cell) for cell in target_cells).issubset(
+                {
+                    cell_id
+                    for cell_id, method in EXPECTED_REQUIREMENTS
+                    if method == DCS_METHOD
+                }
+            )
+        ):
+            raise ValueError("V3 DCS family target cells are malformed")
     if (
         not isinstance(validation, dict)
         or int(validation.get("replicates", 0)) != 8
@@ -559,6 +617,22 @@ def _evaluate_candidate(
                 {"key": asdict(label_key), "seed": label_seed},
             )
         )
+        permutation_seed: int | None = None
+        if config["schema"] == SCHEMA_V3:
+            permutation_key, permutation_seed = _seed(
+                config,
+                stage="validation-block-permutation",
+                cell_id=str(cell["cell_id"]),
+                candidate_id=candidate_id,
+                replicate=replicate,
+                namespace=config["validation_namespace"],
+            )
+            seed_records.append(
+                {
+                    "key": asdict(permutation_key),
+                    "seed": permutation_seed,
+                }
+            )
         sample = _draw(
             simulator=simulator,
             controls=_controls(schedules, float(cell["maturity"])),
@@ -601,11 +675,24 @@ def _evaluate_candidate(
         full_shares.append(full_share)
         if method == RAW_METHOD:
             raw_nonzero_full.append(int(torch.count_nonzero(values)))
+        if permutation_seed is None:
+            permuted_values = values
+        else:
+            permutation_generator = torch.Generator(device="cpu")
+            permutation_generator.manual_seed(permutation_seed)
+            block_permutation = torch.randperm(
+                paths,
+                generator=permutation_generator,
+                device="cpu",
+            )
+            permuted_values = values[block_permutation]
         replicate_block_variances = []
         replicate_block_shares = []
         replicate_block_nonzero = []
         for block in range(blocks):
-            block_values = values[block * block_size : (block + 1) * block_size]
+            block_values = permuted_values[
+                block * block_size : (block + 1) * block_size
+            ]
             variance = float(torch.var(block_values, unbiased=True))
             absolute_sum = float(torch.sum(torch.abs(block_values)))
             share = (
@@ -639,6 +726,7 @@ def _evaluate_candidate(
                     replicate_block_nonzero if method == RAW_METHOD else None
                 ),
                 "maximum_likelihood": maximum_likelihoods[-1],
+                "block_permutation_seed": permutation_seed,
             }
         )
     design_variance = max(full_variances + block_variances)
@@ -805,6 +893,11 @@ def run_production_scale_proposal(
         if DCS_METHOD in target_methods:
             for profile_index, profile in enumerate(profiles[cell_id]):
                 for family in dcs_families:
+                    if (
+                        config["schema"] == SCHEMA_V3
+                        and cell_id not in family["target_cells"]
+                    ):
+                        continue
                     schedules, weights = _dcs_rank_one_mixture(
                         profile,
                         scales=[float(scale) for scale in family["scales"]],
@@ -899,6 +992,11 @@ def run_production_scale_proposal(
             "blocks_per_replicate": blocks,
             "allocation_variance_statistic": (
                 "maximum of full-replicate and within-replicate block variances"
+            ),
+            "block_partition": (
+                "independent_seeded_uniform_permutation_before_equal_slicing"
+                if config["schema"] == SCHEMA_V3
+                else "stored_component_grouped_order"
             ),
         },
         "fits": fits,

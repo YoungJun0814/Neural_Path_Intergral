@@ -24,11 +24,15 @@ CONFIG = ROOT / "configs/g11_v8/p5_production_scale_proposal_v1.yaml"
 RECOVERY_CONFIG = (
     ROOT / "configs/g11_v8/p5_production_scale_proposal_v2.yaml"
 )
+PERMUTED_CONFIG = (
+    ROOT / "configs/g11_v8/p5_production_scale_proposal_v3.yaml"
+)
 
 
 def test_production_scale_config_binds_exact_failed_requirement_roster() -> None:
     config, digest = load_production_scale_config(CONFIG)
     recovery, recovery_digest = load_production_scale_config(RECOVERY_CONFIG)
+    permuted, permuted_digest = load_production_scale_config(PERMUTED_CONFIG)
     actual = {
         (cell["cell_id"], method)
         for cell in config["cells"]
@@ -37,9 +41,14 @@ def test_production_scale_config_binds_exact_failed_requirement_roster() -> None
     assert actual == EXPECTED_REQUIREMENTS
     assert len(digest) == 64
     assert len(recovery_digest) == 64
+    assert len(permuted_digest) == 64
     assert recovery["training_namespace"].endswith("-v2")
     assert recovery["validation_namespace"].endswith("-v2")
     assert recovery["prior_execution_failure"]["sha256"]
+    assert permuted["training_namespace"].endswith("-v3")
+    assert permuted["validation_namespace"].endswith("-v3")
+    assert permuted["prior_result"]["sha256"]
+    assert permuted["prior_audit"]["sha256"]
     assert config["decision"]["new_formal_pilot_authorized"] is False
     assert config["decision"]["final_execution_authorized"] is False
 
@@ -84,11 +93,20 @@ def test_dcs_profile_mixture_is_exactly_rank_one() -> None:
 
 
 def test_production_scale_smoke_is_seed_disjoint_and_fail_closed() -> None:
-    result = run_production_scale_proposal(RECOVERY_CONFIG, smoke=True)
+    result = run_production_scale_proposal(PERMUTED_CONFIG, smoke=True)
     seeds = [record["seed"] for record in result["seed_records"]]
-    assert result["schema"].endswith("result.v2")
+    assert result["schema"].endswith("result.v3")
     assert result["required_selection_count"] == 1
     assert result["candidates"]
+    assert result["validation_design"]["block_partition"].startswith(
+        "independent_seeded"
+    )
+    assert result["seed_count"] == 7
+    assert all(
+        replicate["block_permutation_seed"] is not None
+        for candidate in result["candidates"]
+        for replicate in candidate["replicates"]
+    )
     assert {candidate["method"] for candidate in result["candidates"]} == {
         RAW_METHOD
     }
