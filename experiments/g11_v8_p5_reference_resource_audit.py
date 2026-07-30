@@ -120,7 +120,9 @@ def _forecasts(
 
 
 def audit_resource_authorization(
-    authorization: dict[str, Any], authorization_sha256: str
+    authorization: dict[str, Any],
+    authorization_sha256: str,
+    authorization_path: Path | None = None,
 ) -> dict[str, Any]:
     load_ok = True
     try:
@@ -129,7 +131,8 @@ def audit_resource_authorization(
         implementation_path = _bound_path(authorization["implementation_manifest"])
         context = load_context(config_path)
         _verify_authorization(
-            ROOT / "configs/g11_v8/p5_reference_pilot_authorization_v1.yaml",
+            authorization_path
+            or ROOT / "configs/g11_v8/p5_reference_pilot_authorization_v1.yaml",
             context,
         )
         benchmark = json.loads(benchmark_path.read_text(encoding="utf-8"))
@@ -177,7 +180,7 @@ def audit_resource_authorization(
         == _sha256(implementation_path),
         "clean_production_size_benchmark": benchmark.get("dirty_worktree") is False
         and benchmark.get("source_commit")
-        == "d778864952d4f33ca53a1b144e6709e08127ee50"
+        == authorization.get("formal_pilot", {}).get("benchmark_source_commit")
         and settings.get("samples_per_observation") == 32768
         and benchmark.get("benchmark_is_formal_reference_evidence") is False,
         "benchmark_roster_and_seeds_exact": roster == expected_roster
@@ -246,7 +249,9 @@ def main() -> None:
     parser.add_argument("--output", type=Path)
     arguments = parser.parse_args()
     authorization, digest = load_authorization(arguments.authorization)
-    report = audit_resource_authorization(authorization, digest)
+    report = audit_resource_authorization(
+        authorization, digest, arguments.authorization.resolve()
+    )
     encoded = json.dumps(report, indent=2, sort_keys=True, allow_nan=False)
     if arguments.output is not None:
         if arguments.output.exists():
