@@ -49,10 +49,15 @@ benchmark:
   forecast_steps: 128
   local_workers: 1
   local_parallel_efficiency: 1.0
-  external_cpu_workers: 32
+  expected_torch_threads_per_worker: 16
+  # One observed worker already uses 16 PyTorch CPU threads. Two workers model a
+  # 32-vCPU node without multiplying a 16-thread throughput measurement 32 times.
+  external_cpu_workers: 2
   external_parallel_efficiency: 0.70
   forecast_safety_factor: 2.0
-  local_available_memory_fraction: 0.60
+  # Compare peak process memory with a fixed fraction of physical RAM. Using
+  # post-benchmark "available" RAM would subtract the measuring process twice.
+  local_total_memory_fraction: 0.60
   local_maximum_wall_seconds: 14400.0
   external_available_memory_bytes: 120000000000
   external_maximum_wall_seconds: 21600.0

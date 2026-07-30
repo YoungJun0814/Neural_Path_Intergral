@@ -146,9 +146,13 @@ def load_sharded_reference_config(path: Path) -> tuple[dict[str, Any], str]:
         or len(representative_cells) != 3
         or len(set(representative_cells)) != 3
         or benchmark.get("methods") != list(REFERENCE_METHODS)
-        or int(benchmark.get("samples_per_observation", 0)) < 2
-        or int(benchmark.get("repetitions", 0)) < 1
-        or float(benchmark.get("forecast_safety_factor", 0.0)) < 1.0
+        or int(benchmark.get("samples_per_observation", 0)) != 32768
+        or int(benchmark.get("repetitions", 0)) != 1
+        or int(benchmark.get("local_workers", 0)) != 1
+        or int(benchmark.get("external_cpu_workers", 0)) != 2
+        or int(benchmark.get("expected_torch_threads_per_worker", 0)) != 16
+        or float(benchmark.get("local_total_memory_fraction", 0.0)) != 0.60
+        or float(benchmark.get("forecast_safety_factor", 0.0)) != 2.0
     ):
         raise ValueError("representative benchmark contract is invalid")
     if (

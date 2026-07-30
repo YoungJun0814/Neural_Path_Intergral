@@ -56,6 +56,11 @@ def run_benchmark(config_path: Path) -> dict[str, Any]:
     benchmark = config["benchmark"]
     sampling = config["sampling"]
     provenance = source_provenance()
+    if (
+        context.environment["torch_threads"]
+        != benchmark["expected_torch_threads_per_worker"]
+    ):
+        raise RuntimeError("benchmark PyTorch thread count differs from its contract")
     sample_count = int(benchmark["samples_per_observation"])
     observations: list[dict[str, Any]] = []
     forecast_inputs: list[ReferenceBenchmarkObservation] = []
@@ -137,8 +142,8 @@ def run_benchmark(config_path: Path) -> dict[str, Any]:
     steps = int(benchmark["forecast_steps"])
     safety_factor = float(benchmark["forecast_safety_factor"])
     local_memory = math.floor(
-        psutil.virtual_memory().available
-        * float(benchmark["local_available_memory_fraction"])
+        psutil.virtual_memory().total
+        * float(benchmark["local_total_memory_fraction"])
     )
     local_pilot = _forecast(
         forecast_inputs,
@@ -256,6 +261,8 @@ def run_benchmark(config_path: Path) -> dict[str, Any]:
             ),
             "recommended_pilot_hardware": pilot_recommendation,
             "recommended_end_to_end_hardware": end_to_end_recommendation,
+            "external_forecast_is_planning_only": True,
+            "external_hardware_benchmark_required_before_launch": True,
             "formal_pilot_may_start_only_from_clean_committed_source": True,
             "full_pilot_execution_authorized": False,
             "final_execution_authorized": False,
