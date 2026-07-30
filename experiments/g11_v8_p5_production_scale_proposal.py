@@ -740,7 +740,17 @@ def _evaluate_candidate(
         if median_block_variance > 0.0
         else (1.0 if max(block_variances) == 0.0 else math.inf)
     )
-    target_standard_error = 0.10 * 0.20 * float(cell["nominal_probability"])
+    relative_targets = validation.get(
+        "method_relative_standard_error_targets", {}
+    )
+    relative_target = (
+        float(relative_targets.get(method, 0.02))
+        if isinstance(relative_targets, dict)
+        else 0.02
+    )
+    if not 0.0 < relative_target < 1.0:
+        raise ValueError("method relative standard-error target is invalid")
+    target_standard_error = relative_target * float(cell["nominal_probability"])
     projected = max(
         8192,
         math.ceil(
