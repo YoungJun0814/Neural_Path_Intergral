@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import math
 from pathlib import Path
 
 import pytest
@@ -10,6 +12,7 @@ from experiments.g11_v8_p5_production_scale_proposal import (
     EXPECTED_REQUIREMENTS,
     RAW_METHOD,
     _dcs_rank_one_mixture,
+    _finite_or_none,
     _rank_one_diagnostic,
     _raw_full_rank_mixture,
     load_production_scale_config,
@@ -18,10 +21,14 @@ from experiments.g11_v8_p5_production_scale_proposal import (
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "configs/g11_v8/p5_production_scale_proposal_v1.yaml"
+RECOVERY_CONFIG = (
+    ROOT / "configs/g11_v8/p5_production_scale_proposal_v2.yaml"
+)
 
 
 def test_production_scale_config_binds_exact_failed_requirement_roster() -> None:
     config, digest = load_production_scale_config(CONFIG)
+    recovery, recovery_digest = load_production_scale_config(RECOVERY_CONFIG)
     actual = {
         (cell["cell_id"], method)
         for cell in config["cells"]
@@ -29,6 +36,10 @@ def test_production_scale_config_binds_exact_failed_requirement_roster() -> None
     }
     assert actual == EXPECTED_REQUIREMENTS
     assert len(digest) == 64
+    assert len(recovery_digest) == 64
+    assert recovery["training_namespace"].endswith("-v2")
+    assert recovery["validation_namespace"].endswith("-v2")
+    assert recovery["prior_execution_failure"]["sha256"]
     assert config["decision"]["new_formal_pilot_authorized"] is False
     assert config["decision"]["final_execution_authorized"] is False
 
@@ -73,9 +84,9 @@ def test_dcs_profile_mixture_is_exactly_rank_one() -> None:
 
 
 def test_production_scale_smoke_is_seed_disjoint_and_fail_closed() -> None:
-    result = run_production_scale_proposal(CONFIG, smoke=True)
+    result = run_production_scale_proposal(RECOVERY_CONFIG, smoke=True)
     seeds = [record["seed"] for record in result["seed_records"]]
-    assert result["schema"].endswith("result.v1")
+    assert result["schema"].endswith("result.v2")
     assert result["required_selection_count"] == 1
     assert result["candidates"]
     assert {candidate["method"] for candidate in result["candidates"]} == {
@@ -89,3 +100,11 @@ def test_production_scale_smoke_is_seed_disjoint_and_fail_closed() -> None:
     assert result["decision"]["new_formal_pilot_authorized"] is False
     assert result["decision"]["final_execution_authorized"] is False
     assert result["decision"]["performance_claim_authorized"] is False
+    json.dumps(result, allow_nan=False)
+
+
+def test_undefined_diagnostic_is_json_null_not_nonfinite() -> None:
+    assert _finite_or_none(math.inf) is None
+    assert _finite_or_none(-math.inf) is None
+    assert _finite_or_none(math.nan) is None
+    assert _finite_or_none(1.25) == 1.25

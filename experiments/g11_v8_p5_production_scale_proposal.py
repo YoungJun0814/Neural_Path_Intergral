@@ -33,8 +33,13 @@ from src.path_integral.provenance import runtime_provenance, source_provenance
 from src.physics_engine import RBergomiSimulator
 from src.training import fit_rbergomi_piecewise_cem
 
-SCHEMA = "npi.g11.v8-p5-production-scale-proposal.v1"
-RESULT_SCHEMA = "npi.g11.v8-p5-production-scale-proposal-result.v1"
+SCHEMA_V1 = "npi.g11.v8-p5-production-scale-proposal.v1"
+SCHEMA_V2 = "npi.g11.v8-p5-production-scale-proposal.v2"
+SUPPORTED_SCHEMAS = {SCHEMA_V1, SCHEMA_V2}
+RESULT_SCHEMAS = {
+    SCHEMA_V1: "npi.g11.v8-p5-production-scale-proposal-result.v1",
+    SCHEMA_V2: "npi.g11.v8-p5-production-scale-proposal-result.v2",
+}
 RAW_METHOD = "raw_crosscheck"
 DCS_METHOD = "dcs_reference"
 EXPECTED_REQUIREMENTS = {
@@ -81,11 +86,31 @@ def _failure_requirements(path: Path) -> set[tuple[str, str]]:
 def load_production_scale_config(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     config = yaml.safe_load(raw.decode("utf-8"))
-    if not isinstance(config, dict) or config.get("schema") != SCHEMA:
+    if not isinstance(config, dict) or config.get("schema") not in SUPPORTED_SCHEMAS:
         raise ValueError("unexpected production-scale proposal schema")
+    version = 1 if config["schema"] == SCHEMA_V1 else 2
     failure_path = _bound_path(config.get("allocation_failure"))
     audit_path = _bound_path(config.get("allocation_failure_audit"))
     _bound_path(config.get("threshold_binding"))
+    if version == 2:
+        prior_failure_path = _bound_path(config.get("prior_execution_failure"))
+        prior_failure = json.loads(prior_failure_path.read_text(encoding="utf-8"))
+        if (
+            not isinstance(prior_failure, dict)
+            or prior_failure.get("decision", {}).get(
+                "new_protocol_namespace_required"
+            )
+            is not True
+            or prior_failure.get("decision", {}).get(
+                "training_namespace_burned"
+            )
+            is not True
+            or prior_failure.get("decision", {}).get(
+                "validation_namespace_burned"
+            )
+            is not True
+        ):
+            raise ValueError("V1 execution failure does not authorize V2 recovery")
     audit = json.loads(audit_path.read_text(encoding="utf-8"))
     if (
         not isinstance(audit, dict)
@@ -106,9 +131,9 @@ def load_production_scale_config(path: Path) -> tuple[dict[str, Any], str]:
         config.get("design_informed_by_prior_development_outcomes") is not True
         or config.get("current_namespace_outcomes_inspected_before_freeze") is not False
         or config.get("training_namespace")
-        != "v8-r2-production-scale-proposal-training-v1"
+        != f"v8-r2-production-scale-proposal-training-v{version}"
         or config.get("validation_namespace")
-        != "v8-r2-production-scale-proposal-validation-v1"
+        != f"v8-r2-production-scale-proposal-validation-v{version}"
         or actual_requirements != EXPECTED_REQUIREMENTS
         or len(cells) != 7
     ):
@@ -407,6 +432,21 @@ def _median(values: list[float]) -> float:
     )
 
 
+def _finite_or_none(value: float) -> float | None:
+    return value if math.isfinite(value) else None
+
+
+def _assert_json_finite(value: Any, *, path: str = "result") -> None:
+    if isinstance(value, float) and not math.isfinite(value):
+        raise FloatingPointError(f"{path} contains a non-finite JSON float")
+    if isinstance(value, dict):
+        for key, item in value.items():
+            _assert_json_finite(item, path=f"{path}.{key}")
+    elif isinstance(value, (list, tuple)):
+        for index, item in enumerate(value):
+            _assert_json_finite(item, path=f"{path}[{index}]")
+
+
 def _candidate_failure(
     *,
     cell_id: str,
@@ -587,9 +627,11 @@ def _evaluate_candidate(
                 "mean": float(torch.mean(values)),
                 "variance": full_variance,
                 "maximum_absolute_contribution": float(torch.max(torch.abs(values))),
-                "maximum_contribution_share": full_share,
+                "maximum_contribution_share": _finite_or_none(full_share),
                 "block_variances": replicate_block_variances,
-                "block_maximum_contribution_shares": replicate_block_shares,
+                "block_maximum_contribution_shares": [
+                    _finite_or_none(value) for value in replicate_block_shares
+                ],
                 "raw_nonzero_count": (
                     raw_nonzero_full[-1] if method == RAW_METHOD else None
                 ),
@@ -664,7 +706,7 @@ def _evaluate_candidate(
         "replicates": entries,
         "full_replicate_variances": full_variances,
         "block_variances": block_variances,
-        "block_variance_to_median_ratio": variance_ratio,
+        "block_variance_to_median_ratio": _finite_or_none(variance_ratio),
         "allocation_design_variance": design_variance,
         "target_standard_error": target_standard_error,
         "projected_final_samples": projected,
@@ -672,7 +714,7 @@ def _evaluate_candidate(
         / int(validation["maximum_final_samples"]),
         "normalization_mean": normalization.mean,
         "normalization_standard_error": normalization.standard_error,
-        "normalization_z": normalization_z,
+        "normalization_z": _finite_or_none(normalization_z),
         "gates": gates,
         "passes": all(gates.values()),
     }
@@ -838,8 +880,8 @@ def run_production_scale_proposal(
         raise RuntimeError("production-scale training and validation seeds overlap")
     passed = selected_count == required_count
     provenance = source_provenance()
-    return {
-        "schema": RESULT_SCHEMA,
+    result = {
+        "schema": RESULT_SCHEMAS[config["schema"]],
         "protocol_id": config["protocol_id"],
         "config_sha256": config_sha256,
         "training_namespace": config["training_namespace"],
@@ -883,6 +925,8 @@ def run_production_scale_proposal(
         "environment": runtime_provenance(dtype="torch.float64"),
         **provenance,
     }
+    _assert_json_finite(result)
+    return result
 
 
 def main() -> None:

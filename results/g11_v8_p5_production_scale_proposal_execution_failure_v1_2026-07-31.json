@@ -1,0 +1,32 @@
+{
+  "schema": "npi.g11.v8-p5-production-scale-proposal-execution-failure.v1",
+  "protocol_id": "g11-v8-p5-production-scale-proposal-v1",
+  "date": "2026-07-31",
+  "config_path": "configs/g11_v8/p5_production_scale_proposal_v1.yaml",
+  "config_sha256": "247cc4ce2a1d448d7c14902274648f19dbb701957d0e354211bdb14ed9bf3344",
+  "source_commit": "c0a5b59dfc6bb978f4de101223b89c138894fe9c",
+  "dirty_worktree_at_start": false,
+  "training_namespace": "v8-r2-production-scale-proposal-training-v1",
+  "validation_namespace": "v8-r2-production-scale-proposal-validation-v1",
+  "failure_stage": "strict_json_serialization",
+  "exception_type": "ValueError",
+  "exception_message": "Out of range float values are not JSON compliant: inf",
+  "root_cause": "A zero absolute-contribution block used positive infinity as an internal undefined concentration ratio. The fail-closed diagnostic was not converted to a JSON-safe null before strict serialization.",
+  "stderr_path": "results/g11_v8_p5_production_scale_proposal_execution_failure_v1_2026-07-31.log",
+  "stderr_sha256": "ce4f8118a7594df511b154cfb7dd161264d7103cb1ea00e646a0e902ac70444c",
+  "result_file_created": false,
+  "candidate_outcomes_inspected": false,
+  "performance_outcomes_inspected": false,
+  "decision": {
+    "status": "strict_serialization_gate_failure",
+    "training_namespace_burned": true,
+    "validation_namespace_burned": true,
+    "candidate_promoted": false,
+    "proposal_manifest_build_authorized": false,
+    "new_formal_pilot_authorized": false,
+    "final_execution_authorized": false,
+    "performance_claim_authorized": false,
+    "submission_authorized": false,
+    "new_protocol_namespace_required": true
+  }
+}

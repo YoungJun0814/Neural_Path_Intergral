@@ -1,0 +1,109 @@
+schema: npi.g11.v8-p5-production-scale-proposal.v2
+protocol_id: g11-v8-p5-production-scale-proposal-v2
+date: "2026-07-31"
+phase: r2_method_specific_production_scale_proposal_recovery
+design_informed_by_prior_development_outcomes: true
+current_namespace_outcomes_inspected_before_freeze: false
+training_namespace: v8-r2-production-scale-proposal-training-v2
+validation_namespace: v8-r2-production-scale-proposal-validation-v2
+
+allocation_failure:
+  path: results/g11_v8_p5_reference_allocation_failure_v4_2026-07-31.json
+  sha256: 24b8af06926880a8ac8a108a228f40d223a136fe4aa7f6871d963143ae4b1f27
+allocation_failure_audit:
+  path: results/g11_v8_p5_reference_allocation_failure_audit_v4_2026-07-31.json
+  sha256: 1660ac969d2b17ca0e8f99fa6a81529c06c73aef25a4ac28395f3ae831f8ada5
+prior_execution_failure:
+  path: results/g11_v8_p5_production_scale_proposal_execution_failure_v1_2026-07-31.json
+  sha256: c5fecd28afe4801a46d5803d0d332989c1a1e6a926c37e3caf8e082e063b6419
+threshold_binding:
+  path: configs/g11_v8/p5_threshold_manifest_binding_v2.yaml
+  sha256: 638b872cd660180dca20f6572c3ad0b3b84ef747ef29839bd152f0d73d7e3762
+
+cells:
+  - cell_id: h0.05-terminal_left_tail-p1e-04
+    target_methods: [raw_crosscheck]
+    initial_control: &initial
+      - [2.2, -1.1]
+      - [6.6, -3.3]
+      - [6.6, -3.3]
+      - [1.1, -0.55]
+  - cell_id: h0.20-discrete_lower_barrier-p1e-04
+    target_methods: [raw_crosscheck]
+    initial_control: *initial
+  - cell_id: h0.12-discrete_lower_barrier-p1e-03
+    target_methods: [dcs_reference]
+    initial_control: *initial
+  - cell_id: h0.05-terminal_left_tail-p1e-05
+    target_methods: [raw_crosscheck, dcs_reference]
+    initial_control: *initial
+  - cell_id: h0.12-terminal_left_tail-p1e-05
+    target_methods: [dcs_reference]
+    initial_control: *initial
+  - cell_id: h0.12-discrete_lower_barrier-p1e-05
+    target_methods: [raw_crosscheck]
+    initial_control: *initial
+  - cell_id: h0.20-terminal_left_tail-p1e-05
+    target_methods: [raw_crosscheck]
+    initial_control: *initial
+
+training:
+  training_seed_replicates: 3
+  paths_per_iteration: 16384
+  maximum_iterations: 8
+  elite_quantile: 0.90
+  smoothing: 0.50
+  minimum_elite_paths: 256
+  control_bound: 12.0
+  target_level_repetitions: 2
+  price_driver_sign: negative
+  minimum_price_driver_magnitude: 0.05
+  smoke_training_seed_replicates: 1
+  smoke_paths_per_iteration: 512
+  smoke_maximum_iterations: 2
+
+raw_full_rank_families:
+  - id: profile_compact
+    scales: [0.55, 0.75, 0.95]
+    natural_weight: 0.08
+  - id: profile_broad
+    scales: [0.35, 0.65, 1.00]
+    natural_weight: 0.08
+  - id: profile_dense
+    scales: [0.35, 0.55, 0.75, 0.95]
+    natural_weight: 0.08
+
+dcs_rank_one_families:
+  - id: rank_one_dense
+    scales: [0.0, 0.35, 0.50, 0.65, 0.80, 0.95, 1.10, 1.25]
+    weights: [0.08, 0.05, 0.08, 0.12, 0.18, 0.20, 0.17, 0.12]
+
+validation:
+  replicates: 8
+  paths_per_replicate: 32768
+  blocks_per_replicate: 8
+  engine: fft
+  allocation_safety_factor: 6.0
+  maximum_final_samples: 8388608
+  maximum_requested_to_cap_ratio: 0.50
+  minimum_raw_nonzero_per_replicate: 1024
+  minimum_raw_nonzero_per_block: 64
+  maximum_likelihood_normalization_absolute_z: 4.0
+  maximum_block_variance_to_median_ratio: 30.0
+  maximum_full_contribution_share: 0.05
+  maximum_block_contribution_share: 0.25
+  smoke_cells: 1
+  smoke_raw_families: 1
+  smoke_dcs_families: 1
+  smoke_replicates: 2
+  smoke_paths_per_replicate: 512
+  smoke_blocks_per_replicate: 4
+
+decision:
+  status: production_scale_proposal_recovery_open
+  selected_proposals_frozen: false
+  proposal_manifest_build_authorized: false
+  new_formal_pilot_authorized: false
+  final_execution_authorized: false
+  performance_claim_authorized: false
+  submission_authorized: false
