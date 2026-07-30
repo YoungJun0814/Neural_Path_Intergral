@@ -18,12 +18,17 @@ from experiments.g11_v8_p5_cell_tuned_cem_proposal import (
 from experiments.g11_v8_p5_sharded_reference_common import ROOT, load_context
 from src.path_integral.provenance import runtime_provenance, source_provenance
 
-SCHEMA = "npi.g11.v8-p5-dense-amplitude-proposal.v1"
-RESULT_SCHEMA = "npi.g11.v8-p5-dense-amplitude-proposal-result.v1"
-EXPECTED_CELLS = [
+SCHEMA_V1 = "npi.g11.v8-p5-dense-amplitude-proposal.v1"
+SCHEMA_V2 = "npi.g11.v8-p5-dense-amplitude-proposal.v2"
+RESULT_SCHEMAS = {
+    SCHEMA_V1: "npi.g11.v8-p5-dense-amplitude-proposal-result.v1",
+    SCHEMA_V2: "npi.g11.v8-p5-dense-amplitude-proposal-result.v2",
+}
+EXPECTED_CELLS_V1 = [
     "h0.05-terminal_left_tail-p1e-05",
     "h0.05-discrete_lower_barrier-p1e-05",
 ]
+EXPECTED_CELLS_V2 = ["h0.05-terminal_left_tail-p1e-05"]
 
 
 def _sha256(path: Path) -> str:
@@ -44,7 +49,10 @@ def _bound_path(record: Any) -> Path:
 def load_dense_config(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     config = yaml.safe_load(raw.decode("utf-8"))
-    if not isinstance(config, dict) or config.get("schema") != SCHEMA:
+    if not isinstance(config, dict) or config.get("schema") not in {
+        SCHEMA_V1,
+        SCHEMA_V2,
+    }:
         raise ValueError("unexpected dense-amplitude proposal schema")
     for field in (
         "all_failed_cells_result",
@@ -52,30 +60,45 @@ def load_dense_config(path: Path) -> tuple[dict[str, Any], str]:
         "threshold_binding",
     ):
         _bound_path(config.get(field))
+    version = 1 if config["schema"] == SCHEMA_V1 else 2
+    if version == 2:
+        _bound_path(config.get("prior_dense_result"))
+        _bound_path(config.get("prior_dense_audit"))
+    expected_cells = EXPECTED_CELLS_V1 if version == 1 else EXPECTED_CELLS_V2
     if (
         config.get("design_informed_by_prior_development_outcomes") is not True
         or config.get("current_namespace_outcomes_inspected_before_freeze") is not False
         or config.get("validation_namespace")
-        != "v8-r2-dense-amplitude-validation-v1"
-        or config.get("cells") != EXPECTED_CELLS
+        != f"v8-r2-dense-amplitude-validation-v{version}"
+        or config.get("cells") != expected_cells
         or config.get("target_method") != "raw_crosscheck"
     ):
         raise ValueError("dense-amplitude provenance or target contract is invalid")
     families = config.get("proposal_families")
-    if (
-        not isinstance(families, list)
-        or [family.get("id") for family in families]
-        != ["dense_low", "dense_center", "dense_broad", "dense_guarded"]
-    ):
+    expected_families = (
+        ["dense_low", "dense_center", "dense_broad", "dense_guarded"]
+        if version == 1
+        else [
+            "focused_mid",
+            "focused_high",
+            "focused_smooth",
+            "broad_refined",
+            "balanced_refined",
+        ]
+    )
+    if not isinstance(families, list) or [
+        family.get("id") for family in families
+    ] != expected_families:
         raise ValueError("dense-amplitude family roster changed")
+    expected_experts = 7 if version == 1 else 8
     for family in families:
         scales = family.get("scales")
         weights = family.get("weights")
         if (
             not isinstance(scales, list)
             or not isinstance(weights, list)
-            or len(scales) != 7
-            or len(weights) != 7
+            or len(scales) != expected_experts
+            or len(weights) != expected_experts
             or float(scales[0]) != 0.0
             or any(float(scale) <= 0.0 for scale in scales[1:])
             or any(float(weight) <= 0.0 for weight in weights)
@@ -270,7 +293,7 @@ def run_dense_proposal(
     passed = len(selected) == len(cells)
     provenance = source_provenance()
     return {
-        "schema": RESULT_SCHEMA,
+        "schema": RESULT_SCHEMAS[config["schema"]],
         "protocol_id": config["protocol_id"],
         "config_sha256": config_sha256,
         "validation_namespace": config["validation_namespace"],

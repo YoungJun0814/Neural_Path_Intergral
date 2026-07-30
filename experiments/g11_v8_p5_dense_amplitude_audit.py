@@ -14,8 +14,9 @@ from experiments.g11_v8_p5_cell_tuned_cem_proposal import (
     _validation_seeds,
 )
 from experiments.g11_v8_p5_dense_amplitude_proposal import (
-    EXPECTED_CELLS,
-    RESULT_SCHEMA,
+    EXPECTED_CELLS_V1,
+    RESULT_SCHEMAS,
+    SCHEMA_V1,
     _load_v3_result,
     load_dense_config,
 )
@@ -42,12 +43,12 @@ def audit_dense_amplitude(
     profiles = {
         (fit["cell_id"], fit["training_replicate"]): fit["control"]
         for fit in source["training_fits"]
-        if fit["cell_id"] in EXPECTED_CELLS
+        if fit["cell_id"] in EXPECTED_CELLS_V1
     }
     candidates = result.get("candidates", [])
     expected_candidate_ids = {
         f"{cell_id}/v3-train-{replicate}/{family['id']}"
-        for cell_id in EXPECTED_CELLS
+        for cell_id in EXPECTED_CELLS_V1
         for replicate in range(3)
         for family in config["proposal_families"]
     }
@@ -159,7 +160,8 @@ def audit_dense_amplitude(
         )
     seed_values = [record["seed"] for record in expected_seed_records]
     checks = {
-        "schema_protocol_config_exact": result.get("schema") == RESULT_SCHEMA
+        "schema_protocol_config_exact": result.get("schema")
+        == RESULT_SCHEMAS[SCHEMA_V1]
         and result.get("protocol_id") == config["protocol_id"]
         and result.get("config_sha256") == config_sha256,
         "formal_clean_execution": result.get("smoke") is False
