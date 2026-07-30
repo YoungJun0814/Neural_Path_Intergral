@@ -1,0 +1,84 @@
+schema: npi.g11.v8-reference-infrastructure-contract.v1
+protocol_id: g11-v8-r1-reference-infrastructure-v1
+date: "2026-07-31"
+phase: r1_reference_infrastructure
+evidence_class: synthetic_mechanism_verification
+performance_claim_authorized: false
+
+predecessor:
+  path: configs/g11_v8/completion_status_ledger_v1.yaml
+  sha256: b4aa261cba5bc1258a59f47c6191f36cb388841dc383e0056efa4a76ec8d559b
+  required_status: r0_status_freeze_ready
+
+implementation:
+  modules:
+    - src/path_integral/reference_protocol.py
+    - src/path_integral/reference_execution.py
+    - src/path_integral/reference_shards.py
+    - src/path_integral/reference_aggregation.py
+    - src/path_integral/resource_planner.py
+  public_package_exports_required: true
+  cpu_float64_only: true
+  gpu_reference_authorized: false
+
+identity_contract:
+  methods: [dcs_reference, raw_crosscheck]
+  stages: [pilot, final]
+  canonical_encoding: sorted_compact_ascii_json
+  digest: sha256
+  seed_key_unique_across_all_shards: true
+  completed_artifact_overwrite_allowed: false
+
+allocation_contract:
+  pilot_replicates_minimum: 3
+  pilot_and_final_namespaces_disjoint: true
+  allocation_variance_statistic: maximum_replicate_variance
+  allocation_safety_factor_minimum: 1.0
+  final_count_fixed_before_final_sampling: true
+  same_stream_optional_stopping_allowed: false
+  cap_truncation_allowed: false
+  singleton_final_chunk_allowed: false
+
+aggregation_contract:
+  sufficient_statistics: [count, mean, m2]
+  merge_rule: chan_welford
+  equal_weight_shard_mean_allowed: false
+  exact_expected_shard_set_required: true
+  independent_method_agreement_maximum_z: 4.0
+  likelihood_normalization_maximum_absolute_z: 4.0
+  invalid_path_or_contribution_tolerance: 0
+
+restart_contract:
+  checkpoint_unit: immutable_completed_chunk
+  temporary_file_is_checkpoint: false
+  incomplete_chunk_recomputable_with_same_seed: true
+  completed_chunk_append_or_replace_allowed: false
+  interrupted_and_uninterrupted_aggregate_must_match: true
+
+resource_contract:
+  forecast_uses_slowest_observed_throughput: true
+  forecast_uses_largest_observed_memory: true
+  safety_factor_minimum: 1.0
+  infeasible_launch_authorized: false
+
+gate:
+  required_checks:
+    - predecessor_hash_and_status
+    - implementation_files_present
+    - public_exports_present
+    - canonical_hash_stability
+    - sufficient_statistics_exactness
+    - immutable_nonoverwriting_storage
+    - corrupted_shard_rejected
+    - duplicate_or_missing_shard_rejected
+    - seed_collision_rejected
+    - allocation_cap_fails_closed
+    - interrupted_resume_exact
+    - reference_acceptance_gates_propagate
+    - resource_forecast_fails_closed
+
+decision:
+  status: r1_contract_frozen_implementation_requires_audit
+  r2_reference_execution_authorized: false
+  performance_claim_authorized: false
+  submission_authorized: false

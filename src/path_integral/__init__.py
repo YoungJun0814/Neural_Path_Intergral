@@ -277,6 +277,35 @@ from .rbergomi_threshold_diagnostics import (
     RBergomiThresholdCouplingDiagnostics,
     evaluate_rbergomi_threshold_coupling,
 )
+from .reference_aggregation import (
+    aggregate_final_shards,
+    build_allocation_manifest,
+    validate_allocation_manifest,
+)
+from .reference_execution import ReferenceBatch, execute_reference_shard
+from .reference_protocol import (
+    ALLOCATION_SCHEMA,
+    REFERENCE_METHODS,
+    SHARD_SCHEMA,
+    ReferenceShardIdentity,
+    SufficientStatistics,
+    build_shard_artifact,
+    canonical_json_bytes,
+    canonical_sha256,
+    seed_key_sha256,
+    validate_shard_artifact,
+)
+from .reference_shards import (
+    find_completed_shards,
+    load_shard,
+    shard_path,
+    write_json_atomic_nonoverwriting,
+    write_shard_atomic,
+)
+from .resource_planner import (
+    ReferenceBenchmarkObservation,
+    forecast_reference_resources,
+)
 from .robust_crossover import (
     BoundedMomentInterval,
     CandidateElimination,
@@ -597,4 +626,26 @@ __all__ = [
     "load_v6_progress",
     "save_v6_progress",
     "v6_record_checkpoint_path",
+    "ALLOCATION_SCHEMA",
+    "REFERENCE_METHODS",
+    "SHARD_SCHEMA",
+    "ReferenceBenchmarkObservation",
+    "ReferenceBatch",
+    "ReferenceShardIdentity",
+    "SufficientStatistics",
+    "aggregate_final_shards",
+    "build_allocation_manifest",
+    "build_shard_artifact",
+    "canonical_json_bytes",
+    "canonical_sha256",
+    "find_completed_shards",
+    "execute_reference_shard",
+    "forecast_reference_resources",
+    "load_shard",
+    "seed_key_sha256",
+    "shard_path",
+    "validate_allocation_manifest",
+    "validate_shard_artifact",
+    "write_json_atomic_nonoverwriting",
+    "write_shard_atomic",
 ]

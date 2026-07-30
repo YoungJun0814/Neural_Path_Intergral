@@ -1,0 +1,32 @@
+{
+  "checks": {
+    "allocation_cap_fails_closed": true,
+    "canonical_hash_stability": true,
+    "contract_scope_fail_closed": true,
+    "corrupted_shard_rejected": true,
+    "duplicate_or_missing_shard_rejected": true,
+    "gate_roster_exact": true,
+    "immutable_nonoverwriting_storage": true,
+    "implementation_files_present": true,
+    "interrupted_resume_exact": true,
+    "mechanism_exception_free": true,
+    "predecessor_hash_and_status": true,
+    "public_exports_present": true,
+    "reference_acceptance_gates_propagate": true,
+    "resource_forecast_fails_closed": true,
+    "seed_collision_rejected": true,
+    "sufficient_statistics_exactness": true
+  },
+  "contract_sha256": "c8878f823ef7214fff8c864edd6cf48d85d754cea1a5d367b481f56542b39f38",
+  "decision": {
+    "formal_reference_complete": false,
+    "performance_claim_authorized": false,
+    "r2_development_benchmark_authorized": true,
+    "status": "r1_reference_infrastructure_pass",
+    "submission_authorized": false
+  },
+  "evidence_class": "synthetic_mechanism_verification",
+  "failures": [],
+  "passed": true,
+  "schema": "npi.g11.v8-reference-infrastructure-audit.v1"
+}

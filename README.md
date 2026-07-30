@@ -117,6 +117,13 @@ execution was interrupted after 6.9+ wall-clock hours without a terminal result,
 the V2 namespace is burned and a sharded/accelerated fresh-seed execution is required.
 A fresh-seed outcome-blind freeze will still be required after development; its full
 result and every performance claim remain open.
+R1 now implements the required immutable reference infrastructure: content-derived
+shard identities, atomic non-overwriting checkpoints, pilot-only fixed allocation,
+CPU/float64 and estimand binding, pilot/final seed-disjointness, exact Chan/Welford
+aggregation, independent DCS/raw agreement, and fail-closed resource forecasts.
+The interrupted-versus-uninterrupted synthetic mechanism audit passes. This only
+authorizes R2 development benchmarking; no new 24-cell reference or performance
+claim has been produced.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -138,7 +145,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **680/680 tests on 2026-07-25**.
+The complete local regression suite passed **757/757 tests on 2026-07-31**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finite grid rather than a continuously monitored event. V7
@@ -151,6 +158,10 @@ are explicit V8 gates and may not be hidden by relabelling prior results.
 Start with:
 
 - [V11 research and implementation plan](CORRECTION_FOCUSED_DCS_MGI_MLMC_PLAN_V11.md)
+- [V8 completion plan](docs/plans/G11_V8_COMPLETION_IMPLEMENTATION_PLAN_2026-07-31.md)
+- [V8 completion plan (Korean)](docs/plans/G11_V8_COMPLETION_IMPLEMENTATION_PLAN_KO_2026-07-31.md)
+- [V8 R1 sharded-reference theory](docs/theory/G11_V8_R1_REFERENCE_SHARD_THEORY.md)
+- [V8 R1 infrastructure decision](docs/audits/G11_V8_R1_REFERENCE_INFRASTRUCTURE_DECISION_2026-07-31.md)
 - [G11 implementation and error audit](docs/audits/G11_IMPLEMENTATION_AND_ERROR_AUDIT_2026-07-19.md)
 - [Theorem statements](docs/theory/G11_THEOREMS.md) and [proof audit](docs/theory/G11_PROOF_AUDIT.md)
 - [M7 freeze-readiness review](docs/audits/G11_M7_FREEZE_READINESS_2026-07-19.md)
