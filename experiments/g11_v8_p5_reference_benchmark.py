@@ -80,7 +80,7 @@ def run_benchmark(config_path: Path) -> dict[str, Any]:
                     context,
                     identity,
                     requested_samples=sample_count,
-                    parent_sha256=context.binding_sha256,
+                    parent_sha256=context.reference_parent_sha256,
                     source_commit=provenance["source_commit"],
                     dirty_worktree=provenance["dirty_worktree"],
                     benchmark=True,

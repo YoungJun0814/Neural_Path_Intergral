@@ -1,0 +1,73 @@
+schema: npi.g11.v8-p5-sharded-reference-execution.v4
+protocol_id: g11-v8-p5-sharded-reference-cell-tuned-v1
+date: "2026-07-31"
+phase: r2_cell_tuned_reference_execution
+design_informed_by_prior_development_outcomes: true
+current_namespace_outcomes_inspected_before_freeze: false
+
+threshold_binding:
+  path: configs/g11_v8/p5_threshold_manifest_binding_v2.yaml
+  sha256: 638b872cd660180dca20f6572c3ad0b3b84ef747ef29839bd152f0d73d7e3762
+proposal_manifest:
+  path: results/g11_v8_p5_reference_proposal_manifest_v1_2026-07-31.json
+  sha256: 40aa6c5e4662955fcf0079678c50198a57a39242c3cf7a543c6227cf918489a6
+proposal_manifest_audit:
+  path: results/g11_v8_p5_reference_proposal_manifest_audit_v1_2026-07-31.json
+  sha256: ed4d8c1287731faa07f5eceb54160d5ef5e7309aac036485a1dcb7d48832cda6
+
+reference_contract:
+  estimand: fixed_finest_grid
+  continuous_time_claim: false
+  methods: [dcs_reference, raw_crosscheck]
+  dtype: float64
+  device: cpu
+  final_relative_rmse_design_target: 0.20
+  maximum_reference_se_fraction_of_final_target: 0.10
+  maximum_combined_z_score: 4.0
+  maximum_likelihood_normalization_absolute_z: 4.0
+  independent_method_streams_required: true
+  ordinary_mean_required: true
+  self_normalization_allowed: false
+
+sampling:
+  pilot_namespace: v8-r2-reference-cell-tuned-pilot-v1
+  final_namespace: v8-r2-reference-cell-tuned-final-v1
+  pilot_replicates: 8
+  pilot_samples_per_replicate: 32768
+  minimum_final_samples: 8192
+  maximum_final_samples: 8388608
+  final_chunk_size: 4096
+  allocation_safety_factor: 6.0
+  allocation_variance_statistic: maximum_replicate_variance
+  engine: fft
+
+benchmark:
+  namespace: v8-r2-reference-cell-tuned-benchmark-v1
+  representative_cells:
+    - h0.05-terminal_left_tail-p1e-05
+    - h0.05-discrete_lower_barrier-p1e-05
+    - h0.12-terminal_left_tail-p1e-02
+  methods: [dcs_reference, raw_crosscheck]
+  samples_per_observation: 32768
+  repetitions: 1
+  forecast_total_method_cell_count: 48
+  forecast_steps: 128
+  local_workers: 1
+  local_parallel_efficiency: 1.0
+  expected_torch_threads_per_worker: 16
+  external_cpu_workers: 2
+  external_parallel_efficiency: 0.70
+  forecast_safety_factor: 2.0
+  local_total_memory_fraction: 0.60
+  local_maximum_wall_seconds: 14400.0
+  external_available_memory_bytes: 120000000000
+  external_maximum_wall_seconds: 21600.0
+
+decision:
+  status: representative_benchmark_open
+  representative_benchmark_authorized: true
+  full_pilot_execution_authorized: false
+  final_execution_authorized: false
+  reference_complete: false
+  performance_claim_authorized: false
+  submission_authorized: false

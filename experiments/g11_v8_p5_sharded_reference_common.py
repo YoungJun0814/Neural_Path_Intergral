@@ -33,8 +33,9 @@ from src.path_integral.reference_protocol import (
 from src.path_integral.seed_ledger import SeedKey, SeedLedger, derive_seed
 from src.physics_engine import RBergomiSimulator
 
-SCHEMA = "npi.g11.v8-p5-sharded-reference-execution.v3"
-ROOT_KEYS = {
+SCHEMA_V3 = "npi.g11.v8-p5-sharded-reference-execution.v3"
+SCHEMA_V4 = "npi.g11.v8-p5-sharded-reference-execution.v4"
+ROOT_KEYS_V3 = {
     "schema",
     "protocol_id",
     "date",
@@ -47,6 +48,7 @@ ROOT_KEYS = {
     "benchmark",
     "decision",
 }
+ROOT_KEYS_V4 = ROOT_KEYS_V3 | {"proposal_manifest", "proposal_manifest_audit"}
 
 
 @dataclass(frozen=True)
@@ -60,6 +62,8 @@ class ShardedReferenceContext:
     cells_by_id: dict[str, dict[str, Any]]
     environment: dict[str, Any]
     environment_sha256: str
+    proposal_entries_by_key: dict[tuple[str, str], dict[str, Any]]
+    reference_parent_sha256: str
 
 
 def _sha256(path: Path) -> str:
@@ -85,13 +89,25 @@ def load_sharded_reference_config(path: Path) -> tuple[dict[str, Any], str]:
     config = yaml.safe_load(raw.decode("utf-8"))
     if (
         not isinstance(config, dict)
-        or config.get("schema") != SCHEMA
-        or set(config) != ROOT_KEYS
+        or config.get("schema") not in {SCHEMA_V3, SCHEMA_V4}
+        or set(config)
+        != (ROOT_KEYS_V3 if config.get("schema") == SCHEMA_V3 else ROOT_KEYS_V4)
     ):
         raise ValueError("unexpected or malformed sharded-reference V3 config")
+    version = 3 if config["schema"] == SCHEMA_V3 else 4
+    expected_protocol = (
+        "g11-v8-p5-sharded-reference-development-v1"
+        if version == 3
+        else "g11-v8-p5-sharded-reference-cell-tuned-v1"
+    )
+    expected_phase = (
+        "r2_reference_development"
+        if version == 3
+        else "r2_cell_tuned_reference_execution"
+    )
     if (
-        config.get("protocol_id") != "g11-v8-p5-sharded-reference-development-v1"
-        or config.get("phase") != "r2_reference_development"
+        config.get("protocol_id") != expected_protocol
+        or config.get("phase") != expected_phase
         or config.get("design_informed_by_prior_development_outcomes") is not True
         or config.get("current_namespace_outcomes_inspected_before_freeze") is not False
     ):
@@ -127,8 +143,18 @@ def load_sharded_reference_config(path: Path) -> tuple[dict[str, Any], str]:
     ):
         raise ValueError("sharded-reference statistical contract is invalid")
     if (
-        sampling.get("pilot_namespace") != "v8-r2-reference-development"
-        or sampling.get("final_namespace") != "v8-r2-reference-development-final"
+        sampling.get("pilot_namespace")
+        != (
+            "v8-r2-reference-development"
+            if version == 3
+            else "v8-r2-reference-cell-tuned-pilot-v1"
+        )
+        or sampling.get("final_namespace")
+        != (
+            "v8-r2-reference-development-final"
+            if version == 3
+            else "v8-r2-reference-cell-tuned-final-v1"
+        )
         or int(sampling.get("pilot_replicates", 0)) != 8
         or int(sampling.get("pilot_samples_per_replicate", 0)) != 32768
         or int(sampling.get("minimum_final_samples", 0)) != 8192
@@ -176,11 +202,17 @@ def load_context(config_path: Path) -> ShardedReferenceContext:
         raise ValueError(f"R2 threshold binding failed: {binding_audit['failures']}")
     protocol = binding["reference_protocol"]
     sampling = config["sampling"]
+    is_v3 = config["schema"] == SCHEMA_V3
     if (
         binding_sha256 != config["threshold_binding"]["sha256"]
-        or protocol["id"] != config["protocol_id"]
-        or protocol["pilot_namespace"] != sampling["pilot_namespace"]
-        or protocol["final_namespace"] != sampling["final_namespace"]
+        or (
+            is_v3
+            and (
+                protocol["id"] != config["protocol_id"]
+                or protocol["pilot_namespace"] != sampling["pilot_namespace"]
+                or protocol["final_namespace"] != sampling["final_namespace"]
+            )
+        )
         or protocol["methods"] != config["reference_contract"]["methods"]
         or protocol["estimand"] != config["reference_contract"]["estimand"]
         or protocol["dtype"] != config["reference_contract"]["dtype"]
@@ -212,6 +244,53 @@ def load_context(config_path: Path) -> ShardedReferenceContext:
     }
     if len(cells_by_id) != 24:
         raise ValueError("threshold manifest cell IDs must be unique")
+    proposal_entries_by_key: dict[tuple[str, str], dict[str, Any]] = {}
+    reference_parent_sha256 = binding_sha256
+    if not is_v3:
+        proposal_path = _bound_path(config["proposal_manifest"])
+        proposal_audit_path = _bound_path(config["proposal_manifest_audit"])
+        proposal_value = json.loads(proposal_path.read_text(encoding="utf-8"))
+        proposal_audit_value = json.loads(
+            proposal_audit_path.read_text(encoding="utf-8")
+        )
+        if (
+            not isinstance(proposal_value, dict)
+            or proposal_value.get("schema")
+            != "npi.g11.v8-p5-reference-proposal-manifest.v1"
+            or proposal_value.get("protocol_id") != config["protocol_id"]
+            or proposal_value.get("pilot_namespace")
+            != sampling["pilot_namespace"]
+            or proposal_value.get("final_namespace")
+            != sampling["final_namespace"]
+            or proposal_value.get("threshold_manifest_sha256")
+            != binding["threshold_manifest_sha256"]
+            or proposal_value.get("methods")
+            != config["reference_contract"]["methods"]
+            or not isinstance(proposal_audit_value, dict)
+            or proposal_audit_value.get("passed") is not True
+            or proposal_audit_value.get("manifest_file_sha256")
+            != config["proposal_manifest"]["sha256"]
+            or proposal_audit_value.get("decision", {}).get(
+                "new_execution_config_authorized"
+            )
+            is not True
+        ):
+            raise ValueError("cell-tuned proposal manifest or audit is invalid")
+        proposal_entries = proposal_value.get("entries")
+        if not isinstance(proposal_entries, list) or len(proposal_entries) != 48:
+            raise ValueError("cell-tuned proposal manifest must have 48 entries")
+        proposal_entries_by_key = {
+            (str(entry["cell_id"]), str(entry["method"])): entry
+            for entry in proposal_entries
+            if isinstance(entry, dict)
+        }
+        if set(proposal_entries_by_key) != {
+            (cell_id, method)
+            for cell_id in cells_by_id
+            for method in REFERENCE_METHODS
+        }:
+            raise ValueError("cell-tuned proposal manifest matrix is incomplete")
+        reference_parent_sha256 = config["proposal_manifest"]["sha256"]
     representative_cells = config["benchmark"]["representative_cells"]
     if not set(representative_cells).issubset(cells_by_id):
         raise ValueError("representative benchmark references an unknown cell")
@@ -226,6 +305,8 @@ def load_context(config_path: Path) -> ShardedReferenceContext:
         cells_by_id=cells_by_id,
         environment=environment,
         environment_sha256=canonical_sha256(environment),
+        proposal_entries_by_key=proposal_entries_by_key,
+        reference_parent_sha256=reference_parent_sha256,
     )
 
 
@@ -294,6 +375,9 @@ def draw_actual_reference_batch(
         count=requested_samples,
         ledger=ledger,
         protocol_id=f"{identity.protocol_id}/{identity.namespace}",
+        proposal=context.proposal_entries_by_key.get(
+            (identity.cell_id, identity.method)
+        ),
     )
     expected_digest, proposal_seed, label_seed = reference_seed_material(identity)
     actual_seeds = {record.seed for record in ledger.records}

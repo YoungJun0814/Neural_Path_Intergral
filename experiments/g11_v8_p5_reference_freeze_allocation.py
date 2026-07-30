@@ -46,7 +46,7 @@ def freeze_allocation(
         protocol_id=context.config["protocol_id"],
         config_sha256=context.config_sha256,
         threshold_manifest_sha256=context.binding["threshold_manifest_sha256"],
-        pilot_parent_sha256=context.binding_sha256,
+        pilot_parent_sha256=context.reference_parent_sha256,
         pilot_namespace=sampling["pilot_namespace"],
         final_namespace=sampling["final_namespace"],
         expected_cells=list(context.cells_by_id),

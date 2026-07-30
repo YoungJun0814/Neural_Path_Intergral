@@ -22,6 +22,7 @@ from src.path_integral import (
     SeedKey,
     SeedLedger,
     TerminalThresholdTask,
+    TimePiecewiseTwoDriverControl,
     evaluate_rbergomi_dcs_level,
     reference_agreement,
 )
@@ -195,6 +196,7 @@ def _draw_values(
     count: int,
     ledger: SeedLedger,
     protocol_id: str,
+    proposal: dict[str, Any] | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor]:
     task_name = str(cell["task"])
     proposal_seed, label_seed = _seeds(
@@ -213,11 +215,35 @@ def _draw_values(
         "rho": float(cell["rho"]),
         "H": float(cell["hurst"]),
     }
-    weights = torch.tensor(threshold_config["proposal"]["weights"], dtype=torch.float64)
+    if proposal is None:
+        controls = _controls(threshold_config, task_name)
+        weights = torch.tensor(
+            threshold_config["proposal"]["weights"], dtype=torch.float64
+        )
+    else:
+        schedules = proposal.get("schedules")
+        proposal_weights = proposal.get("weights")
+        if (
+            not isinstance(schedules, list)
+            or not isinstance(proposal_weights, list)
+            or len(schedules) != len(proposal_weights)
+        ):
+            raise ValueError("reference proposal manifest entry is malformed")
+        controls = tuple(
+            TimePiecewiseTwoDriverControl(
+                tuple(
+                    (float(segment[0]), float(segment[1]))
+                    for segment in schedule
+                ),
+                maturity=float(cell["maturity"]),
+            )
+            for schedule in schedules
+        )
+        weights = torch.tensor(proposal_weights, dtype=torch.float64)
     engine = cast(Literal["fft", "reference"], threshold_config["sampling"]["engine"])
     sample = _draw(
         simulator=simulator,
-        controls=_controls(threshold_config, task_name),
+        controls=controls,
         weights=weights,
         model=model,
         steps=int(cell["finest_steps"]),

@@ -117,7 +117,7 @@ def _validate_existing(
         artifact["config_sha256"] != context.config_sha256
         or artifact["threshold_manifest_sha256"]
         != context.binding["threshold_manifest_sha256"]
-        or artifact["parent_sha256"] != context.binding_sha256
+        or artifact["parent_sha256"] != context.reference_parent_sha256
         or artifact["source_commit"] != source_commit
         or artifact["dirty_worktree"] is not False
         or artifact["environment_sha256"] != context.environment_sha256
@@ -192,7 +192,7 @@ def run_pilots(
                     context,
                     identity,
                     requested_samples=requested,
-                    parent_sha256=context.binding_sha256,
+                    parent_sha256=context.reference_parent_sha256,
                     source_commit=provenance["source_commit"],
                     dirty_worktree=False,
                 )
