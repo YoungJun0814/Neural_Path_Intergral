@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import TypeAlias
+from typing import Literal, TypeAlias
 
 import torch
 
@@ -19,6 +19,7 @@ from src.physics_engine import RBergomiSimulator
 
 PiecewiseValues = tuple[tuple[float, float], ...]
 PiecewiseCEMTask: TypeAlias = TerminalThresholdTask | DiscreteBarrierHitTask | DownsideExcursionTask
+PriceDriverSign: TypeAlias = Literal["negative", "positive"] | None
 
 
 @dataclass(frozen=True)
@@ -66,6 +67,38 @@ def _segment_sufficient_statistics(
     return torch.stack(statistics, dim=1)
 
 
+def _project_control(
+    control: torch.Tensor,
+    *,
+    control_bound: float,
+    price_driver_sign: PriceDriverSign,
+    minimum_price_driver_magnitude: float,
+) -> torch.Tensor:
+    """Project a CEM update onto its frozen box and price-sign constraints."""
+
+    projected = torch.clamp(control, min=-control_bound, max=control_bound)
+    if price_driver_sign is None:
+        return projected
+    if minimum_price_driver_magnitude <= 0.0:
+        raise ValueError(
+            "a constrained price driver requires a positive minimum magnitude"
+        )
+    result = projected.clone()
+    if price_driver_sign == "negative":
+        result[:, 1] = torch.minimum(
+            result[:, 1],
+            torch.full_like(result[:, 1], -minimum_price_driver_magnitude),
+        )
+    elif price_driver_sign == "positive":
+        result[:, 1] = torch.maximum(
+            result[:, 1],
+            torch.full_like(result[:, 1], minimum_price_driver_magnitude),
+        )
+    else:
+        raise ValueError("price_driver_sign must be negative, positive, or None")
+    return result
+
+
 def fit_rbergomi_piecewise_cem(
     simulator: RBergomiSimulator,
     task: PiecewiseCEMTask,
@@ -82,6 +115,8 @@ def fit_rbergomi_piecewise_cem(
     min_elite_paths: int = 64,
     control_bound: float = 8.0,
     target_level_repetitions: int = 2,
+    price_driver_sign: PriceDriverSign = None,
+    minimum_price_driver_magnitude: float = 0.0,
 ) -> PiecewiseCEMResult:
     """Fit equal-duration Gaussian mean shifts by target-coordinate weighted MLE."""
     if not initial_control or any(len(value) != 2 for value in initial_control):
@@ -96,9 +131,25 @@ def fit_rbergomi_piecewise_cem(
         raise ValueError("min_elite_paths is outside its valid range")
     if control_bound <= 0.0 or target_level_repetitions <= 0:
         raise ValueError("control bound and target repetitions must be positive")
+    if price_driver_sign is None and minimum_price_driver_magnitude != 0.0:
+        raise ValueError(
+            "minimum price-driver magnitude requires an explicit sign constraint"
+        )
+    if price_driver_sign is not None and (
+        minimum_price_driver_magnitude <= 0.0
+        or minimum_price_driver_magnitude > control_bound
+    ):
+        raise ValueError(
+            "constrained price-driver magnitude must lie in (0, control_bound]"
+        )
 
     segments = len(initial_control)
-    control = torch.tensor(initial_control, dtype=torch.float64)
+    control = _project_control(
+        torch.tensor(initial_control, dtype=torch.float64),
+        control_bound=control_bound,
+        price_driver_sign=price_driver_sign,
+        minimum_price_driver_magnitude=minimum_price_driver_magnitude,
+    )
     history: list[PiecewiseCEMIteration] = []
     target_hits = 0
     torch.manual_seed(seed)
@@ -130,8 +181,12 @@ def fit_rbergomi_piecewise_cem(
             step_dt=paths.step_dt,
         )
         candidate = torch.sum(normalized[:, None, None] * sufficient[elite], dim=0)
-        updated = (1.0 - smoothing) * control + smoothing * candidate
-        updated = torch.clamp(updated, min=-control_bound, max=control_bound)
+        updated = _project_control(
+            (1.0 - smoothing) * control + smoothing * candidate,
+            control_bound=control_bound,
+            price_driver_sign=price_driver_sign,
+            minimum_price_driver_magnitude=minimum_price_driver_magnitude,
+        )
         event = task.hard_event(paths.spot, paths.step_dt)
         probability = torch.mean(event.double() * torch.exp(paths.log_likelihood))
         history.append(

@@ -7,6 +7,7 @@ import math
 import torch
 
 from src.path_integral import (
+    DiscreteBarrierHitTask,
     DownsideExcursionTask,
     TerminalThresholdTask,
     TimePiecewiseTwoDriverControl,
@@ -14,6 +15,7 @@ from src.path_integral import (
 )
 from src.physics_engine import RBergomiSimulator
 from src.training.rbergomi_piecewise_cem import (
+    _project_control,
     _segment_sufficient_statistics,
     fit_rbergomi_piecewise_cem,
 )
@@ -108,3 +110,44 @@ def test_piecewise_cem_accepts_terminal_threshold_task() -> None:
     )
     assert len(result.history) == 1
     assert all(math.isfinite(value) for pair in result.control for value in pair)
+
+
+def test_price_driver_projection_enforces_strict_common_sign() -> None:
+    unconstrained = torch.tensor(
+        ((0.5, -0.2), (-1.0, 0.4), (9.0, 0.0)),
+        dtype=torch.float64,
+    )
+    projected = _project_control(
+        unconstrained,
+        control_bound=8.0,
+        price_driver_sign="negative",
+        minimum_price_driver_magnitude=0.05,
+    )
+
+    assert torch.equal(projected[:, 0], torch.tensor((0.5, -1.0, 8.0)))
+    assert bool((projected[:, 1] <= -0.05).all())
+
+
+def test_constrained_piecewise_cem_preserves_negative_price_schedule() -> None:
+    result = fit_rbergomi_piecewise_cem(
+        _simulator(),
+        DiscreteBarrierHitTask(92.0),
+        spot=100.0,
+        maturity=0.25,
+        dt=1.0 / 16.0,
+        initial_control=((1.0, -0.5), (1.0, -0.5)),
+        num_paths=512,
+        seed=2604,
+        max_iterations=2,
+        min_elite_paths=32,
+        target_level_repetitions=1,
+        price_driver_sign="negative",
+        minimum_price_driver_magnitude=0.05,
+    )
+
+    assert all(second <= -0.05 for _first, second in result.control)
+    assert all(
+        second <= -0.05
+        for iteration in result.history
+        for _first, second in iteration.control_after
+    )
