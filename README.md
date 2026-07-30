@@ -124,6 +124,13 @@ aggregation, independent DCS/raw agreement, and fail-closed resource forecasts.
 The interrupted-versus-uninterrupted synthetic mechanism audit passes. This only
 authorizes R2 development benchmarking; no new 24-cell reference or performance
 claim has been produced.
+R2a now binds a fresh development protocol to that threshold manifest and connects
+the actual rough-Bergomi DCS/raw calculations to resumable pilot, allocation,
+final-shard, aggregate, and independent-audit commands. Namespace-qualified RNG
+keys prevent benchmark/pilot/final stream reuse. A full 24-cell synthetic lifecycle
+falsification passes, but its sufficient statistics are analytic test inputs rather
+than empirical reference evidence. A clean-source resource benchmark and all formal
+R2 reference computation remain open.
 
 The V5 finite-grid infrastructure is implemented: pathwise threshold diagnostics,
 finite-look simultaneous variance intervals, an uncertainty-aware crossover,
@@ -145,7 +152,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **757/757 tests on 2026-07-31**.
+The complete local regression suite passed **763/763 tests on 2026-07-31**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finite grid rather than a continuously monitored event. V7
@@ -162,6 +169,7 @@ Start with:
 - [V8 completion plan (Korean)](docs/plans/G11_V8_COMPLETION_IMPLEMENTATION_PLAN_KO_2026-07-31.md)
 - [V8 R1 sharded-reference theory](docs/theory/G11_V8_R1_REFERENCE_SHARD_THEORY.md)
 - [V8 R1 infrastructure decision](docs/audits/G11_V8_R1_REFERENCE_INFRASTRUCTURE_DECISION_2026-07-31.md)
+- [V8 R2a sharded-reference implementation decision](docs/audits/G11_V8_R2A_SHARDED_REFERENCE_IMPLEMENTATION_2026-07-31.md)
 - [G11 implementation and error audit](docs/audits/G11_IMPLEMENTATION_AND_ERROR_AUDIT_2026-07-19.md)
 - [Theorem statements](docs/theory/G11_THEOREMS.md) and [proof audit](docs/theory/G11_PROOF_AUDIT.md)
 - [M7 freeze-readiness review](docs/audits/G11_M7_FREEZE_READINESS_2026-07-19.md)

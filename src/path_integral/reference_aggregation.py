@@ -49,6 +49,7 @@ def build_allocation_manifest(
     protocol_id: str,
     config_sha256: str,
     threshold_manifest_sha256: str,
+    pilot_parent_sha256: str,
     pilot_namespace: str,
     final_namespace: str,
     expected_cells: Sequence[str],
@@ -114,6 +115,8 @@ def build_allocation_manifest(
             raise ValueError("pilot shard config hash mismatch")
         if payload["threshold_manifest_sha256"] != threshold_manifest_sha256:
             raise ValueError("pilot shard threshold hash mismatch")
+        if payload["parent_sha256"] != pilot_parent_sha256:
+            raise ValueError("pilot shard parent-binding mismatch")
         if payload["source_commit"] != source_commit:
             raise ValueError("pilot shard source commit mismatch")
         if payload["environment_sha256"] != environment_sha256:
@@ -221,6 +224,7 @@ def build_allocation_manifest(
         "protocol_id": protocol_id,
         "config_sha256": config_sha256,
         "threshold_manifest_sha256": threshold_manifest_sha256,
+        "pilot_parent_sha256": pilot_parent_sha256,
         "pilot_namespace": pilot_namespace,
         "final_namespace": final_namespace,
         "source_commit": source_commit,
@@ -256,6 +260,7 @@ def validate_allocation_manifest(payload: Any) -> dict[str, Any]:
         "protocol_id",
         "config_sha256",
         "threshold_manifest_sha256",
+        "pilot_parent_sha256",
         "pilot_namespace",
         "final_namespace",
         "source_commit",
@@ -305,7 +310,12 @@ def validate_allocation_manifest(payload: Any) -> dict[str, Any]:
         or any(character not in "0123456789abcdef" for character in source_commit)
     ):
         raise ValueError("allocation source_commit must be a lowercase full Git commit")
-    for field in ("config_sha256", "threshold_manifest_sha256", "environment_sha256"):
+    for field in (
+        "config_sha256",
+        "threshold_manifest_sha256",
+        "pilot_parent_sha256",
+        "environment_sha256",
+    ):
         value = payload.get(field)
         if (
             not isinstance(value, str)

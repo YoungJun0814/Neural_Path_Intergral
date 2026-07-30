@@ -1,0 +1,53 @@
+schema: npi.g11.v8-p5-threshold-manifest-binding.v2
+protocol_id: g11-v8-p5-threshold-manifest-binding-v2
+date: "2026-07-31"
+phase: r2_reference_development_bound
+design_informed_by_prior_development_outcomes: true
+current_namespace_outcomes_inspected_before_freeze: false
+
+completion_status_ledger:
+  path: configs/g11_v8/completion_status_ledger_v1.yaml
+  sha256: b4aa261cba5bc1258a59f47c6191f36cb388841dc383e0056efa4a76ec8d559b
+reference_infrastructure_contract:
+  path: configs/g11_v8/reference_infrastructure_contract_v1.yaml
+  sha256: c8878f823ef7214fff8c864edd6cf48d85d754cea1a5d367b481f56542b39f38
+reference_infrastructure_audit:
+  path: results/g11_v8_r1_reference_infrastructure_audit_v1_2026-07-31.json
+  sha256: cb6404b1a4491cb132804f672c285b742425cb903e11e337a0687af5dbf47b2f
+
+p5_reference_matrix_design_sha256: 7c92468bec444a04e0b1fbecbb09e09e325bf4d002b03496aa913816b8d34b4e
+p6_statistical_design_sha256: 408c1a925634da8195dee6372b7416e6c58e6174c3ee933081247db97a4f84e8
+threshold_calibration_config:
+  path: configs/g11_v8/p5_threshold_calibration_execution_v1.yaml
+  sha256: e0f43a26fb45f9694cccf76036b19fc2dd9fab428891fc2fd6a191ab8d78e70c
+threshold_calibration_result:
+  path: results/g11_v8_p5_threshold_calibration_v1_2026-07-27.json
+  sha256: 27eabb261d079a8e67fb9389f492c532eb51d7c387ce3907437cfe9e5085ddb6
+threshold_manifest_sha256: 165e2107a031e55acefe55cec5888e23ea8f648a072d0a0a28833ca969451ef8
+calibration_source_commit: fd9b6046568a2de8fb2f5abbe7f5f7b8d33ace4a
+
+reference_protocol:
+  id: g11-v8-p5-sharded-reference-development-v1
+  allocation_schema: npi.g11.v8-reference-allocation-manifest.v1
+  shard_schema: npi.g11.v8-reference-shard.v1
+  estimand: fixed_finest_grid
+  methods: [dcs_reference, raw_crosscheck]
+  dtype: float64
+  device: cpu
+  pilot_namespace: v8-r2-reference-development
+  final_namespace: v8-r2-reference-development-final
+  final_method_seed_namespace: p5-final-method
+
+burned_namespaces:
+  - p5-threshold-calibration-development
+  - p5-reference
+  - p5-reference-v2
+  - v8-p7-development
+
+decision:
+  status: r2_development_binding_frozen
+  representative_benchmark_authorized: true
+  full_pilot_execution_authorized: false
+  reference_complete: false
+  performance_claim_authorized: false
+  submission_authorized: false
