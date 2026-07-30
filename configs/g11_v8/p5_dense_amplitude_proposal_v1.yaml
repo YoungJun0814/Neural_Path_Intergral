@@ -1,0 +1,61 @@
+schema: npi.g11.v8-p5-dense-amplitude-proposal.v1
+protocol_id: g11-v8-p5-dense-amplitude-proposal-v1
+date: "2026-07-31"
+phase: r2_targeted_dense_amplitude_development
+design_informed_by_prior_development_outcomes: true
+current_namespace_outcomes_inspected_before_freeze: false
+validation_namespace: v8-r2-dense-amplitude-validation-v1
+
+all_failed_cells_result:
+  path: results/g11_v8_p5_all_failed_cells_cem_proposal_v3_2026-07-31.json
+  sha256: 1f8f7ce2b4f43bfb4a230d4ffde37573f53a76cc39a8d5b641155c3de59aa67f
+all_failed_cells_audit:
+  path: results/g11_v8_p5_all_failed_cells_cem_audit_v1_2026-07-31.json
+  sha256: 28af7076fd7caef6ddff6a7f6f651ebfb6b1dfea4462cc5b0d7dcacd32616989
+threshold_binding:
+  path: configs/g11_v8/p5_threshold_manifest_binding_v2.yaml
+  sha256: 638b872cd660180dca20f6572c3ad0b3b84ef747ef29839bd152f0d73d7e3762
+
+cells:
+  - h0.05-terminal_left_tail-p1e-05
+  - h0.05-discrete_lower_barrier-p1e-05
+target_method: raw_crosscheck
+
+proposal_families:
+  - id: dense_low
+    scales: [0.0, 0.20, 0.35, 0.50, 0.65, 0.80, 0.95]
+    weights: [0.05, 0.08, 0.12, 0.18, 0.22, 0.20, 0.15]
+  - id: dense_center
+    scales: [0.0, 0.30, 0.45, 0.60, 0.75, 0.90, 1.05]
+    weights: [0.05, 0.08, 0.12, 0.20, 0.23, 0.20, 0.12]
+  - id: dense_broad
+    scales: [0.0, 0.20, 0.40, 0.60, 0.80, 1.00, 1.20]
+    weights: [0.05, 0.08, 0.15, 0.24, 0.24, 0.16, 0.08]
+  - id: dense_guarded
+    scales: [0.0, 0.25, 0.40, 0.55, 0.70, 0.85, 1.05]
+    weights: [0.05, 0.08, 0.13, 0.20, 0.24, 0.19, 0.11]
+
+validation:
+  replicates: 8
+  paths_per_replicate: 8192
+  engine: fft
+  allocation_safety_factor: 6.0
+  maximum_final_samples: 8388608
+  selected_method_maximum_requested_to_cap_ratio: 0.50
+  minimum_raw_nonzero_contributions_per_replicate: 256
+  maximum_likelihood_normalization_absolute_z: 4.0
+  maximum_replicate_variance_to_median_ratio: 20.0
+  maximum_single_contribution_share: 0.10
+  smoke_cells: 1
+  smoke_profiles_per_cell: 1
+  smoke_proposal_families: 1
+  smoke_replicates: 2
+  smoke_paths_per_replicate: 512
+
+decision:
+  status: targeted_dense_amplitude_development_open
+  selected_proposal_frozen: false
+  proposal_manifest_freeze_authorized: false
+  new_full_pilot_authorized: false
+  final_execution_authorized: false
+  performance_claim_authorized: false
