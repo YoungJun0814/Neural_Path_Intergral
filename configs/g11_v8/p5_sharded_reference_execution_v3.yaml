@@ -42,7 +42,8 @@ benchmark:
     - h0.05-terminal_left_tail-p1e-05
     - h0.05-discrete_lower_barrier-p1e-05
   methods: [dcs_reference, raw_crosscheck]
-  samples_per_observation: 256
+  # Match one formal pilot shard so peak memory is measured at production batch size.
+  samples_per_observation: 32768
   repetitions: 1
   forecast_total_method_cell_count: 48
   forecast_steps: 128
