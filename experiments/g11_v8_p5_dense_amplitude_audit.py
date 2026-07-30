@@ -15,6 +15,7 @@ from experiments.g11_v8_p5_cell_tuned_cem_proposal import (
 )
 from experiments.g11_v8_p5_dense_amplitude_proposal import (
     EXPECTED_CELLS_V1,
+    EXPECTED_CELLS_V2,
     RESULT_SCHEMAS,
     SCHEMA_V1,
     _load_v3_result,
@@ -40,15 +41,19 @@ def audit_dense_amplitude(
     source = _load_v3_result(config)
     result = _load_json(result_path)
     validation = config["validation"]
+    version = 1 if config["schema"] == SCHEMA_V1 else 2
+    expected_cells = (
+        EXPECTED_CELLS_V1 if version == 1 else EXPECTED_CELLS_V2
+    )
     profiles = {
         (fit["cell_id"], fit["training_replicate"]): fit["control"]
         for fit in source["training_fits"]
-        if fit["cell_id"] in EXPECTED_CELLS_V1
+        if fit["cell_id"] in expected_cells
     }
     candidates = result.get("candidates", [])
     expected_candidate_ids = {
         f"{cell_id}/v3-train-{replicate}/{family['id']}"
-        for cell_id in EXPECTED_CELLS_V1
+        for cell_id in expected_cells
         for replicate in range(3)
         for family in config["proposal_families"]
     }
@@ -137,11 +142,14 @@ def audit_dense_amplitude(
                 )
             )
     selected = result.get("selected_proposals", {})
-    selected_exact = set(selected) == {
-        "h0.05-discrete_lower_barrier-p1e-05"
-    }
+    expected_selected_cells = (
+        {"h0.05-discrete_lower_barrier-p1e-05"}
+        if version == 1
+        else {"h0.05-terminal_left_tail-p1e-05"}
+    )
+    selected_exact = set(selected) == expected_selected_cells
     if selected_exact:
-        cell_id = "h0.05-discrete_lower_barrier-p1e-05"
+        cell_id = next(iter(expected_selected_cells))
         passing = [
             candidate
             for candidate in candidates
@@ -161,7 +169,7 @@ def audit_dense_amplitude(
     seed_values = [record["seed"] for record in expected_seed_records]
     checks = {
         "schema_protocol_config_exact": result.get("schema")
-        == RESULT_SCHEMAS[SCHEMA_V1]
+        == RESULT_SCHEMAS[config["schema"]]
         and result.get("protocol_id") == config["protocol_id"]
         and result.get("config_sha256") == config_sha256,
         "formal_clean_execution": result.get("smoke") is False
@@ -173,11 +181,15 @@ def audit_dense_amplitude(
         == expected_seed_records
         and result.get("seed_count") == len(expected_seed_records)
         and len(seed_values) == len(set(seed_values)),
-        "barrier_selected_terminal_missing": selected_exact,
-        "decision_fail_closed": result.get("passed") is False
+        "expected_selection_exact": selected_exact,
+        "decision_fail_closed": result.get("passed") == (version == 2)
         and result.get("decision")
         == {
-            "status": "dense_amplitude_proposal_falsification_fail",
+            "status": (
+                "dense_amplitude_proposal_falsification_fail"
+                if version == 1
+                else "dense_amplitude_proposal_falsification_pass"
+            ),
             "selected_proposal_frozen": False,
             "proposal_manifest_freeze_authorized": False,
             "new_full_pilot_authorized": False,
@@ -201,8 +213,13 @@ def audit_dense_amplitude(
                 else "dense_amplitude_audit_fail"
             ),
             "barrier_raw_development_selection_available": not failures,
-            "terminal_raw_redesign_required": not failures,
-            "proposal_manifest_freeze_authorized": False,
+            "terminal_raw_development_selection_available": (
+                not failures and version == 2
+            ),
+            "terminal_raw_redesign_required": not failures and version == 1,
+            "proposal_manifest_freeze_authorized": (
+                not failures and version == 2
+            ),
             "new_full_pilot_authorized": False,
             "final_execution_authorized": False,
             "performance_claim_authorized": False,
