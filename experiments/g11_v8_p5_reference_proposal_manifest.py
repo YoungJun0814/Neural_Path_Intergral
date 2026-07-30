@@ -265,8 +265,14 @@ def audit_proposal_manifest(
     manifest_path: Path,
 ) -> dict[str, Any]:
     config, config_sha256 = load_manifest_config(config_path)
+    resolved_manifest_path = manifest_path.resolve()
     manifest = _load_json_binding(
-        {"manifest": {"path": str(manifest_path.relative_to(ROOT)), "sha256": _sha256(manifest_path)}},
+        {
+            "manifest": {
+                "path": str(resolved_manifest_path.relative_to(ROOT)),
+                "sha256": _sha256(resolved_manifest_path),
+            }
+        },
         "manifest",
     )
     entries = manifest.get("entries", [])
@@ -346,7 +352,7 @@ def audit_proposal_manifest(
     failures = sorted(name for name, passed in checks.items() if not passed)
     return {
         "schema": AUDIT_SCHEMA,
-        "manifest_file_sha256": _sha256(manifest_path),
+        "manifest_file_sha256": _sha256(resolved_manifest_path),
         "manifest_canonical_sha256": canonical_sha256(manifest),
         "checks": checks,
         "source_counts": source_counts,
