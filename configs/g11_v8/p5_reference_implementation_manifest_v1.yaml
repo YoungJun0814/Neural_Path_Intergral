@@ -1,0 +1,41 @@
+schema: npi.g11.v8-p5-reference-implementation-manifest.v1
+protocol_id: g11-v8-p5-sharded-reference-development-v1
+date: "2026-07-31"
+phase: r2_reference_implementation_freeze
+records:
+  - path: src/path_integral/reference_protocol.py
+    sha256: a51aff89242daed8d693aeda77b7c2fa2cc0f378fec3f9acfdbac879c9332d0b
+  - path: src/path_integral/reference_execution.py
+    sha256: 9de07a3a9c85535a925a19ce5f598df6df2afd942bc97b6638d46a1cca186d85
+  - path: src/path_integral/reference_shards.py
+    sha256: 2a915f478065eead3aee508e0ef397c33d609f164c90591e904b9233b5d39b26
+  - path: src/path_integral/reference_aggregation.py
+    sha256: 96e3123cfe7f4c739f786a76089082a06a65f3c9535e7a0d63a2e9789eafb20e
+  - path: src/path_integral/resource_planner.py
+    sha256: 0742a0518aa7c19cae6f98f59b8b686c74d50f0e9eeced41845309c5f733d2bc
+  - path: experiments/g11_v8_p5_sharded_reference_common.py
+    sha256: 60dde92f083373ad88a31ef5452bf759b2f6eb740ae0b5f19e98d68583fd7a30
+  - path: experiments/g11_v8_p5_reference_benchmark.py
+    sha256: dd580efdba5a97daa271efb3899598ee6cfb6b98d9f59731d5ea3d3d5b234680
+  - path: experiments/g11_v8_p5_reference_pilot.py
+    sha256: dbba290645de77a0803c2abcc081893b9db39a0b7a93c46cfa1ae6ffa60280fe
+  - path: experiments/g11_v8_p5_reference_freeze_allocation.py
+    sha256: 3b05ef15ed5656d8ec9690f422705e4295079a8c6a9571dd444939cd72627471
+  - path: experiments/g11_v8_p5_reference_shard.py
+    sha256: 07dc9fa0c214fa5f9b98f0e77a8651f6d3bb5118efa46bc40d4e9deab114c882
+  - path: experiments/g11_v8_p5_reference_aggregate.py
+    sha256: edb5884e7e1df1c7f4fef5bd51152d1455075e8473e9c9b924cc4799b87b8fa6
+  - path: experiments/g11_v8_p5_reference_result_audit.py
+    sha256: aec512fe98d406707807380b24064b0c44bf31556e7960ec62e74f8e43289669
+  - path: experiments/g11_v8_p5_threshold_binding_v2_audit.py
+    sha256: 00e3282feb5c0e258d9826e6f0ed99e4f789f717982d67623c4d4556d0fd6551
+  - path: configs/g11_v8/p5_sharded_reference_execution_v3.yaml
+    sha256: ef3e19cf3c4cbe7b8959402389a85cf78684f7d61629a122b78b09427280ca21
+  - path: configs/g11_v8/p5_threshold_manifest_binding_v2.yaml
+    sha256: 638b872cd660180dca20f6572c3ad0b3b84ef747ef29839bd152f0d73d7e3762
+  - path: configs/g11_v8/reference_infrastructure_contract_v1.yaml
+    sha256: c8878f823ef7214fff8c864edd6cf48d85d754cea1a5d367b481f56542b39f38
+decision:
+  formal_pilot_code_state_frozen: true
+  final_execution_authorized: false
+  performance_claim_authorized: false

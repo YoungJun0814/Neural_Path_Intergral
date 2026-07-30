@@ -82,6 +82,9 @@ def test_complete_sharded_reference_orchestration_and_resume(
 ) -> None:
     source = {"source_commit": _head(), "dirty_worktree": False}
     monkeypatch.setattr(pilot_module, "source_provenance", lambda: source)
+    monkeypatch.setattr(
+        pilot_module, "_verify_authorization", lambda _path, _context: {}
+    )
     monkeypatch.setattr(freeze_module, "source_provenance", lambda: source)
     monkeypatch.setattr(final_module, "source_provenance", lambda: source)
     monkeypatch.setattr(
@@ -94,6 +97,7 @@ def test_complete_sharded_reference_orchestration_and_resume(
     pilot_directory = tmp_path / "pilots"
     first = pilot_module.run_pilots(
         CONFIG,
+        tmp_path / "synthetic-authorization.yaml",
         pilot_directory,
         cell_id="h0.12-terminal_left_tail-p1e-02",
         method="dcs_reference",
@@ -101,6 +105,7 @@ def test_complete_sharded_reference_orchestration_and_resume(
     )
     second = pilot_module.run_pilots(
         CONFIG,
+        tmp_path / "synthetic-authorization.yaml",
         pilot_directory,
         cell_id="h0.12-terminal_left_tail-p1e-02",
         method="dcs_reference",
