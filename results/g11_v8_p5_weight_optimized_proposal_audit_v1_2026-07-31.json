@@ -1,0 +1,28 @@
+{
+  "checks": {
+    "candidate_and_seed_rosters_exact": true,
+    "candidate_gates_and_selection_exact": true,
+    "decision_fail_closed": true,
+    "partial_falsification_exact": true,
+    "raw_weight_fit_contract_exact": true,
+    "schema_config_protocol_clean_source_exact": true,
+    "strict_json_finite": true
+  },
+  "config_sha256": "d6c0b09e38ff8ad50fef0d283f3c8da3777b25e950193a6e226321ea2b2bb65e",
+  "decision": {
+    "final_execution_authorized": false,
+    "method_role_precision_redesign_required": true,
+    "new_formal_pilot_authorized": false,
+    "partial_candidates_promoted": false,
+    "performance_claim_authorized": false,
+    "proposal_manifest_build_authorized": false,
+    "status": "weight_optimization_partial_falsification_confirmed",
+    "submission_authorized": false,
+    "validation_namespace_burned": true,
+    "weight_training_namespace_burned": true
+  },
+  "failures": [],
+  "passed": true,
+  "result_file_sha256": "405d7c2e1c60c2c95d9fd2e10f40bbe14cc11f3269eac0d82cba4342a6a677f4",
+  "schema": "npi.g11.v8-p5-weight-optimized-proposal-audit.v1"
+}
