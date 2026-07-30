@@ -1,0 +1,47 @@
+{
+  "checks": {
+    "allocation_formula_exact": true,
+    "candidate_matrix_exact": true,
+    "decision_fail_closed": true,
+    "development_provenance_exact": true,
+    "fit_matrix_and_constraints_exact": true,
+    "formal_clean_execution": true,
+    "gate_logic_exact": true,
+    "large_selection_margin": true,
+    "namespace_exact": true,
+    "rank_one_schedules_exact": true,
+    "schema_protocol_config_exact": true,
+    "seed_roster_exact_and_unique": true,
+    "selection_rule_exact": true
+  },
+  "config_sha256": "94453bc6401938f399339a7a5d81f627558817ed454cbcf40d9761ac27fb9b29",
+  "decision": {
+    "final_execution_authorized": false,
+    "new_full_pilot_authorized": false,
+    "performance_claim_authorized": false,
+    "proposal_manifest_freeze_authorized": true,
+    "selection_is_development_only": true,
+    "status": "cell_tuned_cem_proposal_audit_pass"
+  },
+  "failures": [],
+  "passed": true,
+  "result_canonical_sha256": "d59fe970897df224bd7839cd164a7ddf475af95de056b5419e3d67691557753b",
+  "result_file_sha256": "b55330ff3fd8adf4b60bcf3dced3eef4e4c7e0ad3bd094ec60b956331005b2d0",
+  "schema": "npi.g11.v8-p5-cell-tuned-cem-proposal-audit.v1",
+  "selected_proposal_summary": [
+    {
+      "candidate_id": "h0.20-discrete_lower_barrier-p1e-05/train-2/guarded_amplitude",
+      "cell_id": "h0.20-discrete_lower_barrier-p1e-05",
+      "projected_final_samples": 1101327,
+      "requested_to_cap_ratio": 0.13128840923309326,
+      "target_method": "raw_crosscheck"
+    },
+    {
+      "candidate_id": "h0.05-discrete_lower_barrier-p1e-05/train-1/centered_amplitude",
+      "cell_id": "h0.05-discrete_lower_barrier-p1e-05",
+      "projected_final_samples": 1228410,
+      "requested_to_cap_ratio": 0.1464378833770752,
+      "target_method": "dcs_reference"
+    }
+  ]
+}
