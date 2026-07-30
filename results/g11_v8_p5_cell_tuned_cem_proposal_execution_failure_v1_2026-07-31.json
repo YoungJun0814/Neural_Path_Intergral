@@ -1,0 +1,28 @@
+{
+  "schema": "npi.g11.v8-p5-cell-tuned-cem-proposal-execution-failure.v1",
+  "protocol_id": "g11-v8-p5-cell-tuned-cem-proposal-v1",
+  "date": "2026-07-31",
+  "config_path": "configs/g11_v8/p5_cell_tuned_cem_proposal_v1.yaml",
+  "config_sha256": "3bc37fda81797f5521d5384e7029f04a33fe511238deca50f1caaf0ccad2df5a",
+  "source_commit": "ebabbbd3778650fab575a9d6ace94a04cfa99d7e",
+  "dirty_worktree_at_start": false,
+  "training_namespace": "v8-r2-cell-tuned-cem-training-v1",
+  "validation_namespace": "v8-r2-cell-tuned-cem-validation-v1",
+  "failure_stage": "candidate_validation",
+  "exception_type": "FloatingPointError",
+  "exception_message": "cell-tuned proposal produced invalid paths",
+  "stderr_path": "results/g11_v8_p5_cell_tuned_cem_proposal_execution_failure_v1_2026-07-31.log",
+  "stderr_sha256": "9717d60c94efe9d7885654404734e6987c4c34f95b1264908145d6a49398af5a",
+  "result_file_created": false,
+  "performance_outcomes_inspected": false,
+  "decision": {
+    "status": "numerical_finiteness_gate_failure",
+    "training_namespace_burned": true,
+    "validation_namespace_burned": true,
+    "candidate_promoted": false,
+    "new_full_pilot_authorized": false,
+    "final_execution_authorized": false,
+    "performance_claim_authorized": false,
+    "new_protocol_namespace_required": true
+  }
+}

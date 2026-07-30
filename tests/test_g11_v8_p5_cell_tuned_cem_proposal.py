@@ -11,6 +11,7 @@ from experiments.g11_v8_p5_cell_tuned_cem_proposal import (
 )
 
 CONFIG = ROOT / "configs/g11_v8/p5_cell_tuned_cem_proposal_v1.yaml"
+CONFIG_V2 = ROOT / "configs/g11_v8/p5_cell_tuned_cem_proposal_v2.yaml"
 
 
 def test_cell_tuned_cem_contract_is_frozen_and_fail_closed() -> None:
@@ -19,6 +20,12 @@ def test_cell_tuned_cem_contract_is_frozen_and_fail_closed() -> None:
     assert len(digest) == 64
     assert len(config["cells"]) == 2
     assert config["decision"]["new_full_pilot_authorized"] is False
+
+    config_v2, digest_v2 = load_cell_tuned_config(CONFIG_V2)
+    assert len(digest_v2) == 64
+    assert config_v2["training_namespace"].endswith("-v2")
+    assert config_v2["validation_namespace"].endswith("-v2")
+    assert config_v2["prior_execution_failure"]["sha256"]
 
 
 def test_cell_tuned_training_and_validation_seeds_are_disjoint() -> None:

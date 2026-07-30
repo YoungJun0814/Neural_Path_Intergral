@@ -27,8 +27,13 @@ from src.path_integral.provenance import runtime_provenance, source_provenance
 from src.physics_engine import RBergomiSimulator
 from src.training import fit_rbergomi_piecewise_cem
 
-SCHEMA = "npi.g11.v8-p5-cell-tuned-cem-proposal.v1"
-RESULT_SCHEMA = "npi.g11.v8-p5-cell-tuned-cem-proposal-result.v1"
+SCHEMA_V1 = "npi.g11.v8-p5-cell-tuned-cem-proposal.v1"
+SCHEMA_V2 = "npi.g11.v8-p5-cell-tuned-cem-proposal.v2"
+SUPPORTED_SCHEMAS = {SCHEMA_V1, SCHEMA_V2}
+RESULT_SCHEMAS = {
+    SCHEMA_V1: "npi.g11.v8-p5-cell-tuned-cem-proposal-result.v1",
+    SCHEMA_V2: "npi.g11.v8-p5-cell-tuned-cem-proposal-result.v2",
+}
 EXPECTED_TARGETS = {
     "h0.20-discrete_lower_barrier-p1e-05": "raw_crosscheck",
     "h0.05-discrete_lower_barrier-p1e-05": "dcs_reference",
@@ -53,7 +58,7 @@ def _bound_path(record: Any) -> Path:
 def load_cell_tuned_config(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     config = yaml.safe_load(raw.decode("utf-8"))
-    if not isinstance(config, dict) or config.get("schema") != SCHEMA:
+    if not isinstance(config, dict) or config.get("schema") not in SUPPORTED_SCHEMAS:
         raise ValueError("unexpected cell-tuned CEM proposal schema")
     for field in (
         "barrier_proposal_result",
@@ -61,12 +66,16 @@ def load_cell_tuned_config(path: Path) -> tuple[dict[str, Any], str]:
         "threshold_binding",
     ):
         _bound_path(config.get(field))
+    version = 1 if config["schema"] == SCHEMA_V1 else 2
+    if version == 2:
+        _bound_path(config.get("prior_execution_failure"))
     if (
         config.get("design_informed_by_prior_development_outcomes") is not True
         or config.get("current_namespace_outcomes_inspected_before_freeze") is not False
-        or config.get("training_namespace") != "v8-r2-cell-tuned-cem-training-v1"
+        or config.get("training_namespace")
+        != f"v8-r2-cell-tuned-cem-training-v{version}"
         or config.get("validation_namespace")
-        != "v8-r2-cell-tuned-cem-validation-v1"
+        != f"v8-r2-cell-tuned-cem-validation-v{version}"
     ):
         raise ValueError("cell-tuned proposal provenance contract is invalid")
     cells = config.get("cells")
@@ -108,11 +117,14 @@ def load_cell_tuned_config(path: Path) -> tuple[dict[str, Any], str]:
         or float(training.get("minimum_price_driver_magnitude", 0.0)) != 0.05
     ):
         raise ValueError("cell-tuned CEM training contract is invalid")
-    if (
-        not isinstance(families, list)
-        or [family.get("id") for family in families]
-        != ["low_amplitude", "centered_amplitude", "wide_amplitude"]
-    ):
+    expected_families = (
+        ["low_amplitude", "centered_amplitude", "wide_amplitude"]
+        if version == 1
+        else ["low_amplitude", "centered_amplitude", "guarded_amplitude"]
+    )
+    if not isinstance(families, list) or [
+        family.get("id") for family in families
+    ] != expected_families:
         raise ValueError("cell-tuned proposal-family roster changed")
     for family in families:
         scales = family.get("scales")
@@ -514,8 +526,8 @@ def run_cell_tuned_proposal(
                 f"{fit['cell_id']}/train-{fit['training_replicate']}/"
                 f"{family['id']}"
             )
-            candidates.append(
-                _evaluate_candidate(
+            try:
+                candidate = _evaluate_candidate(
                     config,
                     context,
                     cell=cell,
@@ -527,7 +539,30 @@ def run_cell_tuned_proposal(
                     paths=paths,
                     seed_records=seed_records,
                 )
-            )
+            except FloatingPointError as error:
+                candidate = {
+                    "candidate_id": candidate_id,
+                    "cell_id": cell["cell_id"],
+                    "target_method": specification["target_method"],
+                    "weights": [float(weight) for weight in family["weights"]],
+                    "schedules": _scaled_schedules(profile, family["scales"]),
+                    "entries": [],
+                    "normalization_mean": None,
+                    "normalization_standard_error": None,
+                    "normalization_z": None,
+                    "gates": {
+                        "finite_paths_and_contributions": False,
+                        "target_method_margin_pass": False,
+                        "raw_coverage_pass": False,
+                        "likelihood_normalization_pass": False,
+                    },
+                    "numerical_failure": {
+                        "exception_type": type(error).__name__,
+                        "exception_message": str(error),
+                    },
+                    "passes": False,
+                }
+            candidates.append(candidate)
     selected: dict[str, dict[str, Any]] = {}
     for specification in cells:
         passing = [
@@ -564,7 +599,7 @@ def run_cell_tuned_proposal(
         raise RuntimeError("cell-tuned training and validation seeds overlap")
     provenance = source_provenance()
     return {
-        "schema": RESULT_SCHEMA,
+        "schema": RESULT_SCHEMAS[config["schema"]],
         "protocol_id": config["protocol_id"],
         "config_sha256": config_sha256,
         "training_namespace": config["training_namespace"],

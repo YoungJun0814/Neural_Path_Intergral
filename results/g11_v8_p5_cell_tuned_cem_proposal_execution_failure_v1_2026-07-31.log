@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Jun\Desktop\Thesis\Projects\Neural_Path_Integral\experiments\g11_v8_p5_cell_tuned_cem_proposal.py", line 620, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\Jun\Desktop\Thesis\Projects\Neural_Path_Integral\experiments\g11_v8_p5_cell_tuned_cem_proposal.py", line 610, in main
+    result = run_cell_tuned_proposal(arguments.config, smoke=arguments.smoke)
+  File "C:\Users\Jun\Desktop\Thesis\Projects\Neural_Path_Integral\experiments\g11_v8_p5_cell_tuned_cem_proposal.py", line 518, in run_cell_tuned_proposal
+    _evaluate_candidate(
+    ~~~~~~~~~~~~~~~~~~~^
+        config,
+        ^^^^^^^
+    ...<8 lines>...
+        seed_records=seed_records,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Jun\Desktop\Thesis\Projects\Neural_Path_Integral\experiments\g11_v8_p5_cell_tuned_cem_proposal.py", line 374, in _evaluate_candidate
+    raise FloatingPointError("cell-tuned proposal produced invalid paths")
+FloatingPointError: cell-tuned proposal produced invalid paths
