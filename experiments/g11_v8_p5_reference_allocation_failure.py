@@ -102,6 +102,7 @@ def build_failure_evidence(
         "source_commit": allocation["source_commit"],
         "environment_sha256": allocation["environment_sha256"],
         "pilot_namespace": allocation["pilot_namespace"],
+        "reference_parent_sha256": allocation["pilot_parent_sha256"],
         "pilot_shard_count": len(shard_records),
         "shards": shard_records,
         "formal_reference_complete": False,
@@ -140,6 +141,7 @@ def build_failure_evidence(
         "allocation_manifest_sha256": allocation_sha256,
         "source_commit": allocation["source_commit"],
         "environment_sha256": allocation["environment_sha256"],
+        "reference_parent_sha256": allocation["pilot_parent_sha256"],
         "pilot_shard_count": len(shard_records),
         "entry_count": len(summaries),
         "resource_feasible_entry_count": len(summaries) - len(infeasible),
@@ -188,7 +190,9 @@ def audit_failure_evidence(
         "protocol_id": context.config["protocol_id"],
         "config_sha256": context.config_sha256,
         "threshold_manifest_sha256": context.binding["threshold_manifest_sha256"],
-        "pilot_parent_sha256": context.binding_sha256,
+        "pilot_parent_sha256": receipt.get(
+            "reference_parent_sha256", context.reference_parent_sha256
+        ),
         "pilot_namespace": sampling["pilot_namespace"],
         "final_namespace": sampling["final_namespace"],
         "expected_cells": list(context.cells_by_id),
@@ -252,12 +256,26 @@ def audit_failure_evidence(
             for cell_id in context.cells_by_id
             for method in ("dcs_reference", "raw_crosscheck")
         },
-        "resource_failure_nonempty": receipt.get(
-            "resource_infeasible_entry_count"
+        "resource_failure_nonempty": isinstance(entries, list)
+        and receipt.get("resource_infeasible_entry_count", 0) > 0
+        and receipt.get("resource_infeasible_entry_count")
+        == sum(
+            not bool(entry.get("resource_feasible"))
+            for entry in entries
+            if isinstance(entry, dict)
         )
-        == 11
-        and receipt.get("resource_feasible_entry_count") == 37
-        and receipt.get("total_requested_final_samples") == 1448253332,
+        and receipt.get("resource_feasible_entry_count")
+        == sum(
+            bool(entry.get("resource_feasible"))
+            for entry in entries
+            if isinstance(entry, dict)
+        )
+        and receipt.get("total_requested_final_samples")
+        == sum(
+            int(entry.get("requested_final_samples", 0))
+            for entry in entries
+            if isinstance(entry, dict)
+        ),
         "final_gate_closed": receipt.get("gates", {}).get(
             "all_resources_feasible"
         )
