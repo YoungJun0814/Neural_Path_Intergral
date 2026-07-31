@@ -41,11 +41,20 @@ def _reconstruct_manifest(
     pilot_records = [
         (record["artifact"], record["sha256"]) for record in shards
     ]
-    targets = {
-        entry["cell_id"]: float(entry["target_standard_error"])
-        for entry in template["entries"]
-        if entry["method"] == "dcs_reference"
+    entries = template["entries"]
+    targets: dict[str | tuple[str, str], float] = {
+        (str(entry["cell_id"]), str(entry["method"])): float(
+            entry["target_standard_error"]
+        )
+        for entry in entries
     }
+    method_caps: dict[str, int] = {}
+    for entry in entries:
+        method = str(entry["method"])
+        cap = int(entry["maximum_final_samples"])
+        prior = method_caps.setdefault(method, cap)
+        if prior != cap:
+            raise ValueError("allocation entries disagree on a method-specific cap")
     return build_allocation_manifest(
         protocol_id=template["protocol_id"],
         config_sha256=template["config_sha256"],
@@ -73,6 +82,7 @@ def _reconstruct_manifest(
         current_namespace_outcomes_inspected_before_freeze=template[
             "current_namespace_outcomes_inspected_before_freeze"
         ],
+        maximum_final_samples_by_method=method_caps,
     )
 
 

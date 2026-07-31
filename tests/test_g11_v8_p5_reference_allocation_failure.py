@@ -15,6 +15,13 @@ PACKAGE = ROOT / "results/g11_v8_p5_reference_pilot_package_v3_2026-07-31.json"
 RECEIPT = (
     ROOT / "results/g11_v8_p5_reference_allocation_failure_v3_2026-07-31.json"
 )
+METHOD_ROLE_CONFIG = ROOT / "configs/g11_v8/p5_sharded_reference_execution_v5.yaml"
+METHOD_ROLE_PACKAGE = (
+    ROOT / "results/g11_v8_p5_reference_pilot_package_v5_2026-07-31.json"
+)
+METHOD_ROLE_RECEIPT = (
+    ROOT / "results/g11_v8_p5_reference_allocation_failure_v5_2026-07-31.json"
+)
 
 
 def test_allocation_failure_is_exactly_reproducible_and_fail_closed() -> None:
@@ -44,3 +51,15 @@ def test_failure_audit_rejects_pilot_statistic_tampering(tmp_path: Path) -> None
     report = audit_failure_evidence(CONFIG, package_path, receipt_path)
     assert report["passed"] is False
     assert "allocation_exactly_reconstructed" in report["failures"]
+
+
+def test_method_role_failure_reconstructs_unequal_targets_and_caps_if_present() -> None:
+    if not METHOD_ROLE_PACKAGE.exists() or not METHOD_ROLE_RECEIPT.exists():
+        return
+    report = audit_failure_evidence(
+        METHOD_ROLE_CONFIG,
+        METHOD_ROLE_PACKAGE,
+        METHOD_ROLE_RECEIPT,
+    )
+    assert report["passed"] is True
+    assert report["decision"]["final_execution_authorized"] is False
