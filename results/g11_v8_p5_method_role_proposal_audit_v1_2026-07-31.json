@@ -1,0 +1,27 @@
+{
+  "checks": {
+    "candidate_gates_exact": true,
+    "candidate_seed_roster_exact": true,
+    "decision_fail_closed": true,
+    "falsification_exact": true,
+    "method_precision_exact": true,
+    "schema_config_protocol_clean_source_exact": true,
+    "strict_json_finite": true
+  },
+  "config_sha256": "4bc4118d06cf5d77db79cbca41fefe5c1cad85f0f440f64710cbeeb9a526f1e6",
+  "decision": {
+    "final_execution_authorized": false,
+    "new_formal_pilot_authorized": false,
+    "partial_candidates_promoted": false,
+    "performance_claim_authorized": false,
+    "proposal_manifest_build_authorized": false,
+    "reference_only_resource_escalation_required": true,
+    "status": "method_role_partial_falsification_confirmed",
+    "submission_authorized": false,
+    "validation_namespace_burned": true
+  },
+  "failures": [],
+  "passed": true,
+  "result_file_sha256": "a707239355f58986c9ad3443933e12b69e6bced96d8d50bea9d3c003ce4c40da",
+  "schema": "npi.g11.v8-p5-method-role-proposal-audit.v1"
+}
