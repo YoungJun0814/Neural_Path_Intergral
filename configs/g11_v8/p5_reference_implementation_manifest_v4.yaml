@@ -1,0 +1,61 @@
+schema: npi.g11.v8-p5-reference-implementation-manifest.v1
+protocol_id: g11-v8-p5-sharded-reference-resource-cap-v1
+date: "2026-07-31"
+phase: r2_resource_cap_reference_implementation_freeze
+records:
+  - path: src/path_integral/reference_protocol.py
+    sha256: a51aff89242daed8d693aeda77b7c2fa2cc0f378fec3f9acfdbac879c9332d0b
+  - path: src/path_integral/reference_execution.py
+    sha256: 9de07a3a9c85535a925a19ce5f598df6df2afd942bc97b6638d46a1cca186d85
+  - path: src/path_integral/reference_shards.py
+    sha256: 2a915f478065eead3aee508e0ef397c33d609f164c90591e904b9233b5d39b26
+  - path: src/path_integral/reference_aggregation.py
+    sha256: 58b585d759ecc0e226c3187f1f7e8ae30351afa2400b139f04c2679e1306b3b7
+  - path: src/path_integral/resource_planner.py
+    sha256: 0742a0518aa7c19cae6f98f59b8b686c74d50f0e9eeced41845309c5f733d2bc
+  - path: src/path_integral/controllers/markov.py
+    sha256: 721a6c37051b88376ef85f0dd3f9d1c62e9ff5c3913c91021378e733cbfd8a45
+  - path: src/path_integral/mixture.py
+    sha256: 220614e02170287902dbf36df4f77b21040aa4e9c90472153f2700088d1541f7
+  - path: src/path_integral/rbergomi_fft.py
+    sha256: 7ca7c9833a6a820f494c2ee11211924e37aecc85b30677c5fbefa5dff85072e8
+  - path: src/path_integral/rbergomi_mixture.py
+    sha256: 0849430a654781c1fea531a8fcbf50f1c56ed7e8bdd8e0ad706653f6a801c05c
+  - path: src/path_integral/control_span_smoothing.py
+    sha256: 4df2f80877627f82d97d63d3ab467d48cc90456766cab12b0014f8c08e5875be
+  - path: src/path_integral/gaussian_smoothing.py
+    sha256: d7ab4e307ba2e6a61d2c8b89007204320f7cc2a45f6cfb86f2df534980e388dd
+  - path: src/physics_engine.py
+    sha256: 1e475f9faaadd1f1697efafb652367881c4ef7bc9b532c28bd44cd63a7ed8c93
+  - path: experiments/g11_v8_p5_reference.py
+    sha256: 427b82a2480fc6d1aca01fa1cd7bc00f5d8f2d581286f6593acb9d86b96e3946
+  - path: experiments/g11_v8_p5_sharded_reference_common.py
+    sha256: 822dc2cfb6eaad25ecbfdfc7a7abf55f668816551e1f8a463948c7782c96acc7
+  - path: experiments/g11_v8_p5_reference_benchmark.py
+    sha256: 7e2447db88140d0b12c845bd2126b066b39363f8b712c64f15b5368f96f5adad
+  - path: experiments/g11_v8_p5_reference_pilot.py
+    sha256: 3b7cfe55f9179dd88811c5c0105190087f948f54ff66eae1760b49c5f6aaf4cd
+  - path: experiments/g11_v8_p5_reference_freeze_allocation.py
+    sha256: f45d11433ec54e3e0d5b0e1714c7c62fc9b5f0607dce9f58f7efa6966df011e3
+  - path: experiments/g11_v8_p5_reference_shard.py
+    sha256: 07dc9fa0c214fa5f9b98f0e77a8651f6d3bb5118efa46bc40d4e9deab114c882
+  - path: experiments/g11_v8_p5_reference_aggregate.py
+    sha256: edb5884e7e1df1c7f4fef5bd51152d1455075e8473e9c9b924cc4799b87b8fa6
+  - path: experiments/g11_v8_p5_reference_result_audit.py
+    sha256: aec512fe98d406707807380b24064b0c44bf31556e7960ec62e74f8e43289669
+  - path: experiments/g11_v8_p5_threshold_binding_v2_audit.py
+    sha256: 00e3282feb5c0e258d9826e6f0ed99e4f789f717982d67623c4d4556d0fd6551
+  - path: configs/g11_v8/p5_sharded_reference_execution_v6.yaml
+    sha256: fbbdbc822657c25c73ccd96ceb1e7271a3ebe6f6a05f00494848a7b5c7ea8eb8
+  - path: configs/g11_v8/p5_threshold_manifest_binding_v2.yaml
+    sha256: 638b872cd660180dca20f6572c3ad0b3b84ef747ef29839bd152f0d73d7e3762
+  - path: results/g11_v8_p5_reference_proposal_manifest_v3_2026-07-31.json
+    sha256: 807c04954bf0b3e233900789c203e4968599901ffd012bd61224224dfc2f1d62
+  - path: results/g11_v8_p5_reference_proposal_manifest_audit_v3_2026-07-31.json
+    sha256: dea8a89ff6100389d9f716865b0fd2d38e8d0ffb1b7f214d46b6ff918e096481
+  - path: configs/g11_v8/reference_infrastructure_contract_v1.yaml
+    sha256: c8878f823ef7214fff8c864edd6cf48d85d754cea1a5d367b481f56542b39f38
+decision:
+  formal_pilot_code_state_frozen: true
+  final_execution_authorized: false
+  performance_claim_authorized: false

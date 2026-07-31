@@ -18,6 +18,10 @@ METHOD_ROLE_AUTHORIZATION = (
     ROOT / "configs/g11_v8/p5_reference_pilot_authorization_v3.yaml"
 )
 METHOD_ROLE_CONFIG = ROOT / "configs/g11_v8/p5_sharded_reference_execution_v5.yaml"
+RESOURCE_CAP_AUTHORIZATION = (
+    ROOT / "configs/g11_v8/p5_reference_pilot_authorization_v4.yaml"
+)
+RESOURCE_CAP_CONFIG = ROOT / "configs/g11_v8/p5_sharded_reference_execution_v6.yaml"
 
 
 def test_archived_v2_authorization_fails_closed_after_source_change() -> None:
@@ -44,16 +48,34 @@ def test_resource_audit_rejects_premature_final_authorization() -> None:
     assert "decision_fail_closed" in report["failures"]
 
 
-def test_method_role_authorization_binds_current_runtime_and_only_pilot() -> None:
+def test_archived_method_role_authorization_fails_after_source_change() -> None:
     authorization, digest = load_authorization(METHOD_ROLE_AUTHORIZATION)
     report = audit_resource_authorization(
         authorization,
         digest,
         METHOD_ROLE_AUTHORIZATION,
     )
+    assert report["passed"] is False
+    assert "all_bound_inputs_and_implementation_pass" in report["failures"]
+    assert report["decision"]["formal_pilot_execution_authorized"] is False
+    assert report["decision"]["final_execution_authorized"] is False
+    with pytest.raises(ValueError, match="SHA-256 mismatch"):
+        _verify_authorization(
+            METHOD_ROLE_AUTHORIZATION,
+            load_context(METHOD_ROLE_CONFIG),
+        )
+
+
+def test_resource_cap_authorization_binds_current_runtime_and_only_pilot() -> None:
+    authorization, digest = load_authorization(RESOURCE_CAP_AUTHORIZATION)
+    report = audit_resource_authorization(
+        authorization,
+        digest,
+        RESOURCE_CAP_AUTHORIZATION,
+    )
     verified = _verify_authorization(
-        METHOD_ROLE_AUTHORIZATION,
-        load_context(METHOD_ROLE_CONFIG),
+        RESOURCE_CAP_AUTHORIZATION,
+        load_context(RESOURCE_CAP_CONFIG),
     )
 
     assert verified["decision"]["formal_pilot_execution_authorized"] is True

@@ -1,0 +1,59 @@
+schema: npi.g11.v8-p5-reference-pilot-authorization.v1
+protocol_id: g11-v8-p5-sharded-reference-resource-cap-v1
+date: "2026-07-31"
+phase: r2_resource_cap_reference_pilot_authorization
+design_informed_by_benchmark_outcomes: true
+formal_pilot_outcomes_inspected_before_authorization: false
+
+execution_config:
+  path: configs/g11_v8/p5_sharded_reference_execution_v6.yaml
+  sha256: fbbdbc822657c25c73ccd96ceb1e7271a3ebe6f6a05f00494848a7b5c7ea8eb8
+threshold_binding:
+  path: configs/g11_v8/p5_threshold_manifest_binding_v2.yaml
+  sha256: 638b872cd660180dca20f6572c3ad0b3b84ef747ef29839bd152f0d73d7e3762
+implementation_manifest:
+  path: configs/g11_v8/p5_reference_implementation_manifest_v4.yaml
+  sha256: a25690cb6ccfe3d1bd72e6b0a10c8b844496b3022786011261d01f956e15c776
+representative_benchmark:
+  path: results/g11_v8_p5_reference_benchmark_v6_2026-07-31.json
+  sha256: 3bd5cf183745cc71024b64648a3de82713fccaa6fefdc09c04ae5c01ee975259
+
+benchmark_namespace:
+  id: v8-r2-reference-resource-cap-benchmark-v1
+  terminal_status: completed
+  reusable: false
+
+formal_pilot:
+  namespace: v8-r2-reference-resource-cap-pilot-v1
+  method_cell_count: 48
+  replicates_per_method_cell: 8
+  samples_per_replicate: 32768
+  total_paths: 12582912
+  benchmark_source_commit: 66359c877dba1b79e792241c5a77c7738499b5f6
+  required_source_state: clean_committed
+  required_implementation_manifest_sha256: a25690cb6ccfe3d1bd72e6b0a10c8b844496b3022786011261d01f956e15c776
+  required_device: cpu
+  required_dtype: float64
+  expected_torch_threads_per_worker: 16
+  resume_unit: immutable_completed_shard
+  laptop_predicted_wall_seconds: 1896.4409856051209
+  laptop_maximum_wall_seconds: 14400.0
+  laptop_execution_authorized: true
+
+final_execution:
+  namespace: v8-r2-reference-resource-cap-final-v1
+  allocation_manifest_required: true
+  laptop_worst_case_predicted_wall_seconds: 546175.0038542747
+  laptop_worst_case_authorized: false
+  external_32vcpu_forecast_is_planning_only: true
+  external_32vcpu_worst_case_predicted_wall_seconds: 390125.0027530535
+  external_hardware_benchmark_required: true
+  execution_authorized: false
+
+decision:
+  status: clean_source_formal_pilot_authorized
+  formal_pilot_execution_authorized: true
+  final_execution_authorized: false
+  reference_complete: false
+  performance_claim_authorized: false
+  submission_authorized: false
