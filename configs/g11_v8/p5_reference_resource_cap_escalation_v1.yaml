@@ -1,0 +1,64 @@
+schema: npi.g11.v8-p5-reference-resource-cap-escalation.v1
+protocol_id: g11-v8-p5-reference-resource-cap-escalation-v1
+date: "2026-07-31"
+phase: r2_reference_resource_cap_escalation_freeze
+design_informed_by_prior_resource_failure: true
+current_namespace_outcomes_inspected_before_freeze: false
+
+prior_manifest:
+  path: results/g11_v8_p5_reference_proposal_manifest_v2_2026-07-31.json
+  sha256: 01e2763a815f11bcd54cc24012559136d2752c72b378c96e230a3af45f624b00
+prior_manifest_audit:
+  path: results/g11_v8_p5_reference_proposal_manifest_audit_v2_2026-07-31.json
+  sha256: 36242b185ff0eb025b855585e5d86b7b23d0e47ceff1657475069a9a44dd8886
+failed_pilot_package:
+  path: results/g11_v8_p5_reference_pilot_package_v5_2026-07-31.json
+  sha256: 572737843f25eca7096cc61907f6bfe598035b13a8eeaf8d0944159716dd3555
+failure_receipt:
+  path: results/g11_v8_p5_reference_allocation_failure_v5_2026-07-31.json
+  sha256: 413c996c77bad901efa43bf3bc2c74ae89aa8832f317cba9e65aa428088ca9b4
+failure_audit:
+  path: results/g11_v8_p5_reference_allocation_failure_audit_v5_2026-07-31.json
+  sha256: 680d248655e0e9df153f61d7cf939673c664114fb1b502e99f0c31aba40c4dd1
+
+reference_protocol:
+  id: g11-v8-p5-sharded-reference-resource-cap-v1
+  pilot_namespace: v8-r2-reference-resource-cap-pilot-v1
+  final_namespace: v8-r2-reference-resource-cap-final-v1
+  methods: [dcs_reference, raw_crosscheck]
+  primary_method: dcs_reference
+  estimand: fixed_finest_grid
+  dtype: float64
+  device: cpu
+
+unchanged_statistical_contract:
+  method_relative_standard_error_targets:
+    dcs_reference: 0.02
+    raw_crosscheck: 0.05
+  maximum_combined_agreement_z: 4.0
+  pilot_replicates: 8
+  pilot_samples_per_replicate: 32768
+  allocation_safety_factor: 6.0
+  allocation_variance_statistic: maximum_replicate_variance
+  ordinary_mean_required: true
+  self_normalization_allowed: false
+
+resource_cap_rule:
+  failed_cell_id: h0.12-discrete_lower_barrier-p1e-05
+  failed_method: dcs_reference
+  prior_requested_final_samples: 59685859
+  prior_maximum_final_samples: 33554432
+  multiplier: 2
+  rounding: smallest_power_of_two_not_less_than_multiplied_requirement
+  derived_dcs_maximum_final_samples: 134217728
+  unchanged_raw_maximum_final_samples: 16777216
+
+decision:
+  status: resource_cap_escalation_manifest_build_authorized
+  proposal_or_target_change_authorized: false
+  manifest_build_authorized: true
+  fresh_formal_pilot_required: true
+  new_formal_pilot_authorized: false
+  final_execution_authorized: false
+  performance_claim_authorized: false
+  submission_authorized: false
