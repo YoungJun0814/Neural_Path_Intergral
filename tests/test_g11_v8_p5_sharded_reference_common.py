@@ -16,6 +16,7 @@ from src.path_integral.reference_protocol import ReferenceShardIdentity
 
 CONFIG = ROOT / "configs/g11_v8/p5_sharded_reference_execution_v3.yaml"
 METHOD_ROLE_CONFIG = ROOT / "configs/g11_v8/p5_sharded_reference_execution_v5.yaml"
+RESOURCE_CAP_CONFIG = ROOT / "configs/g11_v8/p5_sharded_reference_execution_v6.yaml"
 
 
 def test_sharded_reference_v3_context_is_hash_bound() -> None:
@@ -44,6 +45,30 @@ def test_sharded_reference_v5_method_roles_are_hash_bound() -> None:
     assert context.reference_parent_sha256 == context.config["proposal_manifest"][
         "sha256"
     ]
+
+
+def test_sharded_reference_v6_changes_only_resource_cap_namespace() -> None:
+    prior = load_context(METHOD_ROLE_CONFIG)
+    context = load_context(RESOURCE_CAP_CONFIG)
+
+    assert context.config["reference_contract"] == prior.config["reference_contract"]
+    assert context.config["sampling"]["maximum_final_samples_by_method"] == {
+        "dcs_reference": 134_217_728,
+        "raw_crosscheck": 16_777_216,
+    }
+    prior_proposals = {
+        key: (entry["weights"], entry["schedules"])
+        for key, entry in prior.proposal_entries_by_key.items()
+    }
+    current_proposals = {
+        key: (entry["weights"], entry["schedules"])
+        for key, entry in context.proposal_entries_by_key.items()
+    }
+    assert current_proposals == prior_proposals
+    assert (
+        context.config["sampling"]["pilot_namespace"]
+        != prior.config["sampling"]["pilot_namespace"]
+    )
 
 
 def test_seed_material_is_disjoint_by_namespace_method_stage_and_index() -> None:

@@ -36,6 +36,7 @@ from src.physics_engine import RBergomiSimulator
 SCHEMA_V3 = "npi.g11.v8-p5-sharded-reference-execution.v3"
 SCHEMA_V4 = "npi.g11.v8-p5-sharded-reference-execution.v4"
 SCHEMA_V5 = "npi.g11.v8-p5-sharded-reference-execution.v5"
+SCHEMA_V6 = "npi.g11.v8-p5-sharded-reference-execution.v6"
 ROOT_KEYS_V3 = {
     "schema",
     "protocol_id",
@@ -90,21 +91,29 @@ def load_sharded_reference_config(path: Path) -> tuple[dict[str, Any], str]:
     config = yaml.safe_load(raw.decode("utf-8"))
     if (
         not isinstance(config, dict)
-        or config.get("schema") not in {SCHEMA_V3, SCHEMA_V4, SCHEMA_V5}
+        or config.get("schema")
+        not in {SCHEMA_V3, SCHEMA_V4, SCHEMA_V5, SCHEMA_V6}
         or set(config)
         != (ROOT_KEYS_V3 if config.get("schema") == SCHEMA_V3 else ROOT_KEYS_V4)
     ):
         raise ValueError("unexpected or malformed sharded-reference config")
-    version = {SCHEMA_V3: 3, SCHEMA_V4: 4, SCHEMA_V5: 5}[config["schema"]]
+    version = {
+        SCHEMA_V3: 3,
+        SCHEMA_V4: 4,
+        SCHEMA_V5: 5,
+        SCHEMA_V6: 6,
+    }[config["schema"]]
     expected_protocol = {
         3: "g11-v8-p5-sharded-reference-development-v1",
         4: "g11-v8-p5-sharded-reference-cell-tuned-v1",
         5: "g11-v8-p5-sharded-reference-method-role-v1",
+        6: "g11-v8-p5-sharded-reference-resource-cap-v1",
     }[version]
     expected_phase = {
         3: "r2_reference_development",
         4: "r2_cell_tuned_reference_execution",
         5: "r2_method_role_reference_execution",
+        6: "r2_resource_cap_reference_execution",
     }[version]
     if (
         config.get("protocol_id") != expected_protocol
@@ -143,7 +152,7 @@ def load_sharded_reference_config(path: Path) -> tuple[dict[str, Any], str]:
         or contract.get("self_normalization_allowed") is not False
     ):
         raise ValueError("sharded-reference statistical contract is invalid")
-    if version == 5 and (
+    if version >= 5 and (
         contract.get("primary_method") != "dcs_reference"
         or contract.get("method_relative_standard_error_targets")
         != {"dcs_reference": 0.02, "raw_crosscheck": 0.05}
@@ -154,13 +163,20 @@ def load_sharded_reference_config(path: Path) -> tuple[dict[str, Any], str]:
         3: "v8-r2-reference-development",
         4: "v8-r2-reference-cell-tuned-pilot-v1",
         5: "v8-r2-reference-method-role-pilot-v1",
+        6: "v8-r2-reference-resource-cap-pilot-v1",
     }[version]
     final_namespace = {
         3: "v8-r2-reference-development-final",
         4: "v8-r2-reference-cell-tuned-final-v1",
         5: "v8-r2-reference-method-role-final-v1",
+        6: "v8-r2-reference-resource-cap-final-v1",
     }[version]
-    expected_maximum = 33_554_432 if version == 5 else 8_388_608
+    expected_maximum = {
+        3: 8_388_608,
+        4: 8_388_608,
+        5: 33_554_432,
+        6: 134_217_728,
+    }[version]
     if (
         sampling.get("pilot_namespace") != pilot_namespace
         or sampling.get("final_namespace") != final_namespace
@@ -175,10 +191,13 @@ def load_sharded_reference_config(path: Path) -> tuple[dict[str, Any], str]:
         or sampling.get("engine") != "fft"
     ):
         raise ValueError("sharded-reference sampling contract is invalid")
-    if version == 5 and sampling.get("maximum_final_samples_by_method") != {
-        "dcs_reference": 33_554_432,
-        "raw_crosscheck": 16_777_216,
-    }:
+    expected_method_caps = {
+        5: {"dcs_reference": 33_554_432, "raw_crosscheck": 16_777_216},
+        6: {"dcs_reference": 134_217_728, "raw_crosscheck": 16_777_216},
+    }
+    if version >= 5 and sampling.get(
+        "maximum_final_samples_by_method"
+    ) != expected_method_caps[version]:
         raise ValueError("method-role sampling caps are invalid")
     representative_cells = benchmark.get("representative_cells")
     if (
@@ -218,6 +237,7 @@ def load_context(config_path: Path) -> ShardedReferenceContext:
     sampling = config["sampling"]
     is_v3 = config["schema"] == SCHEMA_V3
     is_v5 = config["schema"] == SCHEMA_V5
+    is_v6 = config["schema"] == SCHEMA_V6
     if (
         binding_sha256 != config["threshold_binding"]["sha256"]
         or (
@@ -272,7 +292,9 @@ def load_context(config_path: Path) -> ShardedReferenceContext:
             not isinstance(proposal_value, dict)
             or proposal_value.get("schema")
             != (
-                "npi.g11.v8-p5-reference-proposal-manifest.v2"
+                "npi.g11.v8-p5-reference-proposal-manifest.v3"
+                if is_v6
+                else "npi.g11.v8-p5-reference-proposal-manifest.v2"
                 if is_v5
                 else "npi.g11.v8-p5-reference-proposal-manifest.v1"
             )
