@@ -136,8 +136,11 @@ def run_benchmark(config_path: Path) -> dict[str, Any]:
         * int(sampling["pilot_replicates"])
         * int(sampling["pilot_samples_per_replicate"])
     )
-    maximum_final_paths = (
-        cells * methods * int(sampling["maximum_final_samples"])
+    method_caps = sampling.get("maximum_final_samples_by_method")
+    maximum_final_paths = cells * (
+        sum(int(method_caps[method]) for method in config["reference_contract"]["methods"])
+        if isinstance(method_caps, dict)
+        else methods * int(sampling["maximum_final_samples"])
     )
     steps = int(benchmark["forecast_steps"])
     safety_factor = float(benchmark["forecast_safety_factor"])

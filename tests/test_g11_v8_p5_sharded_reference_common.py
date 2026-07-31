@@ -15,6 +15,7 @@ from experiments.g11_v8_p5_sharded_reference_common import (
 from src.path_integral.reference_protocol import ReferenceShardIdentity
 
 CONFIG = ROOT / "configs/g11_v8/p5_sharded_reference_execution_v3.yaml"
+METHOD_ROLE_CONFIG = ROOT / "configs/g11_v8/p5_sharded_reference_execution_v5.yaml"
 
 
 def test_sharded_reference_v3_context_is_hash_bound() -> None:
@@ -27,6 +28,22 @@ def test_sharded_reference_v3_context_is_hash_bound() -> None:
         != context.config["sampling"]["final_namespace"]
     )
     assert len(context.environment_sha256) == 64
+
+
+def test_sharded_reference_v5_method_roles_are_hash_bound() -> None:
+    context = load_context(METHOD_ROLE_CONFIG)
+
+    assert len(context.proposal_entries_by_key) == 48
+    assert context.config["reference_contract"][
+        "method_relative_standard_error_targets"
+    ] == {"dcs_reference": 0.02, "raw_crosscheck": 0.05}
+    assert context.config["sampling"]["maximum_final_samples_by_method"] == {
+        "dcs_reference": 33_554_432,
+        "raw_crosscheck": 16_777_216,
+    }
+    assert context.reference_parent_sha256 == context.config["proposal_manifest"][
+        "sha256"
+    ]
 
 
 def test_seed_material_is_disjoint_by_namespace_method_stage_and_index() -> None:

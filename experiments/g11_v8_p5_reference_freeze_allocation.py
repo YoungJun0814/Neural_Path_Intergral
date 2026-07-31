@@ -32,16 +32,27 @@ def freeze_allocation(
     pilot_records = [
         (payload, digest) for _, payload, digest in completed.values()
     ]
-    target_fraction = float(
-        contract["maximum_reference_se_fraction_of_final_target"]
+    method_relative_targets = contract.get(
+        "method_relative_standard_error_targets"
     )
-    relative_rmse = float(contract["final_relative_rmse_design_target"])
-    target_standard_errors = {
-        cell_id: target_fraction
-        * relative_rmse
-        * float(cell["nominal_probability"])
-        for cell_id, cell in context.cells_by_id.items()
-    }
+    if method_relative_targets is None:
+        target_fraction = float(
+            contract["maximum_reference_se_fraction_of_final_target"]
+        )
+        relative_rmse = float(contract["final_relative_rmse_design_target"])
+        target_standard_errors: dict[str | tuple[str, str], float] = {
+            cell_id: target_fraction
+            * relative_rmse
+            * float(cell["nominal_probability"])
+            for cell_id, cell in context.cells_by_id.items()
+        }
+    else:
+        target_standard_errors = {
+            (cell_id, method): float(method_relative_targets[method])
+            * float(cell["nominal_probability"])
+            for cell_id, cell in context.cells_by_id.items()
+            for method in REFERENCE_METHODS
+        }
     manifest = build_allocation_manifest(
         protocol_id=context.config["protocol_id"],
         config_sha256=context.config_sha256,
@@ -69,6 +80,9 @@ def freeze_allocation(
         current_namespace_outcomes_inspected_before_freeze=context.config[
             "current_namespace_outcomes_inspected_before_freeze"
         ],
+        maximum_final_samples_by_method=sampling.get(
+            "maximum_final_samples_by_method"
+        ),
     )
     digest = write_json_atomic_nonoverwriting(output_path, manifest)
     return manifest, digest

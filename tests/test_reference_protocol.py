@@ -277,6 +277,89 @@ def test_allocation_fails_before_final_when_resource_cap_is_insufficient() -> No
     )
 
 
+def test_allocation_supports_method_specific_targets_and_caps() -> None:
+    shards, _ = _pilot_shards()
+    targets = {
+        (cell, method): (0.25 if method == "dcs_reference" else 0.5)
+        for cell in CELLS
+        for method in REFERENCE_METHODS
+    }
+    manifest = build_allocation_manifest(
+        protocol_id=PROTOCOL,
+        config_sha256=CONFIG_SHA,
+        threshold_manifest_sha256=THRESHOLD_SHA,
+        pilot_parent_sha256=PILOT_PARENT_SHA,
+        pilot_namespace=PILOT_NAMESPACE,
+        final_namespace=FINAL_NAMESPACE,
+        expected_cells=CELLS,
+        expected_methods=REFERENCE_METHODS,
+        pilot_replicates=3,
+        pilot_shards=shards,
+        target_standard_errors=targets,
+        allocation_safety_factor=1.0,
+        minimum_final_samples=4,
+        maximum_final_samples=32,
+        final_chunk_size=4,
+        source_commit=SOURCE_COMMIT,
+        environment_sha256=ENVIRONMENT_SHA,
+        estimand="fixed_finest_grid",
+        dtype="float64",
+        device="cpu",
+        design_informed_by_prior_development_outcomes=True,
+        current_namespace_outcomes_inspected_before_freeze=False,
+        maximum_final_samples_by_method={
+            "dcs_reference": 32,
+            "raw_crosscheck": 8,
+        },
+    )
+    for entry in manifest["entries"]:
+        expected_cap = 32 if entry["method"] == "dcs_reference" else 8
+        assert entry["maximum_final_samples"] == expected_cap
+        assert entry["target_standard_error"] == targets[
+            (entry["cell_id"], entry["method"])
+        ]
+    validate_allocation_manifest(manifest)
+
+
+def test_allocation_rejects_incomplete_method_specific_contracts() -> None:
+    shards, _ = _pilot_shards()
+    targets = {
+        (cell, method): 0.5
+        for cell in CELLS
+        for method in REFERENCE_METHODS
+    }
+    targets.pop((CELLS[0], "raw_crosscheck"))
+    with pytest.raises(ValueError, match="cell-method matrix"):
+        build_allocation_manifest(
+            protocol_id=PROTOCOL,
+            config_sha256=CONFIG_SHA,
+            threshold_manifest_sha256=THRESHOLD_SHA,
+            pilot_parent_sha256=PILOT_PARENT_SHA,
+            pilot_namespace=PILOT_NAMESPACE,
+            final_namespace=FINAL_NAMESPACE,
+            expected_cells=CELLS,
+            expected_methods=REFERENCE_METHODS,
+            pilot_replicates=3,
+            pilot_shards=shards,
+            target_standard_errors=targets,
+            allocation_safety_factor=1.0,
+            minimum_final_samples=4,
+            maximum_final_samples=32,
+            final_chunk_size=4,
+            source_commit=SOURCE_COMMIT,
+            environment_sha256=ENVIRONMENT_SHA,
+            estimand="fixed_finest_grid",
+            dtype="float64",
+            device="cpu",
+            design_informed_by_prior_development_outcomes=True,
+            current_namespace_outcomes_inspected_before_freeze=False,
+            maximum_final_samples_by_method={
+                "dcs_reference": 32,
+                "raw_crosscheck": 8,
+            },
+        )
+
+
 def test_allocation_rejects_dirty_duplicate_or_incomplete_pilots() -> None:
     shards, targets = _pilot_shards()
     dirty_payload = copy.deepcopy(shards[0][0])

@@ -56,7 +56,7 @@ def build_allocation_manifest(
     expected_methods: Sequence[str],
     pilot_replicates: int,
     pilot_shards: Sequence[tuple[dict[str, Any], str]],
-    target_standard_errors: Mapping[str, float],
+    target_standard_errors: Mapping[str | tuple[str, str], float],
     allocation_safety_factor: float,
     minimum_final_samples: int,
     maximum_final_samples: int,
@@ -68,6 +68,7 @@ def build_allocation_manifest(
     device: str,
     design_informed_by_prior_development_outcomes: bool,
     current_namespace_outcomes_inspected_before_freeze: bool,
+    maximum_final_samples_by_method: Mapping[str, int] | None = None,
 ) -> dict[str, Any]:
     """Freeze final counts using only complete independent pilot shards."""
 
@@ -90,13 +91,38 @@ def build_allocation_manifest(
         raise ValueError("reference method roster must remain fixed")
     if len(set(expected_cells)) != len(expected_cells) or not expected_cells:
         raise ValueError("expected reference cells must be unique and nonempty")
-    if set(target_standard_errors) != set(expected_cells):
-        raise ValueError("target standard errors must cover the exact cell set")
+    expected_entry_keys = {
+        (cell, method) for cell in expected_cells for method in expected_methods
+    }
+    target_keys = set(target_standard_errors)
+    cell_targets = target_keys == set(expected_cells)
+    entry_targets = target_keys == expected_entry_keys
+    if not cell_targets and not entry_targets:
+        raise ValueError(
+            "target standard errors must cover either the exact cell set "
+            "or the exact cell-method matrix"
+        )
     if any(
         not math.isfinite(float(value)) or float(value) <= 0.0
         for value in target_standard_errors.values()
     ):
         raise ValueError("target standard errors must be finite and positive")
+    resolved_caps = (
+        {method: maximum_final_samples for method in expected_methods}
+        if maximum_final_samples_by_method is None
+        else dict(maximum_final_samples_by_method)
+    )
+    if (
+        set(resolved_caps) != set(expected_methods)
+        or any(
+            isinstance(value, bool)
+            or not isinstance(value, int)
+            or value < minimum_final_samples
+            or value > maximum_final_samples
+            for value in resolved_caps.values()
+        )
+    ):
+        raise ValueError("method-specific final-sample caps are invalid")
     if current_namespace_outcomes_inspected_before_freeze:
         raise ValueError("current final namespace outcomes must remain unopened")
 
@@ -161,8 +187,12 @@ def build_allocation_manifest(
     entries: list[dict[str, Any]] = []
     all_feasible = True
     for cell in expected_cells:
-        target = float(target_standard_errors[cell])
         for method in expected_methods:
+            target_key: str | tuple[str, str] = (
+                cell if cell_targets else (cell, method)
+            )
+            target = float(target_standard_errors[target_key])
+            method_cap = resolved_caps[method]
             records = [
                 by_key[(cell, method, replicate)]
                 for replicate in range(pilot_replicates)
@@ -182,7 +212,7 @@ def build_allocation_manifest(
                     / (target * target)
                 ),
             )
-            feasible = requested <= maximum_final_samples
+            feasible = requested <= method_cap
             all_feasible &= feasible
             chunk_counts = _chunk_counts(requested, final_chunk_size) if feasible else []
             chunks = [
@@ -212,7 +242,7 @@ def build_allocation_manifest(
                     "allocation_variance_statistic": "maximum_replicate_variance",
                     "allocation_design_variance": design_variance,
                     "requested_final_samples": requested,
-                    "maximum_final_samples": maximum_final_samples,
+                    "maximum_final_samples": method_cap,
                     "resource_feasible": feasible,
                     "authorized_final_samples": requested if feasible else None,
                     "chunks": chunks,
@@ -418,7 +448,10 @@ def validate_allocation_manifest(payload: Any) -> dict[str, Any]:
             or float(design_variance) < 0.0
             or not isinstance(requested, int)
             or requested < minimum
-            or cap != maximum
+            or isinstance(cap, bool)
+            or not isinstance(cap, int)
+            or cap < minimum
+            or cap > maximum
         ):
             raise ValueError("allocation entry statistics or sample count are invalid")
         if entry.get("allocation_variance_statistic") != "maximum_replicate_variance":
@@ -473,7 +506,7 @@ def validate_allocation_manifest(payload: Any) -> dict[str, Any]:
         )
         if requested != calculated_requested:
             raise ValueError("allocation requested count is inconsistent with formula")
-        resource_feasible = requested <= maximum
+        resource_feasible = requested <= cap
         if entry.get("resource_feasible") is not resource_feasible:
             raise ValueError("allocation entry feasibility mismatch")
         authorized = entry.get("authorized_final_samples")

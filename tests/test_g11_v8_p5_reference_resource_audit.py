@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import copy
 
+import pytest
+
 from experiments.g11_v8_p5_reference_pilot import _verify_authorization
 from experiments.g11_v8_p5_reference_resource_audit import (
     ROOT,
@@ -14,15 +16,16 @@ AUTHORIZATION = ROOT / "configs/g11_v8/p5_reference_pilot_authorization_v2.yaml"
 CONFIG = ROOT / "configs/g11_v8/p5_sharded_reference_execution_v4.yaml"
 
 
-def test_production_benchmark_authorizes_only_formal_pilot() -> None:
+def test_archived_v2_authorization_fails_closed_after_source_change() -> None:
     authorization, digest = load_authorization(AUTHORIZATION)
     report = audit_resource_authorization(authorization, digest, AUTHORIZATION)
-    verified = _verify_authorization(AUTHORIZATION, load_context(CONFIG))
 
-    assert verified["decision"]["formal_pilot_execution_authorized"] is True
-    assert report["passed"] is True
-    assert report["decision"]["formal_pilot_execution_authorized"] is True
+    assert report["passed"] is False
+    assert "all_bound_inputs_and_implementation_pass" in report["failures"]
+    assert report["decision"]["formal_pilot_execution_authorized"] is False
     assert report["decision"]["final_execution_authorized"] is False
+    with pytest.raises(ValueError, match="SHA-256 mismatch"):
+        _verify_authorization(AUTHORIZATION, load_context(CONFIG))
 
 
 def test_resource_audit_rejects_premature_final_authorization() -> None:
