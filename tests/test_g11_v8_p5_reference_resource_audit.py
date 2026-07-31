@@ -66,19 +66,19 @@ def test_archived_method_role_authorization_fails_after_source_change() -> None:
         )
 
 
-def test_resource_cap_authorization_binds_current_runtime_and_only_pilot() -> None:
+def test_archived_resource_cap_authorization_fails_after_source_change() -> None:
     authorization, digest = load_authorization(RESOURCE_CAP_AUTHORIZATION)
     report = audit_resource_authorization(
         authorization,
         digest,
         RESOURCE_CAP_AUTHORIZATION,
     )
-    verified = _verify_authorization(
-        RESOURCE_CAP_AUTHORIZATION,
-        load_context(RESOURCE_CAP_CONFIG),
-    )
-
-    assert verified["decision"]["formal_pilot_execution_authorized"] is True
-    assert report["passed"] is True
-    assert report["decision"]["formal_pilot_execution_authorized"] is True
+    assert report["passed"] is False
+    assert "all_bound_inputs_and_implementation_pass" in report["failures"]
+    assert report["decision"]["formal_pilot_execution_authorized"] is False
     assert report["decision"]["final_execution_authorized"] is False
+    with pytest.raises(ValueError, match="SHA-256 mismatch"):
+        _verify_authorization(
+            RESOURCE_CAP_AUTHORIZATION,
+            load_context(RESOURCE_CAP_CONFIG),
+        )

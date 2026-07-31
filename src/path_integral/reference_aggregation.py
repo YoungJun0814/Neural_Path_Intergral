@@ -564,6 +564,9 @@ def aggregate_final_shards(
     manifest: dict[str, Any],
     manifest_sha256: str,
     final_shards: Sequence[tuple[dict[str, Any], str]],
+    *,
+    final_source_commit: str | None = None,
+    final_environment_sha256: str | None = None,
 ) -> dict[str, Any]:
     """Recompute the exact fixed-size aggregate from the expected final shard set."""
 
@@ -573,6 +576,10 @@ def aggregate_final_shards(
     if not manifest["final_execution_authorized"]:
         raise ValueError("resource-infeasible allocation cannot be aggregated")
 
+    expected_source_commit = final_source_commit or manifest["source_commit"]
+    expected_environment_sha256 = (
+        final_environment_sha256 or manifest["environment_sha256"]
+    )
     expected: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
     for entry in manifest["entries"]:
         for chunk in entry["chunks"]:
@@ -626,9 +633,9 @@ def aggregate_final_shards(
                 != manifest["threshold_manifest_sha256"]
             ):
                 raise ValueError("final shard threshold hash mismatch")
-            if payload["source_commit"] != manifest["source_commit"]:
+            if payload["source_commit"] != expected_source_commit:
                 raise ValueError("final shard source commit mismatch")
-            if payload["environment_sha256"] != manifest["environment_sha256"]:
+            if payload["environment_sha256"] != expected_environment_sha256:
                 raise ValueError("final shard environment hash mismatch")
             if payload["estimand"] != manifest["estimand"]:
                 raise ValueError("final shard estimand mismatch")
@@ -712,8 +719,10 @@ def aggregate_final_shards(
         "allocation_manifest_sha256": manifest_sha256,
         "config_sha256": manifest["config_sha256"],
         "threshold_manifest_sha256": manifest["threshold_manifest_sha256"],
-        "source_commit": manifest["source_commit"],
-        "environment_sha256": manifest["environment_sha256"],
+        "source_commit": expected_source_commit,
+        "environment_sha256": expected_environment_sha256,
+        "pilot_source_commit": manifest["source_commit"],
+        "pilot_environment_sha256": manifest["environment_sha256"],
         "cells": cells,
         "method_agreements": agreements,
         "complete_reference_matrix": len(cells) == len(manifest["entries"]),

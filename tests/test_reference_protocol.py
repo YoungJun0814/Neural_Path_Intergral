@@ -321,6 +321,33 @@ def test_allocation_supports_method_specific_targets_and_caps() -> None:
     validate_allocation_manifest(manifest)
 
 
+def test_external_final_source_and_environment_are_separately_authorized() -> None:
+    manifest = _manifest()
+    external_source = "2" * 40
+    external_environment = "e" * 64
+    shards = _final_shards(manifest)
+    changed: list[tuple[dict[str, Any], str]] = []
+    for payload, _ in shards:
+        payload["source_commit"] = external_source
+        payload["environment_sha256"] = external_environment
+        changed.append((payload, canonical_sha256(payload)))
+
+    aggregate = aggregate_final_shards(
+        manifest,
+        canonical_sha256(manifest),
+        changed,
+        final_source_commit=external_source,
+        final_environment_sha256=external_environment,
+    )
+    assert aggregate["source_commit"] == external_source
+    assert aggregate["environment_sha256"] == external_environment
+    assert aggregate["pilot_source_commit"] == manifest["source_commit"]
+    assert (
+        aggregate["pilot_environment_sha256"]
+        == manifest["environment_sha256"]
+    )
+
+
 def test_allocation_rejects_incomplete_method_specific_contracts() -> None:
     shards, _ = _pilot_shards()
     targets = {
