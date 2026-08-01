@@ -1,0 +1,83 @@
+schema: npi.g11.v8-b1-baseline-implementation.v1
+protocol_id: g11-v8-b1-baseline-implementation-v1
+date: "2026-08-02"
+phase: b1_implementation_smoke
+namespace: v8-b1-baseline-implementation-smoke-v1
+outcome_data_used: false
+performance_claim_authorized: false
+completion_status_ledger_v2:
+  path: configs/g11_v8/completion_status_ledger_v2.yaml
+  sha256: 412b7ec67191dbe4fc395211e1a51ef89e1923bb9bb593e8f5302ecfd8466816
+matrix_design:
+  path: configs/g11_v8/p5_reference_matrix_design_v1.yaml
+  sha256: 7c92468bec444a04e0b1fbecbb09e09e325bf4d002b03496aa913816b8d34b4e
+threshold_calibration:
+  path: results/g11_v8_p5_threshold_calibration_v1_2026-07-27.json
+  sha256: 27eabb261d079a8e67fb9389f492c532eb51d7c387ce3907437cfe9e5085ddb6
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  steps: 128
+  hurst: 0.12
+  eta: 1.5
+  xi: 0.04
+  rho: -0.7
+
+cells:
+  - cell_id: h0.12-terminal_left_tail-p1e-02
+    task: terminal_left_tail
+    threshold: 46.41141383480874
+  - cell_id: h0.12-discrete_lower_barrier-p1e-02
+    task: discrete_lower_barrier
+    threshold: 40.411221763015256
+
+methods:
+  - crude_mc
+  - antithetic_mc
+  - conditional_rbergomi
+  - pure_cem
+  - defensive_cem
+  - smoothing_rqmc
+  - ld_subspace_is
+  - flow_is
+
+training:
+  cem:
+    iterations: 2
+    samples_per_iteration: 128
+    elite_fraction: 0.1
+    smoothing: 0.7
+    defensive_weight: 0.1
+    max_mean_norm: 20.0
+  large_deviation:
+    optimizer_steps: 80
+    learning_rate: 0.05
+    penalty: 1000.0
+    feasibility_margin: 0.0
+    restarts: 2
+    defensive_weight: 0.1
+    occupation_temperature: 0.05
+  flow:
+    screening_samples: 256
+    elite_fraction: 0.1
+    max_log_scale: 1.5
+    ridge: 0.000001
+
+execution:
+  pilot_units: 16
+  target_estimator_variance: 0.01
+  minimum_final_units: 4
+  maximum_final_units: 32
+  rqmc_points_per_randomization: 64
+  base_seed: 811000
+
+gate:
+  expected_run_count: 15
+  terminal_method_count: 8
+  barrier_method_count: 7
+  conditional_barrier_must_be_rejected: true
+  every_lifecycle_audit_must_pass: true
+  every_exact_likelihood_must_pass: true
+  every_cost_ledger_must_be_nonzero: true
+  performance_claim_authorized: false

@@ -1,0 +1,36 @@
+{
+  "checks": {
+    "all_estimates_finite_nonnegative": true,
+    "all_lifecycle_checks_pass": true,
+    "all_seeds_global_disjoint": true,
+    "allocation_and_units_exact": true,
+    "barrier_roster_exact": true,
+    "config_hash_exact": true,
+    "config_schema_exact": true,
+    "executor_decision_fail_closed": true,
+    "method_family_exact": true,
+    "method_specific_contracts_pass": true,
+    "namespace_exact": true,
+    "proposal_hashes_independently_recomputed": true,
+    "proposal_hashes_unique": true,
+    "protocol_exact": true,
+    "record_structure_valid": true,
+    "result_schema_exact": true,
+    "run_count_exact": true,
+    "source_commit_is_ancestor": true,
+    "terminal_roster_exact": true,
+    "training_planning_final_costs_charged": true
+  },
+  "config_sha256": "74f1122d0f582f80715f85bd4799ed93cc0e490630fdba0b629c308db86866b7",
+  "decision": {
+    "b1_implementation_complete": true,
+    "d1_falsification_authorized": true,
+    "p8_qualification_authorized": false,
+    "performance_claim_authorized": false,
+    "submission_authorized": false
+  },
+  "failures": [],
+  "passed": true,
+  "result_sha256": "e8a77f98b30ea26bd3a12cd1a4cb72be54b7dc1c6b0c70d5f88d250f4a57144e",
+  "schema": "npi.g11.v8-b1-baseline-implementation-audit.v1"
+}
