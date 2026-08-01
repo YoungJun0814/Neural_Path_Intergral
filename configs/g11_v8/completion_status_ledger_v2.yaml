@@ -1,0 +1,129 @@
+schema: npi.g11.v8-completion-status-ledger.v2
+protocol_id: g11-v8-completion-status-ledger-v2
+date: "2026-08-02"
+phase: r2_reference_close
+predecessor:
+  path: configs/g11_v8/completion_status_ledger_v1.yaml
+  sha256: b4aa261cba5bc1258a59f47c6191f36cb388841dc383e0056efa4a76ec8d559b
+reference_repository_commit: e66c1d37a2201aba4e03ebc51efed0c7a9f70bc5
+reference_outcomes_inspected: true
+current_b1_outcomes_inspected_before_freeze: false
+
+artifacts:
+  - id: p0_claim_contract
+    path: configs/g11_v8/top_journal_claim_contract_v1.yaml
+    sha256: f73d2f1b89aebefa710e0315e0f0f8b1415062ec1595c2a86d2d457c613281cd
+    status: conditional
+    performance_authorized: false
+  - id: p4_baseline_framework
+    path: configs/g11_v8/baseline_framework_ledger_v1.yaml
+    sha256: ebd314dc1b6f9d6fc0eb0f7285a912491fd5f4b562ac81b1ea564fd57ded81f0
+    status: conditional
+    performance_authorized: false
+  - id: p5_matrix
+    path: configs/g11_v8/p5_reference_matrix_design_v1.yaml
+    sha256: 7c92468bec444a04e0b1fbecbb09e09e325bf4d002b03496aa913816b8d34b4e
+    status: passed
+    performance_authorized: false
+  - id: p5_threshold_binding_v2
+    path: configs/g11_v8/p5_threshold_manifest_binding_v2.yaml
+    sha256: 638b872cd660180dca20f6572c3ad0b3b84ef747ef29839bd152f0d73d7e3762
+    status: passed
+    performance_authorized: false
+  - id: p6_statistical_design
+    path: configs/g11_v8/p6_statistical_design_v1.yaml
+    sha256: 408c1a925634da8195dee6372b7416e6c58e6174c3ee933081247db97a4f84e8
+    status: passed
+    performance_authorized: false
+  - id: r2_failed_execution_receipt
+    path: results/g11_v8_p5_reference_final_execution_failure_v1_2026-08-02.json
+    sha256: 7e0f78c599d721cf4c64edea76fcd6a2f3e58442e2337c055329be24e9e3da63
+    status: failed
+    performance_authorized: false
+  - id: r2_log_spot_remediation_audit
+    path: docs/G11_V8_R2_LOG_SPOT_REMEDIATION_AUDIT_2026-08-02.md
+    sha256: a2742b806a636c1c3a81cf48df07b23da228869354faaf7ba0496f6ae3e71d0b
+    status: passed
+    performance_authorized: false
+  - id: r2_benchmark
+    path: results/g11_v8_p5_reference_external_benchmark_v3_2026-08-02.json
+    sha256: 51d567c89c37feac18bdd68dbdc5511b94b749b789d54898ea276052552c7950
+    status: passed
+    performance_authorized: false
+  - id: r2_authorization
+    path: results/g11_v8_p5_reference_final_authorization_v2_2026-08-02.json
+    sha256: 945bf70f3cb8b981a5734a4ef5688f4a2ae630f0076849260ee455132b605c05
+    status: passed
+    performance_authorized: false
+  - id: r2_aggregate
+    path: results/g11_v8_p5_reference_final_aggregate_v1_2026-08-02.json
+    sha256: 879a875016bb17253e36a816d3ddc7a66ec0b96898e48b73ce4f395f783fe525
+    status: passed
+    performance_authorized: false
+  - id: r2_aggregate_audit
+    path: results/g11_v8_p5_reference_final_aggregate_audit_v1_2026-08-02.json
+    sha256: c7542dad6b64aa5e91338486f498ca21afdeff84559e8f41fc0b2da41f102556
+    status: passed
+    performance_authorized: false
+  - id: r2_execution_receipt
+    path: results/g11_v8_p5_reference_final_execution_receipt_v1_2026-08-02.json
+    sha256: d6e97a62618219add7ddddd5980a6c8cea6b80e88c9079419ec5082f29089bba
+    status: passed
+    performance_authorized: false
+  - id: r2_final_audit
+    path: docs/G11_V8_R2_FINAL_REFERENCE_AUDIT_2026-08-02.md
+    sha256: 6177b94c95f0a82a32effe66dbd4ac96231d3deb97e11074556dc70d6c130060
+    status: passed
+    performance_authorized: false
+
+consumed_namespaces:
+  - v8-r2-reference-resource-cap-pilot-v1
+  - v8-r2-reference-resource-cap-final-v1
+
+closed_obligations:
+  - sharded_checkpointed_reference_infrastructure
+  - fresh_high_precision_reference
+
+open_obligations:
+  - production_strong_external_baselines
+  - p7_falsification_benchmark
+  - quantitative_or_model_level_new_theorem
+  - updated_primary_source_novelty_review
+  - p8_independent_seed_qualification
+  - p9_outcome_blind_freeze
+  - p10_uncensored_confirmation
+  - p11_independent_physical_hardware
+  - external_mathematical_review
+  - external_code_review
+  - claim_to_evidence_manuscript_audit
+
+reserved_namespaces:
+  - v8-b1-baseline-implementation-smoke-v1
+  - v8-d1-p7-falsification-development-v1
+  - v8-p8-qualification
+  - v8-p9-freeze-receipt
+  - v8-p10-confirmation
+  - v8-p10-bootstrap
+  - v8-p11-independent-hardware
+
+authorized_actions:
+  - b1_strong_baseline_implementation
+  - b1_correctness_oracles
+  - d1_protocol_implementation
+  - t1_novelty_and_theory_development
+
+prohibited_claims:
+  - external_comparator_superiority
+  - unconditional_rbergomi_mlmc_complexity
+  - continuous_barrier_exactness
+  - independent_physical_reproduction_complete
+  - top_journal_submission_ready
+
+decision:
+  status: r2_reference_complete_b1_authorized
+  next_blocking_phase: b1_strong_baseline_implementation
+  reference_complete: true
+  performance_claim_authorized: false
+  p8_qualification_authorized: false
+  p9_freeze_authorized: false
+  submission_authorized: false

@@ -1,0 +1,39 @@
+{
+  "artifact_count": 13,
+  "checks": {
+    "artifact_hashes_match": true,
+    "artifact_ids_exact": true,
+    "artifact_keys_exact": true,
+    "artifact_paths_exist_and_portable": true,
+    "artifact_statuses_exact": true,
+    "artifacts_refuse_performance": true,
+    "authorized_actions_exact": true,
+    "b1_namespace_unopened": true,
+    "closed_obligations_exact": true,
+    "closed_open_disjoint": true,
+    "date_phase_exact": true,
+    "decision_fail_closed": true,
+    "decision_keys_exact": true,
+    "open_obligations_exact": true,
+    "predecessor_exact": true,
+    "prohibited_claims_exact": true,
+    "protocol_exact": true,
+    "r2_performance_claim_refused": true,
+    "r2_reference_evidence_passes": true,
+    "reference_commit_exact_and_ancestor": true,
+    "reference_outcome_use_disclosed": true,
+    "root_keys_exact": true,
+    "schema_exact": true
+  },
+  "decision": {
+    "b1_implementation_authorized": true,
+    "p8_qualification_authorized": false,
+    "performance_claim_authorized": false,
+    "reference_complete": true,
+    "submission_authorized": false
+  },
+  "failures": [],
+  "ledger_sha256": "412b7ec67191dbe4fc395211e1a51ef89e1923bb9bb593e8f5302ecfd8466816",
+  "passed": true,
+  "schema": "npi.g11.v8-completion-status-audit.v2"
+}
