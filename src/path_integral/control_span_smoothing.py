@@ -243,6 +243,7 @@ def evaluate_control_span_marginalized_mixture(
     )
     affine = affine_rbergomi_log_spot(
         spot=paths.spot,
+        log_spot=paths.log_spot,
         variance=paths.variance,
         proposal_fine_brownian_increments=target,
         fine_step_dt=paths.step_dt,
@@ -255,7 +256,7 @@ def evaluate_control_span_marginalized_mixture(
         step_dt=paths.step_dt,
         task=task,
     )
-    hard_event = task.hard_event(paths.spot, paths.step_dt)
+    hard_event = task.hard_event_from_log_spot(paths.log_spot, paths.step_dt)
     threshold_event = affine.coordinate <= thresholds.combined
     if not torch.equal(hard_event, threshold_event):
         mismatches = int(torch.count_nonzero(hard_event != threshold_event))
@@ -283,9 +284,7 @@ def evaluate_control_span_marginalized_mixture(
     component_error = float(
         torch.max(torch.abs(reconstructed_component - sample.component_log_q_over_p))
     )
-    mixture_error = float(
-        torch.max(torch.abs(reconstructed_mixture - sample.log_mixture_q_over_p))
-    )
+    mixture_error = float(torch.max(torch.abs(reconstructed_mixture - sample.log_mixture_q_over_p)))
 
     zero_expert = torch.amax(torch.abs(schedules), dim=(1, 2)) <= tolerance
     defensive_weight: float | None = None
@@ -339,6 +338,7 @@ def evaluate_control_span_marginalized_adjacent_mixture(
     )
     fine_affine = affine_rbergomi_log_spot(
         spot=paths.fine.spot,
+        log_spot=paths.fine.log_spot,
         variance=paths.fine.variance,
         proposal_fine_brownian_increments=target,
         fine_step_dt=paths.fine.step_dt,
@@ -347,6 +347,7 @@ def evaluate_control_span_marginalized_adjacent_mixture(
     )
     coarse_affine = affine_rbergomi_log_spot(
         spot=paths.coarse.spot,
+        log_spot=paths.coarse.log_spot,
         variance=paths.coarse.variance,
         proposal_fine_brownian_increments=target,
         fine_step_dt=paths.fine.step_dt,
@@ -354,7 +355,9 @@ def evaluate_control_span_marginalized_adjacent_mixture(
         direction=span.direction,
         coarse_from_fine_pairs=True,
     )
-    coordinate_mismatch = float(torch.max(torch.abs(fine_affine.coordinate - coarse_affine.coordinate)))
+    coordinate_mismatch = float(
+        torch.max(torch.abs(fine_affine.coordinate - coarse_affine.coordinate))
+    )
     if coordinate_mismatch > tolerance:
         raise AssertionError("fine and coarse control-span coordinates differ")
     fine_threshold = downside_excursion_thresholds(
@@ -369,8 +372,8 @@ def evaluate_control_span_marginalized_adjacent_mixture(
         step_dt=paths.coarse.step_dt,
         task=task,
     ).combined
-    fine_event = task.hard_event(paths.fine.spot, paths.fine.step_dt)
-    coarse_event = task.hard_event(paths.coarse.spot, paths.coarse.step_dt)
+    fine_event = task.hard_event_from_log_spot(paths.fine.log_spot, paths.fine.step_dt)
+    coarse_event = task.hard_event_from_log_spot(paths.coarse.log_spot, paths.coarse.step_dt)
     if not torch.equal(fine_event, fine_affine.coordinate <= fine_threshold):
         raise AssertionError("fine control-span threshold replay failed")
     if not torch.equal(coarse_event, coarse_affine.coordinate <= coarse_threshold):
@@ -392,9 +395,10 @@ def evaluate_control_span_marginalized_adjacent_mixture(
     raw_correction = (
         fine_event.to(paths.fine.spot.dtype) - coarse_event.to(paths.fine.spot.dtype)
     ) * torch.exp(sample.mixture_log_likelihood)
-    if not torch.isfinite(raw_correction).all() or not torch.isfinite(
-        marginalized_correction
-    ).all():
+    if (
+        not torch.isfinite(raw_correction).all()
+        or not torch.isfinite(marginalized_correction).all()
+    ):
         raise FloatingPointError("control-span correction became nonfinite")
 
     reconstructed_component = (
@@ -406,9 +410,7 @@ def evaluate_control_span_marginalized_adjacent_mixture(
     component_error = float(
         torch.max(torch.abs(reconstructed_component - sample.component_log_q_over_p))
     )
-    mixture_error = float(
-        torch.max(torch.abs(reconstructed_mixture - sample.log_mixture_q_over_p))
-    )
+    mixture_error = float(torch.max(torch.abs(reconstructed_mixture - sample.log_mixture_q_over_p)))
     zero_expert = torch.amax(torch.abs(schedules), dim=(1, 2)) <= tolerance
     defensive_weight: float | None = None
     bound_violation = 0.0
@@ -433,12 +435,8 @@ def evaluate_control_span_marginalized_adjacent_mixture(
         maximum_component_log_density_error=component_error,
         maximum_mixture_log_density_error=mixture_error,
         maximum_coordinate_mismatch=coordinate_mismatch,
-        maximum_fine_path_reconstruction_error=(
-            fine_affine.maximum_path_reconstruction_error
-        ),
-        maximum_coarse_path_reconstruction_error=(
-            coarse_affine.maximum_path_reconstruction_error
-        ),
+        maximum_fine_path_reconstruction_error=(fine_affine.maximum_path_reconstruction_error),
+        maximum_coarse_path_reconstruction_error=(coarse_affine.maximum_path_reconstruction_error),
         maximum_residual_projection=max(
             float(torch.max(torch.abs(fine_projection))),
             float(torch.max(torch.abs(coarse_projection))),
@@ -524,7 +522,7 @@ def evaluate_rank_two_control_span_marginalized_mixture(
         ),
         dim=1,
     )
-    log_spot = torch.log(paths.spot)
+    log_spot = paths.log_spot
     intercept = log_spot - torch.sum(slopes * coordinates[:, None, :], dim=2)
     reconstructed_path = intercept + torch.sum(slopes * coordinates[:, None, :], dim=2)
     path_error = float(torch.max(torch.abs(reconstructed_path - log_spot)))
@@ -572,9 +570,7 @@ def evaluate_rank_two_control_span_marginalized_mixture(
         step_dt=paths.step_dt,
         task=task,
     ).combined.reshape(paths.spot.shape[0], inner_samples)
-    conditional_cdf = torch.special.ndtr(
-        (thresholds - conditional_mean_two) / conditional_sd
-    )
+    conditional_cdf = torch.special.ndtr((thresholds - conditional_mean_two) / conditional_sd)
     conditional_probability = torch.mean(conditional_cdf, dim=1)
 
     outer_component = _outer_component_log_q_over_p(
@@ -586,7 +582,7 @@ def evaluate_rank_two_control_span_marginalized_mixture(
     log_outer_likelihood = -outer_mixture
     outer_likelihood = torch.exp(log_outer_likelihood)
     marginalized = outer_likelihood * conditional_probability
-    hard_event = task.hard_event(paths.spot, paths.step_dt)
+    hard_event = task.hard_event_from_log_spot(paths.log_spot, paths.step_dt)
     raw = hard_event.to(paths.spot.dtype) * torch.exp(sample.mixture_log_likelihood)
     if not torch.isfinite(marginalized).all() or not torch.isfinite(raw).all():
         raise FloatingPointError("rank-two marginalized contribution became nonfinite")
@@ -598,9 +594,7 @@ def evaluate_rank_two_control_span_marginalized_mixture(
     component_error = float(
         torch.max(torch.abs(reconstructed_component - sample.component_log_q_over_p))
     )
-    mixture_error = float(
-        torch.max(torch.abs(reconstructed_mixture - sample.log_mixture_q_over_p))
-    )
+    mixture_error = float(torch.max(torch.abs(reconstructed_mixture - sample.log_mixture_q_over_p)))
     zero_expert = torch.amax(torch.abs(schedules), dim=(1, 2)) <= tolerance
     defensive_weight: float | None = None
     bound_violation = 0.0

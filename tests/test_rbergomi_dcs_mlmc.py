@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 import pytest
 import torch
 
@@ -173,6 +175,21 @@ def test_task_types_reject_invalid_parameters_and_paths() -> None:
         TerminalThresholdTask(level=90.0).hard_event(
             torch.tensor([[100.0, 0.0]], dtype=torch.float64), 0.1
         )
+
+
+def test_terminal_and_barrier_events_remain_exact_after_spot_underflow() -> None:
+    log_spot = torch.tensor(
+        [[math.log(100.0), -1000.0], [math.log(100.0), math.log(95.0)]],
+        dtype=torch.float64,
+    )
+    projected_spot = torch.exp(log_spot)
+    terminal = TerminalThresholdTask(level=90.0)
+    barrier = DiscreteBarrierHitTask(barrier=90.0)
+
+    assert projected_spot[0, -1] == 0.0
+    expected = torch.tensor([True, False])
+    assert torch.equal(terminal.hard_event_from_log_spot(log_spot, 0.1), expected)
+    assert torch.equal(barrier.hard_event_from_log_spot(log_spot, 0.1), expected)
 
 
 def test_terminal_and_barrier_cem_scores_have_exact_event_sign() -> None:

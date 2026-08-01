@@ -68,9 +68,7 @@ def load_reference_config(path: Path) -> tuple[dict[str, Any], str]:
         raise ValueError("P5 reference V1 must be outcome-blind")
     if config["schema"] == SCHEMA_V2 and config.get("outcome_data_used") is not True:
         raise ValueError("P5 reference V2 must disclose its V1-informed allocation change")
-    expected_namespace = (
-        "p5-reference" if config["schema"] == SCHEMA_V1 else "p5-reference-v2"
-    )
+    expected_namespace = "p5-reference" if config["schema"] == SCHEMA_V1 else "p5-reference-v2"
     if config.get("reference_seed_namespace") != expected_namespace:
         raise ValueError("P5 reference namespace must be fixed by schema version")
     if config.get("final_method_seed_namespace") != "p5-final-method":
@@ -83,17 +81,18 @@ def load_reference_config(path: Path) -> tuple[dict[str, Any], str]:
         raise ValueError("P5 reference methods must be fixed")
     if (
         float(contract.get("final_relative_rmse_design_target", 0.0)) != 0.20
-        or float(contract.get("maximum_reference_se_fraction_of_final_target", 0.0))
-        != 0.10
+        or float(contract.get("maximum_reference_se_fraction_of_final_target", 0.0)) != 0.10
         or float(contract.get("maximum_combined_z_score", 0.0)) != 4.0
     ):
         raise ValueError("P5 reference precision or agreement contract is invalid")
-    if int(sampling.get("pilot_replicates", 0)) < 3 or int(
-        sampling.get("pilot_samples_per_replicate", 0)
-    ) < 2:
+    if (
+        int(sampling.get("pilot_replicates", 0)) < 3
+        or int(sampling.get("pilot_samples_per_replicate", 0)) < 2
+    ):
         raise ValueError("P5 reference needs at least three pilot replicates")
     if int(sampling.get("maximum_final_samples", 0)) < int(
-        sampling.get("minimum_final_samples", 0)):
+        sampling.get("minimum_final_samples", 0)
+    ):
         raise ValueError("P5 reference final-sample bounds are invalid")
     statistic = sampling.get("allocation_variance_statistic", "median_replicate_variance")
     if statistic not in {"median_replicate_variance", "maximum_replicate_variance"}:
@@ -140,10 +139,8 @@ def _cell_task(cell: dict[str, Any]):
 
 def _method_values(sample: Any, *, task: Any, rho: float, method: ReferenceMethod) -> torch.Tensor:
     if method == "dcs_reference":
-        return evaluate_rbergomi_dcs_level(
-            sample, task=task, rho=rho
-        ).marginalized_contribution
-    hard_event = task.hard_event(sample.paths.spot, sample.paths.step_dt)
+        return evaluate_rbergomi_dcs_level(sample, task=task, rho=rho).marginalized_contribution
+    hard_event = task.hard_event_from_log_spot(sample.paths.log_spot, sample.paths.step_dt)
     likelihood = torch.exp(sample.mixture_log_likelihood)
     values = hard_event.to(dtype=likelihood.dtype) * likelihood
     if not torch.isfinite(values).all():
@@ -177,10 +174,26 @@ def _seeds(
     replicate: int,
 ) -> tuple[int, int]:
     proposal_seed = ledger.allocate(
-        SeedKey(protocol_id, f"p5-reference-{method}-{stage}", cell_id, "fixed-grid", 0, replicate, "proposal")
+        SeedKey(
+            protocol_id,
+            f"p5-reference-{method}-{stage}",
+            cell_id,
+            "fixed-grid",
+            0,
+            replicate,
+            "proposal",
+        )
     )
     label_seed = ledger.allocate(
-        SeedKey(protocol_id, f"p5-reference-{method}-{stage}", cell_id, "fixed-grid", 0, replicate, "labels")
+        SeedKey(
+            protocol_id,
+            f"p5-reference-{method}-{stage}",
+            cell_id,
+            "fixed-grid",
+            0,
+            replicate,
+            "labels",
+        )
     )
     return proposal_seed, label_seed
 
@@ -217,9 +230,7 @@ def _draw_values(
     }
     if proposal is None:
         controls = _controls(threshold_config, task_name)
-        weights = torch.tensor(
-            threshold_config["proposal"]["weights"], dtype=torch.float64
-        )
+        weights = torch.tensor(threshold_config["proposal"]["weights"], dtype=torch.float64)
     else:
         schedules = proposal.get("schedules")
         proposal_weights = proposal.get("weights")
@@ -231,10 +242,7 @@ def _draw_values(
             raise ValueError("reference proposal manifest entry is malformed")
         controls = tuple(
             TimePiecewiseTwoDriverControl(
-                tuple(
-                    (float(segment[0]), float(segment[1]))
-                    for segment in schedule
-                ),
+                tuple((float(segment[0]), float(segment[1])) for segment in schedule),
                 maturity=float(cell["maturity"]),
             )
             for schedule in schedules
@@ -253,10 +261,10 @@ def _draw_values(
         engine=engine,
     )
     if (
-        not torch.isfinite(sample.paths.spot).all()
+        not torch.isfinite(sample.paths.log_spot).all()
         or not torch.isfinite(sample.paths.variance).all()
-        or bool((sample.paths.spot <= 0.0).any())
         or bool((sample.paths.variance <= 0.0).any())
+        or not torch.equal(sample.paths.spot, torch.exp(sample.paths.log_spot))
     ):
         raise FloatingPointError("P5 reference simulation produced an invalid path")
     values = _method_values(sample, task=_cell_task(cell), rho=float(cell["rho"]), method=method)
@@ -319,9 +327,7 @@ def _reference_method(
     requested = max(
         minimum_final,
         math.ceil(
-            float(sampling["allocation_safety_factor"])
-            * design_variance
-            / target_standard_error**2
+            float(sampling["allocation_safety_factor"]) * design_variance / target_standard_error**2
         ),
     )
     final_count = min(requested, maximum_final)

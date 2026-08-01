@@ -191,6 +191,7 @@ def _generic_density(
 def _level_evaluation(
     *,
     spot: torch.Tensor,
+    log_spot: torch.Tensor,
     variance: torch.Tensor,
     step_dt: float,
     target_fine_increments: torch.Tensor,
@@ -206,6 +207,7 @@ def _level_evaluation(
 ) -> RBergomiDCSLevelEvaluation:
     affine = affine_rbergomi_log_spot(
         spot=spot,
+        log_spot=log_spot,
         variance=variance,
         proposal_fine_brownian_increments=target_fine_increments,
         fine_step_dt=fine_step_dt,
@@ -219,7 +221,7 @@ def _level_evaluation(
         step_dt=step_dt,
         task=task,
     )
-    hard_event = task.hard_event(spot, step_dt)
+    hard_event = task.hard_event_from_log_spot(log_spot, step_dt)
     threshold_event = affine.coordinate <= threshold
     if not torch.equal(hard_event, threshold_event):
         mismatches = int(torch.count_nonzero(hard_event != threshold_event))
@@ -278,6 +280,7 @@ def evaluate_rbergomi_dcs_level(
     )
     return _level_evaluation(
         spot=sample.paths.spot,
+        log_spot=sample.paths.log_spot,
         variance=sample.paths.variance,
         step_dt=sample.paths.step_dt,
         target_fine_increments=target,
@@ -315,6 +318,7 @@ def evaluate_rbergomi_dcs_adjacent(
     )
     fine = _level_evaluation(
         spot=sample.paths.fine.spot,
+        log_spot=sample.paths.fine.log_spot,
         variance=sample.paths.fine.variance,
         step_dt=sample.paths.fine.step_dt,
         target_fine_increments=target,
@@ -330,6 +334,7 @@ def evaluate_rbergomi_dcs_adjacent(
     )
     coarse = _level_evaluation(
         spot=sample.paths.coarse.spot,
+        log_spot=sample.paths.coarse.log_spot,
         variance=sample.paths.coarse.variance,
         step_dt=sample.paths.coarse.step_dt,
         target_fine_increments=target,

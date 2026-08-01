@@ -57,6 +57,7 @@ def _concatenate_levels(parts: Sequence[RBergomiLevelPaths]) -> RBergomiLevelPat
         raise ValueError("level samples must share a time grid")
     return RBergomiLevelPaths(
         spot=_required_cat(parts, "spot"),
+        log_spot=_required_cat(parts, "log_spot"),
         variance=_required_cat(parts, "variance"),
         volterra=_required_cat(parts, "volterra"),
         running_minimum=_required_cat(parts, "running_minimum"),
@@ -76,22 +77,12 @@ def _concatenate_coupled(
         coarse=_concatenate_levels([part.coarse for part in parts]),
         log_likelihood=_required_cat(parts, "log_likelihood"),
         control_energy=_required_cat(parts, "control_energy"),
-        proposal_fine_brownian_increments=_required_cat(
-            parts, "proposal_fine_brownian_increments"
-        ),
-        target_fine_brownian_increments=_required_cat(
-            parts, "target_fine_brownian_increments"
-        ),
-        proposal_fine_local_integrals=_required_cat(
-            parts, "proposal_fine_local_integrals"
-        ),
+        proposal_fine_brownian_increments=_required_cat(parts, "proposal_fine_brownian_increments"),
+        target_fine_brownian_increments=_required_cat(parts, "target_fine_brownian_increments"),
+        proposal_fine_local_integrals=_required_cat(parts, "proposal_fine_local_integrals"),
         target_fine_local_integrals=_required_cat(parts, "target_fine_local_integrals"),
-        proposal_coarse_local_integrals=_required_cat(
-            parts, "proposal_coarse_local_integrals"
-        ),
-        target_coarse_local_integrals=_required_cat(
-            parts, "target_coarse_local_integrals"
-        ),
+        proposal_coarse_local_integrals=_required_cat(parts, "proposal_coarse_local_integrals"),
+        target_coarse_local_integrals=_required_cat(parts, "target_coarse_local_integrals"),
         fine_controls=_required_cat(parts, "fine_controls"),
     )
 
@@ -103,6 +94,7 @@ def _as_replay_paths(paths: CoupledRBergomiPaths) -> TwoDriverRBergomiPaths:
         raise ValueError("target fine Brownian increments must be recorded")
     return TwoDriverRBergomiPaths(
         spot=paths.fine.spot,
+        log_spot=paths.fine.log_spot,
         variance=paths.fine.variance,
         volterra=paths.fine.volterra,
         running_minimum=paths.fine.running_minimum,
@@ -171,9 +163,7 @@ def simulate_coupled_rbergomi_mixture(
             )
         parts.append(part)
         grouped_labels.append(
-            torch.full(
-                (count,), expert_index, device=simulator.device, dtype=torch.long
-            )
+            torch.full((count,), expert_index, device=simulator.device, dtype=torch.long)
         )
     paths = _concatenate_coupled(parts)
     labels = torch.cat(grouped_labels, dim=0)
@@ -191,11 +181,14 @@ def simulate_coupled_rbergomi_mixture(
         deterministic = bool(getattr(control, "is_deterministic_time_control", False))
         evaluator = getattr(control, "deterministic_schedule", None)
         if deterministic and callable(evaluator):
-            times = torch.arange(
-                steps,
-                device=selected_controls.device,
-                dtype=selected_controls.dtype,
-            ) * paths.fine.step_dt
+            times = (
+                torch.arange(
+                    steps,
+                    device=selected_controls.device,
+                    dtype=selected_controls.dtype,
+                )
+                * paths.fine.step_dt
+            )
             schedule = cast(torch.Tensor, evaluator(times))
             if (
                 schedule.shape != (steps, drivers)
@@ -219,9 +212,7 @@ def simulate_coupled_rbergomi_mixture(
     resolved_weights = weights.to(device=component_log.device, dtype=component_log.dtype)
     mixture_log = log_mixture_q_over_p(component_log, resolved_weights)
     selected_log_likelihood = selected_component_log_p_over_q(component_log, labels)
-    replay_error = torch.max(
-        torch.abs(selected_log_likelihood - paths.log_likelihood)
-    )
+    replay_error = torch.max(torch.abs(selected_log_likelihood - paths.log_likelihood))
     return CoupledRBergomiMixtureSample(
         paths=paths,
         labels=labels,

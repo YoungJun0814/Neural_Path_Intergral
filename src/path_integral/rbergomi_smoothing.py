@@ -146,6 +146,7 @@ def _validate_control_contract(control_fn: RBergomiControl | None) -> None:
 def affine_rbergomi_log_spot(
     *,
     spot: torch.Tensor,
+    log_spot: torch.Tensor | None = None,
     variance: torch.Tensor,
     proposal_fine_brownian_increments: torch.Tensor,
     fine_step_dt: float,
@@ -161,12 +162,26 @@ def affine_rbergomi_log_spot(
         not spot.is_floating_point()
         or variance.device != spot.device
         or variance.dtype != spot.dtype
-        or not torch.isfinite(spot).all()
-        or not torch.isfinite(variance).all()
-        or bool((spot <= 0.0).any())
-        or bool((variance[:, :-1] <= 0.0).any())
     ):
-        raise ValueError("spot and variance must be finite, positive, matching tensors")
+        raise ValueError("spot and variance must be matching floating tensors")
+    if not torch.isfinite(variance).all() or bool((variance <= 0.0).any()):
+        raise ValueError("variance must be finite and strictly positive")
+    if log_spot is None:
+        if not torch.isfinite(spot).all() or bool((spot <= 0.0).any()):
+            raise ValueError("spot must be finite and positive when log_spot is absent")
+        resolved_log_spot = torch.log(spot)
+    else:
+        if (
+            log_spot.shape != spot.shape
+            or log_spot.device != spot.device
+            or log_spot.dtype != spot.dtype
+            or not log_spot.is_floating_point()
+            or not torch.isfinite(log_spot).all()
+        ):
+            raise ValueError("log_spot must be a finite tensor matching spot")
+        if not torch.equal(spot, torch.exp(log_spot)):
+            raise ValueError("spot must be the IEEE-754 exponential projection of log_spot")
+        resolved_log_spot = log_spot
     if (
         proposal_fine_brownian_increments.ndim != 3
         or proposal_fine_brownian_increments.shape[0] != spot.shape[0]
@@ -211,8 +226,7 @@ def affine_rbergomi_log_spot(
         ),
         dim=1,
     )
-    log_spot = torch.log(spot)
-    intercept = log_spot - slope * coordinate.unsqueeze(1)
+    intercept = resolved_log_spot - slope * coordinate.unsqueeze(1)
     reconstructed = intercept + slope * coordinate.unsqueeze(1)
     residual_projection = torch.sum(residual * resolved_direction, dim=1)
     return AffineRBergomiLogSpot(
@@ -222,7 +236,9 @@ def affine_rbergomi_log_spot(
         residual=residual,
         direction=resolved_direction,
         maximum_residual_projection=float(torch.max(torch.abs(residual_projection))),
-        maximum_path_reconstruction_error=float(torch.max(torch.abs(reconstructed - log_spot))),
+        maximum_path_reconstruction_error=float(
+            torch.max(torch.abs(reconstructed - resolved_log_spot))
+        ),
     )
 
 
@@ -274,7 +290,7 @@ def _level_estimate(
         step_dt=level.step_dt,
         task=task,
     )
-    hard_event = task.hard_event(level.spot, level.step_dt)
+    hard_event = task.hard_event_from_log_spot(level.log_spot, level.step_dt)
     threshold_event = affine.coordinate <= thresholds.combined
     if not torch.equal(hard_event, threshold_event):
         mismatches = int(torch.count_nonzero(hard_event != threshold_event))
@@ -309,6 +325,7 @@ def evaluate_smoothed_rbergomi_sample(
         raise ValueError("MGVS requires record_augmented=True")
     affine = affine_rbergomi_log_spot(
         spot=sample.spot,
+        log_spot=sample.log_spot,
         variance=sample.variance,
         proposal_fine_brownian_increments=sample.proposal_brownian_increments,
         fine_step_dt=sample.step_dt,
@@ -408,6 +425,7 @@ def evaluate_smoothed_adjacent_rbergomi_sample(
         raise ValueError("MGVS requires record_augmented=True")
     fine_affine = affine_rbergomi_log_spot(
         spot=sample.fine.spot,
+        log_spot=sample.fine.log_spot,
         variance=sample.fine.variance,
         proposal_fine_brownian_increments=sample.proposal_fine_brownian_increments,
         fine_step_dt=sample.fine.step_dt,
@@ -416,6 +434,7 @@ def evaluate_smoothed_adjacent_rbergomi_sample(
     )
     coarse_affine = affine_rbergomi_log_spot(
         spot=sample.coarse.spot,
+        log_spot=sample.coarse.log_spot,
         variance=sample.coarse.variance,
         proposal_fine_brownian_increments=sample.proposal_fine_brownian_increments,
         fine_step_dt=sample.fine.step_dt,

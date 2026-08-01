@@ -19,6 +19,22 @@ def _validate_finite_spot(spot: torch.Tensor, step_dt: float) -> None:
         raise ValueError("step_dt must be finite and positive")
 
 
+def _validate_finite_log_spot(log_spot: torch.Tensor, step_dt: float) -> None:
+    """Validate the canonical price state without exponentiating it.
+
+    A finite log-price can represent a strictly positive mathematical price even
+    when ``exp(log_spot)`` underflows to zero in IEEE-754 arithmetic.  Rare-event
+    decisions must therefore be permitted to operate directly in this domain.
+    """
+
+    if log_spot.ndim != 2 or log_spot.shape[1] < 2:
+        raise ValueError("log_spot must have shape (paths, steps + 1)")
+    if not log_spot.is_floating_point() or not torch.isfinite(log_spot).all():
+        raise ValueError("log_spot paths must be finite floating-point tensors")
+    if not math.isfinite(step_dt) or step_dt <= 0.0:
+        raise ValueError("step_dt must be finite and positive")
+
+
 @dataclass(frozen=True)
 class TerminalThresholdTask:
     """A finite-grid terminal downside event ``S_T <= level``."""
@@ -32,6 +48,12 @@ class TerminalThresholdTask:
     def hard_event(self, spot: torch.Tensor, step_dt: float) -> torch.Tensor:
         _validate_finite_spot(spot, step_dt)
         return spot[:, -1] <= self.level
+
+    def hard_event_from_log_spot(self, log_spot: torch.Tensor, step_dt: float) -> torch.Tensor:
+        """Evaluate the same event without price underflow or overflow."""
+
+        _validate_finite_log_spot(log_spot, step_dt)
+        return log_spot[:, -1] <= math.log(self.level)
 
     def score(self, spot: torch.Tensor, step_dt: float) -> torch.Tensor:
         """Dimensionless CEM score whose nonnegative set is the hard event."""
@@ -53,6 +75,12 @@ class DiscreteBarrierHitTask:
     def hard_event(self, spot: torch.Tensor, step_dt: float) -> torch.Tensor:
         _validate_finite_spot(spot, step_dt)
         return torch.amin(spot, dim=1) <= self.barrier
+
+    def hard_event_from_log_spot(self, log_spot: torch.Tensor, step_dt: float) -> torch.Tensor:
+        """Evaluate the same discrete barrier event in canonical log space."""
+
+        _validate_finite_log_spot(log_spot, step_dt)
+        return torch.amin(log_spot, dim=1) <= math.log(self.barrier)
 
     def score(self, spot: torch.Tensor, step_dt: float) -> torch.Tensor:
         """Dimensionless CEM score whose nonnegative set is the hard event."""
@@ -109,6 +137,19 @@ class DownsideExcursionTask:
         running_minimum, occupation, _hit = self.prefix_state(spot, step_dt)
         return (running_minimum[:, -1] <= self.hit_barrier) & (
             occupation[:, -1] + 1e-15 >= self.minimum_occupation
+        )
+
+    def hard_event_from_log_spot(self, log_spot: torch.Tensor, step_dt: float) -> torch.Tensor:
+        """Evaluate hit-plus-occupation exactly for extreme log-price paths."""
+
+        _validate_finite_log_spot(log_spot, step_dt)
+        running_log_minimum = torch.cummin(log_spot, dim=1).values
+        occupation = (
+            torch.sum(log_spot[:, 1:] <= math.log(self.stress_level), dim=1).to(log_spot.dtype)
+            * step_dt
+        )
+        return (running_log_minimum[:, -1] <= math.log(self.hit_barrier)) & (
+            occupation + 1e-15 >= self.minimum_occupation
         )
 
     def soft_payoff(self, spot: torch.Tensor, step_dt: float) -> torch.Tensor:

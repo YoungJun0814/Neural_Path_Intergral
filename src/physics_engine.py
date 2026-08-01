@@ -20,9 +20,7 @@ from dataclasses import dataclass
 import torch
 
 
-def strict_lognormal_variance(
-    log_factor: torch.Tensor, *, xi: float
-) -> torch.Tensor:
+def strict_lognormal_variance(log_factor: torch.Tensor, *, xi: float) -> torch.Tensor:
     """Evaluate ``xi * exp(log_factor)`` without silently flooring volatility."""
 
     if not math.isfinite(xi) or xi <= 0.0:
@@ -34,17 +32,10 @@ def strict_lognormal_variance(
     lower = math.log(finfo.tiny)
     upper = math.log(finfo.max)
     if bool((log_variance < lower).any()) or bool((log_variance > upper).any()):
-        raise FloatingPointError(
-            "rBergomi variance lies outside the normal floating-point range"
-        )
+        raise FloatingPointError("rBergomi variance lies outside the normal floating-point range")
     variance = torch.exp(log_variance)
-    if (
-        not torch.isfinite(variance).all()
-        or bool((variance < finfo.tiny).any())
-    ):
-        raise FloatingPointError(
-            "rBergomi lognormal variance became subnormal or nonfinite"
-        )
+    if not torch.isfinite(variance).all() or bool((variance < finfo.tiny).any()):
+        raise FloatingPointError("rBergomi lognormal variance became subnormal or nonfinite")
     return variance
 
 
@@ -394,9 +385,7 @@ class MarketSimulator:
         T: float,
         dt: float,
         num_paths: int,
-        control_fn: Callable[
-            [float, torch.Tensor, torch.Tensor, torch.Tensor], torch.Tensor
-        ]
+        control_fn: Callable[[float, torch.Tensor, torch.Tensor, torch.Tensor], torch.Tensor]
         | None = None,
         barrier_level: float | None = None,
         barrier_type: str = "down-out",
@@ -646,6 +635,7 @@ class TwoDriverRBergomiPaths:
     """
 
     spot: torch.Tensor
+    log_spot: torch.Tensor
     variance: torch.Tensor
     volterra: torch.Tensor
     running_minimum: torch.Tensor
@@ -853,6 +843,7 @@ class RBergomiSimulator:
         current_volterra = torch.zeros(num_paths, device=self.device, dtype=dtype)
         current_variance = torch.full((num_paths,), xi, device=self.device, dtype=dtype)
         spot_history = [torch.exp(current_log_spot)]
+        log_spot_history = [current_log_spot]
         variance_history = [current_variance]
         volterra_history = [current_volterra]
         running_minimum = torch.exp(current_log_spot)
@@ -958,6 +949,7 @@ class RBergomiSimulator:
             current_volterra = next_volterra
             current_variance = next_variance
             spot_history.append(torch.exp(current_log_spot))
+            log_spot_history.append(current_log_spot)
             volterra_history.append(current_volterra)
             variance_history.append(current_variance)
             running_minimum_history.append(running_minimum)
@@ -967,6 +959,7 @@ class RBergomiSimulator:
 
         return TwoDriverRBergomiPaths(
             spot=torch.stack(spot_history, dim=1),
+            log_spot=torch.stack(log_spot_history, dim=1),
             variance=torch.stack(variance_history, dim=1),
             volterra=torch.stack(volterra_history, dim=1),
             running_minimum=torch.stack(running_minimum_history, dim=1),

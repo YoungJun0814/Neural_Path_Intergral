@@ -199,7 +199,7 @@ def _assemble_level_with_h(
     target_local_integral: torch.Tensor,
     kernel: BLPFFTKernel,
     method: ConvolutionMethod,
-) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     historical = historical_volterra_convolution(
         target_driver_one, kernel.historical_kernel, method=method
     )
@@ -226,9 +226,9 @@ def _assemble_level_with_h(
     spot = torch.exp(log_spot)
     volterra = torch.cat((torch.zeros_like(initial_variance), volterra_after_zero), dim=1)
     running_minimum = torch.cummin(spot, dim=1).values
-    if not torch.isfinite(spot).all() or not torch.isfinite(variance).all():
+    if not torch.isfinite(log_spot).all() or not torch.isfinite(variance).all():
         raise FloatingPointError("fast rBergomi path became nonfinite")
-    return spot, variance, volterra, running_minimum
+    return spot, log_spot, variance, volterra, running_minimum
 
 
 def simulate_rbergomi_fft(
@@ -287,7 +287,7 @@ def simulate_rbergomi_fft(
     target_local_integral = (
         proposal_local_integral + schedule[:, 0].unsqueeze(0) * kernel.local_drift_integral
     )
-    spot, variance, volterra, running_minimum = _assemble_level_with_h(
+    spot, log_spot, variance, volterra, running_minimum = _assemble_level_with_h(
         S0=S0,
         mu=mu,
         H=H,
@@ -307,6 +307,7 @@ def simulate_rbergomi_fft(
     energy = step_dt * torch.sum(schedule_64.square()).expand(num_paths)
     return TwoDriverRBergomiPaths(
         spot=spot,
+        log_spot=log_spot,
         variance=variance,
         volterra=volterra,
         running_minimum=running_minimum,
@@ -423,7 +424,7 @@ def simulate_coupled_rbergomi_adjacent_fft(
     )
     target_coarse_brownian = target_brownian.reshape(num_paths, coarse_steps, 2, 2).sum(dim=2)
 
-    fine_spot, fine_variance, fine_volterra, fine_running = _assemble_level_with_h(
+    fine_spot, fine_log_spot, fine_variance, fine_volterra, fine_running = _assemble_level_with_h(
         S0=S0,
         mu=mu,
         H=H,
@@ -437,19 +438,21 @@ def simulate_coupled_rbergomi_adjacent_fft(
         kernel=fine_kernel,
         method=method,
     )
-    coarse_spot, coarse_variance, coarse_volterra, coarse_running = _assemble_level_with_h(
-        S0=S0,
-        mu=mu,
-        H=H,
-        xi=xi,
-        eta=eta,
-        rho=rho,
-        step_dt=coarse_dt,
-        target_driver_one=target_coarse_brownian[:, :, 0],
-        target_driver_two=target_coarse_brownian[:, :, 1],
-        target_local_integral=target_coarse_local,
-        kernel=coarse_kernel,
-        method=method,
+    coarse_spot, coarse_log_spot, coarse_variance, coarse_volterra, coarse_running = (
+        _assemble_level_with_h(
+            S0=S0,
+            mu=mu,
+            H=H,
+            xi=xi,
+            eta=eta,
+            rho=rho,
+            step_dt=coarse_dt,
+            target_driver_one=target_coarse_brownian[:, :, 0],
+            target_driver_two=target_coarse_brownian[:, :, 1],
+            target_local_integral=target_coarse_local,
+            kernel=coarse_kernel,
+            method=method,
+        )
     )
     schedule_64 = schedule.to(torch.float64)
     proposal_64 = proposal_brownian.to(torch.float64)
@@ -457,6 +460,7 @@ def simulate_coupled_rbergomi_adjacent_fft(
     energy = fine_dt * torch.sum(schedule_64.square()).expand(num_paths)
     fine = RBergomiLevelPaths(
         spot=fine_spot,
+        log_spot=fine_log_spot,
         variance=fine_variance,
         volterra=fine_volterra,
         running_minimum=fine_running,
@@ -466,6 +470,7 @@ def simulate_coupled_rbergomi_adjacent_fft(
     )
     coarse = RBergomiLevelPaths(
         spot=coarse_spot,
+        log_spot=coarse_log_spot,
         variance=coarse_variance,
         volterra=coarse_volterra,
         running_minimum=coarse_running,

@@ -26,6 +26,7 @@ class RBergomiLevelPaths:
     """One marginal of an adjacent-grid coupled simulation."""
 
     spot: torch.Tensor
+    log_spot: torch.Tensor
     variance: torch.Tensor
     volterra: torch.Tensor
     running_minimum: torch.Tensor
@@ -89,13 +90,8 @@ def adjacent_local_gaussian_coefficients(
     c00 = h
     c01 = h ** (alpha + 1.0) / (alpha + 1.0)
     c11 = h ** (2.0 * alpha + 1.0) / (2.0 * alpha + 1.0)
-    c02 = ((2.0 * h) ** (alpha + 1.0) - h ** (alpha + 1.0)) / (
-        alpha + 1.0
-    )
-    c22 = (
-        (2.0 * h) ** (2.0 * alpha + 1.0)
-        - h ** (2.0 * alpha + 1.0)
-    ) / (2.0 * alpha + 1.0)
+    c02 = ((2.0 * h) ** (alpha + 1.0) - h ** (alpha + 1.0)) / (alpha + 1.0)
+    c22 = ((2.0 * h) ** (2.0 * alpha + 1.0) - h ** (2.0 * alpha + 1.0)) / (2.0 * alpha + 1.0)
     c12, quadrature_error = quad(
         lambda r: (h - r) ** alpha * (2.0 * h - r) ** alpha,
         0.0,
@@ -192,11 +188,9 @@ def simulate_coupled_rbergomi_adjacent(
     fine_dt = T / fine_steps
     coarse_dt = 2.0 * fine_dt
     rho_perpendicular = math.sqrt(max(1.0 - rho * rho, 0.0))
-    fine_local = adjacent_local_gaussian_coefficients(
-        simulator, fine_dt=fine_dt, H=H, dtype=dtype
-    )
-    _fine_chol, fine_weights, fine_volterra_variance, _fine_drift = (
-        simulator._hybrid_coefficients(fine_steps, fine_dt, H=H, dtype=dtype)
+    fine_local = adjacent_local_gaussian_coefficients(simulator, fine_dt=fine_dt, H=H, dtype=dtype)
+    _fine_chol, fine_weights, fine_volterra_variance, _fine_drift = simulator._hybrid_coefficients(
+        fine_steps, fine_dt, H=H, dtype=dtype
     )
     _coarse_chol, coarse_weights, coarse_volterra_variance, _coarse_drift = (
         simulator._hybrid_coefficients(coarse_steps, coarse_dt, H=H, dtype=dtype)
@@ -215,6 +209,8 @@ def simulate_coupled_rbergomi_adjacent(
 
     fine_spot_history = [torch.exp(fine_log_spot)]
     coarse_spot_history = [torch.exp(coarse_log_spot)]
+    fine_log_spot_history = [fine_log_spot]
+    coarse_log_spot_history = [coarse_log_spot]
     fine_variance_history = [fine_variance]
     coarse_variance_history = [coarse_variance]
     fine_volterra_history = [fine_volterra]
@@ -273,8 +269,8 @@ def simulate_coupled_rbergomi_adjacent(
             proposal_driver_one = second_pair[:, 0]
             proposal_fine_integral = second_pair[:, 1]
 
-        proposal_driver_two = (
-            torch.randn(num_paths, device=device, dtype=dtype) * math.sqrt(fine_dt)
+        proposal_driver_two = torch.randn(num_paths, device=device, dtype=dtype) * math.sqrt(
+            fine_dt
         )
         proposal_brownian = torch.stack((proposal_driver_one, proposal_driver_two), dim=-1)
         target_brownian = proposal_brownian + control * fine_dt
@@ -296,19 +292,17 @@ def simulate_coupled_rbergomi_adjacent(
         )
         target_driver_one_history.append(target_driver_one)
         fine_driver_matrix = torch.stack(target_driver_one_history, dim=1)
-        fine_historical = torch.sum(
-            fine_driver_matrix * fine_weights[step, : step + 1], dim=1
-        )
+        fine_historical = torch.sum(fine_driver_matrix * fine_weights[step, : step + 1], dim=1)
         fine_volterra = volterra_scale * (fine_historical + target_fine_integral)
         fine_variance = strict_lognormal_variance(
-            eta * fine_volterra
-            - 0.5 * eta**2 * fine_volterra_variance[step + 1],
+            eta * fine_volterra - 0.5 * eta**2 * fine_volterra_variance[step + 1],
             xi=xi,
         )
         if not torch.isfinite(fine_variance).all() or not torch.isfinite(fine_log_spot).all():
             raise FloatingPointError("fine coupled rBergomi path became nonfinite")
         fine_running_minimum = torch.minimum(fine_running_minimum, torch.exp(fine_log_spot))
         fine_spot_history.append(torch.exp(fine_log_spot))
+        fine_log_spot_history.append(fine_log_spot)
         fine_variance_history.append(fine_variance)
         fine_volterra_history.append(fine_volterra)
         fine_minimum_history.append(fine_running_minimum)
@@ -328,15 +322,10 @@ def simulate_coupled_rbergomi_adjacent(
             ):
                 raise RuntimeError("incomplete adjacent coupling state")
             coarse_brownian = stored_target_brownian + target_brownian
-            proposal_coarse_integral = (
-                stored_proposal_first_coarse_local + proposal_fine_integral
-            )
-            target_coarse_integral = (
-                stored_target_first_coarse_local + target_fine_integral
-            )
+            proposal_coarse_integral = stored_proposal_first_coarse_local + proposal_fine_integral
+            target_coarse_integral = stored_target_first_coarse_local + target_fine_integral
             coarse_spot_increment = (
-                rho * coarse_brownian[:, 0]
-                + rho_perpendicular * coarse_brownian[:, 1]
+                rho * coarse_brownian[:, 0] + rho_perpendicular * coarse_brownian[:, 1]
             )
             coarse_log_spot = (
                 coarse_log_spot
@@ -347,16 +336,12 @@ def simulate_coupled_rbergomi_adjacent(
             coarse_driver_matrix = torch.stack(coarse_driver_one_history, dim=1)
             coarse_index = step // 2
             coarse_historical = torch.sum(
-                coarse_driver_matrix
-                * coarse_weights[coarse_index, : coarse_index + 1],
+                coarse_driver_matrix * coarse_weights[coarse_index, : coarse_index + 1],
                 dim=1,
             )
-            coarse_volterra = volterra_scale * (
-                coarse_historical + target_coarse_integral
-            )
+            coarse_volterra = volterra_scale * (coarse_historical + target_coarse_integral)
             coarse_variance = strict_lognormal_variance(
-                eta * coarse_volterra
-                - 0.5 * eta**2 * coarse_volterra_variance[coarse_index + 1],
+                eta * coarse_volterra - 0.5 * eta**2 * coarse_volterra_variance[coarse_index + 1],
                 xi=xi,
             )
             if (
@@ -368,6 +353,7 @@ def simulate_coupled_rbergomi_adjacent(
                 coarse_running_minimum, torch.exp(coarse_log_spot)
             )
             coarse_spot_history.append(torch.exp(coarse_log_spot))
+            coarse_log_spot_history.append(coarse_log_spot)
             coarse_variance_history.append(coarse_variance)
             coarse_volterra_history.append(coarse_volterra)
             coarse_minimum_history.append(coarse_running_minimum)
@@ -398,6 +384,7 @@ def simulate_coupled_rbergomi_adjacent(
     coarse_target_local = stack_optional(target_coarse_local_history)
     fine_paths = RBergomiLevelPaths(
         spot=torch.stack(fine_spot_history, dim=1),
+        log_spot=torch.stack(fine_log_spot_history, dim=1),
         variance=torch.stack(fine_variance_history, dim=1),
         volterra=torch.stack(fine_volterra_history, dim=1),
         running_minimum=torch.stack(fine_minimum_history, dim=1),
@@ -407,6 +394,7 @@ def simulate_coupled_rbergomi_adjacent(
     )
     coarse_paths = RBergomiLevelPaths(
         spot=torch.stack(coarse_spot_history, dim=1),
+        log_spot=torch.stack(coarse_log_spot_history, dim=1),
         variance=torch.stack(coarse_variance_history, dim=1),
         volterra=torch.stack(coarse_volterra_history, dim=1),
         running_minimum=torch.stack(coarse_minimum_history, dim=1),

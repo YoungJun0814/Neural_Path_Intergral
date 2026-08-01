@@ -17,9 +17,7 @@ from src.path_integral.mixture import (
 from src.path_integral.rbergomi_fft import simulate_rbergomi_fft
 from src.physics_engine import RBergomiSimulator, TwoDriverRBergomiPaths
 
-RBergomiControl = Callable[
-    [float, torch.Tensor, torch.Tensor, torch.Tensor], torch.Tensor
-]
+RBergomiControl = Callable[[float, torch.Tensor, torch.Tensor, torch.Tensor], torch.Tensor]
 SimulationEngine = Literal["reference", "fft"]
 
 
@@ -62,9 +60,7 @@ def replay_rbergomi_control_on_target_paths(
         raise ValueError("path_mask must be a boolean tensor matching the path batch")
     batch = int(path_mask.sum())
     if batch == 0:
-        return torch.empty(
-            (0, steps, drivers), device=target.device, dtype=target.dtype
-        )
+        return torch.empty((0, steps, drivers), device=target.device, dtype=target.dtype)
     reset_memory = getattr(control, "reset_for_simulation", None)
     if callable(reset_memory):
         reset_memory(batch_size=batch, device=target.device, dtype=target.dtype)
@@ -114,6 +110,7 @@ def _concatenate_paths(parts: Sequence[TwoDriverRBergomiPaths]) -> TwoDriverRBer
 
     return TwoDriverRBergomiPaths(
         spot=required("spot"),
+        log_spot=required("log_spot"),
         variance=required("variance"),
         volterra=required("volterra"),
         running_minimum=required("running_minimum"),
@@ -146,9 +143,7 @@ def simulate_rbergomi_mixture(
         raise ValueError("at least one expert control is required")
     if engine not in ("reference", "fft"):
         raise ValueError("engine must be 'reference' or 'fft'")
-    labels_draw = sample_mixture_labels(
-        weights, num_paths, generator=label_generator
-    )
+    labels_draw = sample_mixture_labels(weights, num_paths, generator=label_generator)
     parts: list[TwoDriverRBergomiPaths] = []
     grouped_labels: list[torch.Tensor] = []
     for expert_index, control in enumerate(controls):
@@ -198,11 +193,14 @@ def simulate_rbergomi_mixture(
         deterministic = bool(getattr(control, "is_deterministic_time_control", False))
         evaluator = getattr(control, "deterministic_schedule", None)
         if deterministic and callable(evaluator):
-            times = torch.arange(
-                steps,
-                device=paths.controls.device,
-                dtype=paths.controls.dtype,
-            ) * paths.step_dt
+            times = (
+                torch.arange(
+                    steps,
+                    device=paths.controls.device,
+                    dtype=paths.controls.dtype,
+                )
+                * paths.step_dt
+            )
             schedule = cast(torch.Tensor, evaluator(times))
             if (
                 schedule.shape != (steps, drivers)

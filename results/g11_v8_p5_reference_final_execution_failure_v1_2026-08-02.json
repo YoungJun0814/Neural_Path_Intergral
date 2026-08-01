@@ -1,0 +1,54 @@
+{
+  "schema": "npi.g11.v8-p5-reference-final-execution-failure.v1",
+  "protocol_id": "g11-v8-p5-sharded-reference-resource-cap-v1",
+  "date": "2026-08-02",
+  "status": "final_execution_invalidated_by_log_spot_projection_underflow",
+  "execution_source_commit": "5968afb7f72ef622d286abd358ac26292f1c2650",
+  "allocation_manifest_sha256": "e8846afb0f7e08aa4a52cb115c73061aa79efda9e0ee9786c4e3a38045e548a5",
+  "benchmark_file_sha256": "fbedd2cad11d6045e3e92795329520d21dfb9910189b2ec779ba5c3b4a7b28b0",
+  "authorization_file_sha256": "833ec73382fa32757cf53af504938aba2c6b475115a46e571e71cc0d2eeda127",
+  "failed_partition_index": 0,
+  "failed_shard": {
+    "stage": "final",
+    "cell_id": "h0.20-discrete_lower_barrier-p1e-05",
+    "method": "dcs_reference",
+    "shard_index": 403,
+    "requested_samples": 4096
+  },
+  "exception": {
+    "type": "FloatingPointError",
+    "message": "P5 reference simulation produced an invalid path",
+    "stderr_sha256": "7eff304cf3106c2de7d28b12548df2816b8f7a8dfd268b109f641862ef10fadc"
+  },
+  "preserved_partial_execution": {
+    "complete_shards": 6846,
+    "partition_0_complete_shards": 3088,
+    "partition_1_complete_shards": 3758,
+    "payload_roster_sha256": "d0994c685115b32f1205b2ab82d2275c958e3e81278d018ef6a089c82c068d3b"
+  },
+  "root_cause": {
+    "mathematical_price_state_finite": true,
+    "canonical_log_price_finite": true,
+    "ieee754_exponential_projection_reached_zero": true,
+    "likelihood_or_seed_failure": false,
+    "resource_failure": false
+  },
+  "remediation_contract": {
+    "canonical_price_state": "log_spot",
+    "spot_projection": "exp(log_spot)",
+    "positive_threshold_events_evaluated_in_log_domain": true,
+    "dcs_affine_reconstruction_evaluated_in_log_domain": true,
+    "spot_flooring_allowed": false,
+    "failed_execution_shards_reusable_under_remediated_authorization": false,
+    "statistical_allocation_changed": false,
+    "seed_namespaces_changed": false,
+    "thresholds_changed": false
+  },
+  "decision": {
+    "reference_complete": false,
+    "performance_claim_authorized": false,
+    "submission_authorized": false,
+    "fresh_benchmark_and_authorization_required": true,
+    "fresh_final_execution_required": true
+  }
+}
