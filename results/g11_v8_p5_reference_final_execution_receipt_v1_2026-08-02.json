@@ -1,0 +1,74 @@
+{
+  "schema": "npi.g11.v8-p5-reference-final-execution-receipt.v1",
+  "protocol_id": "g11-v8-p5-sharded-reference-resource-cap-v1",
+  "date": "2026-08-02",
+  "execution_source_commit": "3623e4d8f035ad906ea5e97ba21a8922615b5932",
+  "environment_sha256": "df5f8f38185e79deb715e247acd4b0efdc095bc08c5ea4c3d87212c99db30fcc",
+  "allocation_manifest_sha256": "e8846afb0f7e08aa4a52cb115c73061aa79efda9e0ee9786c4e3a38045e548a5",
+  "authorization_sha256": "91dc43fb35203dd58eb6ec15b064a9346904e923b685c6c41643a59caaae10d8",
+  "partition_rule": "sorted_shard_id_global_index_modulo_partition_count",
+  "workers": [
+    {
+      "partition_index": 0,
+      "expected": 20744,
+      "executed": 20744,
+      "skipped": 0,
+      "partition_complete": true,
+      "stderr_bytes": 0
+    },
+    {
+      "partition_index": 1,
+      "expected": 20743,
+      "executed": 20743,
+      "skipped": 0,
+      "partition_complete": true,
+      "stderr_bytes": 0
+    }
+  ],
+  "execution_totals": {
+    "immutable_shards": 41487,
+    "requested_paths": 169832664,
+    "dcs_reference_paths": 124896513,
+    "raw_crosscheck_paths": 44936151,
+    "cell_method_statistics": 48,
+    "method_agreements": 24
+  },
+  "acceptance_summary": {
+    "precision_gates_passed": 48,
+    "precision_gates_total": 48,
+    "normalization_gates_passed": 48,
+    "normalization_gates_total": 48,
+    "agreement_gates_passed": 24,
+    "agreement_gates_total": 24,
+    "maximum_standard_error_to_target_ratio": 0.5356520339610398,
+    "maximum_relative_standard_error": 0.022522556458400705,
+    "maximum_absolute_normalization_z": 2.834085958491402,
+    "maximum_absolute_agreement_z": 1.5085336142863557
+  },
+  "evidence": {
+    "benchmark": {
+      "path": "results/g11_v8_p5_reference_external_benchmark_v3_2026-08-02.json",
+      "sha256": "51d567c89c37feac18bdd68dbdc5511b94b749b789d54898ea276052552c7950"
+    },
+    "authorization": {
+      "path": "results/g11_v8_p5_reference_final_authorization_v2_2026-08-02.json",
+      "sha256": "945bf70f3cb8b981a5734a4ef5688f4a2ae630f0076849260ee455132b605c05"
+    },
+    "aggregate": {
+      "path": "results/g11_v8_p5_reference_final_aggregate_v1_2026-08-02.json",
+      "sha256": "879a875016bb17253e36a816d3ddc7a66ec0b96898e48b73ce4f395f783fe525",
+      "canonical_sha256": "34701f5c27edd7ebdf481c4d6a1dfce17dadb69ef72016bbdb4872cb4fa60947"
+    },
+    "audit": {
+      "path": "results/g11_v8_p5_reference_final_aggregate_audit_v1_2026-08-02.json",
+      "sha256": "c7542dad6b64aa5e91338486f498ca21afdeff84559e8f41fc0b2da41f102556"
+    }
+  },
+  "decision": {
+    "reference_complete": true,
+    "downstream_frozen_method_evaluation_authorized": true,
+    "performance_claim_authorized": false,
+    "submission_authorized": false,
+    "status": "external_final_reference_pass"
+  }
+}
