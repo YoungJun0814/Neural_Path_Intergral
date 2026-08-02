@@ -21,9 +21,9 @@
 # Generated research artifacts are addressed by exact SHA-256 values recorded in
 # frozen ledgers.  Preserve the producer bytes (including newline convention) so
 # Windows-generated artifacts have identical hashes after a Linux checkout.
-results/*.json -text
-results/**/*.json -text
-configs/**/*.json -text
+results/*.json -text -diff
+results/**/*.json -text -diff
+configs/**/*.json -text -diff
 
 # Shell
 *.sh text eol=lf
