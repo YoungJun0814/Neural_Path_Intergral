@@ -1,0 +1,65 @@
+schema: npi.g11.v9-terminal-reference.v2
+protocol_id: g11-v9-terminal-reference-v2
+date: "2026-08-02"
+namespace: v9-terminal-independent-reference-v2-fresh
+source_parent_commit: e3110aee8f5f53ce93999510f9cc23ef436bc4fe
+current_namespace_outcomes_inspected_before_freeze: false
+
+claim_contract:
+  path: configs/g11_v9/terminal_claim_contract_v1.yaml
+  sha256: 6e870437a6d5a85a1b86ea7fd269986c36abefdcd34da0b8d39f12e35541059f
+
+pilot_bindings:
+  reference_v1:
+    path: results/g11_v9_terminal_reference_v1_2026-08-02.json
+    sha256: 362245a890b5979f74f3a43c42328e2572d25594078c6d36f119f0f9ad519f9c
+  reference_v1_audit:
+    path: results/g11_v9_terminal_reference_audit_v1_2026-08-02.json
+    sha256: 06fa86edae4395e2c3263e92b8d3cfcd2a4c2670e5712380125a9e1b7c7e5ef3
+
+allocation_rule:
+  pilot_randomizations: 32
+  variance_safety_factor: 2.0
+  minimum_randomizations: 64
+  round_to_power_of_two: true
+  pilot_samples_pooled_into_v2: false
+
+proposal_seed_base: 904000
+randomization_seed_base: 905000
+points_per_randomization: 4096
+maximum_relative_standard_error: 0.15
+randomizations_by_cell:
+  h0.05-terminal_left_tail-p1e-02: 64
+  h0.05-terminal_left_tail-p1e-03: 64
+  h0.05-terminal_left_tail-p1e-04: 64
+  h0.05-terminal_left_tail-p1e-05: 512
+  h0.12-terminal_left_tail-p1e-02: 64
+  h0.12-terminal_left_tail-p1e-03: 64
+  h0.12-terminal_left_tail-p1e-04: 64
+  h0.12-terminal_left_tail-p1e-05: 1024
+  h0.20-terminal_left_tail-p1e-02: 64
+  h0.20-terminal_left_tail-p1e-03: 64
+  h0.20-terminal_left_tail-p1e-04: 128
+  h0.20-terminal_left_tail-p1e-05: 1024
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  steps: 128
+  eta: 1.5
+  xi: 0.04
+  rho: -0.7
+
+cells:
+  - {cell_id: h0.05-terminal_left_tail-p1e-02, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.01, threshold: 50.20592042422368}
+  - {cell_id: h0.05-terminal_left_tail-p1e-03, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.001, threshold: 31.92790645389728}
+  - {cell_id: h0.05-terminal_left_tail-p1e-04, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.0001, threshold: 18.320946011895387}
+  - {cell_id: h0.05-terminal_left_tail-p1e-05, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.00001, threshold: 10.199729956015094}
+  - {cell_id: h0.12-terminal_left_tail-p1e-02, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.01, threshold: 46.41141383480874}
+  - {cell_id: h0.12-terminal_left_tail-p1e-03, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.001, threshold: 24.672468432835625}
+  - {cell_id: h0.12-terminal_left_tail-p1e-04, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.0001, threshold: 10.391658226080532}
+  - {cell_id: h0.12-terminal_left_tail-p1e-05, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.00001, threshold: 3.3641964170773018}
+  - {cell_id: h0.20-terminal_left_tail-p1e-02, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.01, threshold: 45.29897333205014}
+  - {cell_id: h0.20-terminal_left_tail-p1e-03, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.001, threshold: 21.431743260451416}
+  - {cell_id: h0.20-terminal_left_tail-p1e-04, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.0001, threshold: 7.656661839363003}
+  - {cell_id: h0.20-terminal_left_tail-p1e-05, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.00001, threshold: 1.884327900748765}
