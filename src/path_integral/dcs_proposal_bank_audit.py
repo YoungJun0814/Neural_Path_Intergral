@@ -118,16 +118,29 @@ def audit_dcs_proposal_bank(
         math.isclose(float(total[key]), float(value), rel_tol=1e-12, abs_tol=1e-12)
         for key, value in summed.items()
     )
+    config_schema = str(config.get("schema"))
+    if config_schema == "npi.g11.v9-terminal-proposal-bank.v1":
+        result_schema = "npi.g11.v9-terminal-proposal-bank-result.v1"
+        expected_decision = {
+            "bank_construction_complete": True,
+            "development_benchmark_authorized": True,
+            "qualification_authorized": False,
+            "performance_claim_authorized": False,
+            "submission_authorized": False,
+        }
+    else:
+        result_schema = "npi.g11.v8-dcs-proposal-bank-result.v1"
+        expected_decision = {
+            "bank_construction_complete": True,
+            "stage_b_use_authorized": True,
+            "p8_qualification_authorized": False,
+            "performance_claim_authorized": False,
+            "submission_authorized": False,
+        }
     decision = result.get("decision")
-    claim_locks = isinstance(decision, dict) and decision == {
-        "bank_construction_complete": True,
-        "stage_b_use_authorized": True,
-        "p8_qualification_authorized": False,
-        "performance_claim_authorized": False,
-        "submission_authorized": False,
-    }
+    claim_locks = isinstance(decision, dict) and decision == expected_decision
     checks = (
-        ("schema", result.get("schema") == "npi.g11.v8-dcs-proposal-bank-result.v1"),
+        ("schema", result.get("schema") == result_schema),
         ("config_hash", result.get("config_sha256") == hashlib.sha256(raw).hexdigest()),
         ("bindings", bindings_valid),
         ("entry_roster", structure),

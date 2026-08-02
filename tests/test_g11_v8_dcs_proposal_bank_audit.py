@@ -85,3 +85,21 @@ def test_dcs_proposal_bank_audit_passes_and_detects_mutation(tmp_path: Path) -> 
     )
     assert not failed.passed
     assert "mixture_rank_one" in failed.failures or "bank_hash" in failed.failures
+
+
+def test_dcs_proposal_bank_audit_supports_v9_claim_locks(tmp_path: Path) -> None:
+    config_path, result = _fixture(tmp_path)
+    config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    config["schema"] = "npi.g11.v9-terminal-proposal-bank.v1"
+    config_path.write_text(yaml.safe_dump(config), encoding="utf-8")
+    result["schema"] = "npi.g11.v9-terminal-proposal-bank-result.v1"
+    result["config_sha256"] = __import__("hashlib").sha256(config_path.read_bytes()).hexdigest()
+    result["decision"] = {
+        "bank_construction_complete": True,
+        "development_benchmark_authorized": True,
+        "qualification_authorized": False,
+        "performance_claim_authorized": False,
+        "submission_authorized": False,
+    }
+    audit = audit_dcs_proposal_bank(config_path=config_path, result=result, root=tmp_path)
+    assert audit.passed, audit.failures
