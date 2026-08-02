@@ -1,0 +1,40 @@
+{
+  "artifact_count": 10,
+  "checks": {
+    "artifact_hashes_match": true,
+    "artifact_ids_and_statuses_exact": true,
+    "artifact_keys_exact": true,
+    "artifact_paths_exist_and_portable": true,
+    "closed_obligations_exact": true,
+    "date_phase_exact": true,
+    "decision_closes_current_program_without_claim_escalation": true,
+    "decision_keys_exact": true,
+    "evidence_commit_exact_and_ancestor": true,
+    "external_obligations_exact": true,
+    "obligation_sets_disjoint": true,
+    "predecessor_hash_bound": true,
+    "prohibited_claims_exact": true,
+    "proposal_bank_passed_without_claim_authority": true,
+    "protocol_exact": true,
+    "root_keys_exact": true,
+    "schema_exact": true,
+    "stage_a_passed_and_only_stage_b_authorized": true,
+    "stage_b_independent_audit_passed_and_stop_preserved": true,
+    "stage_b_scientific_failure_exact": true,
+    "stopped_obligations_exact": true,
+    "t1_passed_but_submission_blocked": true
+  },
+  "decision": {
+    "all_currently_authorized_work_complete": true,
+    "future_v9_requires_new_protocol": true,
+    "p8_qualification_authorized": false,
+    "stage_c_authorized": false,
+    "submission_authorized": false,
+    "v8_closed_by_falsification": true
+  },
+  "failure_count": 0,
+  "failures": [],
+  "ledger_sha256": "674ff92041637276720fb74cf9929bcfbd68f75d4a0af27a0a06cb2475533169",
+  "passed": true,
+  "schema": "npi.g11.v8-completion-status-audit.v3"
+}

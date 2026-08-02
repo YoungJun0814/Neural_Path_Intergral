@@ -1,0 +1,96 @@
+schema: npi.g11.v8-completion-status-ledger.v3
+protocol_id: g11-v8-completion-status-ledger-v3
+date: "2026-08-02"
+phase: final_falsification_closure
+predecessor:
+  path: configs/g11_v8/completion_status_ledger_v2.yaml
+  sha256: 412b7ec67191dbe4fc395211e1a51ef89e1923bb9bb593e8f5302ecfd8466816
+evidence_repository_commit: 276e2bbe4c9e927450458b57bcbebdb2d643286c
+artifacts:
+  - id: b1_implementation_audit
+    path: docs/G11_V8_B1_STRONG_BASELINE_IMPLEMENTATION_AUDIT_2026-08-02.md
+    sha256: 649664923be04656f7c0672b16aa724bb4810837f1c9fe62ab08814c347d7954
+    status: passed
+  - id: d1_stage_a_result
+    path: results/g11_v8_d1_p7_falsification_stage_a_v4_2026-08-02.json
+    sha256: c9505e076487163ea009caaf2b5821dbfcbb15d37bdff1604f2acb04812061ca
+    status: passed
+  - id: d1_stage_a_audit
+    path: results/g11_v8_d1_p7_falsification_stage_a_audit_v4_2026-08-02.json
+    sha256: fa61af49a2e4acfabe67516b99660850bb38337b5708987cdbc976115e26828a
+    status: passed
+  - id: dcs_proposal_bank
+    path: results/g11_v8_d1_dcs_proposal_bank_v1_2026-08-02.json
+    sha256: b9071b2bb908b863d44e3a75fea6838e474e26e8181c97c5c954ca0e8b09998d
+    status: constructed
+  - id: dcs_proposal_bank_audit
+    path: results/g11_v8_d1_dcs_proposal_bank_audit_v1_2026-08-02.json
+    sha256: 9aa69a74cd778f9eee9a985fefe9466d45109602241b4b73231dba30a5d08665
+    status: passed
+  - id: d1_stage_b_result
+    path: results/g11_v8_d1_stage_b_v1_2026-08-02.json
+    sha256: 805eedd2baa18a448033f2284793eec63725553fabb10e4c8e8b4a129bc47987
+    status: scientifically_falsified
+  - id: d1_stage_b_audit
+    path: results/g11_v8_d1_stage_b_audit_v1_2026-08-02.json
+    sha256: ea7367d73f65fb94a755b07f7a67ae55acf96d466f4322d7fc4427e1a6b8da83
+    status: audit_passed
+  - id: d1_stage_b_decision
+    path: docs/G11_V8_D1_STAGE_B_DECISION_2026-08-02.md
+    sha256: 204b6b0c0f21e4211b4e4c538115614d9dfe80b2e5b6c98c7528c051e4fe5794
+    status: stop
+  - id: t1_novelty_audit
+    path: results/g11_v8_t1_novelty_audit_v1_2026-08-02.json
+    sha256: ed6ca36b03623ed41b0f2ae3d8b6158c1c961d06b18befcde897fcf117fdec75
+    status: passed_with_blocking_decision
+  - id: t1_theory_novelty_decision
+    path: docs/audits/G11_V8_T1_THEORY_AND_NOVELTY_DECISION_2026-08-02.md
+    sha256: 3e1c108658d1144dcc7f892a22ba2ce7c4a7cb028f6ef2c94a0799ff60b13931
+    status: terminal_only_internal_candidate
+closed_obligations:
+  - r2_independent_reference
+  - b1_strong_baseline_implementation
+  - d1_stage_a_falsification
+  - fully_costed_replayable_dcs_bank
+  - d1_stage_b_full_matrix_falsification
+  - independent_d1_stage_b_audit
+  - t1_primary_source_update
+  - finite_grid_moment_localized_strictness
+  - terminal_rate_internal_proof_obligations_o1_o5
+stopped_obligations:
+  - d1_stage_c_robustness
+  - p8_independent_seed_qualification
+  - p9_outcome_blind_freeze
+  - p10_uncensored_confirmation
+  - p11_independent_physical_hardware
+  - broad_training_inclusive_superiority_claim
+  - current_v8_top_journal_submission
+external_obligations:
+  - independent_stochastic_analysis_review_o6
+  - mathscinet_zbmath_scopus_webofscience_search
+  - external_novelty_challenge
+  - external_code_review
+  - barrier_active_time_and_mesh_crossing_theorem
+prohibited_claims:
+  - universal_factor_two_variance_reduction
+  - broad_superiority_over_strong_baselines
+  - continuous_barrier_exactness
+  - barrier_mesh_rate
+  - canonical_rough_bergomi_mlmc_complexity
+  - submission_ready
+  - top_journal_ready
+  - first_conditional_monte_carlo
+  - first_rao_blackwellized_importance_sampling
+decision:
+  status: v8_closed_by_falsification
+  all_currently_authorized_work_complete: true
+  scientific_implementation_error_found: false
+  broad_performance_hypothesis_passed: false
+  stage_c_authorized: false
+  p8_qualification_authorized: false
+  p9_freeze_authorized: false
+  p10_confirmation_authorized: false
+  p11_reproduction_authorized: false
+  submission_authorized: false
+  top_journal_route_authorized: false
+  future_v9_requires_new_protocol: true
