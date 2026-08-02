@@ -1,0 +1,65 @@
+{
+  "checks": [
+    [
+      "schema",
+      true
+    ],
+    [
+      "config_hash",
+      true
+    ],
+    [
+      "bindings",
+      true
+    ],
+    [
+      "entry_roster",
+      true
+    ],
+    [
+      "mixture_rank_one",
+      true
+    ],
+    [
+      "seed_uniqueness",
+      true
+    ],
+    [
+      "seed_contiguity",
+      true
+    ],
+    [
+      "seed_count",
+      true
+    ],
+    [
+      "entry_costs",
+      true
+    ],
+    [
+      "total_cost",
+      true
+    ],
+    [
+      "bank_hash",
+      true
+    ],
+    [
+      "clean_source_generation",
+      true
+    ],
+    [
+      "claim_locks",
+      true
+    ]
+  ],
+  "development_benchmark_authorized": true,
+  "dirty_worktree": true,
+  "failures": [],
+  "passed": true,
+  "performance_claim_authorized": false,
+  "qualification_authorized": false,
+  "schema": "npi.g11.v9-terminal-proposal-bank-audit.v1",
+  "source_commit": "55fb6d1506f6f54d9350ec6b55e79945c6760688",
+  "submission_authorized": false
+}
