@@ -1,0 +1,21 @@
+{
+  "schema": "npi.g11.v8-d1-p7-falsification-stage-a-failure-receipt.v2",
+  "protocol_id": "g11-v8-d1-p7-falsification-stage-a-remediation-v3",
+  "namespace": "v8-d1-p7-falsification-development-v3",
+  "date": "2026-08-02",
+  "status": "failed_frozen_primary_accuracy_gate_not_applied",
+  "config_path": "configs/g11_v8/d1_p7_falsification_stage_a_v3.yaml",
+  "config_sha256": "c09a7f0b9c5d5e3210c6b722c0de2506a841707a666dfc8454d16b98810719af",
+  "failed_result_path": "results/g11_v8_d1_p7_falsification_stage_a_v3_2026-08-02.json",
+  "failed_result_sha256": "ec7ebc20a827efa0df22ed308c1ed778bf41fba6b808960b8ed58be398e3b587",
+  "failure": "The frozen primary_accuracy_combined_z threshold was reported per record but omitted from the aggregate Stage B authorization expression. The emitted stage_b_authorized=true decision is invalid.",
+  "statistical_stream_complete": true,
+  "outcomes_inspected": true,
+  "seed_count_burned": 240,
+  "seed_set_sha256": "ffb524b012bd57cefdc15b5055e33926219d17f0ab6992babb16bbe70f994db4",
+  "retry_same_namespace_allowed": false,
+  "remediation": "Apply the frozen accuracy threshold to a predeclared operating budget, add an independent gate-presence audit, retain inaccurate and censored records, then use a fresh namespace and disjoint seeds.",
+  "performance_claim_authorized": false,
+  "p8_qualification_authorized": false,
+  "submission_authorized": false
+}

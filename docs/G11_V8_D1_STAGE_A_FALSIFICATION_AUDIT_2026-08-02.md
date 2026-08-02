@@ -106,3 +106,19 @@ namespace after freezing its config and source commit.
 Not authorized: P8 qualification, a superiority statement, a journal-submission
 claim, reuse of V1/V2 development outcomes as confirmation, or omission of failed
 baseline work.
+
+## V3 remediation-stream addendum
+
+The clean-source V3 remediation stream is also closed as a failed protocol stream.
+It completed 240 disjoint seeds and verified that target-level CEM, nonzero-pilot
+support, and variance inflation execute correctly. However, the aggregate decision
+code did not apply the already frozen `primary_accuracy_combined_z` threshold. Its
+emitted Stage B authorization is therefore invalid and is superseded by
+`g11_v8_d1_p7_falsification_stage_a_failure_receipt_v3_2026-08-02.json`.
+
+The V3 numerical observations remain falsification evidence: fixed-identity pure
+CEM can still miss important likelihood regions in the rarest cells, while
+smoothing RQMC requires substantially more randomizations for some rare barrier
+cells. The next protocol must retain those failures, apply accuracy only at a
+predeclared operating budget rather than demanding that every budget-ladder point
+succeed, and keep resource censoring separate from accuracy.
