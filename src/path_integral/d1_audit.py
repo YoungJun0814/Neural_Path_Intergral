@@ -197,7 +197,12 @@ def audit_d1_stage_a(
     terminal_cells = len(config["cells"]) - barrier_cells
     primary_count = expected_paired * len(config["external_methods"]["primary"])
     secondary_methods = config["external_methods"]["secondary"]
-    secondary_per_cluster = len(config["cells"]) * len(secondary_methods) - barrier_cells
+    conditional_exclusions = (
+        barrier_cells if "conditional_rbergomi" in secondary_methods else 0
+    )
+    secondary_per_cluster = (
+        len(config["cells"]) * len(secondary_methods) - conditional_exclusions
+    )
     expected_external = primary_count + (
         secondary_per_cluster * int(config["clusters"])
     )
