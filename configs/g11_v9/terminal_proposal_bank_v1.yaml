@@ -1,0 +1,58 @@
+schema: npi.g11.v9-terminal-proposal-bank.v1
+protocol_id: g11-v9-terminal-proposal-bank-v1
+date: "2026-08-02"
+namespace: v9-terminal-proposal-bank-training-v1
+source_parent_commit: d8d4e57ecc89cf528ed45cf876893393a5942391
+current_namespace_outcomes_inspected_before_freeze: false
+base_seed: 903000
+
+claim_contract:
+  path: configs/g11_v9/terminal_claim_contract_v1.yaml
+  sha256: 6e870437a6d5a85a1b86ea7fd269986c36abefdcd34da0b8d39f12e35541059f
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  steps: 128
+  eta: 1.5
+  xi: 0.04
+  rho: -0.7
+
+training:
+  segments: 8
+  replicates: 3
+  paths_per_iteration: 4096
+  maximum_iterations: 8
+  elite_quantile: 0.90
+  smoothing: 0.60
+  minimum_elite_paths: 512
+  control_bound: 12.0
+  target_level_repetitions: 1
+  minimum_price_driver_magnitude: 0.05
+  initial_control:
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+  mixture_scales: [0.0, 0.5, 1.0, 1.5, 2.0]
+  mixture_weights: [0.10, 0.15, 0.35, 0.25, 0.15]
+
+amortization_query_counts: [1, 10, 100, 1000]
+
+cells:
+  - {cell_id: h0.05-terminal_left_tail-p1e-02, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.01, threshold: 50.20592042422368}
+  - {cell_id: h0.05-terminal_left_tail-p1e-03, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.001, threshold: 31.92790645389728}
+  - {cell_id: h0.05-terminal_left_tail-p1e-04, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.0001, threshold: 18.320946011895387}
+  - {cell_id: h0.05-terminal_left_tail-p1e-05, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.00001, threshold: 10.199729956015094}
+  - {cell_id: h0.12-terminal_left_tail-p1e-02, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.01, threshold: 46.41141383480874}
+  - {cell_id: h0.12-terminal_left_tail-p1e-03, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.001, threshold: 24.672468432835625}
+  - {cell_id: h0.12-terminal_left_tail-p1e-04, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.0001, threshold: 10.391658226080532}
+  - {cell_id: h0.12-terminal_left_tail-p1e-05, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.00001, threshold: 3.3641964170773018}
+  - {cell_id: h0.20-terminal_left_tail-p1e-02, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.01, threshold: 45.29897333205014}
+  - {cell_id: h0.20-terminal_left_tail-p1e-03, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.001, threshold: 21.431743260451416}
+  - {cell_id: h0.20-terminal_left_tail-p1e-04, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.0001, threshold: 7.656661839363003}
+  - {cell_id: h0.20-terminal_left_tail-p1e-05, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.00001, threshold: 1.884327900748765}

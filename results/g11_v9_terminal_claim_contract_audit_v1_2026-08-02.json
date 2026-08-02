@@ -1,0 +1,90 @@
+{
+  "checks": [
+    [
+      "schema",
+      true
+    ],
+    [
+      "v8_disclosed_as_design_data",
+      true
+    ],
+    [
+      "terminal_only",
+      true
+    ],
+    [
+      "complete_roster",
+      true
+    ],
+    [
+      "hurst_roster",
+      true
+    ],
+    [
+      "rarity_roster",
+      true
+    ],
+    [
+      "finite_grid_estimand",
+      true
+    ],
+    [
+      "ordinary_mean",
+      true
+    ],
+    [
+      "exact_likelihood",
+      true
+    ],
+    [
+      "training_inclusive",
+      true
+    ],
+    [
+      "primary_k_frozen",
+      true
+    ],
+    [
+      "cluster_inference",
+      true
+    ],
+    [
+      "no_barrier_rate_claim",
+      true
+    ],
+    [
+      "no_uniform_superiority_claim",
+      true
+    ],
+    [
+      "no_v8_confirmation_binding",
+      true
+    ],
+    [
+      "fresh_reference_required",
+      true
+    ],
+    [
+      "fresh_seeds_required",
+      true
+    ],
+    [
+      "correctness_gate",
+      true
+    ],
+    [
+      "submission_locked",
+      true
+    ]
+  ],
+  "contract_path": "configs/g11_v9/terminal_claim_contract_v1.yaml",
+  "contract_sha256": "6e870437a6d5a85a1b86ea7fd269986c36abefdcd34da0b8d39f12e35541059f",
+  "dirty_worktree": false,
+  "failures": [],
+  "passed": true,
+  "performance_claim_authorized": false,
+  "reference_execution_authorized": true,
+  "schema": "npi.g11.v9-terminal-claim-contract-audit.v1",
+  "source_commit": "d8d4e57ecc89cf528ed45cf876893393a5942391",
+  "submission_authorized": false
+}
