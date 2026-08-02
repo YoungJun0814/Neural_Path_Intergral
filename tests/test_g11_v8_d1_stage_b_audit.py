@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import math
 from pathlib import Path
 
 from src.path_integral.d1_audit import load_standard_json
@@ -30,3 +31,18 @@ def test_stage_b_audit_detects_aggregate_and_amortization_mutations() -> None:
     assert not audit.passed
     assert "aggregate_recomputation" in audit.failures
     assert "bank_and_amortization" in audit.failures
+
+
+def test_stage_b_audit_tolerates_only_roundoff_scale_aggregate_drift() -> None:
+    roundoff = copy.deepcopy(load_standard_json(RESULT))
+    value = roundoff["aggregate"]["mechanism_geometric_variance_ratio"]
+    roundoff["aggregate"]["mechanism_geometric_variance_ratio"] = math.nextafter(
+        value, math.inf
+    )
+    assert audit_d1_stage_b(config_path=CONFIG, result=roundoff, root=ROOT).passed
+
+    material = copy.deepcopy(load_standard_json(RESULT))
+    material["aggregate"]["mechanism_geometric_variance_ratio"] += 1e-6
+    audit = audit_d1_stage_b(config_path=CONFIG, result=material, root=ROOT)
+    assert not audit.passed
+    assert "aggregate_recomputation" in audit.failures

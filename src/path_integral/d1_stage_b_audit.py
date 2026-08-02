@@ -30,6 +30,31 @@ def _geometric_mean(values: list[float]) -> float:
     return math.exp(sum(math.log(value) for value in values) / len(values))
 
 
+def _aggregate_matches(recorded: Any, recomputed: Any) -> bool:
+    """Compare an aggregate without depending on platform-specific libm rounding.
+
+    Derived floating-point fields (notably geometric means) can differ by a few
+    ulps between Windows and Linux even when their inputs are byte-identical.
+    Schema, discrete values, and decisions remain exact; only finite floats get
+    a tolerance far below any scientific gate or serialized measurement error.
+    """
+
+    if isinstance(recorded, dict) and isinstance(recomputed, dict):
+        return recorded.keys() == recomputed.keys() and all(
+            _aggregate_matches(recorded[key], recomputed[key]) for key in recorded
+        )
+    if isinstance(recorded, list) and isinstance(recomputed, list):
+        return len(recorded) == len(recomputed) and all(
+            _aggregate_matches(left, right)
+            for left, right in zip(recorded, recomputed, strict=True)
+        )
+    if isinstance(recorded, bool) or isinstance(recomputed, bool):
+        return type(recorded) is type(recomputed) and recorded == recomputed
+    if isinstance(recorded, float) and isinstance(recomputed, float):
+        return math.isclose(recorded, recomputed, rel_tol=1e-12, abs_tol=1e-15)
+    return type(recorded) is type(recomputed) and recorded == recomputed
+
+
 def _recompute(
     config: dict[str, Any], paired: list[dict[str, Any]], external: list[dict[str, Any]]
 ) -> dict[str, Any]:
@@ -213,7 +238,7 @@ def audit_d1_stage_b(
         ("seed_count", result.get("seed_count") == len(seeds)),
         ("seed_hash", result.get("seed_set_sha256") == seed_hash),
         ("bank_and_amortization", bank_and_amortization),
-        ("aggregate_recomputation", result.get("aggregate") == aggregate),
+        ("aggregate_recomputation", _aggregate_matches(result.get("aggregate"), aggregate)),
         ("decision_locks", result.get("decision") == expected_decision),
     )
     failures = tuple(name for name, passed in checks if not passed)
