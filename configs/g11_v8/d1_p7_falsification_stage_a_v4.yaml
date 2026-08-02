@@ -1,0 +1,152 @@
+schema: npi.g11.v8-d1-p7-falsification-stage-a.v3
+protocol_id: g11-v8-d1-p7-falsification-stage-a-remediation-v4
+date: "2026-08-02"
+phase: d1_p7_falsification_stage_a_accuracy_remediation
+namespace: v8-d1-p7-falsification-development-v4
+source_parent_commit: dab3c5fce51fe084ef0366ab782b17a962d36923
+outcome_data_used_before_freeze: false
+design_informed_by_closed_v3_development: true
+performance_claim_authorized: false
+
+bindings:
+  b1_audit:
+    path: results/g11_v8_b1_baseline_implementation_audit_v1_2026-08-02.json
+    sha256: 34d52b6d44592744fae2ec5c9f5d74a657769b65fe1e73b27603cde8fb0b7962
+  p6_design:
+    path: configs/g11_v8/p6_statistical_design_v1.yaml
+    sha256: 408c1a925634da8195dee6372b7416e6c58e6174c3ee933081247db97a4f84e8
+  reference:
+    path: results/g11_v8_p5_reference_final_aggregate_v1_2026-08-02.json
+    sha256: 879a875016bb17253e36a816d3ddc7a66ec0b96898e48b73ce4f395f783fe525
+  reference_audit:
+    path: results/g11_v8_p5_reference_final_aggregate_audit_v1_2026-08-02.json
+    sha256: c7542dad6b64aa5e91338486f498ca21afdeff84559e8f41fc0b2da41f102556
+  threshold_calibration:
+    path: results/g11_v8_p5_threshold_calibration_v1_2026-07-27.json
+    sha256: 27eabb261d079a8e67fb9389f492c532eb51d7c387ce3907437cfe9e5085ddb6
+  proposal_manifest:
+    path: results/g11_v8_p5_reference_proposal_manifest_v3_2026-07-31.json
+    sha256: 807c04954bf0b3e233900789c203e4968599901ffd012bd61224224dfc2f1d62
+  prior_stage_a_failure_receipt:
+    path: results/g11_v8_d1_p7_falsification_stage_a_failure_receipt_v3_2026-08-02.json
+    sha256: 165966cf2f1269537a27cfd5fa75f4162a569212b78ee01983a7efe0fcb02536
+  prior_stage_a_superseding_audit:
+    path: results/g11_v8_d1_p7_falsification_stage_a_superseding_audit_v3_2026-08-02.json
+    sha256: 37d9d15e76cab42dcb9b833a19613aea2f5ce195706e58d043658203d8f60427
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  steps: 128
+  hurst: 0.12
+  eta: 1.5
+  xi: 0.04
+  rho: -0.7
+
+cells:
+  - cell_id: h0.12-terminal_left_tail-p1e-02
+    task: terminal_left_tail
+    nominal_probability: 0.01
+    threshold: 46.41141383480874
+    reference_estimate: 0.009876206358749891
+    reference_standard_error: 0.0000698764628803037
+  - cell_id: h0.12-terminal_left_tail-p1e-05
+    task: terminal_left_tail
+    nominal_probability: 0.00001
+    threshold: 3.3641964170773018
+    reference_estimate: 0.000009562625441182356
+    reference_standard_error: 0.000000048313967637070306
+  - cell_id: h0.12-discrete_lower_barrier-p1e-02
+    task: discrete_lower_barrier
+    nominal_probability: 0.01
+    threshold: 40.411221763015256
+    reference_estimate: 0.0098538158907038
+    reference_standard_error: 0.00006981802838376404
+  - cell_id: h0.12-discrete_lower_barrier-p1e-05
+    task: discrete_lower_barrier
+    nominal_probability: 0.00001
+    threshold: 2.832026577121174
+    reference_estimate: 0.000010535480908440854
+    reference_standard_error: 0.00000006791880242199002
+
+clusters: 3
+base_seed: 851000
+relative_rmse_target: 0.20
+diagnostic_samples: 4096
+maximum_likelihood_normalization_absolute_z: 6.0
+maximum_exactness_error: 0.0000000001
+
+pilot_policy:
+  minimum_nonzero_units: 4
+  variance_safety_factor: 4.0
+
+budgets:
+  - id: low
+    paired_dcs_paths: 4096
+    pilot_units: 64
+    iid_maximum_final_units: 8192
+    rqmc_maximum_final_units: 32
+    rqmc_points_per_randomization: 512
+    cem:
+      iterations: 6
+      samples_per_iteration: 1024
+      elite_fraction: 0.1
+      smoothing: 0.7
+      defensive_weight: 0.1
+      max_mean_norm: 20.0
+      time_bins: 8
+    large_deviation:
+      optimizer_steps: 60
+      learning_rate: 0.05
+      penalty: 1000.0
+      feasibility_margin: 0.0
+      restarts: 2
+      defensive_weight: 0.1
+      occupation_temperature: 0.05
+    flow:
+      screening_samples: 512
+      elite_fraction: 0.1
+      max_log_scale: 1.5
+      ridge: 0.000001
+  - id: high
+    paired_dcs_paths: 16384
+    pilot_units: 256
+    iid_maximum_final_units: 65536
+    rqmc_maximum_final_units: 256
+    rqmc_points_per_randomization: 1024
+    cem:
+      iterations: 10
+      samples_per_iteration: 4096
+      elite_fraction: 0.1
+      smoothing: 0.7
+      defensive_weight: 0.1
+      max_mean_norm: 20.0
+      time_bins: 8
+    large_deviation:
+      optimizer_steps: 160
+      learning_rate: 0.04
+      penalty: 2000.0
+      feasibility_margin: 0.0
+      restarts: 3
+      defensive_weight: 0.1
+      occupation_temperature: 0.05
+    flow:
+      screening_samples: 2048
+      elite_fraction: 0.1
+      max_log_scale: 1.5
+      ridge: 0.000001
+
+external_methods:
+  primary: [defensive_cem, smoothing_rqmc]
+  secondary: [pure_cem]
+  secondary_budget: high
+
+gate:
+  required_primary_methods: [defensive_cem, smoothing_rqmc]
+  minimum_mechanism_variance_ratio: 2.0
+  primary_accuracy_combined_z: 4.0
+  primary_accuracy_budget: high
+  resource_censoring_blocks_p8: true
+  exactness_failure_stops_method: true
+  stage_b_requires_all_primary_methods_evaluable: true
+  performance_claim_authorized: false
