@@ -1,0 +1,57 @@
+{
+  "benchmark_authorized": true,
+  "checks": [
+    [
+      "schema",
+      true
+    ],
+    [
+      "config_hash",
+      true
+    ],
+    [
+      "bindings",
+      true
+    ],
+    [
+      "cell_roster",
+      true
+    ],
+    [
+      "randomization_reconstruction",
+      true
+    ],
+    [
+      "cost_reconstruction",
+      true
+    ],
+    [
+      "seed_uniqueness",
+      true
+    ],
+    [
+      "seed_count",
+      true
+    ],
+    [
+      "seed_hash",
+      true
+    ],
+    [
+      "clean_source_generation",
+      true
+    ],
+    [
+      "decision_locks",
+      true
+    ]
+  ],
+  "dirty_worktree": true,
+  "failures": [],
+  "maximum_relative_standard_error": 0.569766925439921,
+  "passed": true,
+  "performance_claim_authorized": false,
+  "schema": "npi.g11.v9-terminal-reference-audit.v1",
+  "source_commit": "54f250e3cc0b2a956e2c5f711196afbe75e34103",
+  "submission_authorized": false
+}
