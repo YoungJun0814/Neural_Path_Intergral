@@ -47,7 +47,11 @@ def audit_v9_terminal_reference(
         cell_id = str(cell["cell_id"])
         expected = declared.get(cell_id)
         units = [float(value) for value in cell.get("unit_estimates", [])]
-        randomizations = int(config["randomizations"])
+        randomizations = int(
+            config["randomizations_by_cell"][cell_id]
+            if config.get("schema") == "npi.g11.v9-terminal-reference.v2"
+            else config["randomizations"]
+        )
         points = int(config["points_per_randomization"])
         if expected is None or len(units) != randomizations or any(
             not math.isfinite(value) or value < 0.0 or value > 1.0 for value in units
@@ -96,6 +100,52 @@ def audit_v9_terminal_reference(
     else:
         path = root / str(binding["path"])
         bindings = path.is_file() and _sha256(path) == str(binding["sha256"])
+    allocation_reconstruction = True
+    if config.get("schema") == "npi.g11.v9-terminal-reference.v2":
+        pilot_bindings = config.get("pilot_bindings")
+        if not isinstance(pilot_bindings, dict):
+            bindings = False
+            allocation_reconstruction = False
+        else:
+            for pilot_binding in pilot_bindings.values():
+                if not isinstance(pilot_binding, dict):
+                    bindings = False
+                    break
+                pilot_path = root / str(pilot_binding["path"])
+                if not pilot_path.is_file() or _sha256(pilot_path) != str(
+                    pilot_binding["sha256"]
+                ):
+                    bindings = False
+                    break
+            if bindings:
+                pilot = json.loads(
+                    (
+                        root / str(pilot_bindings["reference_v1"]["path"])
+                    ).read_text(encoding="utf-8")
+                )
+                rule = config["allocation_rule"]
+                expected_allocation: dict[str, int] = {}
+                for pilot_cell in pilot["cells"]:
+                    relative = float(pilot_cell["relative_standard_error"])
+                    required = max(
+                        int(rule["minimum_randomizations"]),
+                        math.ceil(
+                            float(rule["variance_safety_factor"])
+                            * int(rule["pilot_randomizations"])
+                            * (
+                                relative
+                                / float(config["maximum_relative_standard_error"])
+                            )
+                            ** 2
+                        ),
+                    )
+                    expected_allocation[str(pilot_cell["cell_id"])] = 1 << (
+                        required - 1
+                    ).bit_length()
+                allocation_reconstruction = expected_allocation == {
+                    str(key): int(value)
+                    for key, value in config["randomizations_by_cell"].items()
+                }
     seed_hash = hashlib.sha256(
         json.dumps(sorted(seeds), separators=(",", ":")).encode()
     ).hexdigest()
@@ -109,16 +159,40 @@ def audit_v9_terminal_reference(
         "performance_claim_authorized": False,
         "submission_authorized": False,
     }
+    expected_schema = (
+        "npi.g11.v9-terminal-reference-result.v2"
+        if config.get("schema") == "npi.g11.v9-terminal-reference.v2"
+        else "npi.g11.v9-terminal-reference-result.v1"
+    )
+    pilot_disjoint = True
+    if config.get("schema") == "npi.g11.v9-terminal-reference.v2":
+        pilot_binding = config.get("pilot_bindings", {}).get("reference_v1")
+        if not isinstance(pilot_binding, dict):
+            pilot_disjoint = False
+        else:
+            pilot_path = root / str(pilot_binding["path"])
+            if not pilot_path.is_file() or _sha256(pilot_path) != str(pilot_binding["sha256"]):
+                pilot_disjoint = False
+            else:
+                pilot = json.loads(pilot_path.read_text(encoding="utf-8"))
+                pilot_seeds = {
+                    int(seed)
+                    for cell in pilot["cells"]
+                    for seed in [cell["proposal_seed"], *cell["randomization_seeds"]]
+                }
+                pilot_disjoint = not (set(seeds) & pilot_seeds)
     checks = (
-        ("schema", result.get("schema") == "npi.g11.v9-terminal-reference-result.v1"),
+        ("schema", result.get("schema") == expected_schema),
         ("config_hash", result.get("config_sha256") == hashlib.sha256(raw).hexdigest()),
         ("bindings", bindings),
+        ("allocation_reconstruction", allocation_reconstruction),
         ("cell_roster", structure),
         ("randomization_reconstruction", values_valid),
         ("cost_reconstruction", costs_valid),
         ("seed_uniqueness", len(seeds) == len(set(seeds))),
         ("seed_count", result.get("seed_count") == len(seeds)),
         ("seed_hash", result.get("seed_set_sha256") == seed_hash),
+        ("fresh_v2_seeds", pilot_disjoint),
         ("clean_source_generation", result.get("dirty_worktree") is False),
         ("decision_locks", result.get("decision") == expected_decision),
     )
