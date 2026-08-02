@@ -71,7 +71,9 @@ def train_cem_proposal(
     elite_count = max(1, math.ceil(config.elite_fraction * config.samples_per_iteration))
     wall_started = time.perf_counter()
     cpu_started = time.process_time()
+    completed_iterations = 0
     for _ in range(config.iterations):
+        completed_iterations += 1
         noise = torch.randn(
             (config.samples_per_iteration, dimension),
             generator=generator,
@@ -81,20 +83,34 @@ def train_cem_proposal(
         score = problem.score(problem.simulate_latent(latent))
         if score.ndim != 1 or not torch.isfinite(score).all():
             raise FloatingPointError("CEM training score is invalid")
-        elite_indices = torch.topk(score, k=elite_count, largest=True).indices
-        fitted = torch.mean(latent[elite_indices], dim=0)
+        elite_threshold = torch.topk(score, k=elite_count, largest=True).values[-1]
+        # The event is {score >= 0}.  Before reaching it, CEM advances through
+        # adaptive intermediate levels.  Once the empirical elite quantile has
+        # reached zero, fitting only the most extreme elite tail would target a
+        # stricter, unintended event and can catastrophically over-shift the
+        # proposal.  Fit the empirical event conditional mean and stop instead.
+        target_level = min(float(elite_threshold), 0.0)
+        selected = score >= target_level
+        if int(torch.count_nonzero(selected)) < elite_count:
+            raise AssertionError("CEM level selection lost elite samples")
+        fitted = torch.mean(latent[selected], dim=0)
         mean = (1.0 - config.smoothing) * mean + config.smoothing * fitted
         norm = torch.linalg.vector_norm(mean)
         if not torch.isfinite(norm):
             raise FloatingPointError("CEM mean became nonfinite")
         if float(norm) > config.max_mean_norm:
             mean = mean * (config.max_mean_norm / float(norm))
+        if float(elite_threshold) >= 0.0:
+            break
 
-    training_samples = config.iterations * config.samples_per_iteration
+    training_samples = completed_iterations * config.samples_per_iteration
     work = training_samples * (2 * dimension + problem.steps)
+    maximum_work = config.iterations * config.samples_per_iteration * (
+        2 * dimension + problem.steps
+    )
     cost = BaselineCostLedger(
         training_samples=training_samples,
-        optimizer_steps=config.iterations,
+        optimizer_steps=completed_iterations,
         hyperparameter_trials=1,
         algorithmic_work_units=float(work),
         wall_seconds=time.perf_counter() - wall_started,
@@ -110,7 +126,7 @@ def train_cem_proposal(
             dimension=dimension,
             training_seed=training_seed,
             training_cost=cost,
-            training_budget_work_units=float(work),
+            training_budget_work_units=float(maximum_work),
             location=learned,
         )
     zero = tuple(0.0 for _ in range(dimension))
@@ -120,7 +136,7 @@ def train_cem_proposal(
         dimension=dimension,
         training_seed=training_seed,
         training_cost=cost,
-        training_budget_work_units=float(work),
+        training_budget_work_units=float(maximum_work),
         component_means=(zero, learned),
         component_weights=(config.defensive_weight, 1.0 - config.defensive_weight),
     )

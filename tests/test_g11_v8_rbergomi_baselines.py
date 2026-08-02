@@ -27,6 +27,7 @@ from src.path_integral.baselines import (
 )
 from src.path_integral.benchmark_executor import (
     BaselineExecutionRequest,
+    PilotSupportError,
     execute_baseline_lifecycle,
 )
 from src.path_integral.path_functionals import (
@@ -153,8 +154,9 @@ def test_cem_freezes_deterministically_and_charges_training(method: str) -> None
     second = train_cem_proposal(problem, method=typed_method, training_seed=41, config=config)
     assert first.location == second.location
     assert first.component_means == second.component_means
-    assert first.training_cost.training_samples == 128
-    assert first.training_cost.algorithmic_work_units > 128.0
+    assert 64 <= first.training_cost.training_samples <= 128
+    assert first.training_cost.algorithmic_work_units > 64.0
+    assert first.training_cost.algorithmic_work_units <= first.training_budget_work_units
     assert first.training_cost.wall_seconds > 0.0
     assert first.training_cost.cpu_seconds >= 0.0
     assert first.training_cost.peak_memory_bytes > 0
@@ -291,3 +293,53 @@ def test_common_executor_rejects_training_pilot_seed_collision() -> None:
                 final_seed=73,
             ),
         )
+
+
+def test_cem_stops_at_the_declared_event_instead_of_chasing_a_deeper_tail() -> None:
+    problem = _terminal_problem(level=99.0)
+    config = CEMTrainingConfig(iterations=20, samples_per_iteration=512, elite_fraction=0.1)
+    proposal = train_cem_proposal(problem, method="pure_cem", training_seed=741, config=config)
+    assert proposal.training_cost.optimizer_steps < config.iterations
+    assert proposal.training_cost.training_samples == (
+        proposal.training_cost.optimizer_steps * config.samples_per_iteration
+    )
+    assert proposal.training_cost.algorithmic_work_units <= proposal.training_budget_work_units
+
+
+def test_common_executor_fails_closed_when_rare_event_pilot_has_no_support() -> None:
+    problem = _terminal_problem(level=1.0)
+    proposal = freeze_crude_or_antithetic_proposal(
+        problem, method="crude_mc", training_seed=751
+    )
+    request = BaselineExecutionRequest(
+        pilot_units=16,
+        target_estimator_variance=1.0,
+        pilot_seed=752,
+        final_seed=753,
+        minimum_nonzero_pilot_units=1,
+    )
+    with pytest.raises(PilotSupportError, match="insufficient nonzero"):
+        execute_baseline_lifecycle(problem, proposal, request)
+
+
+def test_common_executor_uses_conservative_planning_variance() -> None:
+    problem = _terminal_problem(level=99.0)
+    proposal = freeze_crude_or_antithetic_proposal(
+        problem, method="crude_mc", training_seed=761
+    )
+    artifact = execute_baseline_lifecycle(
+        problem,
+        proposal,
+        BaselineExecutionRequest(
+            pilot_units=256,
+            target_estimator_variance=0.01,
+            pilot_seed=762,
+            final_seed=763,
+            maximum_final_units=512,
+            minimum_nonzero_pilot_units=1,
+            pilot_variance_safety_factor=4.0,
+        ),
+    )
+    assert artifact.pilot_nonzero_unit_count >= 1
+    assert artifact.planning_variance == pytest.approx(4.0 * artifact.pilot_variance)
+    assert artifact.plan.pilot_variance == artifact.planning_variance

@@ -1,0 +1,21 @@
+{
+  "schema": "npi.g11.v8-d1-p7-falsification-stage-a-failure-receipt.v1",
+  "protocol_id": "g11-v8-d1-p7-falsification-stage-a-v1",
+  "namespace": "v8-d1-p7-falsification-development-v1",
+  "date": "2026-08-02",
+  "status": "failed_nonstandard_json_serialization",
+  "config_path": "configs/g11_v8/d1_p7_falsification_stage_a_v1.yaml",
+  "config_sha256": "901903b24ecb1bf46198f3237abbb6f6c831e4f5b455a27452e1c431d5f57d1c",
+  "failed_result_path": "results/g11_v8_d1_p7_falsification_stage_a_nonstandard_json_failure_v1_2026-08-02.json",
+  "failed_result_sha256": "baeade74b747bde383f3129e9fcb21ef68f1af6429004799028138589b35789d",
+  "failure": "Two unrepresentable likelihood-normalization z statistics serialized as the non-standard JSON token -Infinity.",
+  "statistical_stream_complete": true,
+  "outcomes_inspected": true,
+  "seed_count_burned": 504,
+  "seed_set_sha256": "9d640ed383395788e9bbfe88f6a6a15ec41bf5be5dc3627f7fca18e1a465e13a",
+  "retry_same_namespace_allowed": false,
+  "remediation": "Use null with normalization_moments_representable=false, require allow_nan=false, and open a fresh V2 namespace with disjoint seeds.",
+  "performance_claim_authorized": false,
+  "p8_qualification_authorized": false,
+  "submission_authorized": false
+}

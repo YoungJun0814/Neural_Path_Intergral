@@ -1,0 +1,13 @@
+schema: npi.g11.v8-d1-p7-falsification-stage-a.v2
+protocol_id: g11-v8-d1-p7-falsification-stage-a-v2
+date: "2026-08-02"
+phase: d1_p7_falsification_stage_a_retry
+namespace: v8-d1-p7-falsification-development-v2
+outcome_data_used_before_freeze: false
+base_seed: 831000
+parent_config:
+  path: configs/g11_v8/d1_p7_falsification_stage_a_v1.yaml
+  sha256: 901903b24ecb1bf46198f3237abbb6f6c831e4f5b455a27452e1c431d5f57d1c
+failure_receipt:
+  path: results/g11_v8_d1_p7_falsification_stage_a_failure_receipt_v1_2026-08-02.json
+  sha256: 79c2f2159d5c7f32e22ee23312eaef993640e96b1c89602c8a3f87682a0b487e

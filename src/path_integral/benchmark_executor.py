@@ -39,6 +39,8 @@ class BaselineExecutionRequest:
     minimum_final_units: int = 2
     maximum_final_units: int = 10**9
     rqmc_points_per_randomization: int = 1
+    minimum_nonzero_pilot_units: int = 0
+    pilot_variance_safety_factor: float = 1.0
 
     def __post_init__(self) -> None:
         integers = (
@@ -48,6 +50,7 @@ class BaselineExecutionRequest:
             self.minimum_final_units,
             self.maximum_final_units,
             self.rqmc_points_per_randomization,
+            self.minimum_nonzero_pilot_units,
         )
         if any(
             isinstance(value, bool) or not isinstance(value, int) or value < 0 for value in integers
@@ -65,6 +68,25 @@ class BaselineExecutionRequest:
         points = self.rqmc_points_per_randomization
         if points < 1 or points & (points - 1):
             raise ValueError("RQMC points per randomization must be a power of two")
+        if self.minimum_nonzero_pilot_units > self.pilot_units:
+            raise ValueError("minimum nonzero pilot units cannot exceed pilot units")
+        if (
+            not math.isfinite(self.pilot_variance_safety_factor)
+            or self.pilot_variance_safety_factor < 1.0
+        ):
+            raise ValueError("pilot variance safety factor must be finite and at least one")
+
+
+class PilotSupportError(RuntimeError):
+    """Raised before final sampling when a rare-event pilot has no support."""
+
+    def __init__(self, *, observed_nonzero_units: int, required_nonzero_units: int) -> None:
+        self.observed_nonzero_units = observed_nonzero_units
+        self.required_nonzero_units = required_nonzero_units
+        super().__init__(
+            "pilot has insufficient nonzero inferential units: "
+            f"observed {observed_nonzero_units}, required {required_nonzero_units}"
+        )
 
 
 @dataclass(frozen=True)
@@ -78,15 +100,30 @@ class BaselineExecutionArtifact:
     pilot_unit_count: int
     pilot_mean: float
     pilot_variance: float
+    planning_variance: float
+    pilot_nonzero_unit_count: int
+    pilot_variance_safety_factor: float
     pilot_cost: BaselineCostLedger
 
     def __post_init__(self) -> None:
         if self.pilot_unit_count < 2:
             raise ValueError("artifact requires at least two pilot units")
-        if not all(math.isfinite(value) for value in (self.pilot_mean, self.pilot_variance)):
+        if not all(
+            math.isfinite(value)
+            for value in (
+                self.pilot_mean,
+                self.pilot_variance,
+                self.planning_variance,
+                self.pilot_variance_safety_factor,
+            )
+        ):
             raise ValueError("pilot moments must be finite")
-        if self.pilot_variance < 0.0:
+        if self.pilot_variance < 0.0 or self.planning_variance < self.pilot_variance:
             raise ValueError("pilot variance must be nonnegative")
+        if not 0 <= self.pilot_nonzero_unit_count <= self.pilot_unit_count:
+            raise ValueError("invalid nonzero pilot-unit count")
+        if self.pilot_variance_safety_factor < 1.0:
+            raise ValueError("pilot variance safety factor must be at least one")
         if not self.audit.passed:
             raise ValueError("baseline execution artifact requires a passing lifecycle audit")
 
@@ -223,9 +260,16 @@ def execute_baseline_lifecycle(
         role="planning",
     )
     pilot_variance = float(torch.var(pilot.unit_contributions, unbiased=True))
+    pilot_nonzero_units = int(torch.count_nonzero(pilot.unit_contributions))
+    if pilot_nonzero_units < request.minimum_nonzero_pilot_units:
+        raise PilotSupportError(
+            observed_nonzero_units=pilot_nonzero_units,
+            required_nonzero_units=request.minimum_nonzero_pilot_units,
+        )
+    planning_variance = pilot_variance * request.pilot_variance_safety_factor
     plan = plan_baseline_allocation(
         proposal,
-        pilot_variance=pilot_variance,
+        pilot_variance=planning_variance,
         target_variance=request.target_estimator_variance,
         pilot_seed=request.pilot_seed,
         final_seed=request.final_seed,
@@ -262,5 +306,8 @@ def execute_baseline_lifecycle(
         pilot_unit_count=request.pilot_units,
         pilot_mean=float(torch.mean(pilot.unit_contributions)),
         pilot_variance=pilot_variance,
+        planning_variance=planning_variance,
+        pilot_nonzero_unit_count=pilot_nonzero_units,
+        pilot_variance_safety_factor=request.pilot_variance_safety_factor,
         pilot_cost=pilot_cost,
     )
