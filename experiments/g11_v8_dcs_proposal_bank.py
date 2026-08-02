@@ -70,6 +70,30 @@ def _validate(config: dict[str, Any]) -> None:
     cells = config.get("cells")
     if not isinstance(cells, list) or len(cells) != 24:
         raise ValueError("DCS bank requires all 24 primary cells")
+    calibration_binding = config.get("bindings", {}).get("threshold_calibration")
+    if not isinstance(calibration_binding, dict):
+        raise ValueError("DCS bank requires a threshold-calibration binding")
+    calibration = json.loads(
+        (ROOT / str(calibration_binding["path"])).read_text(encoding="utf-8")
+    )
+    calibrated = {
+        str(cell["cell_id"]): (
+            str(cell["task"]),
+            float(cell["hurst"]),
+            float(cell["calibrated_threshold"]),
+        )
+        for cell in calibration["cells"]
+    }
+    declared = {
+        str(cell["cell_id"]): (
+            str(cell["task"]),
+            float(cell["hurst"]),
+            float(cell["threshold"]),
+        )
+        for cell in cells
+    }
+    if declared != calibrated:
+        raise ValueError("DCS bank cells differ from threshold calibration")
 
 
 def _cells(config: dict[str, Any]) -> tuple[DCSBankCell, ...]:
