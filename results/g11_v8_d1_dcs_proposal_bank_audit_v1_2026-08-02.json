@@ -1,0 +1,60 @@
+{
+  "checks": [
+    [
+      "schema",
+      true
+    ],
+    [
+      "config_hash",
+      true
+    ],
+    [
+      "bindings",
+      true
+    ],
+    [
+      "entry_roster",
+      true
+    ],
+    [
+      "mixture_rank_one",
+      true
+    ],
+    [
+      "seed_uniqueness",
+      true
+    ],
+    [
+      "seed_contiguity",
+      true
+    ],
+    [
+      "seed_count",
+      true
+    ],
+    [
+      "entry_costs",
+      true
+    ],
+    [
+      "total_cost",
+      true
+    ],
+    [
+      "bank_hash",
+      true
+    ],
+    [
+      "claim_locks",
+      true
+    ]
+  ],
+  "dirty_worktree": false,
+  "failures": [],
+  "p8_qualification_authorized": false,
+  "passed": true,
+  "performance_claim_authorized": false,
+  "schema": "npi.g11.v8-dcs-proposal-bank-audit.v1",
+  "source_commit": "4f81ec96b3cbed2987dd94b9e3c3e7feff29949a",
+  "submission_authorized": false
+}
