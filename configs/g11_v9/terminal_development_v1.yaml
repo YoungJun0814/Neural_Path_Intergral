@@ -1,0 +1,83 @@
+schema: npi.g11.v9-terminal-benchmark.v1
+protocol_id: g11-v9-terminal-development-v1
+date: "2026-08-02"
+namespace: v9-terminal-development-falsification-v1
+stage: development
+source_parent_commit: 847266d8d1321c638e82c972770ac4c96d95fd29
+current_namespace_outcomes_inspected_before_freeze: false
+base_seed: 920000
+
+bindings:
+  claim_contract:
+    path: configs/g11_v9/terminal_claim_contract_v1.yaml
+    sha256: 6e870437a6d5a85a1b86ea7fd269986c36abefdcd34da0b8d39f12e35541059f
+  reference:
+    path: results/g11_v9_terminal_reference_v2_2026-08-02.json
+    sha256: c22f96b4a4b41b0519523c0f08040cd54d08e409336426f8ecb40f02453c4ecf
+  reference_audit:
+    path: results/g11_v9_terminal_reference_audit_v2_2026-08-02.json
+    sha256: 029d339c06a61f223adf1b4e2a6a2693f0dbcb57b7518ccad4d9623a7cf71fe8
+  dcs_proposal_bank:
+    path: results/g11_v9_terminal_proposal_bank_v2_2026-08-02.json
+    sha256: 727b13e9c4af2adeca913444daaf2f74c6d2904a6cc0463e01f7fe1b9d40714d
+  proposal_bank_audit:
+    path: results/g11_v9_terminal_proposal_bank_audit_v2_2026-08-02.json
+    sha256: 53c215809eae071bd53c93dbe812920083e15164fb62c2ca706faf3663fe665b
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  steps: 128
+  eta: 1.5
+  xi: 0.04
+  rho: -0.7
+
+relative_rmse_target: 0.20
+amortization_query_counts: [1, 10, 100, 1000]
+primary_query_count: 100
+clusters: 4
+diagnostic_samples: 4096
+maximum_likelihood_normalization_absolute_z: 6.0
+maximum_exactness_error: 0.0000000001
+
+pilot_policy:
+  minimum_nonzero_units: 4
+  variance_safety_factor: 4.0
+
+budgets:
+  - id: high
+    paired_dcs_paths: 16384
+    pilot_units: 64
+    iid_maximum_final_units: 262144
+    rqmc_maximum_final_units: 128
+    rqmc_points_per_randomization: 4096
+    cem:
+      iterations: 10
+      samples_per_iteration: 4096
+      elite_fraction: 0.1
+      smoothing: 0.7
+      defensive_weight: 0.1
+      max_mean_norm: 20.0
+      time_bins: 8
+
+external_methods:
+  primary: [conditional_rbergomi, smoothing_rqmc, defensive_cem]
+
+gate:
+  maximum_combined_reference_z: 4.0
+  maximum_paired_difference_z: 4.0
+  minimum_likelihood_normalization_pass_fraction: 0.95
+  development:
+    confidence: 0.95
+    minimum_passing_hurst_groups: 1
+    minimum_dcs_vs_raw_geometric_ratio: 1.10
+    minimum_dcs_vs_raw_lower_bound: 1.00
+    minimum_dcs_vs_best_geometric_ratio: 0.80
+    minimum_dcs_vs_best_lower_bound: 0.67
+  qualification:
+    confidence: 0.95
+    minimum_passing_hurst_groups: 1
+    minimum_dcs_vs_raw_geometric_ratio: 1.10
+    minimum_dcs_vs_raw_lower_bound: 1.00
+    minimum_dcs_vs_best_geometric_ratio: 0.80
+    minimum_dcs_vs_best_lower_bound: 0.67
