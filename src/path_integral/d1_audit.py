@@ -41,7 +41,10 @@ def _effective_config(path: Path, root: Path) -> tuple[dict[str, Any], str]:
     child = yaml.safe_load(raw.decode("utf-8"))
     if not isinstance(child, dict):
         raise ValueError("D1 config must be a mapping")
-    if child.get("schema") == "npi.g11.v8-d1-p7-falsification-stage-a.v1":
+    if child.get("schema") in {
+        "npi.g11.v8-d1-p7-falsification-stage-a.v1",
+        "npi.g11.v8-d1-p7-falsification-stage-a.v3",
+    }:
         return child, hashlib.sha256(raw).hexdigest()
     if child.get("schema") != "npi.g11.v8-d1-p7-falsification-stage-a.v2":
         raise ValueError("unsupported D1 audit config schema")
@@ -109,6 +112,16 @@ def _recompute_aggregate(
     primary_censoring = sum(
         bool(record["allocation"]["resource_censored"]) for record in primary_records
     )
+    accuracy_budget = str(config["gate"].get("primary_accuracy_budget", "high"))
+    accuracy_records = [
+        record for record in primary_records if record["budget_id"] == accuracy_budget
+    ]
+    expected_accuracy = len(config["cells"]) * int(config["clusters"]) * len(primary)
+    accuracy_limit = float(config["gate"]["primary_accuracy_combined_z"])
+    primary_accuracy_pass = len(accuracy_records) == expected_accuracy and all(
+        float(record["estimate"]["combined_reference_z"]) <= accuracy_limit
+        for record in accuracy_records
+    )
     flow_pass = all(
         record["flow_roundtrip"] is None
         or (
@@ -121,7 +134,13 @@ def _recompute_aggregate(
         )
         for record in external
     )
-    stage_b = exactness_pass and finite_likelihoods and mechanism_pass and primary_evaluable
+    stage_b = (
+        exactness_pass
+        and finite_likelihoods
+        and mechanism_pass
+        and primary_evaluable
+        and primary_accuracy_pass
+    )
     stage_b = stage_b and flow_pass
     return {
         "paired_record_count": len(paired),
@@ -136,6 +155,12 @@ def _recompute_aggregate(
         "mechanism_geometric_variance_ratio": geometric_ratio,
         "mechanism_pass": mechanism_pass,
         "primary_external_evaluable": primary_evaluable,
+        "primary_accuracy_budget": accuracy_budget,
+        "primary_accuracy_pass": primary_accuracy_pass,
+        "primary_accuracy_maximum_combined_z": max(
+            float(record["estimate"]["combined_reference_z"])
+            for record in accuracy_records
+        ),
         "primary_resource_censoring_count": primary_censoring,
         "flow_roundtrip_pass": flow_pass,
         "dcs_proposal_training_cost_closed": False,
@@ -146,6 +171,7 @@ def _recompute_aggregate(
             *([] if representable else ["nonrepresentable_likelihood_moment"]),
             *([] if mechanism_pass else ["mechanism_gate_failure"]),
             *([] if primary_evaluable else ["primary_external_method_not_evaluable"]),
+            *([] if primary_accuracy_pass else ["primary_accuracy_failure"]),
             *([] if primary_censoring == 0 else ["primary_resource_censoring"]),
             "dcs_proposal_training_cost_not_closed",
             "stage_b_and_stage_c_not_complete",

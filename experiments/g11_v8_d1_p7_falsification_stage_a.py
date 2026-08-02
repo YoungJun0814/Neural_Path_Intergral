@@ -162,7 +162,14 @@ def _validate_config(config: dict[str, Any]) -> None:
             raise ValueError(f"D1 cell is not threshold/reference bound: {cell_id}")
     primary = config.get("external_methods", {}).get("primary")
     secondary = config.get("external_methods", {}).get("secondary")
-    if primary != ["pure_cem", "smoothing_rqmc"]:
+    allowed_primary = (
+        ["pure_cem", "smoothing_rqmc"]
+        if config.get("schema") != SCHEMA_V3
+        else config.get("gate", {}).get(
+            "required_primary_methods", ["pure_cem", "smoothing_rqmc"]
+        )
+    )
+    if primary != allowed_primary:
         raise ValueError("D1 primary external comparator roster changed")
     if not isinstance(secondary, list) or set(primary) & set(secondary):
         raise ValueError("D1 primary and secondary comparator rosters overlap")
@@ -530,6 +537,16 @@ def _aggregate_stage_a(
         for record in primary_records
     )
     primary_censoring = sum(record["allocation"]["resource_censored"] for record in primary_records)
+    accuracy_budget = str(config["gate"].get("primary_accuracy_budget", "high"))
+    accuracy_records = [
+        record for record in primary_records if record["budget_id"] == accuracy_budget
+    ]
+    expected_accuracy = len(config["cells"]) * int(config["clusters"]) * len(primary)
+    accuracy_limit = float(config["gate"]["primary_accuracy_combined_z"])
+    primary_accuracy_pass = len(accuracy_records) == expected_accuracy and all(
+        float(record["estimate"]["combined_reference_z"]) <= accuracy_limit
+        for record in accuracy_records
+    )
     flow_pass = all(
         record["flow_roundtrip"] is None
         or (
@@ -539,7 +556,12 @@ def _aggregate_stage_a(
         for record in external
     )
     stage_b_authorized = (
-        exactness_pass and finite_likelihoods and mechanism_pass and primary_evaluable and flow_pass
+        exactness_pass
+        and finite_likelihoods
+        and mechanism_pass
+        and primary_evaluable
+        and primary_accuracy_pass
+        and flow_pass
     )
     proposal_training_cost_closed = False
     return {
@@ -553,6 +575,12 @@ def _aggregate_stage_a(
         "mechanism_geometric_variance_ratio": geometric_ratio,
         "mechanism_pass": mechanism_pass,
         "primary_external_evaluable": primary_evaluable,
+        "primary_accuracy_budget": accuracy_budget,
+        "primary_accuracy_pass": primary_accuracy_pass,
+        "primary_accuracy_maximum_combined_z": max(
+            float(record["estimate"]["combined_reference_z"])
+            for record in accuracy_records
+        ),
         "primary_resource_censoring_count": primary_censoring,
         "flow_roundtrip_pass": flow_pass,
         "dcs_proposal_training_cost_closed": proposal_training_cost_closed,
@@ -563,6 +591,7 @@ def _aggregate_stage_a(
             *([] if representable_likelihood_moments else ["nonrepresentable_likelihood_moment"]),
             *([] if mechanism_pass else ["mechanism_gate_failure"]),
             *([] if primary_evaluable else ["primary_external_method_not_evaluable"]),
+            *([] if primary_accuracy_pass else ["primary_accuracy_failure"]),
             *([] if primary_censoring == 0 else ["primary_resource_censoring"]),
             "dcs_proposal_training_cost_not_closed",
             "stage_b_and_stage_c_not_complete",

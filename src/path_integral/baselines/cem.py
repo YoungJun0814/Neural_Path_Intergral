@@ -27,6 +27,7 @@ class CEMTrainingConfig:
     smoothing: float = 0.7
     defensive_weight: float = 0.1
     max_mean_norm: float = 20.0
+    time_bins: int | None = None
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -43,6 +44,32 @@ class CEMTrainingConfig:
             raise ValueError("defensive_weight must lie in (0, 1)")
         if not math.isfinite(self.max_mean_norm) or self.max_mean_norm <= 0.0:
             raise ValueError("max_mean_norm must be finite and positive")
+        if self.time_bins is not None and (
+            isinstance(self.time_bins, bool)
+            or not isinstance(self.time_bins, int)
+            or self.time_bins < 1
+        ):
+            raise ValueError("time_bins must be a positive integer or None")
+
+
+def _project_piecewise_mean(
+    fitted: torch.Tensor, *, steps: int, time_bins: int | None
+) -> torch.Tensor:
+    """Project a 3N latent shift onto an optional temporal step-function space."""
+
+    if time_bins is None:
+        return fitted
+    if steps % time_bins:
+        raise ValueError("rBergomi steps must be divisible by CEM time_bins")
+    width = steps // time_bins
+    local = fitted[: 2 * steps].reshape(steps, 2)
+    price = fitted[2 * steps :].reshape(steps, 1)
+
+    def project(values: torch.Tensor) -> torch.Tensor:
+        binned = values.reshape(time_bins, width, values.shape[1]).mean(dim=1)
+        return binned[:, None, :].expand(-1, width, -1).reshape_as(values)
+
+    return torch.cat((project(local).reshape(-1), project(price).reshape(-1)))
 
 
 def train_cem_proposal(
@@ -67,6 +94,8 @@ def train_cem_proposal(
         raise ValueError("training_seed must be a nonnegative integer")
     generator = torch.Generator(device="cpu").manual_seed(training_seed)
     dimension = problem.latent_dimension
+    if config.time_bins is not None and problem.steps % config.time_bins:
+        raise ValueError("rBergomi steps must be divisible by CEM time_bins")
     mean = torch.zeros(dimension, dtype=torch.float64)
     elite_count = max(1, math.ceil(config.elite_fraction * config.samples_per_iteration))
     wall_started = time.perf_counter()
@@ -93,7 +122,11 @@ def train_cem_proposal(
         selected = score >= target_level
         if int(torch.count_nonzero(selected)) < elite_count:
             raise AssertionError("CEM level selection lost elite samples")
-        fitted = torch.mean(latent[selected], dim=0)
+        fitted = _project_piecewise_mean(
+            torch.mean(latent[selected], dim=0),
+            steps=problem.steps,
+            time_bins=config.time_bins,
+        )
         mean = (1.0 - config.smoothing) * mean + config.smoothing * fitted
         norm = torch.linalg.vector_norm(mean)
         if not torch.isfinite(norm):

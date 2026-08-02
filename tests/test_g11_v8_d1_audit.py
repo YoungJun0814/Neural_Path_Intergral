@@ -13,10 +13,12 @@ CONFIG = ROOT / "configs/g11_v8/d1_p7_falsification_stage_a_v2.yaml"
 RESULT = ROOT / "results/g11_v8_d1_p7_falsification_stage_a_v2_2026-08-02.json"
 
 
-def test_independent_d1_stage_a_audit_passes_frozen_v2_result() -> None:
+def test_independent_d1_stage_a_audit_supersedes_v2_missing_accuracy_gate() -> None:
     result = load_standard_json(RESULT)
     audit = audit_d1_stage_a(config_path=CONFIG, result=result, root=ROOT)
-    assert audit.passed, audit.failures
+    assert not audit.passed
+    assert "aggregate_recomputation" in audit.failures
+    assert audit.recomputed_aggregate["primary_accuracy_pass"] is False
 
 
 def test_d1_audit_detects_mutated_gate_and_cost() -> None:

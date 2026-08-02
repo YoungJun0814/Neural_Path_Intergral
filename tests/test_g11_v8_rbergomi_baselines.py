@@ -306,6 +306,34 @@ def test_cem_stops_at_the_declared_event_instead_of_chasing_a_deeper_tail() -> N
     assert proposal.training_cost.algorithmic_work_units <= proposal.training_budget_work_units
 
 
+def test_structured_cem_projects_the_shift_onto_declared_time_bins() -> None:
+    problem = _terminal_problem(level=99.0)
+    proposal = train_cem_proposal(
+        problem,
+        method="defensive_cem",
+        training_seed=746,
+        config=CEMTrainingConfig(
+            iterations=4,
+            samples_per_iteration=256,
+            elite_fraction=0.1,
+            time_bins=2,
+        ),
+    )
+    learned = torch.tensor(proposal.component_means[1], dtype=torch.float64)
+    local = learned[: 2 * problem.steps].reshape(problem.steps, 2)
+    price = learned[2 * problem.steps :]
+    for values in (local[:, 0], local[:, 1], price):
+        assert torch.equal(values[:4], values[0].expand(4))
+        assert torch.equal(values[4:], values[4].expand(4))
+    with pytest.raises(ValueError, match="divisible"):
+        train_cem_proposal(
+            problem,
+            method="pure_cem",
+            training_seed=747,
+            config=CEMTrainingConfig(time_bins=3),
+        )
+
+
 def test_common_executor_fails_closed_when_rare_event_pilot_has_no_support() -> None:
     problem = _terminal_problem(level=1.0)
     proposal = freeze_crude_or_antithetic_proposal(
