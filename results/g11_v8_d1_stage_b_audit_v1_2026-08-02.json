@@ -1,0 +1,90 @@
+{
+  "checks": [
+    [
+      "schema",
+      true
+    ],
+    [
+      "config_hash",
+      true
+    ],
+    [
+      "bindings",
+      true
+    ],
+    [
+      "paired_record_count",
+      true
+    ],
+    [
+      "external_record_count",
+      true
+    ],
+    [
+      "seed_uniqueness",
+      true
+    ],
+    [
+      "seed_contiguity",
+      true
+    ],
+    [
+      "seed_count",
+      true
+    ],
+    [
+      "seed_hash",
+      true
+    ],
+    [
+      "bank_and_amortization",
+      true
+    ],
+    [
+      "aggregate_recomputation",
+      true
+    ],
+    [
+      "decision_locks",
+      true
+    ]
+  ],
+  "dirty_worktree": false,
+  "failures": [],
+  "p8_qualification_authorized": false,
+  "passed": true,
+  "performance_claim_authorized": false,
+  "recomputed_aggregate": {
+    "all_external_weights_finite": true,
+    "all_likelihood_moments_representable": true,
+    "dcs_accuracy_maximum_combined_z": 2.0486927822312153,
+    "dcs_accuracy_pass": true,
+    "dcs_proposal_training_cost_closed": true,
+    "exactness_pass": true,
+    "external_record_count": 144,
+    "flow_roundtrip_pass": true,
+    "likelihood_normalization_pass_fraction": 0.9236111111111112,
+    "maximum_exactness_error": 4.547473508864641e-13,
+    "mechanism_geometric_variance_ratio": 1.908641712567905,
+    "mechanism_pass": false,
+    "p8_blockers": [
+      "mechanism_gate_failure",
+      "primary_accuracy_failure",
+      "primary_resource_censoring",
+      "stage_c_not_complete",
+      "t1_theorem_and_novelty_not_closed"
+    ],
+    "paired_record_count": 48,
+    "primary_accuracy_budget": "high",
+    "primary_accuracy_maximum_combined_z": 4.411497707838809,
+    "primary_accuracy_pass": false,
+    "primary_external_evaluable": true,
+    "primary_resource_censoring_count": 24,
+    "stage_b_authorized": false,
+    "stage_b_complete": false
+  },
+  "schema": "npi.g11.v8-d1-stage-b-audit.v1",
+  "source_commit": "a1a3e797127e8006e33a7cb90229578419e85ccc",
+  "stage_c_authorized": false,
+  "submission_authorized": false
+}
