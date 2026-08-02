@@ -90,10 +90,17 @@ def test_dcs_proposal_bank_audit_passes_and_detects_mutation(tmp_path: Path) -> 
 def test_dcs_proposal_bank_audit_supports_v9_claim_locks(tmp_path: Path) -> None:
     config_path, result = _fixture(tmp_path)
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    claim = tmp_path / "claim.yaml"
+    claim.write_text("claim: true\n", encoding="utf-8")
     config["schema"] = "npi.g11.v9-terminal-proposal-bank.v1"
+    config["claim_contract"] = {
+        "path": "claim.yaml",
+        "sha256": __import__("hashlib").sha256(claim.read_bytes()).hexdigest(),
+    }
     config_path.write_text(yaml.safe_dump(config), encoding="utf-8")
     result["schema"] = "npi.g11.v9-terminal-proposal-bank-result.v1"
     result["config_sha256"] = __import__("hashlib").sha256(config_path.read_bytes()).hexdigest()
+    result["dirty_worktree"] = False
     result["decision"] = {
         "bank_construction_complete": True,
         "development_benchmark_authorized": True,

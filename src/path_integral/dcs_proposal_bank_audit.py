@@ -65,7 +65,33 @@ def audit_dcs_proposal_bank(
         if not path.is_file() or _sha256(path) != binding["sha256"]:
             bindings_valid = False
             break
-
+    config_schema = str(config.get("schema"))
+    if config_schema.startswith("npi.g11.v9-terminal-proposal-bank"):
+        claim_binding = config.get("claim_contract")
+        if not isinstance(claim_binding, dict) or set(claim_binding) != {"path", "sha256"}:
+            bindings_valid = False
+        else:
+            claim_path = root / str(claim_binding["path"])
+            bindings_valid = (
+                bindings_valid
+                and claim_path.is_file()
+                and _sha256(claim_path) == str(claim_binding["sha256"])
+            )
+        if config_schema.endswith(".v2"):
+            reference_bindings = config.get("reference_bindings")
+            if not isinstance(reference_bindings, dict):
+                bindings_valid = False
+            else:
+                for reference_binding in reference_bindings.values():
+                    if not isinstance(reference_binding, dict):
+                        bindings_valid = False
+                        break
+                    reference_path = root / str(reference_binding["path"])
+                    if not reference_path.is_file() or _sha256(reference_path) != str(
+                        reference_binding["sha256"]
+                    ):
+                        bindings_valid = False
+                        break
     seeds = [int(rep["seed"]) for entry in entries for rep in entry["replicates"]]
     expected_seeds = list(range(int(config["base_seed"]), int(config["base_seed"]) + len(seeds)))
     structure = [entry["cell_id"] for entry in entries] == expected_cells
@@ -118,9 +144,15 @@ def audit_dcs_proposal_bank(
         math.isclose(float(total[key]), float(value), rel_tol=1e-12, abs_tol=1e-12)
         for key, value in summed.items()
     )
-    config_schema = str(config.get("schema"))
-    if config_schema == "npi.g11.v9-terminal-proposal-bank.v1":
-        result_schema = "npi.g11.v9-terminal-proposal-bank-result.v1"
+    if config_schema in {
+        "npi.g11.v9-terminal-proposal-bank.v1",
+        "npi.g11.v9-terminal-proposal-bank.v2",
+    }:
+        result_schema = (
+            "npi.g11.v9-terminal-proposal-bank-result.v2"
+            if config_schema.endswith(".v2")
+            else "npi.g11.v9-terminal-proposal-bank-result.v1"
+        )
         expected_decision = {
             "bank_construction_complete": True,
             "development_benchmark_authorized": True,
@@ -151,6 +183,11 @@ def audit_dcs_proposal_bank(
         ("entry_costs", costs_valid),
         ("total_cost", total_cost_valid),
         ("bank_hash", result.get("bank_sha256") == _bank_hash(entries)),
+        (
+            "clean_source_generation",
+            not config_schema.startswith("npi.g11.v9")
+            or result.get("dirty_worktree") is False,
+        ),
         ("claim_locks", claim_locks),
     )
     failures = tuple(name for name, passed in checks if not passed)

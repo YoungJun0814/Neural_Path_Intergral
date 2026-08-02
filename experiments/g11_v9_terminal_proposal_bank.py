@@ -22,6 +22,7 @@ from src.path_integral.provenance import runtime_provenance, source_provenance
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "npi.g11.v9-terminal-proposal-bank.v1"
+SCHEMA_V2 = "npi.g11.v9-terminal-proposal-bank.v2"
 
 
 def _sha256(path: Path) -> str:
@@ -31,7 +32,7 @@ def _sha256(path: Path) -> str:
 def load_config(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     config = yaml.safe_load(raw.decode("utf-8"))
-    if not isinstance(config, dict) or config.get("schema") != SCHEMA:
+    if not isinstance(config, dict) or config.get("schema") not in {SCHEMA, SCHEMA_V2}:
         raise ValueError("unexpected V9 terminal proposal-bank config schema")
     return config, hashlib.sha256(raw).hexdigest()
 
@@ -52,6 +53,38 @@ def _validate(config: dict[str, Any]) -> None:
         raise ValueError("V9 proposal bank is exactly the 12-cell terminal roster")
     if config.get("current_namespace_outcomes_inspected_before_freeze") is not False:
         raise ValueError("V9 proposal-bank namespace was not outcome-blind at freeze")
+    if config["schema"] == SCHEMA_V2:
+        reference_bindings = config.get("reference_bindings")
+        if not isinstance(reference_bindings, dict) or set(reference_bindings) != {
+            "reference",
+            "reference_audit",
+        }:
+            raise ValueError("V9 proposal-bank V2 requires reference result and audit")
+        for name, reference_binding in reference_bindings.items():
+            if not isinstance(reference_binding, dict) or set(reference_binding) != {
+                "path",
+                "sha256",
+            }:
+                raise ValueError(f"invalid V9 proposal-bank reference binding: {name}")
+            reference_path = ROOT / str(reference_binding["path"])
+            if not reference_path.is_file() or _sha256(reference_path) != str(
+                reference_binding["sha256"]
+            ):
+                raise ValueError(f"V9 proposal-bank reference binding mismatch: {name}")
+        reference = json.loads(
+            (ROOT / str(reference_bindings["reference"]["path"])).read_text(
+                encoding="utf-8"
+            )
+        )
+        audit = json.loads(
+            (ROOT / str(reference_bindings["reference_audit"]["path"])).read_text(
+                encoding="utf-8"
+            )
+        )
+        if reference["decision"]["reference_complete"] is not True or audit.get(
+            "passed"
+        ) is not True:
+            raise ValueError("V9 reference gate did not authorize proposal-bank training")
     source_commit = str(config["source_parent_commit"])
     current = subprocess.check_output(("git", "rev-parse", "HEAD"), cwd=ROOT, text=True).strip()
     if subprocess.run(
@@ -118,7 +151,11 @@ def run(config: dict[str, Any], config_sha256: str) -> dict[str, Any]:
         ),
     )
     return {
-        "schema": "npi.g11.v9-terminal-proposal-bank-result.v1",
+        "schema": (
+            "npi.g11.v9-terminal-proposal-bank-result.v2"
+            if config["schema"] == SCHEMA_V2
+            else "npi.g11.v9-terminal-proposal-bank-result.v1"
+        ),
         "protocol_id": config["protocol_id"],
         "namespace": config["namespace"],
         "config_sha256": config_sha256,
