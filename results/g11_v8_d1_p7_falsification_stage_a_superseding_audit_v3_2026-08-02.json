@@ -1,0 +1,99 @@
+{
+  "checks": [
+    [
+      "config_hash",
+      true
+    ],
+    [
+      "protocol",
+      true
+    ],
+    [
+      "namespace",
+      true
+    ],
+    [
+      "bindings",
+      true
+    ],
+    [
+      "paired_record_count",
+      true
+    ],
+    [
+      "external_record_count",
+      true
+    ],
+    [
+      "seed_uniqueness",
+      true
+    ],
+    [
+      "seed_contiguity",
+      true
+    ],
+    [
+      "seed_count",
+      true
+    ],
+    [
+      "seed_hash",
+      true
+    ],
+    [
+      "aggregate_recomputation",
+      false
+    ],
+    [
+      "cost_conservation",
+      true
+    ],
+    [
+      "claim_locks",
+      false
+    ],
+    [
+      "terminal_cells_present",
+      true
+    ]
+  ],
+  "config_path": "configs/g11_v8/d1_p7_falsification_stage_a_v3.yaml",
+  "dirty_worktree": false,
+  "failures": [
+    "aggregate_recomputation",
+    "claim_locks"
+  ],
+  "p8_qualification_authorized": false,
+  "passed": false,
+  "performance_claim_authorized": false,
+  "recomputed_aggregate": {
+    "all_external_weights_finite": true,
+    "all_likelihood_moments_representable": true,
+    "dcs_proposal_training_cost_closed": false,
+    "exactness_pass": true,
+    "external_record_count": 48,
+    "flow_roundtrip_pass": true,
+    "likelihood_normalization_pass_fraction": 0.75,
+    "maximum_exactness_error": 5.684341886080802e-14,
+    "mechanism_geometric_variance_ratio": 2.5575424739943116,
+    "mechanism_pass": true,
+    "p8_blockers": [
+      "primary_accuracy_failure",
+      "primary_resource_censoring",
+      "dcs_proposal_training_cost_not_closed",
+      "stage_b_and_stage_c_not_complete",
+      "t1_theorem_and_novelty_not_closed"
+    ],
+    "paired_record_count": 24,
+    "primary_accuracy_budget": "high",
+    "primary_accuracy_maximum_combined_z": 150.33432558255646,
+    "primary_accuracy_pass": false,
+    "primary_external_evaluable": true,
+    "primary_resource_censoring_count": 10,
+    "stage_b_authorized": false
+  },
+  "result_path": "results/g11_v8_d1_p7_falsification_stage_a_v3_2026-08-02.json",
+  "schema": "npi.g11.v8-d1-p7-falsification-stage-a-audit.v1",
+  "source_commit": "13f95b04891736fad604c8e60144fa01befffeb5",
+  "submission_authorized": false
+}
