@@ -45,6 +45,7 @@ from src.path_integral.provenance import runtime_provenance, source_provenance
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "npi.g11.v8-d1-p7-falsification-stage-a.v1"
 SCHEMA_V2 = "npi.g11.v8-d1-p7-falsification-stage-a.v2"
+SCHEMA_V3 = "npi.g11.v8-d1-p7-falsification-stage-a.v3"
 RESULT_SCHEMA = "npi.g11.v8-d1-p7-falsification-stage-a-result.v1"
 
 
@@ -55,7 +56,11 @@ def _sha256(path: Path) -> str:
 def load_config(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     config = yaml.safe_load(raw.decode("utf-8"))
-    if not isinstance(config, dict) or config.get("schema") not in {SCHEMA, SCHEMA_V2}:
+    if not isinstance(config, dict) or config.get("schema") not in {
+        SCHEMA,
+        SCHEMA_V2,
+        SCHEMA_V3,
+    }:
         raise ValueError("unexpected D1 Stage A config schema")
     if config.get("schema") == SCHEMA_V2:
         parent = config.get("parent_config")
@@ -92,7 +97,34 @@ def _validate_config(config: dict[str, Any]) -> None:
             raise ValueError(f"binding hash mismatch: {name}")
     parent = config.get("source_parent_commit")
     current = subprocess.check_output(("git", "rev-parse", "HEAD"), cwd=ROOT, text=True).strip()
-    if parent != current:
+    if config.get("schema") == SCHEMA_V3:
+        ancestor = subprocess.run(
+            ("git", "merge-base", "--is-ancestor", str(parent), current),
+            cwd=ROOT,
+            check=False,
+        ).returncode == 0
+        bound_source = (
+            "src/path_integral/baselines/cem.py",
+            "src/path_integral/benchmark_executor.py",
+            "src/path_integral/baseline_diagnostics.py",
+            "src/path_integral/dcs_benchmark.py",
+            "experiments/g11_v8_d1_p7_falsification_stage_a.py",
+        )
+        changed = subprocess.run(
+            ("git", "diff", "--quiet", str(parent), "--", *bound_source),
+            cwd=ROOT,
+            check=False,
+        ).returncode != 0
+        dirty = bool(
+            subprocess.check_output(
+                ("git", "status", "--porcelain", "--", *bound_source),
+                cwd=ROOT,
+                text=True,
+            ).strip()
+        )
+        if not ancestor or changed or dirty:
+            raise ValueError("D1 V3 bound implementation is not clean and unchanged")
+    elif parent != current:
         raise ValueError("D1 Stage A must start from the frozen B1 parent commit")
     b1 = json.loads((ROOT / config["bindings"]["b1_audit"]["path"]).read_text())
     reference_audit = json.loads((ROOT / config["bindings"]["reference_audit"]["path"]).read_text())
@@ -139,6 +171,14 @@ def _validate_config(config: dict[str, Any]) -> None:
         raise ValueError("D1 requires the frozen low/high budget ladder")
     if int(config.get("clusters", 0)) < 2:
         raise ValueError("D1 requires at least two independent clusters")
+    if config.get("schema") == SCHEMA_V3:
+        policy = config.get("pilot_policy")
+        if (
+            not isinstance(policy, dict)
+            or int(policy.get("minimum_nonzero_units", 0)) < 1
+            or float(policy.get("variance_safety_factor", 0.0)) < 1.0
+        ):
+            raise ValueError("D1 V3 requires a fail-closed conservative pilot policy")
 
 
 def _problem(cell: dict[str, Any], model: dict[str, Any]) -> RBergomiBaselineProblem:
@@ -352,6 +392,12 @@ def _external_record(
             minimum_final_units=4,
             maximum_final_units=maximum_units,
             rqmc_points_per_randomization=points,
+            minimum_nonzero_pilot_units=int(
+                config.get("pilot_policy", {}).get("minimum_nonzero_units", 0)
+            ),
+            pilot_variance_safety_factor=float(
+                config.get("pilot_policy", {}).get("variance_safety_factor", 1.0)
+            ),
         ),
     )
     diagnostics = evaluate_baseline_likelihood_diagnostics(
@@ -359,7 +405,7 @@ def _external_record(
         sample_count=int(config["diagnostic_samples"]),
         seed=seeds[3],
     )
-    required_units = math.ceil(artifact.pilot_variance / target_variance)
+    required_units = math.ceil(artifact.planning_variance / target_variance)
     estimate = artifact.estimate
     estimate_se = math.sqrt(estimate.estimator_variance)
     reference = float(cell["reference_estimate"])
@@ -395,13 +441,23 @@ def _external_record(
             "self_normalized": proposal.self_normalized,
             "conditional_integral": proposal.conditional_integral,
             "training_cost": asdict(proposal.training_cost),
+            "training_budget_work_units": proposal.training_budget_work_units,
             "fixed_identity_covariance": method in {"pure_cem", "defensive_cem"},
+            "covariance_eigenvalue_minimum": 1.0
+            if method in {"pure_cem", "defensive_cem"}
+            else None,
+            "covariance_eigenvalue_maximum": 1.0
+            if method in {"pure_cem", "defensive_cem"}
+            else None,
             "defensive_target_component": method in {"defensive_cem", "ld_subspace_is"},
         },
         "pilot": {
             "unit_count": artifact.pilot_unit_count,
             "mean": artifact.pilot_mean,
             "variance": artifact.pilot_variance,
+            "planning_variance": artifact.planning_variance,
+            "nonzero_unit_count": artifact.pilot_nonzero_unit_count,
+            "variance_safety_factor": artifact.pilot_variance_safety_factor,
             "cost": asdict(artifact.pilot_cost),
         },
         "allocation": {
@@ -419,6 +475,8 @@ def _external_record(
             "variance": estimate.estimator_variance,
             "combined_reference_z": abs(estimate.estimate - reference)
             / math.sqrt(estimate_se**2 + reference_se**2),
+            "target_standard_error": math.sqrt(target_variance),
+            "target_attained": estimate_se <= math.sqrt(target_variance),
             "final_cost": asdict(estimate.final_cost),
         },
         "likelihood_diagnostics": asdict(diagnostics),

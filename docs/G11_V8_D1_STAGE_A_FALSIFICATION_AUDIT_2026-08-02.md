@@ -1,6 +1,6 @@
 # G11 V8 D1 Stage A Falsification and Remediation Audit
 
-Date: 2026-08-02  
+Date: 2026-08-02
 Status: **Stage A mechanism continuation only; external-comparator remediation required**
 
 ## Decision
