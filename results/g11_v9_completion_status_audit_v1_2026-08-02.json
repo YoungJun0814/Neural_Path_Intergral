@@ -1,0 +1,62 @@
+{
+  "checks": [
+    [
+      "schema",
+      true
+    ],
+    [
+      "binding_hashes",
+      true
+    ],
+    [
+      "claim_contract_audit",
+      true
+    ],
+    [
+      "reference_v1_preserved_failure",
+      true
+    ],
+    [
+      "reference_v2_pass",
+      true
+    ],
+    [
+      "proposal_bank",
+      true
+    ],
+    [
+      "development_audit",
+      true
+    ],
+    [
+      "numeric_reconstruction",
+      true
+    ],
+    [
+      "mechanism_group_ratios",
+      true
+    ],
+    [
+      "falsification_decision",
+      true
+    ],
+    [
+      "claim_locks",
+      true
+    ],
+    [
+      "forbidden_downstream_outputs_absent",
+      true
+    ]
+  ],
+  "dirty_worktree": false,
+  "failures": [],
+  "ledger_sha256": "11ccb2c07a2a0f3e468e0bd2a4f07c24fc1d55447f12d0272f2a6d615abbcafa",
+  "passed": true,
+  "qualification_authorized": false,
+  "schema": "npi.g11.v9-completion-status-audit.v1",
+  "scientific_status": "closed_by_development_falsification",
+  "source_commit": "1c0988062d26ddab429360e83b3e29ee92459df0",
+  "submission_authorized": false,
+  "top_journal_claim_authorized": false
+}

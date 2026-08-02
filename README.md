@@ -10,6 +10,17 @@
 
 ## Research status
 
+The current frontier is **V9 terminal-only, regime-conditional DCS**.  Its fresh
+reference and reference-gated proposal bank pass independent audits.  The complete
+12-cell by 4-cluster development matrix is technically valid and confirms a
+same-mixture DCS total-work gain at `K=100` in all three Hurst groups (geometric
+raw/DCS ratios 2.03, 1.50, and 1.58; one-sided lower bounds all above one).
+Nevertheless, V9 is closed by its frozen development gate: the best-primary/DCS
+ratios are only 0.30--0.42, the external maximum combined-reference z is 9.10, and
+22 comparator records are resource-censored.  No Hurst group is selected and
+qualification, top-journal, and submission claims remain locked.  This is a valid
+negative result, not a software failure.
+
 The confirmed empirical base is the **V7 fixed-proposal DCS mechanism**:
 
 > an exact Rao--Blackwell comparison of raw defensive importance sampling and
@@ -76,7 +87,7 @@ as diagnostic because OS and container scheduling affect it. This is a
 cross-software-environment reproduction on the same physical laptop, not an
 independent-hardware replication.
 
-V8 top-journal development has started from that confirmed base. P0 fixes the
+V8 top-journal development was launched from that confirmed base. P0 fixes the
 finite-grid estimand, three permitted contribution slots, outcome-independent
 comparator roles, training-inclusive cost categories, inferential units, prohibited
 claims, flow-extension conditions, and one-commit-per-phase policy. P1 completes a
@@ -164,7 +175,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **767/767 tests on 2026-07-31**.
+The complete local regression suite passed **898/898 tests on 2026-08-02**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finite grid rather than a continuously monitored event. V7
@@ -177,6 +188,10 @@ are explicit V8 gates and may not be hidden by relabelling prior results.
 Start with:
 
 - [V11 research and implementation plan](CORRECTION_FOCUSED_DCS_MGI_MLMC_PLAN_V11.md)
+- [V9 terminal implementation plan](docs/G11_V9_TERMINAL_REGIME_CONDITIONAL_IMPLEMENTATION_PLAN_2026-08-02.md)
+- [V9 development decision](docs/G11_V9_TERMINAL_DEVELOPMENT_DECISION_2026-08-02.md)
+- [V9 final execution closure](docs/G11_V9_FINAL_EXECUTION_CLOSURE_2026-08-02.md)
+- [V8 final execution closure](docs/G11_V8_FINAL_EXECUTION_CLOSURE_2026-08-02.md)
 - [V8 completion plan](docs/plans/G11_V8_COMPLETION_IMPLEMENTATION_PLAN_2026-07-31.md)
 - [V8 completion plan (Korean)](docs/plans/G11_V8_COMPLETION_IMPLEMENTATION_PLAN_KO_2026-07-31.md)
 - [V8 R1 sharded-reference theory](docs/theory/G11_V8_R1_REFERENCE_SHARD_THEORY.md)
@@ -597,7 +612,8 @@ and prevent selective reporting.
 | G11 V4 | Margin-localized Hybrid DCS-MGI | 27-cell frozen OAT qualification and independent audit pass; 90/135 SLIS, 45/135 multilevel |
 | G11 V6 | Amortized DCS-SLIS policy | Frozen Windows and disjoint-seed Linux software-environment results pass; selector claim falsified |
 | G11 V7 | Same-proposal Rao--Blackwell DCS | Development, qualification, confirmation, and Linux software-environment reproduction pass |
-| G11 V8 | Theory plus strong external comparators | P0 contract passes; novelty, new theorem, external comparison, and physical reproduction open |
+| G11 V8 | Theory plus strong external comparators | Complete authorized execution; broad 24-cell performance route falsified and closed |
+| G11 V9 | Terminal regime-conditional DCS | Same-mixture work gain passes; best-primary, accuracy, and resource gates fail; qualification blocked |
 
 Earlier neural VFO, mixture, and residual-controller tracks were tested against strong
 baselines and stopped when their gates failed. See the phase reviews under
@@ -606,22 +622,20 @@ baselines and stopped when their gates failed. See the phase reviews under
 
 ## What remains before a journal claim
 
-The next publication-critical steps are:
+V9 cannot be repaired by weakening its gate.  The next valid protocol must be a new
+V10 model that applies exact conditional smoothing to a stronger, full-dimensional
+CEM proposal rather than the current rank-one bank.  It must then:
 
-1. complete the reproducible primary-source novelty audit and stop if the surviving
-   contribution is only renamed conditional smoothing;
-2. prove defensive-mixture exactness, the proposal-conditional DCS identity, strict
-   improvement, and finite-grid scalar-threshold lemmas;
-3. prove or explicitly downgrade barrier-mesh, weak-bias, correction-variance, and
-   end-to-end complexity claims;
-4. implement published-style conditional Monte Carlo, smoothing RQMC,
-   large-deviation IS, and exact-likelihood flow baselines under one cost contract;
-5. freeze one-factor cells, independent references, cluster-level inference,
-   simultaneous intervals, and training-inclusive work gates;
-6. complete development, independent-seed qualification, outcome-blind freeze, and
-   uncensored confirmation without reusing seeds; and
-7. reproduce the frozen effect on independent physical hardware and obtain external
-   mathematical and code review before manuscript submission.
+1. derive the proposal-conditional Gaussian law and exact mixture likelihood before
+   implementation;
+2. test whether the hybrid retains the V9 same-proposal gain while closing the
+   2.4--3.4x gap to the best comparator;
+3. freeze fresh references, seeds, accuracy/resource gates, and cluster-level
+   qualification before observing V10 outcomes;
+4. retain conditional MC, smoothing RQMC, and defensive CEM under the same
+   training-inclusive target-work contract; and
+5. obtain external mathematical review, a current primary-source novelty audit, and
+   independent physical-hardware reproduction before manuscript submission.
 
 Until those items are complete, the defensible description is **PhD-level research
 prototype and strong working-paper core**, not a top-journal-ready final manuscript.
