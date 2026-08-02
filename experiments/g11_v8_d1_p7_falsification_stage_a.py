@@ -203,7 +203,7 @@ def _problem(cell: dict[str, Any], model: dict[str, Any]) -> RBergomiBaselinePro
         spot=float(model["spot"]),
         maturity=float(model["maturity"]),
         steps=int(model["steps"]),
-        hurst=float(model["hurst"]),
+        hurst=float(cell.get("hurst", model.get("hurst"))),
         eta=float(model["eta"]),
         xi=float(model["xi"]),
         rho=float(model["rho"]),
@@ -211,11 +211,17 @@ def _problem(cell: dict[str, Any], model: dict[str, Any]) -> RBergomiBaselinePro
 
 
 def _proposal_entry(config: dict[str, Any], cell_id: str) -> dict[str, Any]:
-    manifest = json.loads((ROOT / config["bindings"]["proposal_manifest"]["path"]).read_text())
+    binding = config["bindings"].get(
+        "dcs_proposal_bank", config["bindings"].get("proposal_manifest")
+    )
+    if not isinstance(binding, dict):
+        raise ValueError("missing DCS proposal binding")
+    manifest = json.loads((ROOT / binding["path"]).read_text())
     matches = [
         item
         for item in manifest["entries"]
-        if item["cell_id"] == cell_id and item["method"] == "dcs_reference"
+        if item["cell_id"] == cell_id
+        and item.get("method", "dcs_reference") == "dcs_reference"
     ]
     if len(matches) != 1:
         raise ValueError(f"missing unique DCS proposal for {cell_id}")
@@ -322,7 +328,21 @@ def _paired_record(
         "path_seed": seeds[0],
         "label_seed": seeds[1],
         "sample_count": batch.raw_contribution.numel(),
-        "proposal_source": entry["entry_id"],
+        "proposal_source": entry.get("entry_id", entry["cell_id"]),
+        "proposal_bank_sha256": (
+            json.loads(
+                (
+                    ROOT
+                    / config["bindings"]["dcs_proposal_bank"]["path"]
+                ).read_text()
+            )["bank_sha256"]
+            if "dcs_proposal_bank" in config["bindings"]
+            else None
+        ),
+        "proposal_training_cost": entry.get("training_cost"),
+        "proposal_training_budget_work_units": entry.get(
+            "training_budget_work_units"
+        ),
         "component_counts": batch.component_counts,
         "raw": {
             "estimate": raw_mean,
