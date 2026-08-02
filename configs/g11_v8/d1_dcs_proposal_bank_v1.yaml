@@ -1,0 +1,149 @@
+schema: npi.g11.v8-dcs-proposal-bank.v1
+protocol_id: g11-v8-d1-dcs-proposal-bank-v1
+date: "2026-08-02"
+namespace: v8-d1-dcs-proposal-bank-training-v1
+source_parent_commit: 9dcf5db8c820815702dc68508d05f9035e497bd1
+current_namespace_outcomes_inspected_before_freeze: false
+base_seed: 861000
+
+bindings:
+  threshold_calibration:
+    path: results/g11_v8_p5_threshold_calibration_v1_2026-07-27.json
+    sha256: 27eabb261d079a8e67fb9389f492c532eb51d7c387ce3907437cfe9e5085ddb6
+  stage_a_result:
+    path: results/g11_v8_d1_p7_falsification_stage_a_v4_2026-08-02.json
+    sha256: c9505e076487163ea009caaf2b5821dbfcbb15d37bdff1604f2acb04812061ca
+  stage_a_audit:
+    path: results/g11_v8_d1_p7_falsification_stage_a_audit_v4_2026-08-02.json
+    sha256: fa61af49a2e4acfabe67516b99660850bb38337b5708987cdbc976115e26828a
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  steps: 128
+  eta: 1.5
+  xi: 0.04
+  rho: -0.7
+
+training:
+  segments: 8
+  replicates: 2
+  paths_per_iteration: 2048
+  maximum_iterations: 6
+  elite_quantile: 0.90
+  smoothing: 0.60
+  minimum_elite_paths: 256
+  control_bound: 12.0
+  target_level_repetitions: 1
+  minimum_price_driver_magnitude: 0.05
+  initial_control:
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+    - [0.0, -0.5]
+  mixture_scales: [0.0, 0.5, 1.0, 1.5, 2.0]
+  mixture_weights: [0.10, 0.15, 0.35, 0.25, 0.15]
+
+amortization_query_counts: [1, 10, 100, 1000]
+
+cells:
+  - cell_id: h0.05-terminal_left_tail-p1e-02
+    task: terminal_left_tail
+    hurst: 0.05
+    threshold: 50.20592042422368
+  - cell_id: h0.05-terminal_left_tail-p1e-03
+    task: terminal_left_tail
+    hurst: 0.05
+    threshold: 31.92790645389728
+  - cell_id: h0.05-terminal_left_tail-p1e-04
+    task: terminal_left_tail
+    hurst: 0.05
+    threshold: 18.320946011895387
+  - cell_id: h0.05-terminal_left_tail-p1e-05
+    task: terminal_left_tail
+    hurst: 0.05
+    threshold: 10.199729956015094
+  - cell_id: h0.05-discrete_lower_barrier-p1e-02
+    task: discrete_lower_barrier
+    hurst: 0.05
+    threshold: 45.977995577392456
+  - cell_id: h0.05-discrete_lower_barrier-p1e-03
+    task: discrete_lower_barrier
+    hurst: 0.05
+    threshold: 28.05392556306338
+  - cell_id: h0.05-discrete_lower_barrier-p1e-04
+    task: discrete_lower_barrier
+    hurst: 0.05
+    threshold: 16.155414739400396
+  - cell_id: h0.05-discrete_lower_barrier-p1e-05
+    task: discrete_lower_barrier
+    hurst: 0.05
+    threshold: 8.92030911882107
+  - cell_id: h0.12-terminal_left_tail-p1e-02
+    task: terminal_left_tail
+    hurst: 0.12
+    threshold: 46.41141383480874
+  - cell_id: h0.12-terminal_left_tail-p1e-03
+    task: terminal_left_tail
+    hurst: 0.12
+    threshold: 24.672468432835625
+  - cell_id: h0.12-terminal_left_tail-p1e-04
+    task: terminal_left_tail
+    hurst: 0.12
+    threshold: 10.391658226080532
+  - cell_id: h0.12-terminal_left_tail-p1e-05
+    task: terminal_left_tail
+    hurst: 0.12
+    threshold: 3.3641964170773018
+  - cell_id: h0.12-discrete_lower_barrier-p1e-02
+    task: discrete_lower_barrier
+    hurst: 0.12
+    threshold: 40.411221763015256
+  - cell_id: h0.12-discrete_lower_barrier-p1e-03
+    task: discrete_lower_barrier
+    hurst: 0.12
+    threshold: 20.768105234010374
+  - cell_id: h0.12-discrete_lower_barrier-p1e-04
+    task: discrete_lower_barrier
+    hurst: 0.12
+    threshold: 8.617658712720067
+  - cell_id: h0.12-discrete_lower_barrier-p1e-05
+    task: discrete_lower_barrier
+    hurst: 0.12
+    threshold: 2.832026577121174
+  - cell_id: h0.20-terminal_left_tail-p1e-02
+    task: terminal_left_tail
+    hurst: 0.20
+    threshold: 45.29897333205014
+  - cell_id: h0.20-terminal_left_tail-p1e-03
+    task: terminal_left_tail
+    hurst: 0.20
+    threshold: 21.431743260451416
+  - cell_id: h0.20-terminal_left_tail-p1e-04
+    task: terminal_left_tail
+    hurst: 0.20
+    threshold: 7.656661839363003
+  - cell_id: h0.20-terminal_left_tail-p1e-05
+    task: terminal_left_tail
+    hurst: 0.20
+    threshold: 1.884327900748765
+  - cell_id: h0.20-discrete_lower_barrier-p1e-02
+    task: discrete_lower_barrier
+    hurst: 0.20
+    threshold: 38.533175520208395
+  - cell_id: h0.20-discrete_lower_barrier-p1e-03
+    task: discrete_lower_barrier
+    hurst: 0.20
+    threshold: 17.312136932756314
+  - cell_id: h0.20-discrete_lower_barrier-p1e-04
+    task: discrete_lower_barrier
+    hurst: 0.20
+    threshold: 6.071187226165286
+  - cell_id: h0.20-discrete_lower_barrier-p1e-05
+    task: discrete_lower_barrier
+    hurst: 0.20
+    threshold: 1.4106484508511312
