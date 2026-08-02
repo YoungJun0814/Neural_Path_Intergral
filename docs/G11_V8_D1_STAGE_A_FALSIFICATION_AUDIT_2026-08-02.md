@@ -1,18 +1,21 @@
 # G11 V8 D1 Stage A Falsification and Remediation Audit
 
 Date: 2026-08-02
-Status: **Stage A mechanism continuation only; external-comparator remediation required**
+Status: **Stage A V4 passed for Stage B development; P8 remains blocked**
 
 ## Decision
 
-The representative-cell experiment supports continuation to a remediated Stage B
-because the same-proposal raw/DCS mechanism passed and all exact-density checks
-passed. It does **not** qualify any performance, P8, submission, or top-journal
-claim.
+The final V4 representative-cell experiment supports continuation to Stage B
+because the same-proposal raw/DCS mechanism, exact-density checks, and the frozen
+high-budget primary accuracy gate all passed. It does **not** qualify any
+performance, P8, submission, or top-journal claim.
 
-The independent V2 audit passes every structural, seed, cost-arithmetic, aggregate,
-and claim-lock check. The audit does not turn an exploratory result into a
-confirmatory one.
+The original V2 audit reproduced the then-implemented aggregate, but a later
+gate-presence review found that the frozen primary-accuracy threshold was absent
+from that aggregate. Superseding V2 and V3 audits correctly fail those decisions.
+The clean-source independent V4 audit passes every structural, seed,
+cost-arithmetic, aggregate, and claim-lock check. No development audit turns an
+exploratory result into a confirmatory one.
 
 ## Frozen evidence
 
@@ -122,3 +125,22 @@ smoothing RQMC requires substantially more randomizations for some rare barrier
 cells. The next protocol must retain those failures, apply accuracy only at a
 predeclared operating budget rather than demanding that every budget-ladder point
 succeed, and keep resource censoring separate from accuracy.
+
+## V4 corrected-stream result
+
+V4 used 288 new disjoint seeds, retained pure CEM as a secondary comparator, and
+made exact defensive CEM plus smoothing RQMC the primary external roster. Its
+predeclared high-budget accuracy operating point passed:
+
+- geometric raw/DCS variance ratio: `2.2027` versus the `2.0` boundary;
+- maximum high-budget primary combined reference z: `3.4381` versus `4.0`;
+- maximum exactness residual: `4.97e-14` versus `1e-10`;
+- likelihood-normalization diagnostic pass fraction: `0.95`;
+- defensive CEM high-budget resource censoring: zero; and
+- primary resource censoring overall: 11, arising from smoothing RQMC.
+
+The V4 audit independently reconstructs all 288 seeds, the full 24 paired and 60
+external records, cost conservation, aggregate arithmetic, and decision locks. It
+passes with no audit failures. Stage B development is authorized. P8 remains
+blocked until proposal-bank training cost, Stage B/C, resource planning, and T1 are
+closed.
