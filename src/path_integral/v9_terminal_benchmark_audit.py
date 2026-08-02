@@ -115,6 +115,13 @@ def audit_v9_terminal_benchmark(
     proposal_bindings = all(
         record["proposal_bank_sha256"] == bank_hash for record in paired
     )
+    budget = config["budgets"][0]
+    expected_pilots = budget.get("pilot_units_by_method")
+    pilot_allocations = expected_pilots is None or all(
+        int(record["pilot"]["unit_count"])
+        == int(expected_pilots[str(record["method"])])
+        for record in external
+    )
     expected_decision = _expected_decision(str(config["stage"]), bool(aggregate["stage_pass"]))
     checks = (
         ("schema", result.get("schema") == "npi.g11.v9-terminal-benchmark-result.v1"),
@@ -129,6 +136,7 @@ def audit_v9_terminal_benchmark(
         ("seed_count", result.get("seed_count") == len(seeds)),
         ("seed_hash", result.get("seed_set_sha256") == seed_hash),
         ("proposal_bank_binding", proposal_bindings),
+        ("method_specific_pilot_allocation", pilot_allocations),
         ("work_reconstruction", work_reconstruction),
         ("aggregate_recomputation", result.get("aggregate") == aggregate),
         ("clean_source_generation", result.get("dirty_worktree") is False),

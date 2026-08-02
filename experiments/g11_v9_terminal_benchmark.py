@@ -168,6 +168,15 @@ def _validate(config: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("V9 reference and proposal-bank audits must pass")
     if int(config["clusters"]) < 2 or len(config["budgets"]) != 1:
         raise ValueError("V9 benchmark requires >=2 clusters and one operating budget")
+    for budget in config["budgets"]:
+        pilot_by_method = budget.get("pilot_units_by_method")
+        if pilot_by_method is not None:
+            expected_methods = set(config["external_methods"]["primary"])
+            if set(pilot_by_method) != expected_methods or any(
+                isinstance(value, bool) or not isinstance(value, int) or value < 2
+                for value in pilot_by_method.values()
+            ):
+                raise ValueError("V9 method-specific pilot allocation is invalid")
     if config["stage"] == "qualification":
         development_audit = json.loads(
             (ROOT / str(config["bindings"]["development_audit"]["path"])).read_text(
@@ -233,12 +242,17 @@ def run(config: dict[str, Any], config_sha256: str) -> dict[str, Any]:
                 )
             )
             for method in methods:
+                method_budget = dict(budget)
+                if "pilot_units_by_method" in budget:
+                    method_budget["pilot_units"] = int(
+                        budget["pilot_units_by_method"][method]
+                    )
                 external.append(
                     _augment_record(
                         _external_record(
                             config,
                             cell,
-                            budget,
+                            method_budget,
                             method,
                             cluster,
                             cast(tuple[int, int, int, int], allocate(4)),
@@ -246,6 +260,7 @@ def run(config: dict[str, Any], config_sha256: str) -> dict[str, Any]:
                         cell,
                     )
                 )
+        print(json.dumps({"completed_cell": cell["cell_id"]}, sort_keys=True), flush=True)
     bank = json.loads(
         (ROOT / str(config["bindings"]["dcs_proposal_bank"]["path"])).read_text(
             encoding="utf-8"
