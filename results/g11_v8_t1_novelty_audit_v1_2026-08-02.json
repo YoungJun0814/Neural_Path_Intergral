@@ -1,0 +1,36 @@
+{
+  "base_ledger_sha256": "b3f31276194eee08333fd1d7c5eef68ea678a3e3c6840b2a6101316d4d820f19",
+  "checks": {
+    "base_ledger_hash_bound": true,
+    "database_search_required": true,
+    "dates_exact": true,
+    "decision_reasoned": true,
+    "decision_status_narrowed": true,
+    "external_review_required": true,
+    "forbidden_claims_complete": true,
+    "full_combination_not_found": true,
+    "interfaces_valid": true,
+    "protocol_exact": true,
+    "queries_valid": true,
+    "required_query_families": true,
+    "root_keys_exact": true,
+    "schema_exact": true,
+    "source_families_covered": true,
+    "source_ids_exact": true,
+    "source_keys_exact": true,
+    "sources_primary_and_complete": true,
+    "submission_blocked": true,
+    "surviving_candidate_narrow": true,
+    "top_journal_blocked": true
+  },
+  "counts": {
+    "interfaces": 3,
+    "queries": 7,
+    "sources": 7
+  },
+  "failure_count": 0,
+  "failures": [],
+  "passed": true,
+  "payload_sha256": "7a8f3fb0817161686727d61aaeaab9a8bbff037a88fd252762374e2bee6688f8",
+  "schema": "npi.g11.v8-t1-novelty-audit.v1"
+}

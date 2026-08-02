@@ -1,0 +1,158 @@
+schema: npi.g11.v8-t1-novelty-update.v1
+protocol_id: g11-v8-t1-novelty-update-v1
+date: "2026-08-02"
+search_cutoff_date: "2026-08-02"
+base_ledger:
+  path: configs/g11_v8/novelty_search_ledger_v1.yaml
+  sha256: b3f31276194eee08333fd1d7c5eef68ea678a3e3c6840b2a6101316d4d820f19
+  decision: conditional_pass_for_p2_only
+interfaces:
+  - id: arxiv
+    name: arXiv primary manuscript and version records
+    access_date: "2026-08-02"
+  - id: publisher
+    name: Publisher and DOI primary article records
+    access_date: "2026-08-02"
+  - id: author_record
+    name: Author or institutional primary publication records
+    access_date: "2026-08-02"
+queries:
+  - id: tq01
+    interface_id: arxiv
+    executed_on: "2026-08-02"
+    text: rough volatility weak error rough Bergomi 2024 2025
+    family: rough_weak_error
+  - id: tq02
+    interface_id: arxiv
+    executed_on: "2026-08-02"
+    text: nonlinear rough Bergomi weak convergence rate indicator barrier option
+    family: rough_weak_error
+  - id: tq03
+    interface_id: author_record
+    executed_on: "2026-08-02"
+    text: Fukasawa Hirano rough volatility orthogonal projection hybrid random numbers
+    family: rough_simulation_projection
+  - id: tq04
+    interface_id: publisher
+    executed_on: "2026-08-02"
+    text: conditional importance sampling convex rare event Gaussian
+    family: conditional_importance_sampling
+  - id: tq05
+    interface_id: arxiv
+    executed_on: "2026-08-02"
+    text: Rao-Blackwellized importance sampling Gaussian mixture marginalization
+    family: marginalized_importance_sampling
+  - id: tq06
+    interface_id: arxiv
+    executed_on: "2026-08-02"
+    text: rough Bergomi barrier anti-concentration supremum Malliavin
+    family: rough_barrier_analysis
+  - id: tq07
+    interface_id: arxiv
+    executed_on: "2026-08-02"
+    text: Volterra large deviations adaptive importance sampling rare event
+    family: volterra_rare_event
+sources:
+  - id: friz_salkeld_wagenhofer_2025
+    family: rough_weak_error
+    title: Weak error estimates for rough volatility models
+    authors: [Peter K. Friz, William Salkeld, Thomas Wagenhofer]
+    year: 2025
+    primary_url: https://arxiv.org/abs/2212.01591
+    version: arXiv v2, 2024-08-28
+    doi: https://doi.org/10.1214/24-AAP2109
+    peer_review_status: published
+    overlap: nonlinear rough-volatility weak rates including rough Bergomi and an optimality lower bound
+    nonoverlap: no rare indicator, defensive Gaussian mixture, or proposal-conditional event-span marginalization
+    consequence: V8 cannot claim the first nonlinear rough-volatility weak-rate theorem
+  - id: gassiat_2023
+    family: rough_weak_error
+    title: Weak Error Rates of Numerical Schemes for Rough Volatility
+    authors: [Paul Gassiat]
+    year: 2023
+    primary_url: https://arxiv.org/abs/2203.09298
+    version: published SIAM J. Financial Mathematics 14(2)
+    doi: https://doi.org/10.1137/22M1485760
+    peer_review_status: published
+    overlap: hybrid-scheme weak rates and explicit applicability to 3R orthogonal-projection schemes
+    nonoverlap: special smooth or polynomial tests rather than defensive-mixture rare indicators
+    consequence: hybrid weak-rate and projection ingredients are prior art
+  - id: bayer_fukasawa_nakahara_2022
+    family: rough_weak_error
+    title: On the weak convergence rate in the discretization of rough volatility models
+    authors: [Christian Bayer, Masaaki Fukasawa, Shonosuke Nakahara]
+    year: 2022
+    primary_url: https://arxiv.org/abs/2203.02943
+    version: arXiv v1, 2022-03-06
+    doi: https://doi.org/10.48550/arXiv.2203.02943
+    peer_review_status: preprint
+    overlap: general lower bound 2H and sharper linear-model weak rate
+    nonoverlap: no conditional rare-event integration or exact residual mixture likelihood
+    consequence: conservative H-rate claims are not novel by themselves
+  - id: fukasawa_hirano_2021
+    family: rough_simulation_projection
+    title: Refinement by reducing and reusing random numbers of the Hybrid scheme for Brownian semistationary processes
+    authors: [Masaaki Fukasawa, Asuto Hirano]
+    year: 2021
+    primary_url: https://doi.org/10.1080/14697688.2020.1866209
+    version: Quantitative Finance 21(7), 1127-1146
+    doi: https://doi.org/10.1080/14697688.2020.1866209
+    peer_review_status: published
+    overlap: orthogonal projections and reduced random-number simulation for rough Bergomi
+    nonoverlap: projection is for simulation refinement, not exact likelihood marginalization of a rare event under a defensive mixture
+    consequence: orthogonal projection cannot be claimed as a new ingredient
+  - id: ahn_zheng_2023
+    family: conditional_importance_sampling
+    title: Conditional Importance Sampling for Convex Rare-Event Sets
+    authors: [Dohyun Ahn, Lewen Zheng]
+    year: 2023
+    primary_url: https://doi.org/10.1109/WSC60868.2023.10408303
+    version: 2023 Winter Simulation Conference proceedings
+    doi: https://doi.org/10.1109/WSC60868.2023.10408303
+    peer_review_status: published
+    overlap: conditional importance sampling and bounded-relative-error analysis for convex rare events
+    nonoverlap: different conditional proposal construction; no rough Volterra model or defensive balance-mixture marginal likelihood
+    consequence: conditional importance sampling and rare-event efficiency are prior art terms
+  - id: jacquier_pannier_2021
+    family: volterra_rare_event
+    title: Large and moderate deviations for stochastic Volterra systems
+    authors: [Antoine Jacquier, Alexandre Pannier]
+    year: 2021
+    primary_url: https://arxiv.org/abs/2004.10571
+    version: arXiv v3
+    doi: https://doi.org/10.48550/arXiv.2004.10571
+    peer_review_status: published
+    overlap: pathwise large deviations for stochastic Volterra systems encompassing rough-volatility models
+    nonoverlap: no finite-grid defensive-mixture DCS estimator or training-inclusive comparison
+    consequence: a Volterra large-deviation control principle is prior art
+  - id: bures_2025
+    family: rough_barrier_analysis
+    title: On the short-time behaviour of up-and-in barrier options using Malliavin calculus
+    authors: [Oscar Bures]
+    year: 2025
+    primary_url: https://arxiv.org/abs/2510.15423
+    version: arXiv v1, 2025-10-17
+    doi: https://doi.org/10.48550/arXiv.2510.15423
+    peer_review_status: preprint
+    overlap: supremum-density and concentration bounds with a rough Bergomi application
+    nonoverlap: short-maturity barrier asymptotics rather than mesh-enrichment error for DCS
+    consequence: barrier anti-concentration claims require explicit comparison to this analysis
+decision:
+  status: narrowed_and_blocked
+  full_combination_found: false
+  surviving_candidate: exact proposal-conditional integration of a scalar event direction under a defensive Gaussian balance mixture, with an explicit rarity-dependent population strictness certificate
+  claims_forbidden:
+    - first_nonlinear_rough_volatility_weak_rate
+    - first_orthogonal_projection_for_rough_bergomi
+    - first_conditional_importance_sampler
+    - first_rao_blackwellized_importance_sampler
+    - first_volterra_large_deviation_method
+    - universal_rarity_independent_variance_factor
+    - broad_training_inclusive_superiority
+    - barrier_mesh_rate
+    - unconditional_top_journal_novelty
+  submission_novelty_authorized: false
+  top_journal_route_authorized: false
+  external_expert_review_required: true
+  subscription_database_search_required: true
+  reason: Stage B falsified the broad factor-two mechanism gate, and the surviving finite-grid quantitative theorem has not passed external novelty review or model-specific rarity-rate closure.
