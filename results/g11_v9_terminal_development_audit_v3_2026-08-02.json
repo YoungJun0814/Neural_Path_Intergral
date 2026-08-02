@@ -1,0 +1,236 @@
+{
+  "checks": [
+    [
+      "schema",
+      true
+    ],
+    [
+      "config_hash",
+      true
+    ],
+    [
+      "bindings",
+      true
+    ],
+    [
+      "stage",
+      true
+    ],
+    [
+      "paired_record_count",
+      true
+    ],
+    [
+      "external_record_count",
+      true
+    ],
+    [
+      "seed_uniqueness",
+      true
+    ],
+    [
+      "seed_contiguity",
+      true
+    ],
+    [
+      "seed_disjoint_from_bound_artifacts",
+      true
+    ],
+    [
+      "seed_count",
+      true
+    ],
+    [
+      "seed_hash",
+      true
+    ],
+    [
+      "proposal_bank_binding",
+      true
+    ],
+    [
+      "method_specific_pilot_allocation",
+      true
+    ],
+    [
+      "work_reconstruction",
+      true
+    ],
+    [
+      "aggregate_recomputation",
+      true
+    ],
+    [
+      "clean_source_generation",
+      true
+    ],
+    [
+      "decision_locks",
+      true
+    ]
+  ],
+  "dirty_worktree": true,
+  "failures": [],
+  "passed": true,
+  "qualification_authorized": false,
+  "recomputed_aggregate": {
+    "all_correctness_gates_pass": false,
+    "blockers": [
+      "reference_accuracy_failure",
+      "resource_censoring",
+      "insufficient_passing_hurst_groups"
+    ],
+    "dcs_accuracy_maximum_combined_z": 2.5452172026873043,
+    "exactness_pass": true,
+    "external_accuracy_maximum_combined_z": 9.098380233762931,
+    "external_record_count": 144,
+    "group_summaries": [
+      {
+        "all_correctness_gates_pass": false,
+        "cell_ids": [
+          "h0.05-terminal_left_tail-p1e-02",
+          "h0.05-terminal_left_tail-p1e-03",
+          "h0.05-terminal_left_tail-p1e-04",
+          "h0.05-terminal_left_tail-p1e-05"
+        ],
+        "dcs_vs_best_primary": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            0.2549583205287453,
+            0.3354769036667893,
+            0.6277971065430423,
+            0.4835059286110524
+          ],
+          "geometric_ratio": 0.40141004136248754,
+          "log_standard_error": 0.19850462851561312,
+          "lower_confidence_bound": 0.251597331214012,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "dcs_vs_raw": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            2.524006074392574,
+            1.517800073368774,
+            1.9853991991194435,
+            2.241131890239613
+          ],
+          "geometric_ratio": 2.031912751330744,
+          "log_standard_error": 0.10888505017879149,
+          "lower_confidence_bound": 1.5726018795640897,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "efficiency_pass": false,
+        "group_pass": false,
+        "hurst": 0.05
+      },
+      {
+        "all_correctness_gates_pass": false,
+        "cell_ids": [
+          "h0.12-terminal_left_tail-p1e-02",
+          "h0.12-terminal_left_tail-p1e-03",
+          "h0.12-terminal_left_tail-p1e-04",
+          "h0.12-terminal_left_tail-p1e-05"
+        ],
+        "dcs_vs_best_primary": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            0.4318667709670484,
+            0.25282728311107233,
+            0.6470878886455231,
+            0.4514051211425276
+          ],
+          "geometric_ratio": 0.4225964749423908,
+          "log_standard_error": 0.19370294031781427,
+          "lower_confidence_bound": 0.2678867581057486,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "dcs_vs_raw": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            1.8133790852656653,
+            1.8140771831013964,
+            1.0369920069935865,
+            1.4919531093586433
+          ],
+          "geometric_ratio": 1.5019958632567634,
+          "log_standard_error": 0.13179075702752968,
+          "lower_confidence_bound": 1.101467355645287,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "efficiency_pass": false,
+        "group_pass": false,
+        "hurst": 0.12
+      },
+      {
+        "all_correctness_gates_pass": false,
+        "cell_ids": [
+          "h0.20-terminal_left_tail-p1e-02",
+          "h0.20-terminal_left_tail-p1e-03",
+          "h0.20-terminal_left_tail-p1e-04",
+          "h0.20-terminal_left_tail-p1e-05"
+        ],
+        "dcs_vs_best_primary": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            0.3163825205979033,
+            0.2648892495194015,
+            0.29176146068412584,
+            0.32144840668793245
+          ],
+          "geometric_ratio": 0.2977515316270802,
+          "log_standard_error": 0.04438231997337945,
+          "lower_confidence_bound": 0.2682210954035938,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "dcs_vs_raw": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            1.751805854820417,
+            1.4157043590963576,
+            1.61237100758369,
+            1.5480232492198809
+          ],
+          "geometric_ratio": 1.577339759311197,
+          "log_standard_error": 0.04427976692528672,
+          "lower_confidence_bound": 1.4212451406466409,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "efficiency_pass": false,
+        "group_pass": false,
+        "hurst": 0.2
+      }
+    ],
+    "likelihood_and_ordinary_mean_contract_pass": true,
+    "likelihood_normalization_pass": true,
+    "likelihood_normalization_pass_fraction": 1.0,
+    "maximum_exactness_error": 4.547473508864641e-13,
+    "paired_difference_maximum_z": 2.6916430526017807,
+    "paired_identity_pass": true,
+    "paired_record_count": 48,
+    "primary_query_count": 100,
+    "primary_resource_censoring_count": 22,
+    "reference_accuracy_pass": false,
+    "resource_gate_pass": false,
+    "selected_hurst_groups": [],
+    "stage": "development",
+    "stage_pass": false
+  },
+  "regime_conditional_empirical_claim_authorized": false,
+  "schema": "npi.g11.v9-terminal-benchmark-audit.v1",
+  "source_commit": "9a595858aa06104306b367192a4b0d08f7821c44",
+  "stage": "development",
+  "submission_authorized": false,
+  "top_journal_claim_authorized": false
+}

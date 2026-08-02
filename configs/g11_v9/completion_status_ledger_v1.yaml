@@ -1,0 +1,69 @@
+schema: npi.g11.v9-completion-status-ledger.v1
+protocol_id: g11-v9-terminal-completion-v1
+date: "2026-08-02"
+status: closed_by_development_falsification
+
+bindings:
+  claim_contract:
+    path: configs/g11_v9/terminal_claim_contract_v1.yaml
+    sha256: 6e870437a6d5a85a1b86ea7fd269986c36abefdcd34da0b8d39f12e35541059f
+  claim_contract_audit:
+    path: results/g11_v9_terminal_claim_contract_audit_v1_2026-08-02.json
+    sha256: 6408f6c74e1e91c90f4e48670c1fb8d2116c28259188f867a87d08ebe1f1a712
+  reference_v1:
+    path: results/g11_v9_terminal_reference_v1_2026-08-02.json
+    sha256: 362245a890b5979f74f3a43c42328e2572d25594078c6d36f119f0f9ad519f9c
+  reference_v1_audit:
+    path: results/g11_v9_terminal_reference_audit_v1_2026-08-02.json
+    sha256: 06fa86edae4395e2c3263e92b8d3cfcd2a4c2670e5712380125a9e1b7c7e5ef3
+  reference_v2:
+    path: results/g11_v9_terminal_reference_v2_2026-08-02.json
+    sha256: c22f96b4a4b41b0519523c0f08040cd54d08e409336426f8ecb40f02453c4ecf
+  reference_v2_audit:
+    path: results/g11_v9_terminal_reference_audit_v2_2026-08-02.json
+    sha256: 029d339c06a61f223adf1b4e2a6a2693f0dbcb57b7518ccad4d9623a7cf71fe8
+  proposal_bank:
+    path: results/g11_v9_terminal_proposal_bank_v2_2026-08-02.json
+    sha256: 727b13e9c4af2adeca913444daaf2f74c6d2904a6cc0463e01f7fe1b9d40714d
+  proposal_bank_audit:
+    path: results/g11_v9_terminal_proposal_bank_audit_v2_2026-08-02.json
+    sha256: 53c215809eae071bd53c93dbe812920083e15164fb62c2ca706faf3663fe665b
+  development:
+    path: results/g11_v9_terminal_development_v3_2026-08-02.json
+    sha256: 1e93ff164508974f0d18b45d7066e23328a81145aef73d951c87f8cd41f920d1
+  development_audit:
+    path: results/g11_v9_terminal_development_audit_v3_2026-08-02.json
+    sha256: d205a52d31c85efcd9734afa4c9e45e7486fd30c21a16be3d97dbde879c13f62
+
+expected:
+  reference_v1_complete: false
+  reference_v2_complete: true
+  proposal_bank_entries: 12
+  proposal_bank_seeds: 36
+  development_paired_records: 48
+  development_external_records: 144
+  development_seeds: 672
+  development_stage_pass: false
+  selected_hurst_groups: []
+  blockers:
+    - reference_accuracy_failure
+    - resource_censoring
+    - insufficient_passing_hurst_groups
+  maximum_exactness_error: 0.0000000000004547473508864641
+  maximum_dcs_combined_z: 2.5452172026873043
+  maximum_external_combined_z: 9.098380233762931
+  maximum_paired_difference_z: 2.6916430526017807
+  resource_censoring_count: 22
+  h0.05_raw_geometric_ratio: 2.031912751330744
+  h0.12_raw_geometric_ratio: 1.5019958632567634
+  h0.20_raw_geometric_ratio: 1.577339759311197
+  qualification_authorized: false
+  regime_conditional_empirical_claim_authorized: false
+  top_journal_claim_authorized: false
+  submission_authorized: false
+
+forbidden_outputs:
+  - results/g11_v9_terminal_development_v1_2026-08-02.json
+  - results/g11_v9_terminal_development_v2_2026-08-02.json
+  - results/g11_v9_terminal_qualification_v1_2026-08-02.json
+  - results/g11_v9_terminal_qualification_audit_v1_2026-08-02.json
