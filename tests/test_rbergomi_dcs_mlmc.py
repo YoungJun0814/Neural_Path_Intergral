@@ -190,6 +190,10 @@ def test_terminal_and_barrier_events_remain_exact_after_spot_underflow() -> None
     expected = torch.tensor([True, False])
     assert torch.equal(terminal.hard_event_from_log_spot(log_spot, 0.1), expected)
     assert torch.equal(barrier.hard_event_from_log_spot(log_spot, 0.1), expected)
+    assert torch.isfinite(terminal.score_from_log_spot(log_spot, 0.1)).all()
+    assert torch.isfinite(barrier.score_from_log_spot(log_spot, 0.1)).all()
+    assert torch.equal(terminal.score_from_log_spot(log_spot, 0.1) >= 0.0, expected)
+    assert torch.equal(barrier.score_from_log_spot(log_spot, 0.1) >= 0.0, expected)
 
 
 def test_terminal_and_barrier_cem_scores_have_exact_event_sign() -> None:
@@ -198,6 +202,13 @@ def test_terminal_and_barrier_cem_scores_have_exact_event_sign() -> None:
     barrier = DiscreteBarrierHitTask(barrier=90.0)
     assert torch.equal(terminal.score(spot, 0.1) >= 0.0, terminal.hard_event(spot, 0.1))
     assert torch.equal(barrier.score(spot, 0.1) >= 0.0, barrier.hard_event(spot, 0.1))
+    log_spot = torch.log(spot)
+    assert torch.allclose(
+        terminal.score_from_log_spot(log_spot, 0.1), terminal.score(spot, 0.1)
+    )
+    assert torch.allclose(
+        barrier.score_from_log_spot(log_spot, 0.1), barrier.score(spot, 0.1)
+    )
 
 
 def test_adapter_rejects_degenerate_price_correlation() -> None:

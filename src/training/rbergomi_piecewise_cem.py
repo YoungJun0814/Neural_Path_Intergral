@@ -165,7 +165,7 @@ def fit_rbergomi_piecewise_cem(
             dtype=torch.float64,
         )
         assert paths.target_brownian_increments is not None
-        score = task.score(paths.spot, paths.step_dt)
+        score = task.score_from_log_spot(paths.log_spot, paths.step_dt)
         quantile_level = float(torch.quantile(score, elite_quantile))
         level = min(0.0, quantile_level)
         elite = score >= level
@@ -187,7 +187,7 @@ def fit_rbergomi_piecewise_cem(
             price_driver_sign=price_driver_sign,
             minimum_price_driver_magnitude=minimum_price_driver_magnitude,
         )
-        event = task.hard_event(paths.spot, paths.step_dt)
+        event = task.hard_event_from_log_spot(paths.log_spot, paths.step_dt)
         probability = torch.mean(event.double() * torch.exp(paths.log_likelihood))
         history.append(
             PiecewiseCEMIteration(

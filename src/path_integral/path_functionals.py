@@ -61,6 +61,12 @@ class TerminalThresholdTask:
         _validate_finite_spot(spot, step_dt)
         return math.log(self.level) - torch.log(spot[:, -1])
 
+    def score_from_log_spot(self, log_spot: torch.Tensor, step_dt: float) -> torch.Tensor:
+        """Canonical CEM score without an avoidable exponential round trip."""
+
+        _validate_finite_log_spot(log_spot, step_dt)
+        return math.log(self.level) - log_spot[:, -1]
+
 
 @dataclass(frozen=True)
 class DiscreteBarrierHitTask:
@@ -87,6 +93,12 @@ class DiscreteBarrierHitTask:
 
         _validate_finite_spot(spot, step_dt)
         return math.log(self.barrier) - torch.log(torch.amin(spot, dim=1))
+
+    def score_from_log_spot(self, log_spot: torch.Tensor, step_dt: float) -> torch.Tensor:
+        """Canonical barrier score that remains finite for extreme paths."""
+
+        _validate_finite_log_spot(log_spot, step_dt)
+        return math.log(self.barrier) - torch.amin(log_spot, dim=1)
 
 
 @dataclass(frozen=True)
@@ -164,4 +176,18 @@ class DownsideExcursionTask:
         running_minimum, occupation, _hit = self.prefix_state(spot, step_dt)
         hit_margin = (self.hit_barrier - running_minimum[:, -1]) / self.hit_scale
         occupation_margin = (occupation[:, -1] - self.minimum_occupation) / self.occupation_scale
+        return torch.minimum(hit_margin, occupation_margin)
+
+    def score_from_log_spot(self, log_spot: torch.Tensor, step_dt: float) -> torch.Tensor:
+        """Canonical event-level score for CEM training in the log domain."""
+
+        _validate_finite_log_spot(log_spot, step_dt)
+        hit_margin = math.log(self.hit_barrier) - torch.amin(log_spot, dim=1)
+        required = math.ceil((self.minimum_occupation - 1e-15) / step_dt)
+        occupation_margin = (
+            torch.sum(log_spot[:, 1:] <= math.log(self.stress_level), dim=1).to(
+                log_spot.dtype
+            )
+            - required
+        )
         return torch.minimum(hit_margin, occupation_margin)
