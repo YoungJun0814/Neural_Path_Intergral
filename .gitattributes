@@ -18,6 +18,13 @@
 *.cfg text eol=lf
 *.ini text eol=lf
 
+# Generated research artifacts are addressed by exact SHA-256 values recorded in
+# frozen ledgers.  Preserve the producer bytes (including newline convention) so
+# Windows-generated artifacts have identical hashes after a Linux checkout.
+results/*.json -text
+results/**/*.json -text
+configs/**/*.json -text
+
 # Shell
 *.sh text eol=lf
 
