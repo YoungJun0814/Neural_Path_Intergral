@@ -1,0 +1,113 @@
+schema: npi.g11.v8-d1-stage-b.v1
+protocol_id: g11-v8-d1-stage-b-v1
+date: "2026-08-02"
+namespace: v8-d1-stage-b-development-v1
+source_parent_commit: 0c66a7b3bb924384f398fe36330f33b8f7448fcd
+current_namespace_outcomes_inspected_before_freeze: false
+base_seed: 871000
+
+bindings:
+  threshold_calibration:
+    path: results/g11_v8_p5_threshold_calibration_v1_2026-07-27.json
+    sha256: 27eabb261d079a8e67fb9389f492c532eb51d7c387ce3907437cfe9e5085ddb6
+  reference:
+    path: results/g11_v8_p5_reference_final_aggregate_v1_2026-08-02.json
+    sha256: 879a875016bb17253e36a816d3ddc7a66ec0b96898e48b73ce4f395f783fe525
+  stage_a_audit:
+    path: results/g11_v8_d1_p7_falsification_stage_a_audit_v4_2026-08-02.json
+    sha256: fa61af49a2e4acfabe67516b99660850bb38337b5708987cdbc976115e26828a
+  dcs_proposal_bank:
+    path: results/g11_v8_d1_dcs_proposal_bank_v1_2026-08-02.json
+    sha256: b9071b2bb908b863d44e3a75fea6838e474e26e8181c97c5c954ca0e8b09998d
+  dcs_proposal_bank_audit:
+    path: results/g11_v8_d1_dcs_proposal_bank_audit_v1_2026-08-02.json
+    sha256: 9aa69a74cd778f9eee9a985fefe9466d45109602241b4b73231dba30a5d08665
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  steps: 128
+  eta: 1.5
+  xi: 0.04
+  rho: -0.7
+
+cell_ids:
+  - h0.05-terminal_left_tail-p1e-02
+  - h0.05-terminal_left_tail-p1e-03
+  - h0.05-terminal_left_tail-p1e-04
+  - h0.05-terminal_left_tail-p1e-05
+  - h0.05-discrete_lower_barrier-p1e-02
+  - h0.05-discrete_lower_barrier-p1e-03
+  - h0.05-discrete_lower_barrier-p1e-04
+  - h0.05-discrete_lower_barrier-p1e-05
+  - h0.12-terminal_left_tail-p1e-02
+  - h0.12-terminal_left_tail-p1e-03
+  - h0.12-terminal_left_tail-p1e-04
+  - h0.12-terminal_left_tail-p1e-05
+  - h0.12-discrete_lower_barrier-p1e-02
+  - h0.12-discrete_lower_barrier-p1e-03
+  - h0.12-discrete_lower_barrier-p1e-04
+  - h0.12-discrete_lower_barrier-p1e-05
+  - h0.20-terminal_left_tail-p1e-02
+  - h0.20-terminal_left_tail-p1e-03
+  - h0.20-terminal_left_tail-p1e-04
+  - h0.20-terminal_left_tail-p1e-05
+  - h0.20-discrete_lower_barrier-p1e-02
+  - h0.20-discrete_lower_barrier-p1e-03
+  - h0.20-discrete_lower_barrier-p1e-04
+  - h0.20-discrete_lower_barrier-p1e-05
+
+clusters: 2
+relative_rmse_target: 0.20
+diagnostic_samples: 2048
+maximum_likelihood_normalization_absolute_z: 6.0
+maximum_exactness_error: 0.0000000001
+
+pilot_policy:
+  minimum_nonzero_units: 4
+  variance_safety_factor: 4.0
+
+budgets:
+  - id: high
+    paired_dcs_paths: 8192
+    pilot_units: 256
+    iid_maximum_final_units: 65536
+    rqmc_maximum_final_units: 256
+    rqmc_points_per_randomization: 1024
+    cem:
+      iterations: 10
+      samples_per_iteration: 4096
+      elite_fraction: 0.1
+      smoothing: 0.7
+      defensive_weight: 0.1
+      max_mean_norm: 20.0
+      time_bins: 8
+    large_deviation:
+      optimizer_steps: 160
+      learning_rate: 0.04
+      penalty: 2000.0
+      feasibility_margin: 0.0
+      restarts: 3
+      defensive_weight: 0.1
+      occupation_temperature: 0.05
+    flow:
+      screening_samples: 2048
+      elite_fraction: 0.1
+      max_log_scale: 1.5
+      ridge: 0.000001
+
+external_methods:
+  primary: [defensive_cem, smoothing_rqmc]
+  secondary: [pure_cem]
+  secondary_budget: high
+
+gate:
+  required_primary_methods: [defensive_cem, smoothing_rqmc]
+  minimum_mechanism_variance_ratio: 2.0
+  primary_accuracy_combined_z: 4.0
+  primary_accuracy_budget: high
+  dcs_accuracy_combined_z: 4.0
+  resource_censoring_blocks_p8: true
+  exactness_failure_stops_method: true
+  stage_b_requires_all_primary_methods_evaluable: true
+  performance_claim_authorized: false
