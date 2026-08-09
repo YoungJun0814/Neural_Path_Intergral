@@ -1,0 +1,75 @@
+schema: npi.g11.v10-terminal-claim-contract.v1
+protocol_id: g11-v10-full-cem-dcs-terminal-v1
+date: "2026-08-08"
+design_parent_commit: 78b8aa6
+design_status: v9-informed-full-cem-dcs-integration
+
+claim:
+  estimand: finite_grid_terminal_probability
+  finite_grid_only: true
+  self_normalization_allowed: false
+  exact_likelihood_required: true
+  training_inclusive_total_work: true
+  inferential_unit: independent_cluster
+  uniform_superiority_claim_allowed: false
+  barrier_claim_allowed: false
+  continuum_unbiasedness_claim_allowed: false
+  top_journal_claim_authorized: false
+  submission_authorized: false
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  steps: 128
+  eta: 1.5
+  xi: 0.04
+  rho: -0.7
+
+estimators:
+  candidate: full_cem_defensive_conditional_smoothing
+  mechanism_control: raw_same_mixture
+  primary_comparators: [conditional_rbergomi, smoothing_rqmc, defensive_cem]
+
+relative_rmse_target: 0.20
+amortization_query_counts: [1, 10, 100, 1000]
+primary_query_count: 100
+
+artifact_policy:
+  v9_results_are_design_information_only: true
+  fresh_v10_proposal_bank: true
+  fresh_v10_seed_namespaces: true
+  immutable_outputs: true
+
+gate:
+  maximum_exactness_error: 0.0000000001
+  maximum_combined_reference_z: 4.0
+  maximum_paired_difference_z: 4.0
+  minimum_likelihood_normalization_pass_fraction: 0.95
+  development:
+    confidence: 0.95
+    minimum_passing_hurst_groups: 1
+    minimum_dcs_vs_raw_geometric_ratio: 1.10
+    minimum_dcs_vs_raw_lower_bound: 1.00
+    minimum_dcs_vs_best_geometric_ratio: 0.80
+    minimum_dcs_vs_best_lower_bound: 0.67
+  qualification:
+    confidence: 0.95
+    minimum_passing_hurst_groups: 1
+    minimum_dcs_vs_raw_geometric_ratio: 1.10
+    minimum_dcs_vs_raw_lower_bound: 1.00
+    minimum_dcs_vs_best_geometric_ratio: 0.80
+    minimum_dcs_vs_best_lower_bound: 0.67
+
+cells:
+  - {cell_id: h0.05-terminal_left_tail-p1e-02, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.01, threshold: 50.20592042422368}
+  - {cell_id: h0.05-terminal_left_tail-p1e-03, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.001, threshold: 31.92790645389728}
+  - {cell_id: h0.05-terminal_left_tail-p1e-04, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.0001, threshold: 18.320946011895387}
+  - {cell_id: h0.05-terminal_left_tail-p1e-05, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.00001, threshold: 10.199729956015094}
+  - {cell_id: h0.12-terminal_left_tail-p1e-02, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.01, threshold: 46.41141383480874}
+  - {cell_id: h0.12-terminal_left_tail-p1e-03, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.001, threshold: 24.672468432835625}
+  - {cell_id: h0.12-terminal_left_tail-p1e-04, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.0001, threshold: 10.391658226080532}
+  - {cell_id: h0.12-terminal_left_tail-p1e-05, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.00001, threshold: 3.3641964170773018}
+  - {cell_id: h0.20-terminal_left_tail-p1e-02, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.01, threshold: 45.29897333205014}
+  - {cell_id: h0.20-terminal_left_tail-p1e-03, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.001, threshold: 21.431743260451416}
+  - {cell_id: h0.20-terminal_left_tail-p1e-04, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.0001, threshold: 7.656661839363003}
+  - {cell_id: h0.20-terminal_left_tail-p1e-05, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.00001, threshold: 1.884327900748765}

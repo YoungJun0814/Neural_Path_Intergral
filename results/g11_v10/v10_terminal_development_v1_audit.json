@@ -1,0 +1,197 @@
+{
+  "aggregate_summary": {
+    "all_correctness_gates_pass": false,
+    "blockers": [
+      "reference_accuracy_failure",
+      "resource_censoring",
+      "insufficient_passing_hurst_groups"
+    ],
+    "dcs_accuracy_maximum_combined_z": 1.9574863346060198,
+    "exactness_pass": true,
+    "external_accuracy_maximum_combined_z": 9.273075626568888,
+    "external_record_count": 144,
+    "group_summaries": [
+      {
+        "all_correctness_gates_pass": false,
+        "cell_ids": [
+          "h0.05-terminal_left_tail-p1e-02",
+          "h0.05-terminal_left_tail-p1e-03",
+          "h0.05-terminal_left_tail-p1e-04",
+          "h0.05-terminal_left_tail-p1e-05"
+        ],
+        "dcs_vs_best_primary": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            0.44873634540263474,
+            0.2475799550244501,
+            0.9098357333802525,
+            0.42146702934224617
+          ],
+          "geometric_ratio": 0.4543163123066316,
+          "log_standard_error": 0.2671760708326841,
+          "lower_confidence_bound": 0.2422647854682763,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "dcs_vs_raw": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            3.5324428809829795,
+            2.11376428623575,
+            2.000491099538393,
+            1.2594919662318649
+          ],
+          "geometric_ratio": 2.0826482813614717,
+          "log_standard_error": 0.21093705825437295,
+          "lower_confidence_bound": 1.2677310604958187,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "efficiency_pass": false,
+        "group_pass": false,
+        "hurst": 0.05
+      },
+      {
+        "all_correctness_gates_pass": false,
+        "cell_ids": [
+          "h0.12-terminal_left_tail-p1e-02",
+          "h0.12-terminal_left_tail-p1e-03",
+          "h0.12-terminal_left_tail-p1e-04",
+          "h0.12-terminal_left_tail-p1e-05"
+        ],
+        "dcs_vs_best_primary": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            0.7004345306662251,
+            0.4855103833467058,
+            0.6266901062060232,
+            0.3966077437360461
+          ],
+          "geometric_ratio": 0.5391939674302498,
+          "log_standard_error": 0.12792809906065375,
+          "lower_confidence_bound": 0.3990210055217988,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "dcs_vs_raw": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            1.9711463514055385,
+            2.426397955761217,
+            1.9062945720056694,
+            2.4058949233458957
+          ],
+          "geometric_ratio": 2.164147674077491,
+          "log_standard_error": 0.06397744346108945,
+          "lower_confidence_bound": 1.8616522945906815,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "efficiency_pass": false,
+        "group_pass": false,
+        "hurst": 0.12
+      },
+      {
+        "all_correctness_gates_pass": false,
+        "cell_ids": [
+          "h0.20-terminal_left_tail-p1e-02",
+          "h0.20-terminal_left_tail-p1e-03",
+          "h0.20-terminal_left_tail-p1e-04",
+          "h0.20-terminal_left_tail-p1e-05"
+        ],
+        "dcs_vs_best_primary": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            0.4056189481038829,
+            0.37215092450440695,
+            0.38853879721661805,
+            0.621145500787971
+          ],
+          "geometric_ratio": 0.4368841288962495,
+          "log_standard_error": 0.11860890226974745,
+          "lower_confidence_bound": 0.3304773601156482,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "dcs_vs_raw": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            2.470715884487736,
+            3.1701473172367627,
+            2.5742792906263117,
+            2.8375420262781654
+          ],
+          "geometric_ratio": 2.7502682442034305,
+          "log_standard_error": 0.05554680161057587,
+          "lower_confidence_bound": 2.4132554338994985,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "efficiency_pass": false,
+        "group_pass": false,
+        "hurst": 0.2
+      }
+    ],
+    "likelihood_and_ordinary_mean_contract_pass": true,
+    "likelihood_normalization_pass": true,
+    "likelihood_normalization_pass_fraction": 1.0,
+    "maximum_exactness_error": 4.263256414560601e-14,
+    "paired_difference_maximum_z": 2.4891415583498917,
+    "paired_identity_pass": true,
+    "paired_record_count": 48,
+    "primary_query_count": 100,
+    "primary_resource_censoring_count": 18,
+    "reference_accuracy_pass": false,
+    "resource_gate_pass": false,
+    "selected_hurst_groups": [],
+    "stage": "development",
+    "stage_pass": false
+  },
+  "checks": [
+    {
+      "check": "schema_valid",
+      "passed": true
+    },
+    {
+      "check": "paired_record_count_48",
+      "passed": true
+    },
+    {
+      "check": "external_record_count_144",
+      "passed": true
+    },
+    {
+      "check": "exactness_error_below_threshold",
+      "max_exactness_error": 4.263256414560601e-14,
+      "passed": true
+    },
+    {
+      "check": "likelihood_normalization_pass_fraction",
+      "fraction": 1.0,
+      "passed": true
+    },
+    {
+      "check": "seed_uniqueness",
+      "passed": true
+    }
+  ],
+  "decision": {
+    "broad_performance_claim_authorized": false,
+    "development_complete": true,
+    "qualification_authorized": false,
+    "qualification_complete": false,
+    "regime_conditional_empirical_claim_authorized": false,
+    "submission_authorized": false,
+    "top_journal_claim_authorized": false
+  },
+  "passed": true,
+  "result_path": "results\\g11_v10\\v10_terminal_development_v1.json",
+  "result_sha256": "3663b793521ce193eddad5e8e616acb67e231273daea1d866a281d6e74b2e45d",
+  "schema": "npi.g11.v10-terminal-benchmark-audit-result.v1"
+}
