@@ -17,6 +17,7 @@ from experiments.g11_v8_d1_p7_falsification_stage_a import _external_record
 from src.path_integral.baselines.rbergomi_common import RBergomiBaselineProblem
 from src.path_integral.path_functionals import TerminalThresholdTask
 from src.path_integral.provenance import runtime_provenance, source_provenance
+from src.path_integral.v9_terminal_reference_audit import audit_v9_terminal_reference
 from src.path_integral.v10r1_full_latent_dcs import evaluate_full_latent_dcs
 from src.path_integral.v10r1_proposal_bank import proposal_from_dict
 from src.path_integral.v10r1_protocol import aggregate_v10r1, attach_v10r1_work
@@ -54,6 +55,7 @@ def validate_config(config: dict[str, Any], *, root: Path = ROOT) -> None:
         bank_audit.get("passed") is not True
         or bank_audit.get("replay_performed") is not True
         or bank_audit.get("decision", {}).get("development_authorized") is not True
+        or bank_audit.get("result_sha256") != bindings["proposal_bank"]["sha256"]
     ):
         raise ValueError("V10R1 development requires a replay-passed bank audit")
     claim = yaml.safe_load(
@@ -79,6 +81,16 @@ def validate_config(config: dict[str, Any], *, root: Path = ROOT) -> None:
         or reference_audit.get("benchmark_authorized") is not True
     ):
         raise ValueError("V10R1 requires a clean-source passing reference re-audit")
+    reference = json.loads(
+        (root / str(bindings["reference"]["path"])).read_text(encoding="utf-8")
+    )
+    reconstructed_reference_audit = audit_v9_terminal_reference(
+        config_path=root / str(bindings["reference_config"]["path"]),
+        result=reference,
+        root=root,
+    )
+    if not reconstructed_reference_audit.passed:
+        raise ValueError("the exactly bound V9 reference fails independent reconstruction")
     if config.get("current_namespace_outcomes_inspected_before_freeze") is not False:
         raise ValueError("V10R1 development namespace was not outcome-blind at freeze")
     if int(config["clusters"]) != int(config["proposal_replicates"]):
