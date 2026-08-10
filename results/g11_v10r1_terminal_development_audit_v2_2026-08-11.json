@@ -1,0 +1,187 @@
+{
+  "checks": {
+    "aggregate_recomputation": true,
+    "all_3n_exactness_fields_present": true,
+    "bindings": true,
+    "clean_source": true,
+    "config_hash": true,
+    "decision_locks": true,
+    "external_record_count": true,
+    "paired_record_count": true,
+    "proposal_bank_binding": true,
+    "schema": true,
+    "seed_contiguity": true,
+    "seed_count": true,
+    "seed_disjoint_from_bound_artifacts": true,
+    "seed_hash": true,
+    "seed_uniqueness": true,
+    "source_contains_exact_config": true,
+    "stage": true,
+    "work_reconstruction": true
+  },
+  "decision": {
+    "performance_claim_authorized": false,
+    "qualification_authorized": false,
+    "submission_authorized": false
+  },
+  "failures": [],
+  "passed": true,
+  "recomputed_aggregate": {
+    "all_correctness_gates_pass": false,
+    "blockers": [
+      "reference_accuracy_failure",
+      "resource_censoring",
+      "insufficient_passing_hurst_groups"
+    ],
+    "dcs_accuracy_maximum_combined_z": 1.5775928962897734,
+    "exactness_pass": true,
+    "external_accuracy_maximum_combined_z": 9.122077354125535,
+    "external_record_count": 144,
+    "group_summaries": [
+      {
+        "all_correctness_gates_pass": false,
+        "cell_ids": [
+          "h0.05-terminal_left_tail-p1e-02",
+          "h0.05-terminal_left_tail-p1e-03",
+          "h0.05-terminal_left_tail-p1e-04",
+          "h0.05-terminal_left_tail-p1e-05"
+        ],
+        "dcs_vs_best_primary": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            0.39609478148820504,
+            0.13277369354497762,
+            0.29743762092853965,
+            0.3501963362189692
+          ],
+          "geometric_ratio": 0.2720537167726823,
+          "log_standard_error": 0.24620838060746067,
+          "lower_confidence_bound": 0.15241113953900692,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "dcs_vs_raw": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            3.82663971679822,
+            6.727615626115739,
+            1.413436669471172,
+            1.8475302361847128
+          ],
+          "geometric_ratio": 2.8634306121509736,
+          "log_standard_error": 0.35404369831319454,
+          "lower_confidence_bound": 1.2446158483912182,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "efficiency_pass": false,
+        "group_pass": false,
+        "hurst": 0.05
+      },
+      {
+        "all_correctness_gates_pass": false,
+        "cell_ids": [
+          "h0.12-terminal_left_tail-p1e-02",
+          "h0.12-terminal_left_tail-p1e-03",
+          "h0.12-terminal_left_tail-p1e-04",
+          "h0.12-terminal_left_tail-p1e-05"
+        ],
+        "dcs_vs_best_primary": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            0.2999323126283219,
+            0.21318204359829446,
+            1.0312621455243525,
+            1.6677026660514565
+          ],
+          "geometric_ratio": 0.5758579862257857,
+          "log_standard_error": 0.4901681151194765,
+          "lower_confidence_bound": 0.18169280194729456,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "dcs_vs_raw": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            1.2202911396415812,
+            0.9920809225138075,
+            2.3800595249696985,
+            1.721077623745577
+          ],
+          "geometric_ratio": 1.4922779035024971,
+          "log_standard_error": 0.1926632370195408,
+          "lower_confidence_bound": 0.948282457274301,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "efficiency_pass": false,
+        "group_pass": false,
+        "hurst": 0.12
+      },
+      {
+        "all_correctness_gates_pass": false,
+        "cell_ids": [
+          "h0.20-terminal_left_tail-p1e-02",
+          "h0.20-terminal_left_tail-p1e-03",
+          "h0.20-terminal_left_tail-p1e-04",
+          "h0.20-terminal_left_tail-p1e-05"
+        ],
+        "dcs_vs_best_primary": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            0.32164959485194,
+            0.5958194554613716,
+            0.2689404209157828,
+            0.37570111882389123
+          ],
+          "geometric_ratio": 0.3730345559304993,
+          "log_standard_error": 0.1703764490378978,
+          "lower_confidence_bound": 0.24981317869384362,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "dcs_vs_raw": {
+          "cluster_count": 4,
+          "cluster_geometric_ratios": [
+            3.500791325776923,
+            2.2025538747178897,
+            1.6672238210984867,
+            2.045616693861925
+          ],
+          "geometric_ratio": 2.264528196365318,
+          "log_standard_error": 0.15669389562631483,
+          "lower_confidence_bound": 1.5661317898000742,
+          "multiplicity": 1,
+          "one_sided_confidence": 0.95,
+          "record_count": 16
+        },
+        "efficiency_pass": false,
+        "group_pass": false,
+        "hurst": 0.2
+      }
+    ],
+    "likelihood_and_ordinary_mean_contract_pass": true,
+    "likelihood_normalization_pass": true,
+    "likelihood_normalization_pass_fraction": 1.0,
+    "maximum_exactness_error": 5.684341886080802e-14,
+    "paired_difference_maximum_z": 2.85013732918004,
+    "paired_identity_pass": true,
+    "paired_record_count": 48,
+    "primary_query_count": 100,
+    "primary_resource_censoring_count": 26,
+    "reference_accuracy_pass": false,
+    "resource_gate_pass": false,
+    "selected_hurst_groups": [],
+    "stage": "development",
+    "stage_pass": false,
+    "training_replicates_complete": true
+  },
+  "result_path": "results/g11_v10r1_terminal_development_v1_2026-08-11.json",
+  "result_sha256": "b257bd4fac98a019d6c86ef74b3ce44ae40da4f16833db2faf2063f3df5554a2",
+  "schema": "npi.g11.v10r1-terminal-benchmark-audit.v1"
+}

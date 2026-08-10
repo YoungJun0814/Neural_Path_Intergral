@@ -93,11 +93,25 @@ def audit_v10r1_benchmark(
         external_records=expected_external,
     )
 
+    external_by_cluster: dict[tuple[str, int], dict[str, dict[str, Any]]] = {}
+    for record in external:
+        key = (str(record["cell_id"]), int(record["cluster"]))
+        external_by_cluster.setdefault(key, {})[str(record["method"])] = record
     seeds: list[int] = []
+    seed_order_valid = True
     for record in paired:
         seeds.extend((int(record["gaussian_seed"]), int(record["label_seed"])))
-    for record in external:
-        seeds.extend(int(value) for value in record["seeds"].values())
+        key = (str(record["cell_id"]), int(record["cluster"]))
+        matches = external_by_cluster.get(key, {})
+        if set(matches) != set(config["external_methods"]["primary"]):
+            seed_order_valid = False
+            continue
+        for method in config["external_methods"]["primary"]:
+            method_seeds = matches[str(method)]["seeds"]
+            seeds.extend(
+                int(method_seeds[name])
+                for name in ("training", "pilot", "final", "diagnostic")
+            )
     expected_seeds = list(
         range(int(config["base_seed"]), int(config["base_seed"]) + len(seeds))
     )
@@ -152,7 +166,7 @@ def audit_v10r1_benchmark(
         ("paired_record_count", len(paired) == expected_paired_count),
         ("external_record_count", len(external) == expected_external_count),
         ("seed_uniqueness", len(seeds) == len(set(seeds))),
-        ("seed_contiguity", seeds == expected_seeds),
+        ("seed_contiguity", seed_order_valid and seeds == expected_seeds),
         ("seed_disjoint_from_bound_artifacts", not (set(seeds) & bound_seeds)),
         ("seed_count", result.get("seed_count") == len(seeds)),
         ("seed_hash", result.get("seed_set_sha256") == seed_hash),
