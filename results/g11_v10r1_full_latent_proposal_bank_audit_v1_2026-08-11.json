@@ -1,0 +1,31 @@
+{
+  "checks": {
+    "bank_hash": true,
+    "clean_source": true,
+    "config_hash": true,
+    "decision_lock": true,
+    "entry_count": true,
+    "entry_roster": true,
+    "full_3n_dimension": true,
+    "proposal_law_hashes": true,
+    "proposal_payloads": true,
+    "schema": true,
+    "seed_hash": true,
+    "seed_roster": true,
+    "seed_uniqueness": true,
+    "source_contains_exact_config": true,
+    "total_training_cost": true,
+    "training_replay": true
+  },
+  "decision": {
+    "development_authorized": true,
+    "performance_claim_authorized": false,
+    "submission_authorized": false
+  },
+  "failures": [],
+  "passed": true,
+  "replay_performed": true,
+  "result_path": "results/g11_v10r1_full_latent_proposal_bank_v1_2026-08-11.json",
+  "result_sha256": "f1dd2a4395d34bda171daa8915676fb30349ae2d42ddc58e2c580aeccbf1960c",
+  "schema": "npi.g11.v10r1-full-latent-proposal-bank-audit.v1"
+}
