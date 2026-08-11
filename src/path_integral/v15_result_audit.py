@@ -69,6 +69,11 @@ def audit_v15_result(payload: dict[str, Any], *, root: Path) -> V15ResultAudit:
     config_path = root / str(config_binding.get("path", ""))
     if not config_path.is_file() or file_sha256(config_path) != config_binding.get("sha256"):
         failures.append("configuration hash binding failed")
+    elif config_path.suffix in {".yaml", ".yml"}:
+        bound_config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+        if isinstance(bound_config, dict) and "gates" in bound_config:
+            if payload.get("gates") != bound_config["gates"]:
+                failures.append("serialized gates do not match bound configuration")
     seeds = payload.get("used_seeds", [])
     if not seeds or len(seeds) != len(set(seeds)):
         failures.append("seed ledger is empty or contains collisions")
@@ -77,6 +82,20 @@ def audit_v15_result(payload: dict[str, Any], *, root: Path) -> V15ResultAudit:
         failures.append("result contains no cells")
     numerical_failures: list[str] = []
     for cell in cells:
+        reference = cell.get("reference", {})
+        minimum_reference_snr = float(
+            payload.get("gates", {}).get("minimum_reference_signal_to_noise", 0.0)
+        )
+        reference_estimate = abs(float(reference.get("estimate", 0.0)))
+        reference_se = float(reference.get("standard_error", math.inf))
+        reference_snr = reference_estimate / max(
+            reference_se,
+            float.fromhex("0x1.0p-1022"),
+        )
+        if reference_snr < minimum_reference_snr:
+            numerical_failures.append(
+                f"{cell.get('cell_id')}: reference signal-to-noise gate failed"
+            )
         records = {record.get("method"): record for record in cell.get("methods", [])}
         missing = REQUIRED_PRIMARY_COMPARATORS - set(records)
         if missing:
@@ -100,6 +119,14 @@ def audit_v15_result(payload: dict[str, Any], *, root: Path) -> V15ResultAudit:
         required = float(payload.get("gates", {}).get("minimum_work_ratio", 1.0))
         if ratio < required:
             numerical_failures.append(f"{cell.get('cell_id')}: work-efficiency gate failed")
+        minimum_comparators = int(
+            payload.get("gates", {}).get("minimum_accuracy_qualified_comparators", 0)
+        )
+        qualified = set(cell.get("accuracy_qualified_primary", []))
+        if len(qualified) < minimum_comparators:
+            numerical_failures.append(
+                f"{cell.get('cell_id')}: too few accuracy-qualified comparators"
+            )
     ledger_path = root / "configs/g11_v15/theorem_ledger_v1.yaml"
     ledger = yaml.safe_load(ledger_path.read_text(encoding="utf-8"))
     passed_theory = bool(ledger["gates"]["G5"]["pass"])

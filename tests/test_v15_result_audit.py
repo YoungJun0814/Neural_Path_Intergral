@@ -1,4 +1,5 @@
 import hashlib
+import json
 from pathlib import Path
 
 import yaml
@@ -151,3 +152,13 @@ def test_result_audit_does_not_confuse_theory_pass_with_submission_readiness(
     assert audit.passed_numerical
     assert not audit.passed_top_journal_gate
     assert "top-journal submission locks remain open" in audit.failures
+
+
+def test_result_audit_fails_closed_on_low_snr_reference() -> None:
+    root = Path(__file__).resolve().parents[1]
+    result_path = root / "results/g11_v16_routed_confirmation_v1_2026-08-11.json"
+    payload = json.loads(result_path.read_text(encoding="utf-8"))
+    payload["gates"]["minimum_reference_signal_to_noise"] = 1000.0
+    audit = audit_v15_result(payload, root=root)
+    assert not audit.passed_numerical
+    assert any("reference signal-to-noise gate failed" in item for item in audit.failures)

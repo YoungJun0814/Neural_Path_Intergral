@@ -204,6 +204,14 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
         reference_mean, reference_variance, reference_se = _summary(
             reference_batch.unit_contributions
         )
+        minimum_reference_snr = float(
+            config["gates"].get("minimum_reference_signal_to_noise", 0.0)
+        )
+        reference_snr = abs(reference_mean) / max(
+            reference_se,
+            torch.finfo(torch.float64).tiny,
+        )
+        reference_qualified = reference_snr >= minimum_reference_snr
 
         resolved_candidate = dict(candidate_config)
         route = None
@@ -497,6 +505,7 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
             item
             for item in methods
             if item["method"] in protocol.primary_comparators
+            and reference_qualified
             and item["accuracy_z"] <= float(config["gates"]["maximum_accuracy_z"])
             and item["sample_variance"] > 0.0
         ]
@@ -516,6 +525,8 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
                     "estimate": reference_mean,
                     "sample_variance": reference_variance,
                     "standard_error": reference_se,
+                    "signal_to_noise": reference_snr,
+                    "qualified": reference_qualified,
                     "inferential_units": reference_batch.unit_contributions.numel(),
                     "evaluation_cost": asdict(reference_cost),
                 },
