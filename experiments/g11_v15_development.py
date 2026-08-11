@@ -9,7 +9,7 @@ import math
 import time
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal, cast
 
 import torch
 import yaml
@@ -306,6 +306,11 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
                         resolved_candidate.get("asymptotic_safety_mass", 0.0)
                     ),
                     components=int(tempered["components"]),
+                    clustering=cast(
+                        Literal["pca_quantile", "kmeans"],
+                        str(tempered.get("clustering", "pca_quantile")),
+                    ),
+                    kmeans_iterations=int(tempered.get("kmeans_iterations", 25)),
                 ),
             )
             candidate_proposal = fitted.proposal

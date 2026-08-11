@@ -9,6 +9,7 @@ from src.path_integral.rbergomi_cm_transport import evaluate_rbergomi_cm_transpo
 from src.path_integral.tempered_conditional_smc import TemperedSMCConfig
 from src.path_integral.tempered_target_transport import (
     TemperedTargetTransportConfig,
+    _kmeans_labels,
     fit_tempered_target_transport,
 )
 
@@ -61,3 +62,16 @@ def test_tempered_target_fit_preserves_exact_defensive_mixture() -> None:
     )
     assert evaluated.maximum_likelihood_bound_violation == 0.0
     assert torch.isfinite(evaluated.contribution).all()
+
+
+def test_kmeans_clustering_separates_two_target_modes_deterministically() -> None:
+    generator = torch.Generator().manual_seed(991)
+    left = -3.0 + 0.1 * torch.randn((100, 2), generator=generator)
+    right = 3.0 + 0.1 * torch.randn((100, 2), generator=generator)
+    points = torch.cat((left, right)).to(torch.float64)
+    labels = _kmeans_labels(points, components=2, iterations=20)
+    repeated = _kmeans_labels(points, components=2, iterations=20)
+    assert torch.equal(labels, repeated)
+    assert int(torch.sum(labels[:100] == labels[0])) == 100
+    assert int(torch.sum(labels[100:] == labels[100])) == 100
+    assert labels[0] != labels[100]

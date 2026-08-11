@@ -6,7 +6,7 @@ import argparse
 import json
 import math
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal, cast
 
 import torch
 import yaml
@@ -332,6 +332,11 @@ def main() -> None:
                     defensive_mass=float(variant["defensive_mass"]),
                     safety_mass=float(variant["safety_mass"]),
                     components=int(tempered["components"]),
+                    clustering=cast(
+                        Literal["pca_quantile", "kmeans"],
+                        str(tempered.get("clustering", "pca_quantile")),
+                    ),
+                    kmeans_iterations=int(tempered.get("kmeans_iterations", 25)),
                 ),
             )
             proposal = fitted.proposal

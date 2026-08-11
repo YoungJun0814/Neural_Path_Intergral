@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 import time
 from dataclasses import dataclass
+from typing import Literal
 
 import torch
 
@@ -35,6 +36,8 @@ class TemperedTargetTransportConfig:
     defensive_mass: float = 0.15
     safety_mass: float = 0.02
     components: int = 3
+    clustering: Literal["pca_quantile", "kmeans"] = "pca_quantile"
+    kmeans_iterations: int = 25
     minimum_variance: float = 0.05
     maximum_variance: float = 20.0
     covariance_ridge: float = 1e-6
@@ -50,6 +53,14 @@ class TemperedTargetTransportConfig:
             raise ValueError("components must be an integer")
         if self.components < 1:
             raise ValueError("components must be positive")
+        if self.clustering not in {"pca_quantile", "kmeans"}:
+            raise ValueError("unsupported tempered target clustering method")
+        if (
+            isinstance(self.kmeans_iterations, bool)
+            or not isinstance(self.kmeans_iterations, int)
+            or self.kmeans_iterations < 1
+        ):
+            raise ValueError("kmeans_iterations must be a positive integer")
         if not 0.0 < self.minimum_variance <= self.maximum_variance:
             raise ValueError("variance bounds are invalid")
         if not math.isfinite(self.maximum_variance):
@@ -67,6 +78,80 @@ class TemperedTargetTransportResult:
     minimum_incremental_ess_fraction: float
     mutation_acceptance_rate: float
     fitted_particle_count: int
+
+
+def _pca_quantile_labels(
+    coefficients: torch.Tensor,
+    components: int,
+) -> torch.Tensor:
+    centered = coefficients - torch.mean(coefficients, dim=0)
+    covariance = centered.T @ centered / coefficients.shape[0]
+    _, eigenvectors = torch.linalg.eigh(covariance)
+    score = centered @ eigenvectors[:, -1]
+    order = torch.argsort(score)
+    ordered_labels = torch.div(
+        torch.arange(coefficients.shape[0]) * components,
+        coefficients.shape[0],
+        rounding_mode="floor",
+    )
+    labels = torch.empty_like(ordered_labels)
+    labels[order] = ordered_labels
+    return labels
+
+
+def _kmeans_labels(
+    coefficients: torch.Tensor,
+    components: int,
+    iterations: int,
+) -> torch.Tensor:
+    """Deterministic farthest-point Lloyd clustering for target particles."""
+
+    centered = coefficients - torch.mean(coefficients, dim=0)
+    first = int(torch.argmax(torch.sum(centered.square(), dim=1)))
+    centers = [coefficients[first]]
+    minimum_distance = torch.sum((coefficients - centers[0]) ** 2, dim=1)
+    for _ in range(1, components):
+        selected_index = int(torch.argmax(minimum_distance))
+        centers.append(coefficients[selected_index])
+        distance = torch.sum((coefficients - centers[-1]) ** 2, dim=1)
+        minimum_distance = torch.minimum(minimum_distance, distance)
+    center_tensor = torch.stack(centers)
+    labels = torch.zeros(coefficients.shape[0], dtype=torch.int64)
+    for _ in range(iterations):
+        distances = torch.cdist(coefficients, center_tensor).square()
+        updated_labels = torch.argmin(distances, dim=1)
+        updated_centers = []
+        for label in range(components):
+            selected_mask = updated_labels == label
+            if torch.any(selected_mask):
+                updated_centers.append(
+                    torch.mean(coefficients[selected_mask], dim=0)
+                )
+            else:
+                farthest = int(torch.argmax(torch.amin(distances, dim=1)))
+                updated_centers.append(coefficients[farthest])
+        updated_center_tensor = torch.stack(updated_centers)
+        if torch.equal(updated_labels, labels):
+            center_tensor = updated_center_tensor
+            labels = updated_labels
+            break
+        labels = updated_labels
+        center_tensor = updated_center_tensor
+    # A covariance component needs at least two points.  This repair is only a
+    # finite-sample fitting safeguard; final ordinary IS exactness is unaffected.
+    for label in range(components):
+        if int(torch.sum(labels == label)) >= 2:
+            continue
+        counts = torch.bincount(labels, minlength=components)
+        donor = int(torch.argmax(counts))
+        donor_indices = torch.nonzero(labels == donor, as_tuple=False).flatten()
+        donor_distances = torch.sum(
+            (coefficients[donor_indices] - center_tensor[donor]) ** 2,
+            dim=1,
+        )
+        moved = donor_indices[torch.topk(donor_distances, k=2).indices]
+        labels[moved] = label
+    return labels
 
 
 def _fit_component(
@@ -125,19 +210,14 @@ def fit_tempered_target_transport(
         raise RuntimeError("too few final particles for the requested mixture")
     if config.components == 1:
         labels = torch.zeros(coefficients.shape[0], dtype=torch.int64)
-    else:
-        centered = coefficients - torch.mean(coefficients, dim=0)
-        covariance = centered.T @ centered / coefficients.shape[0]
-        _, eigenvectors = torch.linalg.eigh(covariance)
-        score = centered @ eigenvectors[:, -1]
-        order = torch.argsort(score)
-        ordered_labels = torch.div(
-            torch.arange(coefficients.shape[0]) * config.components,
-            coefficients.shape[0],
-            rounding_mode="floor",
+    elif config.clustering == "kmeans":
+        labels = _kmeans_labels(
+            coefficients,
+            config.components,
+            config.kmeans_iterations,
         )
-        labels = torch.empty_like(ordered_labels)
-        labels[order] = ordered_labels
+    else:
+        labels = _pca_quantile_labels(coefficients, config.components)
     adaptive_components = []
     adaptive_weights = []
     for label in range(config.components):
