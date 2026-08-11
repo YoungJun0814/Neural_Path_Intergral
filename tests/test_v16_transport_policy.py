@@ -3,6 +3,7 @@ from src.path_integral.path_functionals import TerminalThresholdTask
 from src.path_integral.v16_transport_policy import (
     route_v16_hybrid_v1,
     route_v16_hybrid_v2,
+    route_v16_hybrid_v3,
 )
 
 
@@ -65,3 +66,23 @@ def test_v16_v2_preserves_v1_route_above_the_frozen_deep_tail_boundary() -> None
     v2 = route_v16_hybrid_v2(problem)
     assert v2.policy_id == "v16_hybrid_routing_v2"
     assert {**v2.__dict__, "policy_id": v1.policy_id} == v1.__dict__
+
+
+def test_v16_v3_routes_joint_extremes_to_confirmable_target_clusters() -> None:
+    rough = route_v16_hybrid_v3(
+        _problem(hurst=0.05, rho=-0.7, threshold=0.5)
+    )
+    rough_eta = route_v16_hybrid_v3(
+        _problem(hurst=0.05, rho=-0.7, threshold=1.0, eta=2.0)
+    )
+    eta_rho = route_v16_hybrid_v3(
+        _problem(hurst=0.12, rho=-0.9, threshold=1.0, eta=2.0)
+    )
+    assert rough.initializer == "tempered_smc"
+    assert rough.tempered_clustering == "kmeans"
+    assert rough.defensive_mass == 0.10
+    assert rough_eta.regime == "deep_rough_high_vol_of_vol"
+    assert rough_eta.tempered_particles == 8192
+    assert eta_rho.regime == "deep_high_vol_of_vol_strong_negative_correlation"
+    assert eta_rho.tempered_particles == 4096
+    assert eta_rho.candidate_overrides()["tempered_target"]["clustering"] == "kmeans"

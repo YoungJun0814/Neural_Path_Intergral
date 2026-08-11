@@ -44,7 +44,10 @@ from src.path_integral.tempered_target_transport import (
     fit_tempered_target_transport,
 )
 from src.path_integral.v15_result_audit import file_sha256, git_source_provenance
-from src.path_integral.v16_transport_policy import route_v16_hybrid_v2
+from src.path_integral.v16_transport_policy import (
+    route_v16_hybrid_v2,
+    route_v16_hybrid_v3,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -214,9 +217,16 @@ def main() -> None:
         routing_policy = variant.get("routing_policy")
         routing_regime = None
         if routing_policy is not None:
-            if routing_policy != "v16_hybrid_routing_v2":
+            if routing_policy not in {
+                "v16_hybrid_routing_v2",
+                "v16_hybrid_routing_v3",
+            }:
                 raise ValueError(f"unsupported routing policy: {routing_policy}")
-            route = route_v16_hybrid_v2(problem)
+            route = (
+                route_v16_hybrid_v2(problem)
+                if routing_policy == "v16_hybrid_routing_v2"
+                else route_v16_hybrid_v3(problem)
+            )
             routing_regime = route.regime
             variant.update(
                 {
@@ -236,6 +246,8 @@ def main() -> None:
                     "pcn_scale": route.tempered_pcn_scale,
                     "replicates": route.tempered_replicates,
                     "components": route.final_components,
+                    "clustering": route.tempered_clustering,
+                    "kmeans_iterations": route.tempered_kmeans_iterations,
                 }
             else:
                 variant["adaptation"] = {
