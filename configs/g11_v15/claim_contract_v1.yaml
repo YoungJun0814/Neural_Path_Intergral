@@ -17,10 +17,12 @@ allowed_current_claims:
   - fixed_grid_conditional_small_noise_probability_exponent
   - fixed_grid_logarithmic_efficiency_with_positive_isotropic_safety_mass
   - continuous_small_noise_probability_exponent_under_T16_4_scope
+  - continuous_trace_class_safety_mixture_logarithmic_efficiency_under_T16_5_scope
+  - qualitative_BLP_terminal_probability_and_rate_action_convergence
+  - trace_norm_mesh_consistency_of_the_T16_8_safety_operator
 candidate_v15_claims_locked:
-  - continuous_time_proposal_second_moment_efficiency
   - mesh_uniform_multimode_rare_event_efficiency
-  - mesh_consistent_cameron_martin_transport
+  - simultaneous_noise_mesh_efficiency_and_complexity
   - operator_assisted_certified_amortization
 prohibited_claims:
   - first_conditional_mc_for_rbergomi
@@ -40,11 +42,11 @@ nonnegotiable:
 gates:
   p0_internal_literature: pass_with_external_lock
   p1_probability_contract: pass_for_implementation
-  p2_oracle: pending
-  p3_mode_solver: pending
-  p4_exact_transport: pending
-  p5_theory: pending
-  p6_mesh: pending
+  p2_oracle: pass
+  p3_mode_solver: pass_with_continuum_basis_replacement
+  p4_exact_transport: pass
+  p5_theory: pass_for_T16_4_T16_5_scope
+  p6_mesh: pass_qualitative_rate_and_joint_limit_open
   p7_operator: pending
   p8_baselines: pending
   qualification: locked

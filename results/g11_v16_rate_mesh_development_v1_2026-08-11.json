@@ -1,0 +1,304 @@
+{
+  "claim_boundary": {
+    "blp_to_continuum_transport_theorem_proved": false,
+    "deterministic_galerkin_diagnostic": true,
+    "fixed_rank_mesh_theorem_proved": false,
+    "rank_to_infinity_theorem_proved": false
+  },
+  "config_binding": {
+    "path": "configs/g11_v15/rate_mesh_development_v1.yaml",
+    "sha256": "0ee8d4c72999819c00088faba760e39dbab6b9456666b0208715dcd0a574537b"
+  },
+  "coordinate_contract": {
+    "coefficient_energy_is_cm_energy": true,
+    "interpretation": "orthonormal_within_cell_shapes_of_one_volatility_brownian_motion",
+    "local_channels": 2
+  },
+  "finest_mesh_rank_study": [
+    {
+      "action": 0.7621654748240847,
+      "coefficients": [
+        1.0507551898036693,
+        0.0372419343274967
+      ],
+      "conditional_cost": 0.2094287595381853,
+      "correlated_return": -0.2180188893879728,
+      "energy": 0.5527367152858994,
+      "gradient_norm": 8.349138860851473e-13,
+      "integrated_variance": 0.08999972538735096,
+      "methods": [
+        "lbfgs",
+        "trust-ncg"
+      ],
+      "minimum_hessian_eigenvalue": 1.000398672784191,
+      "modes_per_channel": 1,
+      "steps": 64,
+      "support_count": 4
+    },
+    {
+      "action": 0.7611127915170404,
+      "action_decrease_from_previous_rank": 0.001052683307044333,
+      "coefficients": [
+        1.0471711392448433,
+        0.05052440790575433,
+        0.03718176555049028,
+        -0.005296795943264264
+      ],
+      "conditional_cost": 0.21084746631789733,
+      "correlated_return": -0.21691197734344025,
+      "energy": 0.5502653251991431,
+      "gradient_norm": 2.7220940541114366e-08,
+      "integrated_variance": 0.09082714484867659,
+      "methods": [
+        "lbfgs",
+        "trust-ncg"
+      ],
+      "minimum_hessian_eigenvalue": 0.7983280697696622,
+      "modes_per_channel": 2,
+      "previous_rank_omitted_gradient_norm": 0.04151707081868612,
+      "steps": 64,
+      "support_count": 6
+    },
+    {
+      "action": 0.7597159968237066,
+      "action_decrease_from_previous_rank": 0.0013967946933337583,
+      "coefficients": [
+        1.0449682876587358,
+        0.05116076960647511,
+        -0.05654248936668906,
+        0.037064498520763746,
+        -0.005299938756624052,
+        -0.0030593747492864967
+      ],
+      "conditional_cost": 0.21012378390459874,
+      "correlated_return": -0.21687938248347588,
+      "energy": 0.5495922129191079,
+      "gradient_norm": 1.7389454776502413e-08,
+      "integrated_variance": 0.0911824759161183,
+      "methods": [
+        "lbfgs",
+        "trust-ncg"
+      ],
+      "minimum_hessian_eigenvalue": 0.7976971388999144,
+      "modes_per_channel": 3,
+      "previous_rank_omitted_gradient_norm": 0.04933595652495609,
+      "steps": 64,
+      "support_count": 5
+    },
+    {
+      "action": 0.7596421959790489,
+      "action_decrease_from_previous_rank": 7.380084465768988e-05,
+      "coefficients": [
+        1.0448237651291938,
+        0.05076392703684749,
+        -0.05668530236342522,
+        0.012793815903613434,
+        0.03705354432906251,
+        -0.005336394019472622,
+        -0.0030648280085798147,
+        0.0006728993438224714
+      ],
+      "conditional_cost": 0.2101312610245082,
+      "correlated_return": -0.21684783423480497,
+      "energy": 0.5495109349545407,
+      "gradient_norm": 2.677837840630476e-11,
+      "integrated_variance": 0.09122038960188181,
+      "methods": [
+        "lbfgs",
+        "trust-ncg"
+      ],
+      "minimum_hessian_eigenvalue": 0.7934381920534498,
+      "modes_per_channel": 4,
+      "previous_rank_omitted_gradient_norm": 0.011523683697356867,
+      "steps": 64,
+      "support_count": 6
+    },
+    {
+      "action": 0.7594637466793935,
+      "action_decrease_from_previous_rank": 0.00017844929965538103,
+      "coefficients": [
+        1.0445761040712824,
+        0.05054066098491376,
+        -0.05637971618004747,
+        0.012933152697676075,
+        -0.018769907376078473,
+        0.0058312488074960265,
+        0.0370412408276427,
+        -0.005349502821916602,
+        -0.0030204913227004156,
+        0.0007009606246559027,
+        -0.0016722699698270215,
+        0.0008351652831310399
+      ],
+      "conditional_cost": 0.2100439333122138,
+      "correlated_return": -0.21684362805831145,
+      "energy": 0.5494198133671797,
+      "gradient_norm": 1.0499045505290461e-10,
+      "integrated_variance": 0.0912638057383442,
+      "methods": [
+        "lbfgs",
+        "trust-ncg"
+      ],
+      "minimum_hessian_eigenvalue": 0.7920696042869125,
+      "modes_per_channel": 6,
+      "previous_rank_omitted_gradient_norm": 0.01808003947956537,
+      "steps": 64,
+      "support_count": 6
+    },
+    {
+      "action": 0.7594096134706989,
+      "action_decrease_from_previous_rank": 5.41332086946289e-05,
+      "coefficients": [
+        1.0445049434227212,
+        0.050456977503489576,
+        -0.05627888647881658,
+        0.012901682772825567,
+        -0.01870658597647653,
+        0.005884180366083238,
+        -0.01002975861007098,
+        0.003520944493881831,
+        0.03703843210280397,
+        -0.0053526714972310825,
+        -0.0030067524712233565,
+        0.000699064134138583,
+        -0.001660601733652104,
+        0.0008718056831963293,
+        -0.0013067824591832553,
+        0.0008584622521847409
+      ],
+      "conditional_cost": 0.2100177179620408,
+      "correlated_return": -0.21684259360415453,
+      "energy": 0.5493918955086581,
+      "gradient_norm": 1.2043739686202708e-09,
+      "integrated_variance": 0.09127654818388364,
+      "methods": [
+        "lbfgs",
+        "trust-ncg"
+      ],
+      "minimum_hessian_eigenvalue": 0.791653116694041,
+      "modes_per_channel": 8,
+      "previous_rank_omitted_gradient_norm": 0.010078285234995979,
+      "steps": 64,
+      "support_count": 6
+    }
+  ],
+  "fixed_rank_mesh": [
+    {
+      "action": 0.7852397972689651,
+      "coefficients": [
+        1.0458541454472443,
+        0.07082007455621896,
+        -0.07670336848592575,
+        0.01912311324928382,
+        0.13049259516687733,
+        0.010957548913334433,
+        -0.037872039717911365,
+        0.022232172880016523
+      ],
+      "conditional_cost": 0.22316358582811352,
+      "correlated_return": -0.21372391617920938,
+      "energy": 0.5620762114408516,
+      "gradient_norm": 6.74885730725252e-10,
+      "integrated_variance": 0.08977410028820174,
+      "methods": [
+        "lbfgs",
+        "trust-ncg"
+      ],
+      "minimum_hessian_eigenvalue": 0.8047558799658155,
+      "modes_per_channel": 4,
+      "steps": 8,
+      "support_count": 4
+    },
+    {
+      "action": 0.7706895528984066,
+      "adjacent_action_change": 0.014550244370558518,
+      "coefficient_change_from_previous_mesh": 0.05605477882645063,
+      "coefficients": [
+        1.0460092750965742,
+        0.05947007304809594,
+        -0.06556266915101787,
+        0.016059614442480004,
+        0.08653122756407965,
+        -0.004344313768468011,
+        -0.015181065366041798,
+        0.008155161011319193
+      ],
+      "conditional_cost": 0.2156735700077629,
+      "correlated_return": -0.21559143471814113,
+      "energy": 0.5550159828906437,
+      "gradient_norm": 1.2505428761963906e-12,
+      "integrated_variance": 0.09048058670459594,
+      "methods": [
+        "lbfgs",
+        "trust-ncg"
+      ],
+      "minimum_hessian_eigenvalue": 0.800344666118194,
+      "modes_per_channel": 4,
+      "steps": 16,
+      "support_count": 6
+    },
+    {
+      "action": 0.763354475018998,
+      "adjacent_action_change": 0.007335077879408569,
+      "coefficient_change_from_previous_mesh": 0.03279654336762873,
+      "coefficients": [
+        1.0453890742492724,
+        0.053590533139301254,
+        -0.05953532606872773,
+        0.013863727425262984,
+        0.05674919290496184,
+        -0.006444633622020187,
+        -0.006442571881947298,
+        0.0025189713840130063
+      ],
+      "conditional_cost": 0.21197608705034238,
+      "correlated_return": -0.21644525501325676,
+      "energy": 0.5513783879686556,
+      "gradient_norm": 9.550918677858871e-09,
+      "integrated_variance": 0.0909479466633329,
+      "methods": [
+        "lbfgs",
+        "trust-ncg"
+      ],
+      "minimum_hessian_eigenvalue": 0.7962166452526115,
+      "modes_per_channel": 4,
+      "steps": 32,
+      "support_count": 6
+    },
+    {
+      "action": 0.7596421959790494,
+      "adjacent_action_change": 0.0037122790399486405,
+      "coefficient_change_from_previous_mesh": 0.02053145210579475,
+      "coefficients": [
+        1.0448237651331307,
+        0.05076392705936649,
+        -0.05668530236258676,
+        0.012793815903227505,
+        0.03705354433013145,
+        -0.005336394018004585,
+        -0.003064828008817866,
+        0.0006728993435751108
+      ],
+      "conditional_cost": 0.21013126101927218,
+      "correlated_return": -0.21684783423595066,
+      "energy": 0.5495109349597772,
+      "gradient_norm": 3.8720976435628606e-12,
+      "integrated_variance": 0.09122038960265998,
+      "methods": [
+        "lbfgs",
+        "trust-ncg"
+      ],
+      "minimum_hessian_eigenvalue": 0.7934381920560262,
+      "modes_per_channel": 4,
+      "steps": 64,
+      "support_count": 6
+    }
+  ],
+  "observed_last_adjacent_mesh_rate": 0.9825071264029414,
+  "schema": "npi.g11.v16-rate-mesh-audit.v1",
+  "source_provenance": {
+    "git_commit": "88e4ce0274a6e7b2359668b94c19fbb6ddb0d1b5",
+    "source_changes_before_run": [],
+    "source_dirty_before_run": false
+  }
+}

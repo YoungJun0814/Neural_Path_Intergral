@@ -20,16 +20,16 @@ theorems:
     scope: bounded_payoff_and_positive_natural_mixture_mass
   T15-5:
     title: small-noise rare-event efficiency
-    status: open
-    scope: declared_small_noise_gaussian_volterra_family
+    status: proved
+    scope: T16_4_terminal_left_tail_with_positive_trace_class_safety_mixture_mass
   T15-6:
     title: finite-grid convergence
-    status: open
-    scope: continuous_rough_bergomi
+    status: proved
+    scope: qualitative_BLP_terminal_probability_and_full_rate_action_convergence
   T15-7:
     title: transport mesh consistency
-    status: open
-    scope: Galerkin_mode_and_subspace_limit
+    status: conditional
+    scope: safety_operator_and_minimizers_proved_Hessian_subspaces_need_gap
   T15-8:
     title: end-to-end complexity
     status: open
@@ -56,25 +56,43 @@ theorems:
     scope: constant_xi_definition3_volterra_kernel_fixed_terminal_left_tail
   T16-5:
     title: trace-class continuous safety transport
-    status: conditional
-    scope: exact_equivalence_and_density_proved_uniform_second_moment_upper_bound_open
+    status: proved
+    scope: exact_equivalence_density_and_terminal_left_tail_logarithmic_efficiency
+  T16-6:
+    title: BLP full-rate-action Gamma convergence
+    status: proved
+    scope: uniform_grid_Riemann_Liouville_kernel_constant_xi_terminal_left_tail
+  T16-7:
+    title: fixed-noise BLP terminal probability convergence
+    status: proved
+    scope: qualitative_convergence_without_explicit_rate
+  T16-8:
+    title: mesh-compatible trace safety covariance convergence
+    status: proved
+    scope: trace_norm_main_cosine_spectrum_and_vanishing_BLP_bridge_complement
 gates:
   G5:
-    pass: false
-    reason: continuous-time T15-5 remains open although fixed-grid T16-1 through T16-3 are proved
+    pass: true
+    reason: T16-4 and T16-5 prove the continuous probability and exact trace-safety second-moment exponents
   G5_fixed_grid:
     pass: true
     reason: T16-1 through T16-3 close the fixed-grid exponent and second-moment theorem
   G5_continuous_probability:
     pass: true
-    reason: T16-4 closes the continuous probability exponent but not proposal efficiency
+    reason: T16-4 closes the continuous probability exponent; T16-5 separately closes proposal efficiency
+  G5_continuous_transport:
+    pass: true
+    reason: T16-5 closes continuous trace-class safety-mixture logarithmic efficiency
+  G6_mesh_identification:
+    pass: true
+    reason: T16-6 through T16-8 prove qualitative target action and safety-operator convergence
 claim_locks:
   prohibited:
-    - logarithmically_efficient
+    - unqualified_logarithmic_efficiency_outside_T16_5_scope
     - bounded_relative_error
     - asymptotically_optimal
     - continuous_time_exact_simulation
-    - mesh_uniform_logarithmic_efficiency
+    - simultaneous_mesh_noise_logarithmic_efficiency
   allowed:
     - exact_finite_grid_likelihood
     - unbiased_ordinary_importance_sampling
@@ -83,3 +101,6 @@ claim_locks:
     - fixed_grid_logarithmic_efficiency_with_positive_isotropic_safety_mass
     - continuous_small_noise_probability_exponent_under_T16_4_scope
     - exact_equivalent_trace_class_gaussian_safety_transport
+    - continuous_logarithmic_efficiency_under_T16_5_scope
+    - qualitative_BLP_probability_and_rate_action_convergence
+    - trace_norm_mesh_convergence_of_the_T16_8_safety_operator

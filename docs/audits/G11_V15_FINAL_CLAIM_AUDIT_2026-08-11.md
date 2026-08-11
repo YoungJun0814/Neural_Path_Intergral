@@ -2,6 +2,14 @@
 
 Date: 2026-08-11
 
+> **Historical V15 decision; superseded for theorem status by V16.**  The numerical
+> records and V15 no-go decision are retained for provenance.  T16 subsequently
+> corrected the small-noise Wick factor, proved the fixed-grid and scoped continuous
+> probability/second-moment theorems, and established qualitative BLP mesh
+> identification.  Consult `configs/g11_v15/theorem_ledger_v1.yaml` and the
+> `G11_V16_*` theory documents for current claims.  Submission remains locked for the
+> still-open numerical, joint-limit, external-review, and reproduction gates.
+
 Decision: **NO-GO for top-journal submission; GO for continued theorem-first
 development and working-paper circulation.**
 

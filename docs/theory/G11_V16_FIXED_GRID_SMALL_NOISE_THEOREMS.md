@@ -184,9 +184,10 @@ pass to `N -> infinity` by assertion. A continuous-time theorem needs either:
 2. a different adapted drift/subsolution construction with a continuous-time
    second-moment proof.
 
-This is the remaining T15-5 continuum obligation. T16 closes the finite-grid theorem
-and provides a falsifiable route for studying the mesh limit, but it does not close
-T15-6 or T15-7.
+T16-5 closes the ideal continuous-time trace-class safety theorem by a finite-coordinate
+Laplace upper bound. T16-6 through T16-8 separately identify the qualitative BLP
+action, probability, and safety-operator limits.  They do not provide a simultaneous
+`N(epsilon)` second-moment or work-complexity theorem.
 
 ## 7. Implementation obligations
 
@@ -198,7 +199,9 @@ T15-6 or T15-7.
 - Safety mass must be fixed and positive on the asymptotic sequence.
 - The balance-mixture density, not the sampled-component density, must be used.
 - Reduced-rank action minima must be labelled Galerkin upper bounds.
-- No continuous-time or bounded-relative-error claim is authorized by T16.
+- Continuous-time logarithmic efficiency is authorized only under the exact T16-5
+  trace-class assumptions.  No bounded-relative-error or joint mesh/noise claim is
+  authorized.
 
 ## 8. Primary-source boundary
 

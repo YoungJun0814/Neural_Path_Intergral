@@ -3,8 +3,9 @@
 Date: 2026-08-11
 
 Status: proof-complete corollary for the constant-forward-variance Gaussian Volterra
-model and fixed terminal left tails. This closes the continuous **probability exponent**,
-not the continuous proposal second moment or the mesh limit.
+model and fixed terminal left tails. Together with T16-5 it supplies the probability
+half of the continuous logarithmic-efficiency theorem; it does not prove a joint
+mesh/noise limit.
 
 ## 1. Parameter disambiguation
 
@@ -162,16 +163,21 @@ Proved under the stated scope:
 - speed `1/epsilon` for fixed terminal left tails;
 - the continuous event-level contracted action and probability exponent.
 
-Still open:
+Closed separately by T16-5:
 
-- logarithmic efficiency of an exact equivalent **continuous-time** proposal;
-- convergence of the BLP finite-grid rate and optimizers to this continuum rate;
-- a mesh-uniform second-moment/complexity theorem;
+- logarithmic efficiency of the exact equivalent trace-class continuous proposal and
+  any exact mixture carrying fixed positive mass on it.
+
+Still open here:
+
+- a simultaneous mesh-uniform second-moment/complexity theorem;
 - time-dependent `xi_0(t)` outside a separately verified extension.
+
+The BLP rate/optimizer and fixed-noise probability limits are treated separately in
+T16-6/T16-7; no quantitative weak rate is imported from this LDP.
 
 ## 6. Primary source
 
 Archil Gulisashvili, *Large deviation principle for Volterra type fractional
 stochastic volatility models*, Theorem 13, Lemma 15, and Definition 3:
 <https://arxiv.org/abs/1710.10711>.
-

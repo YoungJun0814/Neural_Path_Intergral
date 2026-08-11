@@ -12,6 +12,9 @@ import torch
 import yaml
 
 from src.path_integral.baselines.rbergomi_common import RBergomiBaselineProblem
+from src.path_integral.blp_cameron_martin_embedding import (
+    build_mesh_compatible_blp_drift_basis,
+)
 from src.path_integral.cameron_martin_modes import ActionSolverConfig, ModeSearchConfig
 from src.path_integral.finite_rank_gaussian_transport import CurvatureTransportConfig
 from src.path_integral.path_functionals import TerminalThresholdTask
@@ -45,12 +48,25 @@ def main() -> None:
         rho=float(model["rho"]),
     )
     records = []
+    mode_basis_kind = str(config.get("mode_basis", "channel_dct"))
+    if mode_basis_kind == "mesh_compatible_drift":
+        mode_basis = build_mesh_compatible_blp_drift_basis(
+            steps=problem.steps,
+            maturity=problem.maturity,
+            hurst=problem.hurst,
+            modes=int(config["modes"]),
+        )
+    elif mode_basis_kind == "channel_dct":
+        mode_basis = None
+    else:
+        raise ValueError("mode_basis must be channel_dct or mesh_compatible_drift")
     for index, epsilon_value in enumerate(config["epsilons"]):
         epsilon = float(epsilon_value)
         trained = train_rbergomi_cm_transport(
             problem,
             epsilon=epsilon,
             modes_per_driver=int(config["modes_per_driver"]),
+            basis=mode_basis,
             mode_search=ModeSearchConfig(
                 methods=("lbfgs", "trust-ncg"),
                 random_starts=int(config["random_starts"]),
@@ -72,6 +88,9 @@ def main() -> None:
                     else None
                 ),
                 safety_spectrum_scale=float(config.get("safety_spectrum_scale", 1.0)),
+                safety_complement_decay=float(
+                    config.get("safety_complement_decay", 2.0)
+                ),
             ),
         )
         candidate = evaluate_rbergomi_cm_transport(
@@ -143,6 +162,9 @@ def main() -> None:
                     if "safety_spectrum_decay" in config
                     else None
                 ),
+                "safety_complement_decay": float(
+                    config.get("safety_complement_decay", 2.0)
+                ),
                 "proposal_sha256": trained.proposal_sha256,
                 "maximum_likelihood_bound_violation": (
                     candidate.maximum_likelihood_bound_violation
@@ -165,8 +187,15 @@ def main() -> None:
                 float(config.get("asymptotic_safety_mass", 0.0)) > 0.0
             ),
             "continuous_terminal_probability_exponent_proved_under_T16_4_scope": True,
-            "continuous_proposal_efficiency_proved": False,
+            "continuous_trace_safety_proposal_efficiency_proved_under_T16_5_scope": bool(
+                float(config.get("asymptotic_safety_mass", 0.0)) > 0.0
+                and "safety_spectrum_decay" in config
+            ),
             "mesh_uniform_asymptotic_efficiency_proved": False,
+        },
+        "mode_basis": {
+            "kind": mode_basis_kind,
+            "rank": int(mode_basis.rank) if mode_basis is not None else 2 * int(config["modes_per_driver"]),
         },
         "records": records,
     }

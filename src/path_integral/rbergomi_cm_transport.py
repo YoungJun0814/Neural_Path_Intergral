@@ -82,15 +82,19 @@ def train_rbergomi_cm_transport(
     *,
     epsilon: float = 1.0,
     modes_per_driver: int = 8,
+    basis: CameronMartinBasis | None = None,
     mode_search: ModeSearchConfig | None = None,
     transport_config: CurvatureTransportConfig | None = None,
 ) -> RBergomiCMTransportTrainingResult:
     started_wall = time.perf_counter()
     started_cpu = time.process_time()
-    basis = build_blp_cameron_martin_basis(
-        steps=problem.steps,
-        modes_per_driver=modes_per_driver,
-    )
+    if basis is None:
+        basis = build_blp_cameron_martin_basis(
+            steps=problem.steps,
+            modes_per_driver=modes_per_driver,
+        )
+    elif basis.dimension != problem.local_dimension:
+        raise ValueError("supplied basis dimension does not match the problem")
     action = RBergomiConditionalAction(
         problem=problem,
         basis=basis,

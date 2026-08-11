@@ -11,7 +11,13 @@ import torch
 import yaml
 
 from src.path_integral.baselines.rbergomi_common import RBergomiBaselineProblem
-from src.path_integral.cameron_martin_basis import build_blp_cameron_martin_basis
+from src.path_integral.blp_cameron_martin_embedding import (
+    build_mesh_compatible_blp_drift_basis,
+)
+from src.path_integral.cameron_martin_basis import (
+    CameronMartinBasis,
+    build_blp_cameron_martin_basis,
+)
 from src.path_integral.cameron_martin_modes import (
     ActionMode,
     ActionSolverConfig,
@@ -22,7 +28,9 @@ from src.path_integral.finite_grid_small_noise import RBergomiFiniteGridRateActi
 from src.path_integral.path_functionals import TerminalThresholdTask
 from src.path_integral.rate_mesh_audit import (
     omitted_mode_gradient_norm,
+    omitted_tail_gradient_norm,
     pad_channel_coefficients,
+    pad_nested_coefficients,
 )
 from src.path_integral.v15_result_audit import file_sha256, git_source_provenance
 
@@ -57,6 +65,28 @@ def _search_config(config: dict, *, seed: int) -> ModeSearchConfig:
     )
 
 
+def _basis(
+    config: dict,
+    problem: RBergomiBaselineProblem,
+    *,
+    modes: int,
+) -> CameronMartinBasis:
+    kind = str(config.get("basis_kind", "channel_dct"))
+    if kind == "mesh_compatible_drift":
+        return build_mesh_compatible_blp_drift_basis(
+            steps=problem.steps,
+            maturity=problem.maturity,
+            hurst=problem.hurst,
+            modes=modes,
+        )
+    if kind == "channel_dct":
+        return build_blp_cameron_martin_basis(
+            steps=problem.steps,
+            modes_per_driver=modes,
+        )
+    raise ValueError("basis_kind must be channel_dct or mesh_compatible_drift")
+
+
 def _mode_record(action: RBergomiFiniteGridRateAction, mode: ActionMode) -> dict:
     coefficients = mode.coefficients
     evaluated = action.evaluate(coefficients)
@@ -84,17 +114,18 @@ def main() -> None:
     config_path = args.config.resolve()
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     root_seed = int(config["seed"])
-    fixed_modes = int(config["fixed_modes_per_channel"])
+    basis_kind = str(config.get("basis_kind", "channel_dct"))
+    continuum_basis = basis_kind == "mesh_compatible_drift"
+    fixed_modes = int(
+        config["fixed_modes"] if continuum_basis else config["fixed_modes_per_channel"]
+    )
 
     mesh_records = []
     previous = None
     for index, steps_value in enumerate(config["mesh_steps"]):
         steps = int(steps_value)
         problem = _problem(config, steps=steps)
-        basis = build_blp_cameron_martin_basis(
-            steps=steps,
-            modes_per_driver=fixed_modes,
-        )
+        basis = _basis(config, problem, modes=fixed_modes)
         action = RBergomiFiniteGridRateAction(problem, basis)
         supplied = () if previous is None else (previous,)
         modes = find_action_modes(
@@ -108,7 +139,7 @@ def main() -> None:
         best = modes.modes[0]
         record = {
             "steps": steps,
-            "modes_per_channel": fixed_modes,
+            "basis_modes": fixed_modes,
             **_mode_record(action, best),
         }
         if previous is not None:
@@ -125,23 +156,26 @@ def main() -> None:
     rank_records = []
     previous_coefficients = None
     previous_modes = None
-    for index, modes_value in enumerate(config["rank_modes_per_channel"]):
-        modes_per_channel = int(modes_value)
+    rank_values = config["rank_modes"] if continuum_basis else config["rank_modes_per_channel"]
+    for index, modes_value in enumerate(rank_values):
+        basis_modes = int(modes_value)
         problem = _problem(config, steps=finest_steps)
-        basis = build_blp_cameron_martin_basis(
-            steps=finest_steps,
-            modes_per_driver=modes_per_channel,
-        )
+        basis = _basis(config, problem, modes=basis_modes)
         action = RBergomiFiniteGridRateAction(problem, basis)
         supplied = ()
         if previous_coefficients is not None and previous_modes is not None:
-            supplied = (
-                pad_channel_coefficients(
+            if continuum_basis:
+                padded_start = pad_nested_coefficients(
+                    previous_coefficients,
+                    new_modes=basis_modes,
+                )
+            else:
+                padded_start = pad_channel_coefficients(
                     previous_coefficients,
                     old_modes=previous_modes,
-                    new_modes=modes_per_channel,
-                ),
-            )
+                    new_modes=basis_modes,
+                )
+            supplied = (padded_start,)
         modes = find_action_modes(
             action,
             basis.rank,
@@ -153,29 +187,42 @@ def main() -> None:
         best = modes.modes[0]
         record = {
             "steps": finest_steps,
-            "modes_per_channel": modes_per_channel,
+            "basis_modes": basis_modes,
             **_mode_record(action, best),
         }
         if previous_coefficients is not None and previous_modes is not None:
-            padded = pad_channel_coefficients(
-                previous_coefficients,
-                old_modes=previous_modes,
-                new_modes=modes_per_channel,
-            )
+            if continuum_basis:
+                padded = pad_nested_coefficients(
+                    previous_coefficients,
+                    new_modes=basis_modes,
+                )
+            else:
+                padded = pad_channel_coefficients(
+                    previous_coefficients,
+                    old_modes=previous_modes,
+                    new_modes=basis_modes,
+                )
             point = padded.detach().requires_grad_(True)
             value = action(point)
             (gradient,) = torch.autograd.grad(value, point)
-            record["previous_rank_omitted_gradient_norm"] = omitted_mode_gradient_norm(
-                gradient.detach(),
-                retained_modes=previous_modes,
-                expanded_modes=modes_per_channel,
-            )
+            if continuum_basis:
+                omitted = omitted_tail_gradient_norm(
+                    gradient.detach(),
+                    retained_modes=previous_modes,
+                )
+            else:
+                omitted = omitted_mode_gradient_norm(
+                    gradient.detach(),
+                    retained_modes=previous_modes,
+                    expanded_modes=basis_modes,
+                )
+            record["previous_rank_omitted_gradient_norm"] = omitted
             record["action_decrease_from_previous_rank"] = float(rank_records[-1]["action"]) - float(
                 record["action"]
             )
         rank_records.append(record)
         previous_coefficients = best.coefficients.detach().clone()
-        previous_modes = modes_per_channel
+        previous_modes = basis_modes
 
     mesh_changes = [
         float(record["adjacent_action_change"])
@@ -202,6 +249,8 @@ def main() -> None:
             "local_channels": 2,
             "interpretation": "orthonormal_within_cell_shapes_of_one_volatility_brownian_motion",
             "coefficient_energy_is_cm_energy": True,
+            "basis_kind": basis_kind,
+            "fixed_modes_have_continuum_limit": continuum_basis,
         },
         "fixed_rank_mesh": mesh_records,
         "observed_last_adjacent_mesh_rate": observed_mesh_rate,

@@ -41,6 +41,8 @@ primary records and do not support novelty decisions.
 | L15 | Gulisashvili, *Large deviation principle for Volterra type fractional stochastic volatility models* (2018), arXiv `1710.10711` | small-noise LDP for Volterra-type Gaussian stochastic-volatility models under explicit assumptions | A continuous Volterra small-noise LDP is prior art; V16 must align its exact family and numerical law rather than claim the LDP itself. |
 | L16 | Guyader, Touchette, *Efficient large deviation estimation based on importance sampling* (2020), DOI `10.1007/s10955-020-02589-x` | general joint-LDP necessary/sufficient framework for logarithmic IS efficiency | Generic logarithmic-efficiency criteria are prior art; only the conditional-Volterra specialization and exact safety mixture may be studied as a combination. |
 | L17 | Rozanov, *On the Density of One Gaussian Measure with Respect to Another* (1962), DOI `10.1137/1107006` | equivalence criteria and densities for Gaussian process measures | Gaussian covariance equivalence and determinant densities are classical prior art; V16 novelty cannot rest on Feldman--Hajek/Rozanov alone. |
+| L18 | Bayer, Fukasawa, Nakahara, *On the Weak Convergence Rate in the Discretization of Rough Volatility Models* (2023), DOI `10.1137/22M1482871` | general and structure-dependent weak-error bounds for rough-volatility discretizations | V16 may use this as a boundary, but cannot assign its rates to the nonlinear conditional digital without matching the payoff and scheme assumptions. |
+| L19 | Gassiat, *Weak Error Rates of Numerical Schemes for Rough Volatility* (2023), DOI `10.1137/22M1485760` | sharper rates for specified integrands, tests and hybrid-type schemes | The qualitative T16-7 limit is defensible; an explicit rate remains locked until the exact conditional payoff assumptions are checked. |
 
 ## Exact overlap boundary
 
@@ -122,3 +124,5 @@ for any frozen proposal, but qualification and top-journal language stay locked.
 - <https://arxiv.org/abs/1710.10711>
 - <https://doi.org/10.1007/s10955-020-02589-x>
 - <https://doi.org/10.1137/1107006>
+- <https://doi.org/10.1137/22M1482871>
+- <https://doi.org/10.1137/22M1485760>

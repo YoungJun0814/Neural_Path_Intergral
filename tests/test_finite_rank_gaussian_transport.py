@@ -247,9 +247,11 @@ def test_curvature_builder_trace_class_spectrum_is_positive_and_summable_by_desi
     )
     safety = transport.components[1]
     covariance_spectrum = action.epsilon * (safety.variance_eigenvalues - 1.0)
-    expected = 0.8 / torch.tensor(
-        [1.0, 2.0, 3.0, 4.0] * 2,
-        dtype=torch.float64,
-    ).square()
+    expected = torch.cat(
+        (
+            0.8 / torch.arange(1, 5, dtype=torch.float64).square(),
+            torch.full((4,), 0.8 / 4**2, dtype=torch.float64),
+        )
+    )
     torch.testing.assert_close(covariance_spectrum, expected, rtol=1e-13, atol=1e-13)
     assert bool((covariance_spectrum > 0.0).all())

@@ -40,6 +40,12 @@ decisive_sources:
   - id: L17
     doi: 10.1137/1107006
     overlap: gaussian_process_measure_equivalence_and_density
+  - id: L18
+    doi: 10.1137/22M1482871
+    overlap: rough_volatility_weak_discretization_rates
+  - id: L19
+    doi: 10.1137/22M1485760
+    overlap: hybrid_rough_volatility_weak_error_rates
 candidate_claim:
   short_name: conditional_multimode_cm_transport
   required_features:

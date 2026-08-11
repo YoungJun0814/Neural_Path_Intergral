@@ -47,3 +47,37 @@ def omitted_mode_gradient_norm(
     for channel in range(channels):
         mask[channel * expanded_modes : channel * expanded_modes + retained_modes] = False
     return float(torch.linalg.vector_norm(gradient[mask]))
+
+
+def pad_nested_coefficients(
+    coefficients: torch.Tensor,
+    *,
+    new_modes: int,
+) -> torch.Tensor:
+    """Zero-pad coefficients for a one-block nested continuum basis."""
+
+    if coefficients.ndim != 1 or not coefficients.numel() <= new_modes:
+        raise ValueError("new_modes must be at least the current coefficient count")
+    if coefficients.device.type != "cpu" or coefficients.dtype != torch.float64:
+        raise ValueError("coefficients must be CPU float64")
+    if not torch.isfinite(coefficients).all():
+        raise ValueError("coefficients must be finite")
+    padded = torch.zeros(new_modes, dtype=torch.float64)
+    padded[: coefficients.numel()] = coefficients
+    return padded
+
+
+def omitted_tail_gradient_norm(
+    gradient: torch.Tensor,
+    *,
+    retained_modes: int,
+) -> float:
+    """Return the gradient norm beyond a nested one-block truncation."""
+
+    if gradient.ndim != 1 or not 0 <= retained_modes <= gradient.numel():
+        raise ValueError("retained_modes is incompatible with the gradient")
+    if gradient.device.type != "cpu" or gradient.dtype != torch.float64:
+        raise ValueError("gradient must be CPU float64")
+    if not torch.isfinite(gradient).all():
+        raise ValueError("gradient must be finite")
+    return float(torch.linalg.vector_norm(gradient[retained_modes:]))

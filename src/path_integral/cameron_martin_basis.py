@@ -22,14 +22,20 @@ class CameronMartinBasis:
     steps: int
     drivers: int
     modes_per_driver: int
+    channel_separated: bool = True
 
     def __post_init__(self) -> None:
         matrix = self.matrix
         if matrix.device.type != "cpu" or matrix.dtype != torch.float64:
             raise ValueError("Cameron--Martin basis must be CPU float64")
+        expected_rank = (
+            self.modes_per_driver * self.drivers
+            if self.channel_separated
+            else self.modes_per_driver
+        )
         if matrix.ndim != 2 or matrix.shape != (
             self.steps * self.drivers,
-            self.modes_per_driver * self.drivers,
+            expected_rank,
         ):
             raise ValueError("Cameron--Martin basis has the wrong shape")
         if not torch.isfinite(matrix).all():

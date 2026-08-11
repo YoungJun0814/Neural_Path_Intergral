@@ -13,7 +13,9 @@ from dataclasses import dataclass
 
 import torch
 
-from src.path_integral.cameron_martin_basis import build_blp_cameron_martin_basis
+from src.path_integral.blp_cameron_martin_embedding import (
+    build_mesh_compatible_blp_trace_safety_geometry,
+)
 from src.path_integral.cameron_martin_modes import RBergomiModeSearchResult
 from src.path_integral.volterra_action import (
     RBergomiConditionalAction,
@@ -271,6 +273,7 @@ class CurvatureTransportConfig:
     asymptotic_safety_mass: float = 0.0
     safety_spectrum_decay: float | None = None
     safety_spectrum_scale: float = 1.0
+    safety_complement_decay: float = 2.0
     minimum_variance: float = 0.05
     maximum_variance: float = 20.0
     positive_curvature_tolerance: float = 1e-7
@@ -293,6 +296,11 @@ class CurvatureTransportConfig:
             raise ValueError("safety spectrum decay must exceed one")
         if not math.isfinite(self.safety_spectrum_scale) or self.safety_spectrum_scale <= 0.0:
             raise ValueError("safety spectrum scale must be finite and positive")
+        if (
+            not math.isfinite(self.safety_complement_decay)
+            or self.safety_complement_decay <= 1.0
+        ):
+            raise ValueError("safety complement decay must exceed one")
         if not 0.0 < self.minimum_variance <= self.maximum_variance:
             raise ValueError("variance clipping bounds are invalid")
         if not math.isfinite(self.maximum_variance):
@@ -361,19 +369,16 @@ def build_curvature_transport(
                 epsilon=action.epsilon,
             )
         else:
-            full_basis = build_blp_cameron_martin_basis(
+            directions, spectrum = build_mesh_compatible_blp_trace_safety_geometry(
                 steps=action.basis.steps,
-                drivers=action.basis.drivers,
-            )
-            frequencies = torch.arange(action.basis.steps, dtype=torch.float64).repeat(
-                action.basis.drivers
-            )
-            spectrum = config.safety_spectrum_scale / torch.pow(
-                1.0 + frequencies,
-                config.safety_spectrum_decay,
+                maturity=action.problem.maturity,
+                hurst=action.problem.hurst,
+                spectrum_decay=config.safety_spectrum_decay,
+                spectrum_scale=config.safety_spectrum_scale,
+                complement_decay=config.safety_complement_decay,
             )
             broad = build_trace_class_small_noise_safety_component(
-                full_basis.matrix,
+                directions,
                 spectrum,
                 epsilon=action.epsilon,
             )

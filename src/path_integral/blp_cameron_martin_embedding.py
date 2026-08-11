@@ -12,6 +12,10 @@ import math
 
 import torch
 
+from src.path_integral.cameron_martin_basis import (
+    CameronMartinBasis,
+    build_blp_cameron_martin_basis,
+)
 from src.path_integral.rbergomi_fft import blp_fft_kernel
 from src.physics_engine import RBergomiSimulator
 
@@ -123,3 +127,95 @@ def piecewise_constant_drift_to_blp_standard_shift(
         observable_means.T,
         upper=False,
     ).T
+
+
+def build_mesh_compatible_blp_trace_safety_geometry(
+    *,
+    steps: int,
+    maturity: float,
+    hurst: float,
+    spectrum_decay: float,
+    spectrum_scale: float,
+    complement_decay: float,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Build a full-grid safety eigensystem with a continuum cosine limit.
+
+    The first ``steps`` directions are exact BLP embeddings of orthonormal
+    piecewise-constant cosine drifts.  Their eigenvalues discretize a positive
+    summable continuum spectrum.  The orthogonal within-cell bridge complement
+    remains strictly positive on every frozen grid, but its total trace vanishes
+    as the mesh is refined.
+    """
+
+    if isinstance(steps, bool) or not isinstance(steps, int) or steps < 1:
+        raise ValueError("steps must be a positive integer")
+    if not math.isfinite(maturity) or maturity <= 0.0:
+        raise ValueError("maturity must be finite and positive")
+    if not 0.0 < hurst < 0.5:
+        raise ValueError("hurst must lie in (0,0.5)")
+    if not math.isfinite(spectrum_decay) or spectrum_decay <= 1.0:
+        raise ValueError("spectrum_decay must exceed one")
+    if not math.isfinite(spectrum_scale) or spectrum_scale <= 0.0:
+        raise ValueError("spectrum_scale must be finite and positive")
+    if not math.isfinite(complement_decay) or complement_decay <= 1.0:
+        raise ValueError("complement_decay must exceed one")
+    step_dt = maturity / steps
+    temporal = build_blp_cameron_martin_basis(
+        steps=steps,
+        drivers=1,
+    ).matrix
+    unit_shift = piecewise_constant_drift_to_blp_standard_shift(
+        torch.ones(1, dtype=torch.float64),
+        hurst=hurst,
+        step_dt=step_dt,
+    )[0]
+    drift_values = temporal / math.sqrt(step_dt)
+    main = (drift_values[:, :, None] * unit_shift[None, None, :]).permute(0, 2, 1)
+    main = main.reshape(2 * steps, steps)
+    gram = main.T @ main
+    if float(torch.amax(torch.abs(gram - torch.eye(steps, dtype=torch.float64)))) > 2e-11:
+        raise RuntimeError("embedded continuum safety directions lost orthonormality")
+    complete, _ = torch.linalg.qr(main, mode="complete")
+    complement = complete[:, steps:]
+    directions = torch.cat((main, complement), dim=1)
+    full_gram = directions.T @ directions
+    if float(torch.amax(torch.abs(full_gram - torch.eye(2 * steps, dtype=torch.float64)))) > 2e-10:
+        raise RuntimeError("full mesh safety directions lost orthonormality")
+    frequencies = torch.arange(steps, dtype=torch.float64)
+    continuum_spectrum = spectrum_scale / torch.pow(1.0 + frequencies, spectrum_decay)
+    bridge_eigenvalue = spectrum_scale * steps ** (-complement_decay)
+    bridge_spectrum = torch.full((steps,), bridge_eigenvalue, dtype=torch.float64)
+    return directions, torch.cat((continuum_spectrum, bridge_spectrum))
+
+
+def build_mesh_compatible_blp_drift_basis(
+    *,
+    steps: int,
+    maturity: float,
+    hurst: float,
+    modes: int,
+) -> CameronMartinBasis:
+    """Embed low-frequency continuum Brownian drifts into the BLP grid exactly.
+
+    Unlike a channel-separated BLP DCT basis, every column here is one actual
+    cellwise-constant drift of the single volatility Brownian motion.  Consequently
+    a fixed column has a well-defined continuum limit as the grid is refined.
+    """
+
+    if isinstance(modes, bool) or not isinstance(modes, int) or not 1 <= modes <= steps:
+        raise ValueError("modes must lie between one and steps")
+    directions, _ = build_mesh_compatible_blp_trace_safety_geometry(
+        steps=steps,
+        maturity=maturity,
+        hurst=hurst,
+        spectrum_decay=2.0,
+        spectrum_scale=1.0,
+        complement_decay=2.0,
+    )
+    return CameronMartinBasis(
+        matrix=directions[:, :modes],
+        steps=steps,
+        drivers=2,
+        modes_per_driver=modes,
+        channel_separated=False,
+    )

@@ -2,6 +2,15 @@
 
 Date: 2026-08-11
 
+> **V16 supersession notice.** Sections 6--8 below preserve the original V15 proof
+> boundary and are historical.  T16-4/T16-5 now prove the scoped continuous terminal
+> probability and trace-class-safety second-moment exponents.  T16-6/T16-7/T16-8
+> prove qualitative BLP rate/target convergence and trace-norm safety-operator
+> convergence.  The current machine-readable status is
+> `configs/g11_v15/theorem_ledger_v1.yaml`; the proofs are in the V16 theory files.
+> Joint `N(epsilon)` efficiency, quantitative complexity, bounded relative error, and
+> exact continuous-time simulation remain unproved.
+
 This document distinguishes exact finite-dimensional statements from continuum and
 rare-event asymptotic claims.  Numerical evidence cannot change a theorem status.
 The machine-readable source of status is
