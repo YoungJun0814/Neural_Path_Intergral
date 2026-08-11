@@ -42,10 +42,10 @@ def main() -> None:
             spot=float(model["spot"]),
             maturity=float(model["maturity"]),
             steps=int(model["steps"]),
-            hurst=float(model["hurst"]),
-            eta=float(model["eta"]),
-            xi=float(model["xi"]),
-            rho=float(model["rho"]),
+            hurst=float(cell.get("hurst", model["hurst"])),
+            eta=float(cell.get("eta", model["eta"])),
+            xi=float(cell.get("xi", model["xi"])),
+            rho=float(cell.get("rho", model["rho"])),
         )
 
         def log_potential(
