@@ -1,0 +1,16 @@
+schema: npi.g11.v16-deep-tail-closure-audit-config.v1
+output_path: results/g11_v16_deep_tail_heterogeneous_closure_audit_v1_2026-08-11.json
+artifacts:
+  experiment:
+    path: results/g11_v16_deep_tail_heterogeneous_confirmation_v1_2026-08-11.json
+    sha256: 4e4d18fab389ebf9503edbe54889ee66d30ce025cbf6daf9ff019e4e4084c61d
+  independent_reference:
+    path: results/g11_v16_deep_tail_heterogeneous_smc_reference_v1_2026-08-11.json
+    sha256: 4f544ec7e7239aee29d0833d597c528c68d67a817efa457a1cc2b239e057b2af
+gates:
+  maximum_accuracy_z: 4.0
+  minimum_reference_signal_to_noise: 8.0
+  minimum_accuracy_qualified_comparators: 3
+  required_accuracy_qualified: [v14_local_volterra, defensive_cem, ld_subspace_is]
+  minimum_work_ratio: 1.0
+  maximum_likelihood_bound_violation: 0.0000000001
