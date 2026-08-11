@@ -10,7 +10,26 @@
 
 ## Research status
 
-The current frontier is **V12 Exact Conditional Residual Path-Space Transport
+The current frontier is **V15 Exact Conditional Cameron–Martin Transport**.  The
+finite-grid core conditions out the complete independent rBergomi price driver,
+solves a low-rank Cameron–Martin action with two independently implemented
+optimizers, and evaluates an exact defensive multimode finite-rank Gaussian
+proposal.  A three-cell frozen qualification passes integrity, accuracy,
+likelihood, and training-inclusive numerical gates; the strongest-primary/V15
+100-query work ratios are 1.43, 4.69, and 3.96.  A separate small-noise diagnostic
+reaches probability about `1.34e-6` with relative variance 0.50.  These are
+finite-grid empirical results.  The small-noise efficiency theorem and
+continuous-time mesh theorem remain open, so top-journal and asymptotic-optimality
+claims are explicitly locked.  See the
+[V15 theorem ledger](docs/theory/G11_V15_THEOREMS.md),
+[manuscript draft](docs/manuscript/G11_V15_MANUSCRIPT_DRAFT.md),
+[final claim audit](docs/audits/G11_V15_FINAL_CLAIM_AUDIT_2026-08-11.md), and
+[reproduction protocol](docs/reproduction/G11_V15_REPRODUCTION_PROTOCOL.md).
+
+The sections below preserve the historical progression and negative results that
+led to V15.
+
+The former V12 frontier was **Exact Conditional Residual Path-Space Transport
 (ECRPT)**.  P0--P4 correctness infrastructure is implemented: tail-safe allocation,
 exact defensive residual mixtures, finite-grid rBergomi conditioning, task-conditioned
 proposal emission, exact residual coupling flows, and signed residual MLMC.  Three

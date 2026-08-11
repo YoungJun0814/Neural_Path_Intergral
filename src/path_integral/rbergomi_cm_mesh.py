@@ -123,6 +123,7 @@ def run_conditional_mesh_study(
     steps: tuple[int, ...],
     sample_count: int,
     seed: int,
+    batch_size: int | None = None,
 ) -> ConditionalMeshStudy:
     if not isinstance(template.task, TerminalThresholdTask):
         raise TypeError("mesh study requires a terminal threshold task")
@@ -132,6 +133,13 @@ def run_conditional_mesh_study(
         raise ValueError("mesh steps must be a consecutive doubling hierarchy")
     if steps[0] < 1 or sample_count < 2:
         raise ValueError("mesh study requires positive steps and at least two samples")
+    resolved_batch = sample_count if batch_size is None else batch_size
+    if (
+        isinstance(resolved_batch, bool)
+        or not isinstance(resolved_batch, int)
+        or resolved_batch < 2
+    ):
+        raise ValueError("mesh batch size must be an integer of at least two")
     adjacent: list[ConditionalMeshPairSummary] = []
     levels: list[ScalarMonteCarloSummary] = []
     for index, fine_steps in enumerate(steps[1:]):
@@ -147,21 +155,51 @@ def run_conditional_mesh_study(
             rho=template.rho,
         )
         generator = torch.Generator().manual_seed(seed + 104_729 * index)
-        local = torch.randn(
-            (sample_count, problem.local_dimension),
-            dtype=torch.float64,
-            generator=generator,
+        moments = torch.zeros(7, dtype=torch.float64)
+        completed = 0
+        while completed < sample_count:
+            count = min(resolved_batch, sample_count - completed)
+            local = torch.randn(
+                (count, problem.local_dimension),
+                dtype=torch.float64,
+                generator=generator,
+            )
+            batch = evaluate_adjacent_conditional_mesh_pair(problem, local)
+            fine = batch.fine_probability
+            coarse = batch.coarse_probability
+            correction = batch.correction
+            moments += torch.stack(
+                (
+                    torch.sum(fine),
+                    torch.sum(fine.square()),
+                    torch.sum(coarse),
+                    torch.sum(coarse.square()),
+                    torch.sum(correction),
+                    torch.sum(correction.square()),
+                    torch.sum(fine * coarse),
+                )
+            )
+            completed += count
+
+        def moment_summary(total: torch.Tensor, square_total: torch.Tensor) -> ScalarMonteCarloSummary:
+            mean = float(total / sample_count)
+            variance = float((square_total - total.square() / sample_count) / (sample_count - 1))
+            variance = max(0.0, variance)
+            return ScalarMonteCarloSummary(
+                mean=mean,
+                variance=variance,
+                standard_error=math.sqrt(variance / sample_count),
+                sample_count=sample_count,
+            )
+
+        fine_summary = moment_summary(moments[0], moments[1])
+        coarse_summary = moment_summary(moments[2], moments[3])
+        correction_summary = moment_summary(moments[4], moments[5])
+        covariance = float(
+            (moments[6] - moments[0] * moments[2] / sample_count) / (sample_count - 1)
         )
-        batch = evaluate_adjacent_conditional_mesh_pair(problem, local)
-        fine_summary = summarize_samples(batch.fine_probability)
-        coarse_summary = summarize_samples(batch.coarse_probability)
-        correction_summary = summarize_samples(batch.correction)
-        centered_fine = batch.fine_probability - torch.mean(batch.fine_probability)
-        centered_coarse = batch.coarse_probability - torch.mean(batch.coarse_probability)
-        denominator = torch.linalg.vector_norm(centered_fine) * torch.linalg.vector_norm(
-            centered_coarse
-        )
-        correlation = float(torch.dot(centered_fine, centered_coarse) / denominator)
+        denominator = math.sqrt(fine_summary.variance * coarse_summary.variance)
+        correlation = covariance / denominator
         adjacent.append(
             ConditionalMeshPairSummary(
                 fine_steps=fine_steps,
