@@ -1,4 +1,4 @@
-# Hybrid DCS-MGI for Rare Events under Rough Volatility
+# Exact Conditional Residual Path-Space Transport for Gaussian Volterra Rare Events
 
 [![CI](https://github.com/YoungJun0814/Neural_Path_Intergral/actions/workflows/ci.yml/badge.svg)](https://github.com/YoungJun0814/Neural_Path_Intergral/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
@@ -10,7 +10,20 @@
 
 ## Research status
 
-The current frontier is **V9 terminal-only, regime-conditional DCS**.  Its fresh
+The current frontier is **V12 Exact Conditional Residual Path-Space Transport
+(ECRPT)**.  P0--P4 correctness infrastructure is implemented: tail-safe allocation,
+exact defensive residual mixtures, finite-grid rBergomi conditioning, task-conditioned
+proposal emission, exact residual coupling flows, and signed residual MLMC.  Three
+12-record development studies (one-pass, adaptive, and annealed CE) and their
+independent audits are complete.  All pass exactness, paired-identity, and likelihood-
+normalization checks, but all fail the frozen accuracy/censoring/performance gates.
+The best-primary-over-ECRPT descriptive geometric work ratios are 0.528, 0.163, and
+0.014 respectively, so qualification and submission remain locked.  See
+[the V12 plan](EXACT_CONDITIONAL_RESIDUAL_PATH_SPACE_TRANSPORT_PLAN_V12.md),
+[the theorem contract](docs/theory/G11_V12_ECRPT_THEOREMS.md), and
+[the development report](ECRPT_V12_DEVELOPMENT_REPORT.md).
+
+The preceding **V9 terminal-only, regime-conditional DCS** study remains preserved.  Its fresh
 reference and reference-gated proposal bank pass independent audits.  The complete
 12-cell by 4-cluster development matrix is technically valid and confirms a
 same-mixture DCS total-work gain at `K=100` in all three Hurst groups (geometric
@@ -175,7 +188,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **898/898 tests on 2026-08-02**.
+The complete local regression suite passed **929/929 tests on 2026-08-11**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finite grid rather than a continuously monitored event. V7
@@ -614,6 +627,9 @@ and prevent selective reporting.
 | G11 V7 | Same-proposal Rao--Blackwell DCS | Development, qualification, confirmation, and Linux software-environment reproduction pass |
 | G11 V8 | Theory plus strong external comparators | Complete authorized execution; broad 24-cell performance route falsified and closed |
 | G11 V9 | Terminal regime-conditional DCS | Same-mixture work gain passes; best-primary, accuracy, and resource gates fail; qualification blocked |
+| G11 V12 | Exact conditional residual Gaussian-mixture transport | Exactness passes; adaptive mixture misses deep-tail support and performance gate fails |
+| G11 V13 | SMC-trained low-rank structured ECRPT | Full 12-record development and audit complete; correctness mechanisms pass, accuracy/tail-safe/performance gates fail; qualification blocked |
+| G11 V14 | Exact conditional local-Volterra transport | Development and disjoint-seed qualification pass; 3/3 cells favorable, qualified geometric work ratio 2.42 with lower bound 1.81; distribution-free tail claim remains blocked |
 
 Earlier neural VFO, mixture, and residual-controller tracks were tested against strong
 baselines and stopped when their gates failed. See the phase reviews under
@@ -622,23 +638,23 @@ baselines and stopped when their gates failed. See the phase reviews under
 
 ## What remains before a journal claim
 
-V9 cannot be repaired by weakening its gate.  The next valid protocol must be a new
-V10 model that applies exact conditional smoothing to a stronger, full-dimensional
-CEM proposal rather than the current rank-one bank.  It must then:
+V14 resolves the terminal-event support and cost failure by integrating the complete
+price driver and transporting only the local Volterra law. Frozen development and
+disjoint-seed qualification now pass the empirical accuracy and training-inclusive
+performance gates. Before a journal claim, the result still needs external hardware
+reproduction, a current primary-source novelty audit, manuscript-level proof review,
+and broader tests across meshes and task families. The distribution-free bounded-
+range tail certificate remains resource censored and is not an authorized claim.
 
-1. derive the proposal-conditional Gaussian law and exact mixture likelihood before
-   implementation;
-2. test whether the hybrid retains the V9 same-proposal gain while closing the
-   2.4--3.4x gap to the best comparator;
-3. freeze fresh references, seeds, accuracy/resource gates, and cluster-level
-   qualification before observing V10 outcomes;
-4. retain conditional MC, smoothing RQMC, and defensive CEM under the same
-   training-inclusive target-work contract; and
-5. obtain external mathematical review, a current primary-source novelty audit, and
-   independent physical-hardware reproduction before manuscript submission.
+See [the V13 development report](V13_STRUCTURED_ECRPT_DEVELOPMENT_REPORT.md) for the
+audited result and redesign requirements.
 
-Until those items are complete, the defensible description is **PhD-level research
-prototype and strong working-paper core**, not a top-journal-ready final manuscript.
+The successful terminal-event redesign and its exact claim boundary are documented
+in [the V14 report](V14_LOCAL_VOLTERRA_TRANSPORT_REPORT.md).
+
+Until those items are complete, the defensible description is **qualified PhD-level
+working-paper core with a positive frozen result**, not a top-journal-ready final
+manuscript.
 
 ## Research integrity
 

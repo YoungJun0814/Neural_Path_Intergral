@@ -1,0 +1,59 @@
+schema: npi.g11.v14-local-volterra-development.v1
+protocol_id: g11-v14-local-volterra-development-v1
+namespace: v14-local-volterra-development-v1
+stage: development
+date: "2026-08-11"
+
+bindings:
+  theory_contract:
+    path: docs/theory/G11_V14_LOCAL_VOLTERRA_TRANSPORT_CONTRACT.md
+    sha256: d39bb0ba9db8a6110ed814bd5dbfcf5360e293e05ab988bb15687bd7b35b2031
+  reference:
+    path: results/g11_v9_terminal_reference_v2_2026-08-02.json
+    sha256: c22f96b4a4b41b0519523c0f08040cd54d08e409336426f8ecb40f02453c4ecf
+  v10r1_proposal_bank:
+    path: results/g11_v10r1_full_latent_proposal_bank_v1_2026-08-11.json
+    sha256: f1dd2a4395d34bda171daa8915676fb30349ae2d42ddc58e2c580aeccbf1960c
+
+model: {spot: 100.0, maturity: 1.0, steps: 128, eta: 1.5, xi: 0.04, rho: -0.7}
+cells:
+  - {cell_id: h0.05-terminal_left_tail-p1e-03, hurst: 0.05, nominal_probability: 0.001, threshold: 31.92790645389728}
+  - {cell_id: h0.12-terminal_left_tail-p1e-04, hurst: 0.12, nominal_probability: 0.0001, threshold: 10.391658226080532}
+  - {cell_id: h0.20-terminal_left_tail-p1e-05, hurst: 0.20, nominal_probability: 0.00001, threshold: 1.884327900748765}
+
+clusters: 4
+relative_rmse_target: 0.20
+primary_query_count: 100
+primary_comparators: [conditional_rbergomi, smoothing_rqmc, v10r1_full_cem_dcs]
+candidate_training:
+  target_powers: [0.10]
+  shifted_weights: [1.0]
+  defensive_weight: 0.20
+  smc_particles: 2048
+  target_ess_fraction: 0.70
+  pcn_scale: 0.25
+  pcn_sweeps_per_stage: 3
+  maximum_stages: 128
+final_budget:
+  candidate_iid_paths: 32768
+  conditional_iid_paths: 65536
+  rqmc_randomizations: 32
+  rqmc_points_per_randomization: 512
+  v10r1_iid_paths: 16384
+tail_safe_policy:
+  confidence_level: 0.95
+  minimum_iid_units: 32
+  minimum_rqmc_randomizations: 16
+  maximum_iid_units: 262144
+  maximum_rqmc_randomizations: 4096
+gate:
+  confidence_level: 0.95
+  maximum_exactness_error: 0.0000000001
+  maximum_combined_reference_z: 4.0
+  maximum_paired_difference_z: 4.0
+  maximum_likelihood_normalization_z: 6.0
+  minimum_raw_over_ecrpt_variance_ratio: 1.0
+  minimum_best_primary_over_ecrpt_geometric_ratio: 1.50
+  minimum_one_sided_lower_ratio: 1.0
+  minimum_cells_favoring_ecrpt: 2
+  distribution_free_tail_certificate_is_claim_gate: false
