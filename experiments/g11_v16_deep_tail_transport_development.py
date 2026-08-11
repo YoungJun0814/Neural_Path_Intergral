@@ -30,6 +30,7 @@ from src.path_integral.finite_rank_gaussian_transport import (
     DefensiveFiniteRankGaussianMixture,
     FiniteRankGaussianComponent,
     build_trace_class_small_noise_safety_component,
+    combine_defensive_gaussian_mixtures,
 )
 from src.path_integral.path_functionals import TerminalThresholdTask
 from src.path_integral.rbergomi_cm_transport import (
@@ -490,7 +491,7 @@ def main() -> None:
                     hybrid.target.fitted_particle_count
                 ),
             }
-        elif initializer == "v14_risk_selected":
+        elif initializer in {"v14_risk_selected", "v14_bank_mixture"}:
             candidate_proposals = []
             candidate_ids = []
             candidate_training_work = 0.0
@@ -563,70 +564,93 @@ def main() -> None:
                         ),
                     }
                 )
-            selection_values = variant["selection"]
-            selection_path_seed = int(selection_values["path_seed"])
-            selection_label_seed = int(selection_values["label_seed"])
-            if {
-                selection_path_seed,
-                selection_label_seed,
-            }.intersection(candidate_training_seeds):
-                raise RuntimeError("selection and proposal training streams collided")
-
-            def selection_payoff(
-                sample: torch.Tensor,
-                frozen_problem: RBergomiBaselineProblem = problem,
-            ) -> torch.Tensor:
-                return evaluate_conditional_terminal_local(
-                    frozen_problem, sample
-                ).conditional_value
-
-            selected = select_defensive_proposal_by_second_moment(
-                tuple(candidate_proposals),
-                tuple(candidate_ids),
-                selection_payoff,
-                sample_count=int(selection_values["samples"]),
-                batch_size=int(selection_values["batch_size"]),
-                path_seed=selection_path_seed,
-                label_seed=selection_label_seed,
-                confidence_delta=float(
-                    selection_values.get("confidence_delta", 0.05)
-                ),
-                payoff_work_per_sample=float(
-                    problem.local_dimension + problem.steps + 1
-                ),
-            )
-            proposal = selected.proposal
-            training_work = (
-                candidate_training_work + selected.algorithmic_work_units
-            )
             effective_sample_sizes = ()
             tempering_powers = ()
-            initializer_diagnostics = {
-                "selected_candidate_id": selected.selected_id,
-                "candidate_count": len(candidate_proposals),
-                "validation_samples": selected.validation_samples,
-                "validation_defensive_mass": (
-                    selected.validation_defensive_mass
-                ),
-                "simultaneous_oracle_excess_bound": (
-                    selected.simultaneous_oracle_excess_bound
-                ),
-                "risk_estimates": [
-                    {
-                        "candidate_id": item.candidate_id,
-                        "second_moment_estimate": (
-                            item.second_moment_estimate
-                        ),
-                        "standard_error": item.standard_error,
-                        "simultaneous_empirical_bernstein_radius": (
-                            item.simultaneous_empirical_bernstein_radius
-                        ),
-                        "upper_confidence_bound": item.upper_confidence_bound,
-                    }
-                    for item in selected.estimates
-                ],
-                "candidate_diagnostics": candidate_diagnostics,
-            }
+            if initializer == "v14_bank_mixture":
+                bank_weights = tuple(
+                    float(value)
+                    for value in variant.get(
+                        "bank_weights",
+                        [1.0 / len(candidate_proposals)]
+                        * len(candidate_proposals),
+                    )
+                )
+                proposal = combine_defensive_gaussian_mixtures(
+                    tuple(candidate_proposals), bank_weights
+                )
+                training_work = candidate_training_work
+                initializer_diagnostics = {
+                    "candidate_count": len(candidate_proposals),
+                    "bank_weights": list(bank_weights),
+                    "candidate_diagnostics": candidate_diagnostics,
+                }
+            else:
+                selection_values = variant["selection"]
+                selection_path_seed = int(selection_values["path_seed"])
+                selection_label_seed = int(selection_values["label_seed"])
+                if {
+                    selection_path_seed,
+                    selection_label_seed,
+                }.intersection(candidate_training_seeds):
+                    raise RuntimeError(
+                        "selection and proposal training streams collided"
+                    )
+
+                def selection_payoff(
+                    sample: torch.Tensor,
+                    frozen_problem: RBergomiBaselineProblem = problem,
+                ) -> torch.Tensor:
+                    return evaluate_conditional_terminal_local(
+                        frozen_problem, sample
+                    ).conditional_value
+
+                selected = select_defensive_proposal_by_second_moment(
+                    tuple(candidate_proposals),
+                    tuple(candidate_ids),
+                    selection_payoff,
+                    sample_count=int(selection_values["samples"]),
+                    batch_size=int(selection_values["batch_size"]),
+                    path_seed=selection_path_seed,
+                    label_seed=selection_label_seed,
+                    confidence_delta=float(
+                        selection_values.get("confidence_delta", 0.05)
+                    ),
+                    payoff_work_per_sample=float(
+                        problem.local_dimension + problem.steps + 1
+                    ),
+                )
+                proposal = selected.proposal
+                training_work = (
+                    candidate_training_work + selected.algorithmic_work_units
+                )
+                initializer_diagnostics = {
+                    "selected_candidate_id": selected.selected_id,
+                    "candidate_count": len(candidate_proposals),
+                    "validation_samples": selected.validation_samples,
+                    "validation_defensive_mass": (
+                        selected.validation_defensive_mass
+                    ),
+                    "simultaneous_oracle_excess_bound": (
+                        selected.simultaneous_oracle_excess_bound
+                    ),
+                    "risk_estimates": [
+                        {
+                            "candidate_id": item.candidate_id,
+                            "second_moment_estimate": (
+                                item.second_moment_estimate
+                            ),
+                            "standard_error": item.standard_error,
+                            "simultaneous_empirical_bernstein_radius": (
+                                item.simultaneous_empirical_bernstein_radius
+                            ),
+                            "upper_confidence_bound": (
+                                item.upper_confidence_bound
+                            ),
+                        }
+                        for item in selected.estimates
+                    ],
+                    "candidate_diagnostics": candidate_diagnostics,
+                }
         elif initializer == "v14_only":
             local_values = variant["v14_initializer"]
             local = train_local_volterra_transport(
