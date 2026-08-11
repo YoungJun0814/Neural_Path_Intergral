@@ -1,0 +1,17 @@
+schema: npi.g11.v16-hybrid-closure-audit-config.v1
+task_id: g11-v16-hybrid-closure-audit
+output_path: results/g11_v16_hybrid_closure_audit_v1_2026-08-11.json
+artifacts:
+  isotropic_reference: results/g11_v16_small_noise_development_v3_2026-08-11.json
+  candidate: results/g11_v16_small_noise_development_v8_hybrid_trace_2026-08-11.json
+  unrelated_reference: results/g11_v16_tempered_smc_reference_v1_2026-08-11.json
+  continuum_mesh: results/g11_v16_rate_mesh_development_v2_2026-08-11.json
+  hybrid_mesh: results/g11_v16_rate_mesh_development_v3_hybrid_2026-08-11.json
+gates:
+  maximum_unrelated_reference_z: 2.0
+  require_relative_variance_improvement_at_every_epsilon: true
+  minimum_deepest_second_moment_exponent_ratio: 0.985
+  maximum_likelihood_bound_violation: 0.0000000001
+  require_monotone_bridge_norm: true
+  require_monotone_hybrid_action_gap: true
+  maximum_final_bridge_norm: 0.03
