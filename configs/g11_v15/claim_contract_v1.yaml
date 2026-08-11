@@ -23,8 +23,8 @@ allowed_current_claims:
   - joint_mesh_noise_logarithmic_efficiency_under_T16_9_scope
 candidate_v15_claims_locked:
   - quantitative_mesh_uniform_relative_error
-  - simultaneous_noise_mesh_work_complexity
-  - operator_assisted_certified_amortization
+  - continuous_target_relative_RMSE_complexity
+  - uniform_operator_generalization
 prohibited_claims:
   - first_conditional_mc_for_rbergomi
   - first_neural_cameron_martin_importance_sampler
@@ -47,7 +47,7 @@ gates:
   p3_mode_solver: pass_with_continuum_basis_replacement
   p4_exact_transport: pass
   p5_theory: pass_for_T16_4_T16_5_scope
-  p6_mesh: pass_qualitative_rate_and_joint_limit_open
-  p7_operator: pending
-  p8_baselines: pending
-  qualification: locked
+  p6_mesh: pass_qualitative_and_joint_exponent_quantitative_relative_bias_rate_open
+  p7_operator: pass_exact_correction_and_replicated_initializer_gain
+  p8_baselines: pass_internal_confirmation_and_ood
+  qualification: internal_pass_external_reproduction_locked

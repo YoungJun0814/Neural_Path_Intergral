@@ -32,12 +32,12 @@ theorems:
     scope: safety_operator_and_minimizers_proved_Hessian_subspaces_need_gap
   T15-8:
     title: end-to-end complexity
-    status: open
-    scope: bias_variance_training_and_evaluation_work
+    status: conditional
+    scope: T16_11_closes_joint_grid_log_work_continuum_relative_bias_rate_open
   T15-9:
     title: operator-assisted certification
-    status: conditional
-    scope: frozen_corrected_or_fallback_proposal
+    status: proved
+    scope: T16_10_predictor_independent_exactness_and_local_Newton_bound_under_explicit_basin_assumptions
   T16-1:
     title: fixed-grid conditional small-noise probability exponent
     status: proved
@@ -74,6 +74,14 @@ theorems:
     title: joint mesh-noise logarithmic efficiency
     status: proved
     scope: every_diverging_BLP_grid_schedule_under_T16_4_through_T16_8_assumptions
+  T16-10:
+    title: operator correction exactness and local quadratic bound
+    status: proved
+    scope: frozen_prediction_exact_defensive_fallback_and_explicit_local_Newton_assumptions
+  T16-11:
+    title: joint-grid logarithmic sampling and work complexity
+    status: proved
+    scope: stochastic_relative_RMSE_for_joint_grid_target_with_subexponential_setup_and_path_work
 gates:
   G5:
     pass: true
@@ -93,6 +101,12 @@ gates:
   G6_joint_mesh_noise:
     pass: true
     reason: T16-9 proves the joint probability and safety-mixture second-moment exponents
+  G7_operator_certification:
+    pass: true
+    reason: T16-10 proves predictor-independent exactness and a scoped local correction bound
+  G8_full_continuum_complexity:
+    pass: false
+    reason: T16-11 closes log-scale joint-grid work but a quantitative continuous relative-bias rate is unavailable
 claim_locks:
   prohibited:
     - unqualified_logarithmic_efficiency_outside_T16_5_scope
@@ -100,6 +114,8 @@ claim_locks:
     - asymptotically_optimal
     - continuous_time_exact_simulation
     - simultaneous_mesh_noise_complexity_rate
+    - uniform_neural_operator_generalization
+    - continuous_target_relative_RMSE_complexity
   allowed:
     - exact_finite_grid_likelihood
     - unbiased_ordinary_importance_sampling
@@ -112,3 +128,5 @@ claim_locks:
     - qualitative_BLP_probability_and_rate_action_convergence
     - trace_norm_mesh_convergence_of_the_T16_8_safety_operator
     - joint_mesh_noise_logarithmic_efficiency_under_T16_9_scope
+    - operator_assisted_exactness_and_local_Newton_bound_under_T16_10_scope
+    - joint_grid_subexponential_sampling_work_under_T16_11_scope
