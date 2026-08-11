@@ -6,7 +6,7 @@
     },
     "claim_contract": {
       "path": "configs/g11_v15/claim_contract_v1.yaml",
-      "sha256": "61f1b09672682627adbaf309a75f8d1fedb1552141bfaef1eaf8b1db898b62cf"
+      "sha256": "c33b3699e4b15947ec35ad45764f2f19e930f363bcef74412db85de4b5dfa632"
     },
     "novelty_ledger": {
       "path": "docs/literature/G11_V15_PRIMARY_SOURCE_LEDGER.yaml",
@@ -23,7 +23,7 @@
   },
   "config_binding": {
     "path": "configs/g11_v15/v16_final_policy_audit_v1.yaml",
-    "sha256": "507425c5ede2e2ef69451d6a6a1da5cd4f0a5fa3246027c2d3eb1c796129c3e9"
+    "sha256": "0601a6491d6f4d14a8a54bd7fbf85172c52685a5216d4950bcbea1b2afa939b6"
   },
   "correctness_fallback_cells": {
     "eta200-rho090-k1-ood": {
@@ -52,7 +52,7 @@
   "passed": true,
   "schema": "npi.g11.v16-final-policy-audit.v1",
   "source_provenance": {
-    "git_commit": "65e8827b49b5bc93b38855c7c76dff0a330f5946",
+    "git_commit": "69d4d38849c64e3c29b42ca1b165604c2c8c526d",
     "source_changes_before_run": [],
     "source_dirty_before_run": false
   },
