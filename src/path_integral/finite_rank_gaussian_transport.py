@@ -13,6 +13,7 @@ from dataclasses import dataclass
 
 import torch
 
+from src.path_integral.cameron_martin_basis import build_blp_cameron_martin_basis
 from src.path_integral.cameron_martin_modes import RBergomiModeSearchResult
 from src.path_integral.volterra_action import (
     RBergomiConditionalAction,
@@ -129,6 +130,46 @@ def build_isotropic_small_noise_safety_component(
     )
 
 
+def build_trace_class_small_noise_safety_component(
+    directions: torch.Tensor,
+    covariance_eigenvalues: torch.Tensor,
+    *,
+    epsilon: float,
+) -> FiniteRankGaussianComponent:
+    """Return ``N(0, I + C/epsilon)`` for a positive finite-grid spectrum.
+
+    A summable positive limiting spectrum is the discretization-compatible
+    alternative to inflating every continuum coordinate equally.  Positivity in
+    every frozen grid direction retains the fixed-dimensional logarithmic safety
+    argument, while summability is the appropriate starting point for Gaussian
+    measure equivalence in the mesh limit.
+    """
+
+    if directions.ndim != 2 or directions.shape[0] != directions.shape[1]:
+        raise ValueError("trace-class safety directions must be a square matrix")
+    dimension = directions.shape[0]
+    if covariance_eigenvalues.shape != (dimension,):
+        raise ValueError("trace-class safety spectrum has the wrong shape")
+    if directions.device.type != "cpu" or directions.dtype != torch.float64:
+        raise ValueError("trace-class safety directions must be CPU float64")
+    if (
+        covariance_eigenvalues.device.type != "cpu"
+        or covariance_eigenvalues.dtype != torch.float64
+    ):
+        raise ValueError("trace-class safety spectrum must be CPU float64")
+    if not torch.isfinite(covariance_eigenvalues).all() or torch.any(
+        covariance_eigenvalues <= 0.0
+    ):
+        raise ValueError("trace-class safety spectrum must be finite and positive")
+    if not math.isfinite(epsilon) or not 0.0 < epsilon <= 1.0:
+        raise ValueError("epsilon must lie in (0, 1]")
+    return FiniteRankGaussianComponent(
+        mean=torch.zeros(dimension, dtype=torch.float64),
+        directions=directions,
+        variance_eigenvalues=1.0 + covariance_eigenvalues / epsilon,
+    )
+
+
 @dataclass(frozen=True)
 class DefensiveFiniteRankGaussianMixture:
     components: tuple[FiniteRankGaussianComponent, ...]
@@ -228,6 +269,8 @@ class FiniteRankMixtureSample:
 class CurvatureTransportConfig:
     defensive_mass: float = 0.1
     asymptotic_safety_mass: float = 0.0
+    safety_spectrum_decay: float | None = None
+    safety_spectrum_scale: float = 1.0
     minimum_variance: float = 0.05
     maximum_variance: float = 20.0
     positive_curvature_tolerance: float = 1e-7
@@ -243,6 +286,13 @@ class CurvatureTransportConfig:
             raise ValueError(
                 "asymptotic safety mass must be nonnegative and leave positive shifted mass"
             )
+        if self.safety_spectrum_decay is not None and (
+            not math.isfinite(self.safety_spectrum_decay)
+            or self.safety_spectrum_decay <= 1.0
+        ):
+            raise ValueError("safety spectrum decay must exceed one")
+        if not math.isfinite(self.safety_spectrum_scale) or self.safety_spectrum_scale <= 0.0:
+            raise ValueError("safety spectrum scale must be finite and positive")
         if not 0.0 < self.minimum_variance <= self.maximum_variance:
             raise ValueError("variance clipping bounds are invalid")
         if not math.isfinite(self.maximum_variance):
@@ -305,10 +355,28 @@ def build_curvature_transport(
         # efficiency.  This full-rank construction is deliberately not claimed
         # to define an equivalent change of Wiener measure in infinite dimension.
         dimension = action.basis.dimension
-        broad = build_isotropic_small_noise_safety_component(
-            dimension,
-            epsilon=action.epsilon,
-        )
+        if config.safety_spectrum_decay is None:
+            broad = build_isotropic_small_noise_safety_component(
+                dimension,
+                epsilon=action.epsilon,
+            )
+        else:
+            full_basis = build_blp_cameron_martin_basis(
+                steps=action.basis.steps,
+                drivers=action.basis.drivers,
+            )
+            frequencies = torch.arange(action.basis.steps, dtype=torch.float64).repeat(
+                action.basis.drivers
+            )
+            spectrum = config.safety_spectrum_scale / torch.pow(
+                1.0 + frequencies,
+                config.safety_spectrum_decay,
+            )
+            broad = build_trace_class_small_noise_safety_component(
+                full_basis.matrix,
+                spectrum,
+                epsilon=action.epsilon,
+            )
         components = (natural, broad, *shifted)
         fixed_weights.append(config.asymptotic_safety_mass)
     else:

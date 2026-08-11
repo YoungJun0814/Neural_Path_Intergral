@@ -16,8 +16,9 @@ allowed_current_claims:
   - v14_frozen_three_cell_empirical_efficiency
   - fixed_grid_conditional_small_noise_probability_exponent
   - fixed_grid_logarithmic_efficiency_with_positive_isotropic_safety_mass
+  - continuous_small_noise_probability_exponent_under_T16_4_scope
 candidate_v15_claims_locked:
-  - continuous_time_conditional_small_noise_action_contraction
+  - continuous_time_proposal_second_moment_efficiency
   - mesh_uniform_multimode_rare_event_efficiency
   - mesh_consistent_cameron_martin_transport
   - operator_assisted_certified_amortization

@@ -37,6 +37,9 @@ decisive_sources:
   - id: L16
     doi: 10.1007/s10955-020-02589-x
     overlap: general_joint_ldp_importance_sampling_efficiency_criteria
+  - id: L17
+    doi: 10.1137/1107006
+    overlap: gaussian_process_measure_equivalence_and_density
 candidate_claim:
   short_name: conditional_multimode_cm_transport
   required_features:

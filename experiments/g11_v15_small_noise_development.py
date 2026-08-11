@@ -66,6 +66,12 @@ def main() -> None:
                 asymptotic_safety_mass=float(
                     config.get("asymptotic_safety_mass", 0.0)
                 ),
+                safety_spectrum_decay=(
+                    float(config["safety_spectrum_decay"])
+                    if "safety_spectrum_decay" in config
+                    else None
+                ),
+                safety_spectrum_scale=float(config.get("safety_spectrum_scale", 1.0)),
             ),
         )
         candidate = evaluate_rbergomi_cm_transport(
@@ -131,6 +137,11 @@ def main() -> None:
                 "mode_count": len(trained.modes.modes),
                 "asymptotic_safety_mass": float(
                     config.get("asymptotic_safety_mass", 0.0)
+                ),
+                "safety_spectrum_decay": (
+                    float(config["safety_spectrum_decay"])
+                    if "safety_spectrum_decay" in config
+                    else None
                 ),
                 "proposal_sha256": trained.proposal_sha256,
                 "maximum_likelihood_bound_violation": (

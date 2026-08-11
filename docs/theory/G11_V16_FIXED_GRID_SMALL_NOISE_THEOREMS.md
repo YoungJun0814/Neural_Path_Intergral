@@ -93,7 +93,7 @@ integral continuity theorem.
 
 ## 4. T16-2: mode-omission-safe proposal
 
-Let `Q_epsilon^wide` be the exactly normalized proposal
+The simplest exactly normalized proposal is
 
 ```text
 Z ~ Normal(0, I_(2N)/epsilon).
@@ -133,6 +133,19 @@ This theorem does **not** assert bounded relative error. Its pre-asymptotic fact
 be severe in high dimension; the component is an asymptotic safety net, not the main
 practical proposal.
 
+The same exponent holds for every fixed positive-definite matrix `C_N` under
+
+```text
+Z ~ Normal(0, I + C_N/epsilon).
+```
+
+Diagonalizing `C_N` replaces each quadratic coefficient by
+`lambda_j/(epsilon+lambda_j)`, which tends to one in every one of the fixed `2N`
+directions, while `epsilon log det(I+C_N/epsilon)` tends to zero. This extension is
+important for the mesh route: choosing a positive summable limiting spectrum is
+compatible with equivalence of Gaussian measures, whereas uniform inflation of every
+infinite-dimensional coordinate is not.
+
 ## 5. T16-3: inheritance by the practical mixture
 
 Let the implemented proposal be any exact mixture
@@ -160,9 +173,11 @@ The natural defensive mass remains useful for the pathwise likelihood bound
 
 ## 6. Infinite-dimensional boundary
 
-The covariance `I/epsilon` in every coordinate is not an equivalent covariance
-change on an infinite-dimensional Wiener space. The fixed-grid proof therefore
-cannot pass to `N -> infinity` by assertion. A continuous-time theorem needs either:
+The covariance `I/epsilon` in every coordinate is not an equivalent covariance change
+on an infinite-dimensional Wiener space. V16 therefore also implements the finite-grid
+restriction of `I+C/epsilon`, where `C` has a strictly positive summable spectrum.
+This is an equivalence-compatible candidate, but the fixed-grid proof still cannot
+pass to `N -> infinity` by assertion. A continuous-time theorem needs either:
 
 1. an equivalence-preserving finite-rank safety family plus a proof that its ranks
    exhaust all rate-minimizing directions uniformly; or
@@ -177,7 +192,9 @@ T15-6 or T15-7.
 
 - `epsilon=1` must remain pathwise identical to V14.
 - The Wick compensator must be multiplied by `epsilon`.
-- The safety covariance must be exactly `I/epsilon` in all `2N` local coordinates.
+- The safety covariance must be either exactly `I/epsilon`, or `I+C_N/epsilon` with
+  every eigenvalue of `C_N` strictly positive. A mesh claim additionally requires a
+  summable limiting spectrum.
 - Safety mass must be fixed and positive on the asymptotic sequence.
 - The balance-mixture density, not the sampled-component density, must be used.
 - Reduced-rank action minima must be labelled Galerkin upper bounds.
@@ -191,4 +208,3 @@ kernel and volatility assumptions; it is not used as a substitute for matching t
 present discretization. Guyader--Touchette gives a general joint-LDP framework for
 testing IS efficiency; the explicit broad-component calculation above supplies the
 model-specific second-moment exponent required here.
-

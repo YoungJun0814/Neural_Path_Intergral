@@ -16,6 +16,7 @@ from src.path_integral.finite_rank_gaussian_transport import (
     FiniteRankGaussianComponent,
     build_curvature_transport,
     build_isotropic_small_noise_safety_component,
+    build_trace_class_small_noise_safety_component,
 )
 from src.path_integral.path_functionals import TerminalThresholdTask
 from src.path_integral.volterra_action import RBergomiConditionalAction
@@ -175,3 +176,80 @@ def test_curvature_builder_can_add_full_rank_asymptotic_safety_component() -> No
     assert float(transport.weights[1]) == pytest.approx(0.05)
     assert transport.components[1].rank == problem.local_dimension
     assert torch.all(transport.components[1].variance_eigenvalues == 4.0)
+
+
+def test_trace_class_safety_component_matches_dense_covariance() -> None:
+    angle = 0.41
+    directions = torch.tensor(
+        [[math.cos(angle), -math.sin(angle)], [math.sin(angle), math.cos(angle)]],
+        dtype=torch.float64,
+    )
+    spectrum = torch.tensor([1.0, 0.25], dtype=torch.float64)
+    epsilon = 0.2
+    component = build_trace_class_small_noise_safety_component(
+        directions,
+        spectrum,
+        epsilon=epsilon,
+    )
+    covariance = torch.eye(2, dtype=torch.float64) + directions @ (
+        torch.diag(spectrum / epsilon) @ directions.T
+    )
+    samples = torch.tensor([[0.0, 0.0], [1.0, -0.5], [-2.0, 0.3]], dtype=torch.float64)
+    proposal = torch.distributions.MultivariateNormal(
+        torch.zeros(2, dtype=torch.float64),
+        covariance_matrix=covariance,
+    )
+    reference = torch.distributions.MultivariateNormal(
+        torch.zeros(2, dtype=torch.float64),
+        covariance_matrix=torch.eye(2, dtype=torch.float64),
+    )
+    torch.testing.assert_close(
+        component.log_q_over_p(samples),
+        proposal.log_prob(samples) - reference.log_prob(samples),
+        rtol=2e-13,
+        atol=2e-13,
+    )
+
+
+def test_curvature_builder_trace_class_spectrum_is_positive_and_summable_by_design() -> None:
+    problem = RBergomiBaselineProblem(
+        task_id="v16-trace-safety",
+        task=TerminalThresholdTask(level=60.0),
+        spot=100.0,
+        maturity=1.0,
+        steps=4,
+        hurst=0.12,
+        eta=1.5,
+        xi=0.04,
+        rho=-0.7,
+    )
+    basis = build_blp_cameron_martin_basis(steps=problem.steps, modes_per_driver=2)
+    action = RBergomiConditionalAction(problem=problem, basis=basis, epsilon=0.25)
+    modes = find_rbergomi_conditional_modes(
+        action,
+        config=ModeSearchConfig(
+            methods=("lbfgs",),
+            random_starts=1,
+            random_seed=81,
+            start_scale=1.0,
+            solver=ActionSolverConfig(maximum_iterations=100, gradient_tolerance=1e-6),
+        ),
+    )
+    transport = build_curvature_transport(
+        action,
+        modes,
+        config=CurvatureTransportConfig(
+            defensive_mass=0.15,
+            asymptotic_safety_mass=0.05,
+            safety_spectrum_decay=2.0,
+            safety_spectrum_scale=0.8,
+        ),
+    )
+    safety = transport.components[1]
+    covariance_spectrum = action.epsilon * (safety.variance_eigenvalues - 1.0)
+    expected = 0.8 / torch.tensor(
+        [1.0, 2.0, 3.0, 4.0] * 2,
+        dtype=torch.float64,
+    ).square()
+    torch.testing.assert_close(covariance_spectrum, expected, rtol=1e-13, atol=1e-13)
+    assert bool((covariance_spectrum > 0.0).all())

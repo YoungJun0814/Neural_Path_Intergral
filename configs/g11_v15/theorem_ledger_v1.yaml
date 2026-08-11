@@ -50,6 +50,14 @@ theorems:
     title: fixed-grid mixture efficiency inheritance
     status: proved
     scope: exact_mixture_dominating_positive_broad_component
+  T16-4:
+    title: continuous Wick-corrected Volterra terminal probability exponent
+    status: proved
+    scope: constant_xi_definition3_volterra_kernel_fixed_terminal_left_tail
+  T16-5:
+    title: trace-class continuous safety transport
+    status: conditional
+    scope: exact_equivalence_and_density_proved_uniform_second_moment_upper_bound_open
 gates:
   G5:
     pass: false
@@ -57,6 +65,9 @@ gates:
   G5_fixed_grid:
     pass: true
     reason: T16-1 through T16-3 close the fixed-grid exponent and second-moment theorem
+  G5_continuous_probability:
+    pass: true
+    reason: T16-4 closes the continuous probability exponent but not proposal efficiency
 claim_locks:
   prohibited:
     - logarithmically_efficient
@@ -70,3 +81,5 @@ claim_locks:
     - conditional_Rao_Blackwell_variance_ordering
     - defensive_likelihood_bound
     - fixed_grid_logarithmic_efficiency_with_positive_isotropic_safety_mass
+    - continuous_small_noise_probability_exponent_under_T16_4_scope
+    - exact_equivalent_trace_class_gaussian_safety_transport

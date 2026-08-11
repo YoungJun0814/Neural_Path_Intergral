@@ -143,8 +143,12 @@ conditions for financial applications. V15 does not infer fixed-strike small-tim
 efficiency from that result.
 
 Any future small-time theorem must independently align event scaling, topology, rate
-function and martingale assumptions. Until then, only the small-noise family above is
-the T15-5 track.
+function and martingale assumptions. T16-4 now matches the declared small-noise family
+to Gulisashvili's Theorem 13 by setting that paper's scaling exponent (not the roughness
+parameter) to `1/2` and proving exponential equivalence of the deterministic Wick
+correction. This authorizes the constant-`xi`, fixed-terminal-left-tail probability
+exponent only; it does not authorize a small-time or continuous-proposal-efficiency
+claim.
 
 ## 6. Finite-grid implementation law
 
