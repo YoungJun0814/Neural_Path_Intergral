@@ -285,6 +285,18 @@ def main() -> None:
             contribution_square_sum - contribution_sum**2 / total_count
         ) / (total_count - 1)
         standard_error = math.sqrt(variance / total_count)
+        cluster_estimates = torch.tensor(
+            [item["estimate"] for item in cluster_records],
+            dtype=torch.float64,
+        )
+        between_cluster_standard_error = math.sqrt(
+            float(torch.var(cluster_estimates, unbiased=True)) / clusters
+        )
+        robust_standard_error = max(standard_error, between_cluster_standard_error)
+        cluster_to_pooled_se_ratio = between_cluster_standard_error / max(
+            standard_error,
+            float.fromhex("0x1.0p-1022"),
+        )
         likelihood_mean = likelihood_sum / total_count
         likelihood_variance = (
             likelihood_square_sum - likelihood_sum**2 / total_count
@@ -293,7 +305,7 @@ def main() -> None:
             likelihood_variance / total_count
         )
         accuracy_z = abs(estimate - float(external["estimate"])) / math.sqrt(
-            standard_error**2 + float(external["standard_error"]) ** 2
+            robust_standard_error**2 + float(external["standard_error"]) ** 2
         )
         total_work = (
             training_work
@@ -307,13 +319,22 @@ def main() -> None:
         variant_failures = []
         if accuracy_z > float(gates["maximum_accuracy_z"]):
             variant_failures.append("external accuracy")
-        if max(item["external_accuracy_z"] for item in cluster_records) > float(
-            gates["maximum_cluster_accuracy_z"]
-        ):
+        if "maximum_cluster_accuracy_z" in gates and max(
+            item["external_accuracy_z"] for item in cluster_records
+        ) > float(gates["maximum_cluster_accuracy_z"]):
             variant_failures.append("cluster accuracy")
-        if standard_error / abs(estimate) > float(
-            gates["maximum_relative_standard_error"]
+        if "maximum_cluster_to_pooled_se_ratio" in gates and (
+            cluster_to_pooled_se_ratio
+            > float(gates["maximum_cluster_to_pooled_se_ratio"])
         ):
+            variant_failures.append("cluster/pooled SE consistency")
+        maximum_relative_se = float(
+            gates.get(
+                "maximum_robust_relative_standard_error",
+                gates.get("maximum_relative_standard_error", math.inf),
+            )
+        )
+        if robust_standard_error / abs(estimate) > maximum_relative_se:
             variant_failures.append("relative standard error")
         if likelihood_z > float(gates["maximum_likelihood_normalization_z"]):
             variant_failures.append("likelihood normalization")
@@ -332,7 +353,12 @@ def main() -> None:
                 "estimate": estimate,
                 "sample_variance": variance,
                 "standard_error": standard_error,
+                "between_cluster_standard_error": between_cluster_standard_error,
+                "robust_standard_error": robust_standard_error,
+                "cluster_to_pooled_se_ratio": cluster_to_pooled_se_ratio,
                 "relative_standard_error": standard_error / abs(estimate),
+                "robust_relative_standard_error": robust_standard_error
+                / abs(estimate),
                 "external_reference_estimate": float(external["estimate"]),
                 "external_reference_standard_error": float(external["standard_error"]),
                 "external_accuracy_z": accuracy_z,
@@ -366,11 +392,10 @@ def main() -> None:
     for target in {str(item["reference_cell"]) for item in config["variants"]}:
         if target not in passing_by_cell:
             failures.append(f"{target}: no variant passed all gates")
-    result_schema = (
-        "npi.g11.v16-deep-tail-transport-development.v2"
-        if str(config["schema"]).endswith(".v2")
-        else "npi.g11.v16-deep-tail-transport-development.v1"
-    )
+    config_schema = str(config["schema"])
+    version = config_schema.rsplit(".v", maxsplit=1)[-1]
+    run_class = "confirmation" if "confirmation" in config_schema else "development"
+    result_schema = f"npi.g11.v16-deep-tail-transport-{run_class}.v{version}"
     payload = {
         "schema": result_schema,
         "config_binding": {
@@ -384,10 +409,10 @@ def main() -> None:
         "passing_variants_by_cell": passing_by_cell,
         "variants": records,
         "claim_boundary": {
-            "development_selection_only": True,
+            "development_selection_only": run_class == "development",
             "independent_evaluation_clusters": True,
             "proposal_frozen_across_clusters": True,
-            "fresh_confirmation_required_after_selection": True,
+            "fresh_confirmation_required_after_selection": run_class == "development",
         },
     }
     output = ROOT / str(config["output_path"])
