@@ -14,17 +14,30 @@ import yaml
 from src.path_integral.baselines.rbergomi_common import RBergomiBaselineProblem
 from src.path_integral.blp_cameron_martin_embedding import (
     build_mesh_compatible_blp_hybrid_basis,
+    build_mesh_compatible_blp_trace_safety_geometry,
 )
+from src.path_integral.cameron_martin_basis import CameronMartinBasis
 from src.path_integral.cameron_martin_modes import ActionSolverConfig, ModeSearchConfig
 from src.path_integral.conditional_transport_adaptation import (
     ConditionalTransportAdaptationConfig,
+    adapt_conditional_transport,
 )
-from src.path_integral.finite_rank_gaussian_transport import CurvatureTransportConfig
+from src.path_integral.finite_rank_gaussian_transport import (
+    CurvatureTransportConfig,
+    DefensiveFiniteRankGaussianMixture,
+    FiniteRankGaussianComponent,
+    build_trace_class_small_noise_safety_component,
+)
 from src.path_integral.path_functionals import TerminalThresholdTask
 from src.path_integral.rbergomi_cm_transport import (
     evaluate_rbergomi_cm_transport,
     train_rbergomi_cm_transport,
 )
+from src.path_integral.rbergomi_local_volterra_transport import (
+    LocalVolterraTransportTrainingConfig,
+    train_local_volterra_transport,
+)
+from src.path_integral.residual_smc import AdaptiveResidualSMCConfig
 from src.path_integral.v15_result_audit import file_sha256, git_source_provenance
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,6 +55,90 @@ def _method_wnv(method: dict[str, Any]) -> float:
         float(method["sample_variance"])
         * float(method["total_work_at_primary_query_count"])
         / int(method["inferential_units"])
+    )
+
+
+def _v14_seeded_transport(
+    problem: RBergomiBaselineProblem,
+    basis: CameronMartinBasis,
+    variant: dict[str, Any],
+    *,
+    seed: int,
+    adaptation_config: ConditionalTransportAdaptationConfig,
+) -> tuple[DefensiveFiniteRankGaussianMixture, float, tuple[float, ...], tuple[float, ...]]:
+    initializer = variant["v14_initializer"]
+    safety_mass = float(variant["safety_mass"])
+    local_defensive_mass = float(variant["defensive_mass"]) / (1.0 - safety_mass)
+    if local_defensive_mass >= 1.0:
+        raise ValueError("V14-seeded defensive and safety masses leave no shifted mass")
+    local = train_local_volterra_transport(
+        problem,
+        training_seed=seed,
+        config=LocalVolterraTransportTrainingConfig(
+            target_powers=tuple(float(value) for value in initializer["target_powers"]),
+            shifted_weights=tuple(
+                float(value) for value in initializer["shifted_weights"]
+            ),
+            defensive_weight=local_defensive_mass,
+            smc=AdaptiveResidualSMCConfig(
+                particles=int(initializer["particles"]),
+                target_ess_fraction=0.7,
+                pcn_scale=0.25,
+                pcn_sweeps_per_stage=int(initializer["pcn_sweeps"]),
+                maximum_stages=int(initializer["maximum_stages"]),
+            ),
+        ),
+    )
+    components = [
+        FiniteRankGaussianComponent(
+            mean=torch.tensor(mean, dtype=torch.float64),
+            directions=torch.empty((problem.local_dimension, 0), dtype=torch.float64),
+            variance_eigenvalues=torch.empty(0, dtype=torch.float64),
+        )
+        for mean in local.proposal.component_means
+    ]
+    directions, spectrum = build_mesh_compatible_blp_trace_safety_geometry(
+        steps=problem.steps,
+        maturity=problem.maturity,
+        hurst=problem.hurst,
+        spectrum_decay=2.0,
+        spectrum_scale=4.0,
+        complement_decay=2.0,
+    )
+    safety = build_trace_class_small_noise_safety_component(
+        directions,
+        spectrum,
+        epsilon=1.0,
+    )
+    original_weights = torch.tensor(local.proposal.component_weights, dtype=torch.float64)
+    weights = torch.cat(
+        (
+            (1.0 - safety_mass) * original_weights[:1],
+            torch.tensor([safety_mass], dtype=torch.float64),
+            (1.0 - safety_mass) * original_weights[1:],
+        )
+    )
+    initial = DefensiveFiniteRankGaussianMixture(
+        components=(components[0], safety, *components[1:]),
+        weights=weights,
+    )
+    adapted = adapt_conditional_transport(
+        problem,
+        basis,
+        initial,
+        epsilon=1.0,
+        seed=seed + 1,
+        config=adaptation_config,
+    )
+    training_work = (
+        local.proposal.training_cost.algorithmic_work_units
+        + adapted.training_cost.algorithmic_work_units
+    )
+    return (
+        adapted.proposal,
+        training_work,
+        adapted.effective_sample_sizes,
+        adapted.tempering_powers,
     )
 
 
@@ -85,38 +182,60 @@ def main() -> None:
         )
         adaptation = variant["adaptation"]
         seed = int(variant["seed"])
-        trained = train_rbergomi_cm_transport(
-            problem,
-            basis=basis,
-            adaptation_config=ConditionalTransportAdaptationConfig(
-                iterations=int(adaptation["iterations"]),
-                samples_per_iteration=int(adaptation["samples"]),
-                smoothing=0.7,
-                minimum_ess_fraction=float(adaptation["minimum_ess_fraction"]),
-                minimum_variance=0.05,
-                maximum_variance=20.0,
-                adapt_covariance=bool(adaptation["adapt_covariance"]),
-                final_components=int(adaptation["final_components"]),
-            ),
-            adaptation_seed=seed + 1,
-            mode_search=ModeSearchConfig(
-                methods=("lbfgs", "trust-ncg"),
-                random_starts=int(solver_values["random_starts"]),
-                random_seed=seed,
-                start_scale=float(solver_values["start_scale"]),
-                solver=ActionSolverConfig(
-                    maximum_iterations=int(solver_values["maximum_iterations"]),
-                    gradient_tolerance=float(solver_values["gradient_tolerance"]),
-                ),
-            ),
-            transport_config=CurvatureTransportConfig(
-                defensive_mass=float(variant["defensive_mass"]),
-                asymptotic_safety_mass=float(variant["safety_mass"]),
-                safety_spectrum_decay=2.0,
-                safety_spectrum_scale=4.0,
-                safety_complement_decay=2.0,
-            ),
+        adaptation_config = ConditionalTransportAdaptationConfig(
+            iterations=int(adaptation["iterations"]),
+            samples_per_iteration=int(adaptation["samples"]),
+            smoothing=0.7,
+            minimum_ess_fraction=float(adaptation["minimum_ess_fraction"]),
+            minimum_variance=0.05,
+            maximum_variance=20.0,
+            adapt_covariance=bool(adaptation["adapt_covariance"]),
+            final_components=int(adaptation["final_components"]),
         )
+        initializer = str(variant.get("initializer", "cm_action"))
+        if initializer == "cm_action":
+            trained = train_rbergomi_cm_transport(
+                problem,
+                basis=basis,
+                adaptation_config=adaptation_config,
+                adaptation_seed=seed + 1,
+                mode_search=ModeSearchConfig(
+                    methods=("lbfgs", "trust-ncg"),
+                    random_starts=int(solver_values["random_starts"]),
+                    random_seed=seed,
+                    start_scale=float(solver_values["start_scale"]),
+                    solver=ActionSolverConfig(
+                        maximum_iterations=int(solver_values["maximum_iterations"]),
+                        gradient_tolerance=float(solver_values["gradient_tolerance"]),
+                    ),
+                ),
+                transport_config=CurvatureTransportConfig(
+                    defensive_mass=float(variant["defensive_mass"]),
+                    asymptotic_safety_mass=float(variant["safety_mass"]),
+                    safety_spectrum_decay=2.0,
+                    safety_spectrum_scale=4.0,
+                    safety_complement_decay=2.0,
+                ),
+            )
+            proposal = trained.proposal
+            training_work = trained.training_cost.algorithmic_work_units
+            effective_sample_sizes = trained.adaptation_effective_sample_sizes
+            tempering_powers = trained.adaptation_tempering_powers
+        elif initializer == "v14_local":
+            (
+                proposal,
+                training_work,
+                effective_sample_sizes,
+                tempering_powers,
+            ) = _v14_seeded_transport(
+                problem,
+                basis,
+                variant,
+                seed=seed,
+                adaptation_config=adaptation_config,
+            )
+        else:
+            raise ValueError(f"unsupported initializer: {initializer}")
         total_count = 0
         contribution_sum = 0.0
         contribution_square_sum = 0.0
@@ -125,10 +244,11 @@ def main() -> None:
         evaluation_work = 0.0
         maximum_bound_violation = 0.0
         cluster_records = []
-        for cluster in range(int(evaluation["clusters"])):
+        clusters = int(variant.get("clusters", evaluation["clusters"]))
+        for cluster in range(clusters):
             evaluated = evaluate_rbergomi_cm_transport(
                 problem,
-                trained.proposal,
+                proposal,
                 sample_count=int(evaluation["samples_per_cluster"]),
                 path_seed=seed + 1_000_003 + 1009 * cluster,
                 label_seed=seed + 2_000_003 + 1009 * cluster,
@@ -176,7 +296,7 @@ def main() -> None:
             standard_error**2 + float(external["standard_error"]) ** 2
         )
         total_work = (
-            trained.training_cost.algorithmic_work_units
+            training_work
             + int(evaluation["primary_query_count"]) * evaluation_work
         )
         candidate_wnv = variance * total_work / total_count
@@ -222,16 +342,17 @@ def main() -> None:
                 "likelihood_normalization_mean": likelihood_mean,
                 "likelihood_normalization_z": likelihood_z,
                 "maximum_likelihood_bound_violation": maximum_bound_violation,
-                "training_work": trained.training_cost.algorithmic_work_units,
+                "initializer": initializer,
+                "training_work": training_work,
                 "evaluation_work": evaluation_work,
                 "total_work_at_primary_query_count": total_work,
                 "work_normalized_variance": candidate_wnv,
                 "v14_over_candidate_work_ratio": v14_ratio,
                 "adaptation_effective_sample_sizes": list(
-                    trained.adaptation_effective_sample_sizes
+                    effective_sample_sizes
                 ),
                 "adaptation_tempering_powers": list(
-                    trained.adaptation_tempering_powers
+                    tempering_powers
                 ),
                 "clusters": cluster_records,
             }
@@ -245,8 +366,13 @@ def main() -> None:
     for target in {str(item["reference_cell"]) for item in config["variants"]}:
         if target not in passing_by_cell:
             failures.append(f"{target}: no variant passed all gates")
+    result_schema = (
+        "npi.g11.v16-deep-tail-transport-development.v2"
+        if str(config["schema"]).endswith(".v2")
+        else "npi.g11.v16-deep-tail-transport-development.v1"
+    )
     payload = {
-        "schema": "npi.g11.v16-deep-tail-transport-development.v1",
+        "schema": result_schema,
         "config_binding": {
             "path": config_path.relative_to(ROOT).as_posix(),
             "sha256": file_sha256(config_path),
