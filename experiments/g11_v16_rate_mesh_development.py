@@ -13,6 +13,7 @@ import yaml
 from src.path_integral.baselines.rbergomi_common import RBergomiBaselineProblem
 from src.path_integral.blp_cameron_martin_embedding import (
     build_mesh_compatible_blp_drift_basis,
+    build_mesh_compatible_blp_hybrid_basis,
 )
 from src.path_integral.cameron_martin_basis import (
     CameronMartinBasis,
@@ -27,9 +28,11 @@ from src.path_integral.cameron_martin_modes import (
 from src.path_integral.finite_grid_small_noise import RBergomiFiniteGridRateAction
 from src.path_integral.path_functionals import TerminalThresholdTask
 from src.path_integral.rate_mesh_audit import (
+    omitted_hybrid_drift_gradient_norm,
     omitted_mode_gradient_norm,
     omitted_tail_gradient_norm,
     pad_channel_coefficients,
+    pad_hybrid_coefficients,
     pad_nested_coefficients,
 )
 from src.path_integral.v15_result_audit import file_sha256, git_source_provenance
@@ -79,12 +82,22 @@ def _basis(
             hurst=problem.hurst,
             modes=modes,
         )
+    if kind == "mesh_compatible_hybrid":
+        return build_mesh_compatible_blp_hybrid_basis(
+            steps=problem.steps,
+            maturity=problem.maturity,
+            hurst=problem.hurst,
+            drift_modes=modes,
+            bridge_modes=int(config["bridge_modes"]),
+        )
     if kind == "channel_dct":
         return build_blp_cameron_martin_basis(
             steps=problem.steps,
             modes_per_driver=modes,
         )
-    raise ValueError("basis_kind must be channel_dct or mesh_compatible_drift")
+    raise ValueError(
+        "basis_kind must be channel_dct, mesh_compatible_drift, or mesh_compatible_hybrid"
+    )
 
 
 def _mode_record(action: RBergomiFiniteGridRateAction, mode: ActionMode) -> dict:
@@ -115,7 +128,11 @@ def main() -> None:
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     root_seed = int(config["seed"])
     basis_kind = str(config.get("basis_kind", "channel_dct"))
-    continuum_basis = basis_kind == "mesh_compatible_drift"
+    continuum_basis = basis_kind in {"mesh_compatible_drift", "mesh_compatible_hybrid"}
+    hybrid_basis = basis_kind == "mesh_compatible_hybrid"
+    bridge_modes = int(config.get("bridge_modes", 0))
+    if hybrid_basis and bridge_modes < 1:
+        raise ValueError("hybrid rate audit requires at least one bridge mode")
     fixed_modes = int(
         config["fixed_modes"] if continuum_basis else config["fixed_modes_per_channel"]
     )
@@ -142,6 +159,10 @@ def main() -> None:
             "basis_modes": fixed_modes,
             **_mode_record(action, best),
         }
+        if hybrid_basis:
+            record["bridge_coefficient_norm"] = float(
+                torch.linalg.vector_norm(best.coefficients[-bridge_modes:])
+            )
         if previous is not None:
             record["coefficient_change_from_previous_mesh"] = float(
                 torch.linalg.vector_norm(best.coefficients - previous)
@@ -164,7 +185,14 @@ def main() -> None:
         action = RBergomiFiniteGridRateAction(problem, basis)
         supplied = ()
         if previous_coefficients is not None and previous_modes is not None:
-            if continuum_basis:
+            if hybrid_basis:
+                padded_start = pad_hybrid_coefficients(
+                    previous_coefficients,
+                    old_drift_modes=previous_modes,
+                    new_drift_modes=basis_modes,
+                    bridge_modes=bridge_modes,
+                )
+            elif continuum_basis:
                 padded_start = pad_nested_coefficients(
                     previous_coefficients,
                     new_modes=basis_modes,
@@ -190,8 +218,19 @@ def main() -> None:
             "basis_modes": basis_modes,
             **_mode_record(action, best),
         }
+        if hybrid_basis:
+            record["bridge_coefficient_norm"] = float(
+                torch.linalg.vector_norm(best.coefficients[-bridge_modes:])
+            )
         if previous_coefficients is not None and previous_modes is not None:
-            if continuum_basis:
+            if hybrid_basis:
+                padded = pad_hybrid_coefficients(
+                    previous_coefficients,
+                    old_drift_modes=previous_modes,
+                    new_drift_modes=basis_modes,
+                    bridge_modes=bridge_modes,
+                )
+            elif continuum_basis:
                 padded = pad_nested_coefficients(
                     previous_coefficients,
                     new_modes=basis_modes,
@@ -205,7 +244,14 @@ def main() -> None:
             point = padded.detach().requires_grad_(True)
             value = action(point)
             (gradient,) = torch.autograd.grad(value, point)
-            if continuum_basis:
+            if hybrid_basis:
+                omitted = omitted_hybrid_drift_gradient_norm(
+                    gradient.detach(),
+                    retained_drift_modes=previous_modes,
+                    expanded_drift_modes=basis_modes,
+                    bridge_modes=bridge_modes,
+                )
+            elif continuum_basis:
                 omitted = omitted_tail_gradient_norm(
                     gradient.detach(),
                     retained_modes=previous_modes,
@@ -252,7 +298,9 @@ def main() -> None:
             "interpretation": "orthonormal_within_cell_shapes_of_one_volatility_brownian_motion",
             "coefficient_energy_is_cm_energy": True,
             "basis_kind": basis_kind,
-            "fixed_modes_have_continuum_limit": continuum_basis,
+            "drift_modes_have_strong_continuum_limit": continuum_basis,
+            "bridge_modes": bridge_modes,
+            "bridge_modes_are_zero_increment_discretization_correctors": hybrid_basis,
         },
         "fixed_rank_mesh": mesh_records,
         "observed_last_adjacent_mesh_rate": observed_mesh_rate,

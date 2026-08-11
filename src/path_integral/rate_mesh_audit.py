@@ -81,3 +81,47 @@ def omitted_tail_gradient_norm(
     if not torch.isfinite(gradient).all():
         raise ValueError("gradient must be finite")
     return float(torch.linalg.vector_norm(gradient[retained_modes:]))
+
+
+def pad_hybrid_coefficients(
+    coefficients: torch.Tensor,
+    *,
+    old_drift_modes: int,
+    new_drift_modes: int,
+    bridge_modes: int,
+) -> torch.Tensor:
+    """Embed `[drift, bridge]` coefficients while preserving both blocks."""
+
+    if not 1 <= old_drift_modes <= new_drift_modes:
+        raise ValueError("drift mode counts must be nested and positive")
+    if bridge_modes < 0:
+        raise ValueError("bridge_modes must be nonnegative")
+    if coefficients.shape != (old_drift_modes + bridge_modes,):
+        raise ValueError("hybrid coefficient vector has the wrong shape")
+    if coefficients.device.type != "cpu" or coefficients.dtype != torch.float64:
+        raise ValueError("coefficients must be CPU float64")
+    if not torch.isfinite(coefficients).all():
+        raise ValueError("coefficients must be finite")
+    padded = torch.zeros(new_drift_modes + bridge_modes, dtype=torch.float64)
+    padded[:old_drift_modes] = coefficients[:old_drift_modes]
+    if bridge_modes:
+        padded[new_drift_modes:] = coefficients[old_drift_modes:]
+    return padded
+
+
+def omitted_hybrid_drift_gradient_norm(
+    gradient: torch.Tensor,
+    *,
+    retained_drift_modes: int,
+    expanded_drift_modes: int,
+    bridge_modes: int,
+) -> float:
+    """Return only newly exposed drift-gradient components in a hybrid basis."""
+
+    if gradient.shape != (expanded_drift_modes + bridge_modes,):
+        raise ValueError("hybrid gradient has the wrong shape")
+    if not 0 <= retained_drift_modes <= expanded_drift_modes:
+        raise ValueError("retained drift modes are invalid")
+    return float(
+        torch.linalg.vector_norm(gradient[retained_drift_modes:expanded_drift_modes])
+    )

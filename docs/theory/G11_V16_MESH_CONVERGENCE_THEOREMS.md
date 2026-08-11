@@ -126,6 +126,23 @@ continuum Galerkin family.  A fixed channel-separated DCT basis is not covered. 
 fixed finite number of continuum cosine modes converges only to the corresponding
 restricted action.  To recover `min J`, its mode count must tend to infinity.
 
+### Bridge-corrector corollary
+
+On each cell there is one unit BLP direction orthogonal to the embedded constant
+drift.  It has zero cell Brownian increment.  Give a fixed number of these local
+bridge directions smooth DCT envelopes across cells.  Each resulting unit vector
+converges weakly to zero: its cell averages vanish and its oscillation scale is
+`Delta`.  Compactness of `K` then gives a vanishing skeleton effect.
+
+A bounded hybrid control can therefore use these modes as finite-grid correction
+directions without changing the continuum action.  Their energy remains explicit.
+For any strongly convergent sequence of hybrid minimizers supplied by T16-6, the
+bridge coefficient norm must tend to zero; otherwise orthogonality would leave a
+strict positive energy defect.  This justifies the implemented
+`mesh_compatible_hybrid` basis as a practical discretization correction, but the
+coefficient-decay diagnostic must still be reported rather than presumed at a coarse
+grid.
+
 ## 4. T16-7: fixed-noise terminal probability convergence
 
 Fix `epsilon>0`.  The BLP Gaussian skeleton converges to the continuous Volterra
