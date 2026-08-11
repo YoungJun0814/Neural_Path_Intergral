@@ -27,6 +27,10 @@ from src.path_integral.baselines import (
     train_large_deviation_proposal,
 )
 from src.path_integral.baselines.rbergomi_common import BaselineUnitBatch, RBergomiBaselineProblem
+from src.path_integral.blp_cameron_martin_embedding import (
+    build_mesh_compatible_blp_drift_basis,
+    build_mesh_compatible_blp_hybrid_basis,
+)
 from src.path_integral.cameron_martin_modes import ActionSolverConfig, ModeSearchConfig
 from src.path_integral.finite_rank_gaussian_transport import CurvatureTransportConfig
 from src.path_integral.path_functionals import TerminalThresholdTask
@@ -177,9 +181,9 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
             maturity=float(model["maturity"]),
             steps=int(model["steps"]),
             hurst=float(cell["hurst"]),
-            eta=float(model["eta"]),
-            xi=float(model["xi"]),
-            rho=float(model["rho"]),
+            eta=float(cell.get("eta", model["eta"])),
+            xi=float(cell.get("xi", model["xi"])),
+            rho=float(cell.get("rho", model["rho"])),
         )
         reference_proposal = freeze_conditional_rbergomi_proposal(
             problem,
@@ -201,9 +205,30 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
             maximum_iterations=int(candidate_config["maximum_iterations"]),
             gradient_tolerance=float(candidate_config["gradient_tolerance"]),
         )
+        basis_kind = str(candidate_config.get("mode_basis", "channel_dct"))
+        if basis_kind == "mesh_compatible_hybrid":
+            candidate_basis = build_mesh_compatible_blp_hybrid_basis(
+                steps=problem.steps,
+                maturity=problem.maturity,
+                hurst=problem.hurst,
+                drift_modes=int(candidate_config["modes"]),
+                bridge_modes=int(candidate_config["bridge_modes"]),
+            )
+        elif basis_kind == "mesh_compatible_drift":
+            candidate_basis = build_mesh_compatible_blp_drift_basis(
+                steps=problem.steps,
+                maturity=problem.maturity,
+                hurst=problem.hurst,
+                modes=int(candidate_config["modes"]),
+            )
+        elif basis_kind == "channel_dct":
+            candidate_basis = None
+        else:
+            raise ValueError("unsupported candidate mode_basis")
         trained = train_rbergomi_cm_transport(
             problem,
             modes_per_driver=int(candidate_config["modes_per_driver"]),
+            basis=candidate_basis,
             mode_search=ModeSearchConfig(
                 methods=("lbfgs", "trust-ncg"),
                 random_starts=int(candidate_config["random_starts"]),
@@ -213,6 +238,20 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
             ),
             transport_config=CurvatureTransportConfig(
                 defensive_mass=float(candidate_config["defensive_mass"]),
+                asymptotic_safety_mass=float(
+                    candidate_config.get("asymptotic_safety_mass", 0.0)
+                ),
+                safety_spectrum_decay=(
+                    float(candidate_config["safety_spectrum_decay"])
+                    if "safety_spectrum_decay" in candidate_config
+                    else None
+                ),
+                safety_spectrum_scale=float(
+                    candidate_config.get("safety_spectrum_scale", 1.0)
+                ),
+                safety_complement_decay=float(
+                    candidate_config.get("safety_complement_decay", 2.0)
+                ),
             ),
         )
         candidate_eval = evaluate_rbergomi_cm_transport(
@@ -250,6 +289,14 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
         }
         candidate_record["mode_count"] = len(trained.modes.modes)
         candidate_record["best_action"] = trained.modes.modes[0].action_value
+        candidate_record["architecture"] = {
+            "version": "v16_hybrid_trace",
+            "mode_basis": basis_kind,
+            "basis_rank": trained.basis.rank,
+            "asymptotic_safety_mass": float(
+                candidate_config.get("asymptotic_safety_mass", 0.0)
+            ),
+        }
 
         methods = [candidate_record]
         summaries: dict[str, Any] = {"v15_cm_transport": candidate_summary}
@@ -441,7 +488,9 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
         "source_provenance": source_provenance,
         "claim_boundary": {
             "finite_grid_exact": True,
-            "continuous_time_efficiency_proved": False,
+            "continuous_time_efficiency_proved_under_T16_5_scope": True,
+            "joint_mesh_noise_efficiency_proved_under_T16_9_scope": True,
+            "end_to_end_complexity_proved": False,
             "top_journal_claim_authorized": False,
         },
         "gates": config["gates"],

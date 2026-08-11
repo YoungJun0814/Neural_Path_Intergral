@@ -103,16 +103,33 @@ def audit_v15_result(payload: dict[str, Any], *, root: Path) -> V15ResultAudit:
     ledger_path = root / "configs/g11_v15/theorem_ledger_v1.yaml"
     ledger = yaml.safe_load(ledger_path.read_text(encoding="utf-8"))
     passed_theory = bool(ledger["gates"]["G5"]["pass"])
+    submission_unlocked = True
+    claim_path = root / "configs/g11_v15/claim_contract_v1.yaml"
+    if claim_path.is_file():
+        claim_contract = yaml.safe_load(claim_path.read_text(encoding="utf-8"))
+        external = claim_contract.get("external_novelty_review", {})
+        completed = int(external.get("completed", 0))
+        required = int(external.get("required", 0))
+        submission_unlocked = (
+            completed >= required
+            and external.get("submission_lock") is False
+            and claim_contract.get("gates", {}).get("p8_baselines") == "pass"
+            and claim_contract.get("gates", {}).get("qualification") == "pass"
+        )
     integrity = not failures
     numerical = integrity and not numerical_failures
     all_failures = failures + numerical_failures
     if not passed_theory:
         all_failures.append("G5 theory gate is open: T15-5 is not proved")
+    if not submission_unlocked:
+        all_failures.append("top-journal submission locks remain open")
     return V15ResultAudit(
         passed_integrity=integrity,
         passed_numerical=numerical,
         passed_theory=passed_theory,
-        passed_top_journal_gate=integrity and numerical and passed_theory,
+        passed_top_journal_gate=(
+            integrity and numerical and passed_theory and submission_unlocked
+        ),
         failures=tuple(all_failures),
     )
 
