@@ -85,7 +85,13 @@ def build_blp_cameron_martin_basis(
     modes_per_driver: int | None = None,
     drivers: int = 2,
 ) -> CameronMartinBasis:
-    """Build a channel-separated DCT basis in BLP standard-normal coordinates."""
+    """Build a channel-separated DCT basis in BLP standard-normal coordinates.
+
+    For the primary BLP local law, ``drivers=2`` means the two orthonormal
+    within-cell coordinates of one volatility Brownian motion, not two independent
+    continuum Brownian drivers.  See ``blp_cameron_martin_embedding.py`` for the
+    exact isometry.
+    """
 
     if isinstance(drivers, bool) or not isinstance(drivers, int) or drivers < 1:
         raise ValueError("drivers must be a positive integer")
@@ -100,4 +106,3 @@ def build_blp_cameron_martin_basis(
         drivers=drivers,
         modes_per_driver=modes,
     )
-

@@ -164,7 +164,8 @@ def main() -> None:
             "fixed_grid_asymptotic_efficiency_proved": bool(
                 float(config.get("asymptotic_safety_mass", 0.0)) > 0.0
             ),
-            "continuous_large_deviation_principle_proved": False,
+            "continuous_terminal_probability_exponent_proved_under_T16_4_scope": True,
+            "continuous_proposal_efficiency_proved": False,
             "mesh_uniform_asymptotic_efficiency_proved": False,
         },
         "records": records,

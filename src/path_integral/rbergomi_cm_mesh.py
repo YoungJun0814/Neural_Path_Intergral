@@ -244,7 +244,11 @@ def evaluate_dct_cameron_martin_drift(
     steps: int,
     maturity: float,
 ) -> torch.Tensor:
-    """Return the piecewise drift represented by stable DCT coefficients."""
+    """Return normalized BLP channel amplitudes represented by DCT coefficients.
+
+    The final axis indexes the two within-cell CM shapes, not independent continuum
+    Brownian drivers.  The historical function name is retained for compatibility.
+    """
 
     if coefficients.ndim != 2 or coefficients.shape[0] < 1:
         raise ValueError("coefficients must have shape (drivers, modes)")
