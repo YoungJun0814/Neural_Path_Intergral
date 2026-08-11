@@ -1,7 +1,7 @@
 schema: npi.g11.v15-claim-contract.v1
 date: "2026-08-11"
 stage: development_contract
-title: Exact Conditional Cameron-Martin Transport for Rare Events in Gaussian Volterra Models
+title: Exact Conditional Residual Path-Space Transport for Rare Events in Gaussian Volterra Models
 primary_asymptotic_regime: small_noise
 small_time_claim_authorized: false
 continuous_exact_simulation_claim_authorized: false
@@ -21,6 +21,10 @@ allowed_current_claims:
   - qualitative_BLP_terminal_probability_and_rate_action_convergence
   - trace_norm_mesh_consistency_of_the_T16_8_safety_operator
   - joint_mesh_noise_logarithmic_efficiency_under_T16_9_scope
+  - exact_balance_mixture_and_independent_selection_under_T16_12_scope
+  - fail_closed_structural_routing_under_T16_13_scope
+  - v16_confirmed_finite_grid_dominance_in_named_cells_only
+  - v16_correctness_fallback_without_dominance_claim
 candidate_v15_claims_locked:
   - quantitative_mesh_uniform_relative_error
   - continuous_target_relative_RMSE_complexity
@@ -50,4 +54,5 @@ gates:
   p6_mesh: pass_qualitative_and_joint_exponent_quantitative_relative_bias_rate_open
   p7_operator: pass_exact_correction_and_replicated_initializer_gain
   p8_baselines: pass_internal_confirmation_and_ood
+  p9_v16_route: pass_named_cell_dominance_and_joint_extreme_correctness_fallback
   qualification: internal_pass_external_reproduction_locked

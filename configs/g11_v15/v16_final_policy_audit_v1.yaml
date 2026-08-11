@@ -1,0 +1,17 @@
+schema: npi.g11.v16-final-policy-audit-config.v1
+output_path: results/g11_v16_final_policy_audit_v1_2026-08-12.json
+artifacts:
+  canonical_confirmation: {path: results/g11_v16_deep_tail_routed_v3_confirmation_2026-08-11.json, sha256: 2488f70d6ed21e8cb2f70b458745e6a02a969fd59c742a8a7531018303211dcc}
+  ood_confirmation: {path: results/g11_v16_final_v5_joint_ood_confirmation_v15_2026-08-12.json, sha256: eb456d1a04b94055832776ad4a2785721b3eb0246d6feb8170c31a7b37c09179}
+  theorem_ledger: {path: configs/g11_v15/theorem_ledger_v1.yaml, sha256: 71240e6951df6fbbce3f6da4ad61b66a2952bf1b22cb7b50c3202f4090bf3b5c}
+  claim_contract: {path: configs/g11_v15/claim_contract_v1.yaml, sha256: 61f1b09672682627adbaf309a75f8d1fedb1552141bfaef1eaf8b1db898b62cf}
+  novelty_ledger: {path: docs/literature/G11_V15_PRIMARY_SOURCE_LEDGER.yaml, sha256: 226a45ea91b528b60e8851826ac6fdd89a320c1e6172d07d48054c0ef7202f83}
+required_cells:
+  canonical_dominance: [rough-h005-k1]
+  ood_dominance: [rough-h005-k2-ood, rough-h005-k05-ood, regular-h012-k1-ood]
+  correctness_fallback: [rough-h005-eta200-k1-ood, rough-h005-rho090-k1-ood, eta200-rho090-k1-ood]
+gates:
+  minimum_strongest_comparator_ratio: 1.0
+  required_theorems: [T16-12, T16-13]
+  continuous_complexity_gate: G8_full_continuum_complexity
+external_reproduction_result_path: results/g11_v15_external_reproduction_v1.json

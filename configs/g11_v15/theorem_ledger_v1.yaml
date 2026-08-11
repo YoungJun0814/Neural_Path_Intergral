@@ -82,6 +82,14 @@ theorems:
     title: joint-grid logarithmic sampling and work complexity
     status: proved
     scope: stochastic_relative_RMSE_for_joint_grid_target_with_subexponential_setup_and_path_work
+  T16-12:
+    title: exact balance mixtures and independent finite-bank risk selection
+    status: proved
+    scope: frozen_finite_grid_defensive_proposals_independent_validation_and_fresh_final_evaluation
+  T16-13:
+    title: fail-closed structural routing exactness
+    status: proved
+    scope: deterministic_parameter_only_route_exact_likelihood_and_role_scoped_empirical_claims
 gates:
   G5:
     pass: true
@@ -107,6 +115,9 @@ gates:
   G8_full_continuum_complexity:
     pass: false
     reason: T16-11 closes log-scale joint-grid work but a quantitative continuous relative-bias rate is unavailable
+  G9_fail_closed_routing:
+    pass: true
+    reason: T16-12 and T16-13 prove balance-mixture, independent-selection, and structural-routing exactness without asserting uniform dominance
 claim_locks:
   prohibited:
     - unqualified_logarithmic_efficiency_outside_T16_5_scope
@@ -130,3 +141,6 @@ claim_locks:
     - joint_mesh_noise_logarithmic_efficiency_under_T16_9_scope
     - operator_assisted_exactness_and_local_Newton_bound_under_T16_10_scope
     - joint_grid_subexponential_sampling_work_under_T16_11_scope
+    - exact_balance_mixture_second_moment_inheritance_under_T16_12_scope
+    - independent_finite_bank_selection_exactness_under_T16_12_scope
+    - fail_closed_structural_routing_exactness_under_T16_13_scope
