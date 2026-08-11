@@ -55,11 +55,13 @@ def test_conditional_adaptation_preserves_exact_mixture_contract() -> None:
             iterations=2,
             samples_per_iteration=512,
             minimum_ess_fraction=0.1,
+            final_components=3,
         ),
         adaptation_seed=901,
     )
-    assert len(trained.proposal.components) == 3
+    assert len(trained.proposal.components) == 5
     assert trained.adaptation_effective_sample_sizes
+    assert len(trained.adaptation_effective_sample_sizes) == 3
     assert all(value >= 51.2 - 1e-8 for value in trained.adaptation_effective_sample_sizes)
     evaluated = evaluate_rbergomi_cm_transport(
         problem,

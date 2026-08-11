@@ -240,6 +240,7 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
                 minimum_variance=float(adaptation_values["minimum_variance"]),
                 maximum_variance=float(adaptation_values["maximum_variance"]),
                 adapt_covariance=bool(adaptation_values.get("adapt_covariance", True)),
+                final_components=int(adaptation_values.get("final_components", 1)),
             )
             if adaptation_values is not None
             else None
@@ -326,6 +327,11 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
                 adaptation_config.adapt_covariance
                 if adaptation_config is not None
                 else None
+            ),
+            "adaptation_final_components": (
+                adaptation_config.final_components
+                if adaptation_config is not None
+                else 0
             ),
             "adaptation_effective_sample_sizes": list(
                 trained.adaptation_effective_sample_sizes

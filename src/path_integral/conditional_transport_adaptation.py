@@ -31,6 +31,7 @@ class ConditionalTransportAdaptationConfig:
     maximum_variance: float = 20.0
     covariance_ridge: float = 1e-6
     adapt_covariance: bool = True
+    final_components: int = 1
 
     def __post_init__(self) -> None:
         if isinstance(self.iterations, bool) or not isinstance(self.iterations, int):
@@ -55,6 +56,12 @@ class ConditionalTransportAdaptationConfig:
             raise ValueError("covariance_ridge must be finite and positive")
         if not isinstance(self.adapt_covariance, bool):
             raise ValueError("adapt_covariance must be boolean")
+        if (
+            isinstance(self.final_components, bool)
+            or not isinstance(self.final_components, int)
+            or self.final_components < 1
+        ):
+            raise ValueError("final_components must be a positive integer")
 
 
 @dataclass(frozen=True)
@@ -102,6 +109,33 @@ def _basis_covariance(
         torch.diag(component.variance_eigenvalues - 1.0) @ projected.T
     )
     return torch.eye(basis.rank, dtype=torch.float64) + correction
+
+
+def _weighted_component(
+    coefficients: torch.Tensor,
+    weights: torch.Tensor,
+    basis: CameronMartinBasis,
+    config: ConditionalTransportAdaptationConfig,
+) -> FiniteRankGaussianComponent:
+    normalized = weights / torch.sum(weights)
+    mean = torch.sum(normalized[:, None] * coefficients, dim=0)
+    centered = coefficients - mean
+    covariance = centered.T @ (normalized[:, None] * centered)
+    covariance = covariance + config.covariance_ridge * torch.eye(
+        basis.rank,
+        dtype=torch.float64,
+    )
+    eigenvalues, eigenvectors = torch.linalg.eigh(covariance)
+    eigenvalues = torch.clamp(
+        eigenvalues,
+        min=config.minimum_variance,
+        max=config.maximum_variance,
+    )
+    return FiniteRankGaussianComponent(
+        mean=basis.expand(mean),
+        directions=basis.matrix @ eigenvectors,
+        variance_eigenvalues=eigenvalues,
+    )
 
 
 def adapt_conditional_transport(
@@ -195,13 +229,71 @@ def adapt_conditional_transport(
         )
         effective_sample_sizes.append(ess)
         powers.append(power)
-    training_samples = config.iterations * config.samples_per_iteration
+    completed_rounds = config.iterations
+    if config.final_components > 1:
+        draw = proposal.sample(
+            config.samples_per_iteration,
+            path_seed=int(torch.randint(1, 2**62, (), generator=generator)),
+            label_seed=int(torch.randint(1, 2**62, (), generator=generator)),
+        )
+        conditional = evaluate_rbergomi_conditional_terminal(
+            problem,
+            draw.samples,
+            epsilon=epsilon,
+        )
+        log_target_over_q = conditional.payoffs.log_left_probability + draw.log_p_over_q
+        weights, ess, power = _normalized_tempered_weights(
+            log_target_over_q,
+            minimum_ess=config.minimum_ess_fraction * config.samples_per_iteration,
+        )
+        coefficients = basis.project(draw.samples)
+        global_mean = torch.sum(weights[:, None] * coefficients, dim=0)
+        global_centered = coefficients - global_mean
+        global_covariance = global_centered.T @ (weights[:, None] * global_centered)
+        _, eigenvectors = torch.linalg.eigh(global_covariance)
+        score = global_centered @ eigenvectors[:, -1]
+        order = torch.argsort(score)
+        cumulative = torch.cumsum(weights[order], dim=0)
+        ordered_labels = torch.bucketize(
+            cumulative,
+            torch.arange(1, config.final_components, dtype=torch.float64)
+            / config.final_components,
+        )
+        labels = torch.empty_like(ordered_labels)
+        labels[order] = ordered_labels
+        components = []
+        masses = []
+        for label in range(config.final_components):
+            selected = labels == label
+            if int(torch.sum(selected)) < 2:
+                raise RuntimeError("conditional mixture split produced an empty component")
+            cluster_weights = weights[selected]
+            mass = float(torch.sum(cluster_weights))
+            components.append(
+                _weighted_component(
+                    coefficients[selected],
+                    cluster_weights,
+                    basis,
+                    config,
+                )
+            )
+            masses.append(mass)
+        mass_tensor = torch.tensor(masses, dtype=torch.float64)
+        mass_tensor = adaptive_mass * mass_tensor / torch.sum(mass_tensor)
+        proposal = DefensiveFiniteRankGaussianMixture(
+            components=(*fixed_components, *components),
+            weights=torch.cat((fixed_weights, mass_tensor)),
+        )
+        effective_sample_sizes.append(ess)
+        powers.append(power)
+        completed_rounds += 1
+    training_samples = completed_rounds * config.samples_per_iteration
     work = training_samples * (
         problem.local_dimension + problem.steps + 4 * basis.rank**2
     )
     cost = BaselineCostLedger(
         training_samples=training_samples,
-        optimizer_steps=config.iterations,
+        optimizer_steps=completed_rounds,
         hyperparameter_trials=1,
         algorithmic_work_units=float(work),
         wall_seconds=time.perf_counter() - started_wall,
