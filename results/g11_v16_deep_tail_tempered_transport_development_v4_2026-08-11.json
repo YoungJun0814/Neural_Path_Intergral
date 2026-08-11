@@ -1,0 +1,410 @@
+{
+  "artifact_bindings": {
+    "baseline": {
+      "path": "results/g11_v16_deep_tail_heterogeneous_confirmation_v1_2026-08-11.json",
+      "sha256": "4e4d18fab389ebf9503edbe54889ee66d30ce025cbf6daf9ff019e4e4084c61d"
+    },
+    "independent_reference": {
+      "path": "results/g11_v16_deep_tail_heterogeneous_smc_reference_v1_2026-08-11.json",
+      "sha256": "4f544ec7e7239aee29d0833d597c528c68d67a817efa457a1cc2b239e057b2af"
+    }
+  },
+  "claim_boundary": {
+    "development_selection_only": true,
+    "fresh_confirmation_required_after_selection": true,
+    "independent_evaluation_clusters": true,
+    "proposal_frozen_across_clusters": true
+  },
+  "config_binding": {
+    "path": "configs/g11_v15/v16_deep_tail_tempered_transport_development_v4.yaml",
+    "sha256": "9869b5a0392601ec94741f41519efff2c2d152e51498f363e54476bba61d2ad8"
+  },
+  "failures": [],
+  "passed": true,
+  "passing_variants_by_cell": {
+    "rough-h005-k1": [
+      "rough-tempered-target-3",
+      "rough-tempered-target-5"
+    ]
+  },
+  "schema": "npi.g11.v16-deep-tail-transport-development.v4",
+  "source_provenance": {
+    "git_commit": "ab361d2d6d63a62627f713bb8a58fd1ab2555007",
+    "source_changes_before_run": [],
+    "source_dirty_before_run": false
+  },
+  "variants": [
+    {
+      "adaptation_effective_sample_sizes": [
+        2640.0838666067393
+      ],
+      "adaptation_tempering_powers": [
+        1.0
+      ],
+      "between_cluster_standard_error": 3.818748955900017e-09,
+      "cluster_to_pooled_se_ratio": 1.0504315618970745,
+      "clusters": [
+        {
+          "cluster": 0,
+          "estimate": 5.007991549891907e-08,
+          "external_accuracy_z": 0.0985610213389895,
+          "standard_error": 3.0521807383087532e-09
+        },
+        {
+          "cluster": 1,
+          "estimate": 1.3846389012251586e-07,
+          "external_accuracy_z": 1.0374701835644853,
+          "standard_error": 8.486306017618357e-08
+        },
+        {
+          "cluster": 2,
+          "estimate": 4.5352138976805104e-08,
+          "external_accuracy_z": 2.255906601933345,
+          "standard_error": 1.7763457782070879e-09
+        },
+        {
+          "cluster": 3,
+          "estimate": 5.478937389341353e-08,
+          "external_accuracy_z": 0.45186388883743844,
+          "standard_error": 9.595791220401771e-09
+        },
+        {
+          "cluster": 4,
+          "estimate": 5.560250384197149e-08,
+          "external_accuracy_z": 0.5801812465612385,
+          "standard_error": 8.845440870848196e-09
+        },
+        {
+          "cluster": 5,
+          "estimate": 4.998422130241648e-08,
+          "external_accuracy_z": 0.07763177059780488,
+          "standard_error": 5.30551092029266e-09
+        },
+        {
+          "cluster": 6,
+          "estimate": 5.747229760022255e-08,
+          "external_accuracy_z": 1.1177613781349782,
+          "standard_error": 6.168851149509876e-09
+        },
+        {
+          "cluster": 7,
+          "estimate": 4.833729347737646e-08,
+          "external_accuracy_z": 0.6855253205483897,
+          "standard_error": 2.6958023565225558e-09
+        },
+        {
+          "cluster": 8,
+          "estimate": 4.6184432194980596e-08,
+          "external_accuracy_z": 1.336561266916318,
+          "standard_error": 2.850022086955009e-09
+        },
+        {
+          "cluster": 9,
+          "estimate": 4.552080010746854e-08,
+          "external_accuracy_z": 2.347927150873219,
+          "standard_error": 1.5699901442597284e-09
+        },
+        {
+          "cluster": 10,
+          "estimate": 4.4042177035227265e-08,
+          "external_accuracy_z": 3.0845028393846277,
+          "standard_error": 1.5462441466443556e-09
+        },
+        {
+          "cluster": 11,
+          "estimate": 5.122800132834207e-08,
+          "external_accuracy_z": 0.16514468205777869,
+          "standard_error": 4.7634357856467125e-09
+        },
+        {
+          "cluster": 12,
+          "estimate": 4.630640015468982e-08,
+          "external_accuracy_z": 1.4977150280710119,
+          "standard_error": 2.3738079142131325e-09
+        },
+        {
+          "cluster": 13,
+          "estimate": 4.9200436174768676e-08,
+          "external_accuracy_z": 0.3794160377307818,
+          "standard_error": 2.8784063919030308e-09
+        },
+        {
+          "cluster": 14,
+          "estimate": 5.104799291509888e-08,
+          "external_accuracy_z": 0.1784364356272532,
+          "standard_error": 3.306199194582853e-09
+        },
+        {
+          "cluster": 15,
+          "estimate": 4.712874665604956e-08,
+          "external_accuracy_z": 0.8333446369216824,
+          "standard_error": 3.6917282403324903e-09
+        },
+        {
+          "cluster": 16,
+          "estimate": 4.695290462834131e-08,
+          "external_accuracy_z": 1.4909512063603256,
+          "standard_error": 1.8720488338835562e-09
+        },
+        {
+          "cluster": 17,
+          "estimate": 4.742973425776667e-08,
+          "external_accuracy_z": 0.7394191043194889,
+          "standard_error": 3.7907834137077115e-09
+        },
+        {
+          "cluster": 18,
+          "estimate": 4.768927870077283e-08,
+          "external_accuracy_z": 0.9453662936055583,
+          "standard_error": 2.5316859247160664e-09
+        },
+        {
+          "cluster": 19,
+          "estimate": 4.5942103101618654e-08,
+          "external_accuracy_z": 1.94063044249533,
+          "standard_error": 1.8517511887583856e-09
+        },
+        {
+          "cluster": 20,
+          "estimate": 4.496972160898133e-08,
+          "external_accuracy_z": 1.1100650778686585,
+          "standard_error": 4.705749977324666e-09
+        },
+        {
+          "cluster": 21,
+          "estimate": 4.5112395760313546e-08,
+          "external_accuracy_z": 2.046761295864408,
+          "standard_error": 2.1971786582019748e-09
+        },
+        {
+          "cluster": 22,
+          "estimate": 4.485420183381316e-08,
+          "external_accuracy_z": 2.29944310672163,
+          "standard_error": 1.991565526286116e-09
+        },
+        {
+          "cluster": 23,
+          "estimate": 4.9821444082173104e-08,
+          "external_accuracy_z": 0.12108703056304083,
+          "standard_error": 4.6604523328079024e-09
+        }
+      ],
+      "estimate": 5.222968355225193e-08,
+      "evaluation_work": 869793792.0,
+      "external_accuracy_z": 0.44871735516657163,
+      "external_reference_estimate": 5.040956244730212e-08,
+      "external_reference_standard_error": 1.3676715134739613e-09,
+      "failures": [],
+      "initializer": "tempered_smc",
+      "initializer_diagnostics": {
+        "tempered_fitted_particle_count": 16384,
+        "tempered_minimum_incremental_ess_fraction": 0.644551725245786,
+        "tempered_mutation_acceptance_rate": 0.5203065872192383,
+        "tempered_normalizer_estimate": 5.305299692046572e-08,
+        "tempered_normalizer_standard_error": 3.9929810939825145e-09
+      },
+      "likelihood_normalization_mean": 1.0026598384384917,
+      "likelihood_normalization_z": 1.4848701038489185,
+      "maximum_cluster_accuracy_z": 3.0845028393846277,
+      "maximum_likelihood_bound_violation": 0.0,
+      "passed": true,
+      "reference_cell": "rough-h005-k1",
+      "relative_standard_error": 0.06960428104759979,
+      "robust_relative_standard_error": 0.07311453365555319,
+      "robust_standard_error": 3.818748955900017e-09,
+      "sample_variance": 2.0787289543325584e-11,
+      "standard_error": 3.6354095729981433e-09,
+      "total_work_at_primary_query_count": 87191715840.0,
+      "training_work": 212336640.0,
+      "v14_over_candidate_work_ratio": 2.332075909658424,
+      "variant_id": "rough-tempered-target-3",
+      "work_normalized_variance": 1.1523433958342537e-06
+    },
+    {
+      "adaptation_effective_sample_sizes": [
+        2652.8256799232645
+      ],
+      "adaptation_tempering_powers": [
+        1.0
+      ],
+      "between_cluster_standard_error": 1.0424066207294302e-09,
+      "cluster_to_pooled_se_ratio": 0.9864155169430444,
+      "clusters": [
+        {
+          "cluster": 0,
+          "estimate": 5.356086994837094e-08,
+          "external_accuracy_z": 0.5106040419349491,
+          "standard_error": 6.018277042097605e-09
+        },
+        {
+          "cluster": 1,
+          "estimate": 4.424596213687333e-08,
+          "external_accuracy_z": 3.1675667896336157,
+          "standard_error": 1.384122519347644e-09
+        },
+        {
+          "cluster": 2,
+          "estimate": 4.8683970354813226e-08,
+          "external_accuracy_z": 0.537495360721718,
+          "standard_error": 2.904538811639308e-09
+        },
+        {
+          "cluster": 3,
+          "estimate": 4.831855222948586e-08,
+          "external_accuracy_z": 0.6614150588409181,
+          "standard_error": 2.850271132180245e-09
+        },
+        {
+          "cluster": 4,
+          "estimate": 5.134398881469496e-08,
+          "external_accuracy_z": 0.1561269769212537,
+          "standard_error": 5.826679252965338e-09
+        },
+        {
+          "cluster": 5,
+          "estimate": 4.5973529331792114e-08,
+          "external_accuracy_z": 1.4536945627504918,
+          "standard_error": 2.7279076596216735e-09
+        },
+        {
+          "cluster": 6,
+          "estimate": 4.911053368043146e-08,
+          "external_accuracy_z": 0.37673606463038184,
+          "standard_error": 3.165274454770674e-09
+        },
+        {
+          "cluster": 7,
+          "estimate": 4.33491738851524e-08,
+          "external_accuracy_z": 3.4699653266704247,
+          "standard_error": 1.506498420254959e-09
+        },
+        {
+          "cluster": 8,
+          "estimate": 4.437380340267819e-08,
+          "external_accuracy_z": 2.742682026716458,
+          "standard_error": 1.7240814256502462e-09
+        },
+        {
+          "cluster": 9,
+          "estimate": 6.035191142665198e-08,
+          "external_accuracy_z": 0.9728266401123693,
+          "standard_error": 1.0128136569215038e-08
+        },
+        {
+          "cluster": 10,
+          "estimate": 4.886596629636953e-08,
+          "external_accuracy_z": 0.4535096095388419,
+          "standard_error": 3.1167981269728188e-09
+        },
+        {
+          "cluster": 11,
+          "estimate": 4.953373921898453e-08,
+          "external_accuracy_z": 0.23589772358012318,
+          "standard_error": 3.4516368457810043e-09
+        },
+        {
+          "cluster": 12,
+          "estimate": 5.9172469270915404e-08,
+          "external_accuracy_z": 0.9721220714932497,
+          "standard_error": 8.909845751753565e-09
+        },
+        {
+          "cluster": 13,
+          "estimate": 5.3215265450258785e-08,
+          "external_accuracy_z": 0.3423600583308564,
+          "standard_error": 8.080252680569431e-09
+        },
+        {
+          "cluster": 14,
+          "estimate": 4.651901048340988e-08,
+          "external_accuracy_z": 1.4633321558978882,
+          "standard_error": 2.2799400757417336e-09
+        },
+        {
+          "cluster": 15,
+          "estimate": 4.560582310264521e-08,
+          "external_accuracy_z": 1.8804841094473688,
+          "standard_error": 2.1575590041239232e-09
+        },
+        {
+          "cluster": 16,
+          "estimate": 4.567512237176237e-08,
+          "external_accuracy_z": 1.8092352453570064,
+          "standard_error": 2.2309668659506355e-09
+        },
+        {
+          "cluster": 17,
+          "estimate": 5.114020025117805e-08,
+          "external_accuracy_z": 0.14477449318424063,
+          "standard_error": 4.857876092390615e-09
+        },
+        {
+          "cluster": 18,
+          "estimate": 4.37353597041479e-08,
+          "external_accuracy_z": 2.8339806268642507,
+          "standard_error": 1.9172365728286158e-09
+        },
+        {
+          "cluster": 19,
+          "estimate": 4.8179667682925656e-08,
+          "external_accuracy_z": 0.453563388111518,
+          "standard_error": 4.72232684930356e-09
+        },
+        {
+          "cluster": 20,
+          "estimate": 4.5675243608429985e-08,
+          "external_accuracy_z": 2.0292857742032746,
+          "standard_error": 1.8900667787422256e-09
+        },
+        {
+          "cluster": 21,
+          "estimate": 4.58157759256511e-08,
+          "external_accuracy_z": 1.5936826511065287,
+          "standard_error": 2.5373741198114173e-09
+        },
+        {
+          "cluster": 22,
+          "estimate": 6.019427026003233e-08,
+          "external_accuracy_z": 0.7173264324853983,
+          "standard_error": 1.3571784945271208e-08
+        },
+        {
+          "cluster": 23,
+          "estimate": 4.3594081407703774e-08,
+          "external_accuracy_z": 2.7206518704133327,
+          "standard_error": 2.0987988269775774e-09
+        }
+      ],
+      "estimate": 4.900976209355662e-08,
+      "evaluation_work": 1146617856.0,
+      "external_accuracy_z": 0.8098950361545768,
+      "external_reference_estimate": 5.040956244730212e-08,
+      "external_reference_standard_error": 1.3676715134739613e-09,
+      "failures": [],
+      "initializer": "tempered_smc",
+      "initializer_diagnostics": {
+        "tempered_fitted_particle_count": 16384,
+        "tempered_minimum_incremental_ess_fraction": 0.6476625195125157,
+        "tempered_mutation_acceptance_rate": 0.5197563171386719,
+        "tempered_normalizer_estimate": 5.0788326552304176e-08,
+        "tempered_normalizer_standard_error": 2.0079453783974294e-09
+      },
+      "likelihood_normalization_mean": 0.9992211608372464,
+      "likelihood_normalization_z": 0.4364489180898461,
+      "maximum_cluster_accuracy_z": 3.4699653266704247,
+      "maximum_likelihood_bound_violation": 0.0,
+      "passed": true,
+      "reference_cell": "rough-h005-k1",
+      "relative_standard_error": 0.021562279505883415,
+      "robust_relative_standard_error": 0.021562279505883415,
+      "robust_standard_error": 1.0567621887781178e-09,
+      "sample_variance": 1.756490089571735e-12,
+      "standard_error": 1.0567621887781178e-09,
+      "total_work_at_primary_query_count": 114874122240.0,
+      "training_work": 212336640.0,
+      "v14_over_candidate_work_ratio": 20.948255514494253,
+      "variant_id": "rough-tempered-target-5",
+      "work_normalized_variance": 1.2828525369187166e-07
+    }
+  ]
+}

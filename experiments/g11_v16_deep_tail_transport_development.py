@@ -44,6 +44,7 @@ from src.path_integral.tempered_target_transport import (
     fit_tempered_target_transport,
 )
 from src.path_integral.v15_result_audit import file_sha256, git_source_provenance
+from src.path_integral.v16_transport_policy import route_v16_hybrid_v2
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -164,6 +165,7 @@ def main() -> None:
     records = []
     failures = []
     for variant in config["variants"]:
+        variant = dict(variant)
         variant_id = str(variant["id"])
         reference_cell = str(variant["reference_cell"])
         external = reference_cells[reference_cell]
@@ -178,6 +180,40 @@ def main() -> None:
             xi=float(variant.get("xi", model["xi"])),
             rho=float(variant.get("rho", model["rho"])),
         )
+        routing_policy = variant.get("routing_policy")
+        routing_regime = None
+        if routing_policy is not None:
+            if routing_policy != "v16_hybrid_routing_v2":
+                raise ValueError(f"unsupported routing policy: {routing_policy}")
+            route = route_v16_hybrid_v2(problem)
+            routing_regime = route.regime
+            variant.update(
+                {
+                    "initializer": route.initializer,
+                    "drift_modes": route.drift_modes,
+                    "bridge_modes": route.bridge_modes,
+                    "defensive_mass": route.defensive_mass,
+                    "safety_mass": route.safety_mass,
+                }
+            )
+            if route.initializer == "tempered_smc":
+                variant["tempered_smc"] = {
+                    "particles": route.tempered_particles,
+                    "temperature_stages": route.tempered_temperature_stages,
+                    "temperature_power": route.tempered_temperature_power,
+                    "mutation_steps": route.tempered_mutation_steps,
+                    "pcn_scale": route.tempered_pcn_scale,
+                    "replicates": route.tempered_replicates,
+                    "components": route.final_components,
+                }
+            else:
+                variant["adaptation"] = {
+                    "iterations": route.adaptation_iterations,
+                    "samples": route.adaptation_samples,
+                    "minimum_ess_fraction": 0.05,
+                    "adapt_covariance": route.adapt_covariance,
+                    "final_components": route.final_components,
+                }
         basis = build_mesh_compatible_blp_hybrid_basis(
             steps=problem.steps,
             maturity=problem.maturity,
@@ -422,6 +458,8 @@ def main() -> None:
                 "likelihood_normalization_z": likelihood_z,
                 "maximum_likelihood_bound_violation": maximum_bound_violation,
                 "initializer": initializer,
+                "routing_policy": routing_policy,
+                "routing_regime": routing_regime,
                 "initializer_diagnostics": initializer_diagnostics,
                 "training_work": training_work,
                 "evaluation_work": evaluation_work,
