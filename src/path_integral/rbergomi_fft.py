@@ -199,13 +199,18 @@ def _assemble_level_with_h(
     target_local_integral: torch.Tensor,
     kernel: BLPFFTKernel,
     method: ConvolutionMethod,
+    variance_compensator_scale: float,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     historical = historical_volterra_convolution(
         target_driver_one, kernel.historical_kernel, method=method
     )
     volterra_after_zero = math.sqrt(2.0 * H) * (historical + target_local_integral)
     variance_after_zero = strict_lognormal_variance(
-        eta * volterra_after_zero - 0.5 * eta**2 * kernel.volterra_variance[1:],
+        eta * volterra_after_zero
+        - 0.5
+        * variance_compensator_scale
+        * eta**2
+        * kernel.volterra_variance[1:],
         xi=xi,
     )
     initial_variance = torch.full(
@@ -244,12 +249,18 @@ def simulate_rbergomi_fft(
     innovations: RBergomiFFTInnovations | None = None,
     method: ConvolutionMethod = "fft",
     dtype: torch.dtype = torch.float64,
+    variance_compensator_scale: float = 1.0,
 ) -> TwoDriverRBergomiPaths:
     """Simulate the exact finite-grid BLP marginal with FFT history sums."""
     if not math.isfinite(S0) or S0 <= 0.0 or not math.isfinite(T) or T <= 0.0:
         raise ValueError("S0 and T must be finite and positive")
     if not math.isfinite(dt) or dt <= 0.0 or num_paths <= 0 or not math.isfinite(mu):
         raise ValueError("dt/num_paths/mu are invalid")
+    if (
+        not math.isfinite(variance_compensator_scale)
+        or variance_compensator_scale < 0.0
+    ):
+        raise ValueError("variance_compensator_scale must be finite and nonnegative")
     params = simulator._resolved(override_params)
     H, eta, xi, rho = params["H"], params["eta"], params["xi"], params["rho"]
     steps = max(1, int(math.ceil(T / dt)))
@@ -300,6 +311,7 @@ def simulate_rbergomi_fft(
         target_local_integral=target_local_integral,
         kernel=kernel,
         method=method,
+        variance_compensator_scale=variance_compensator_scale,
     )
     schedule_64 = schedule.to(torch.float64)
     proposal_64 = proposal_brownian.to(torch.float64)
@@ -360,12 +372,18 @@ def simulate_coupled_rbergomi_adjacent_fft(
     innovations: AdjacentRBergomiFFTInnovations | None = None,
     method: ConvolutionMethod = "fft",
     dtype: torch.dtype = torch.float64,
+    variance_compensator_scale: float = 1.0,
 ) -> CoupledRBergomiPaths:
     """Simulate exact adjacent BLP marginals with FFT historical convolutions."""
     if not math.isfinite(S0) or S0 <= 0.0 or not math.isfinite(T) or T <= 0.0:
         raise ValueError("S0 and T must be finite and positive")
     if fine_steps < 2 or fine_steps % 2 != 0 or num_paths <= 0 or not math.isfinite(mu):
         raise ValueError("fine_steps/num_paths/mu are invalid")
+    if (
+        not math.isfinite(variance_compensator_scale)
+        or variance_compensator_scale < 0.0
+    ):
+        raise ValueError("variance_compensator_scale must be finite and nonnegative")
     params = simulator._resolved(override_params)
     H, eta, xi, rho = params["H"], params["eta"], params["xi"], params["rho"]
     coarse_steps = fine_steps // 2
@@ -437,6 +455,7 @@ def simulate_coupled_rbergomi_adjacent_fft(
         target_local_integral=target_fine_local,
         kernel=fine_kernel,
         method=method,
+        variance_compensator_scale=variance_compensator_scale,
     )
     coarse_spot, coarse_log_spot, coarse_variance, coarse_volterra, coarse_running = (
         _assemble_level_with_h(
@@ -452,6 +471,7 @@ def simulate_coupled_rbergomi_adjacent_fft(
             target_local_integral=target_coarse_local,
             kernel=coarse_kernel,
             method=method,
+            variance_compensator_scale=variance_compensator_scale,
         )
     )
     schedule_64 = schedule.to(torch.float64)

@@ -153,7 +153,13 @@ def evaluate_rbergomi_conditional_terminal(
         raise ValueError("strike must be finite and positive")
 
     scaled_local = math.sqrt(epsilon) * local_standard_normal
-    paths = problem.simulate_local(scaled_local)
+    # Both parts of the Wick correction scale with the variance of the Volterra
+    # driver.  Scaling only the innovations while retaining the unit-noise
+    # compensator would converge to the wrong deterministic variance curve.
+    paths = problem.simulate_local(
+        scaled_local,
+        variance_compensator_scale=epsilon,
+    )
     integrated_variance = problem.step_dt * torch.sum(paths.variance[:, :-1], dim=1)
     if not torch.isfinite(integrated_variance).all() or bool(
         (integrated_variance <= 0.0).any()

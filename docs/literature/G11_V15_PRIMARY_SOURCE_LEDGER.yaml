@@ -31,6 +31,12 @@ decisive_sources:
   - id: L14
     arxiv: "2604.13147"
     overlap: neural_non_markovian_off_model_importance_sampling
+  - id: L15
+    arxiv: "1710.10711"
+    overlap: volterra_stochastic_volatility_small_noise_ldp
+  - id: L16
+    doi: 10.1007/s10955-020-02589-x
+    overlap: general_joint_ldp_importance_sampling_efficiency_criteria
 candidate_claim:
   short_name: conditional_multimode_cm_transport
   required_features:
@@ -49,4 +55,3 @@ locks:
   qualification: true
   submission: true
   top_journal_language: true
-

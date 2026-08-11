@@ -14,9 +14,11 @@ allowed_current_claims:
   - ordinary_is_unbiased_conditional_on_frozen_proposal
   - defensive_balance_likelihood_bound
   - v14_frozen_three_cell_empirical_efficiency
+  - fixed_grid_conditional_small_noise_probability_exponent
+  - fixed_grid_logarithmic_efficiency_with_positive_isotropic_safety_mass
 candidate_v15_claims_locked:
-  - conditional_small_noise_action_contraction
-  - multimode_rare_event_efficiency
+  - continuous_time_conditional_small_noise_action_contraction
+  - mesh_uniform_multimode_rare_event_efficiency
   - mesh_consistent_cameron_martin_transport
   - operator_assisted_certified_amortization
 prohibited_claims:
@@ -32,7 +34,7 @@ nonnegotiable:
   training_final_independence: true
   balance_denominator: full_mixture
   natural_defensive_component: required
-  covariance_changes: equivalence_preserving_finite_rank_only
+  covariance_changes: fixed_grid_full_rank_allowed_continuum_equivalence_preserving_only
   failures_retained: true
 gates:
   p0_internal_literature: pass_with_external_lock

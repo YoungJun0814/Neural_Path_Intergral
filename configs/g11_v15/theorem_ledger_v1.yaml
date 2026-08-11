@@ -38,18 +38,35 @@ theorems:
     title: operator-assisted certification
     status: conditional
     scope: frozen_corrected_or_fallback_proposal
+  T16-1:
+    title: fixed-grid conditional small-noise probability exponent
+    status: proved
+    scope: fixed_finite_blp_grid_full_2N_local_space
+  T16-2:
+    title: fixed-grid isotropic-safety logarithmic efficiency
+    status: proved
+    scope: fixed_finite_blp_grid_positive_broad_mass
+  T16-3:
+    title: fixed-grid mixture efficiency inheritance
+    status: proved
+    scope: exact_mixture_dominating_positive_broad_component
 gates:
   G5:
     pass: false
-    reason: T15-5 remains open
+    reason: continuous-time T15-5 remains open although fixed-grid T16-1 through T16-3 are proved
+  G5_fixed_grid:
+    pass: true
+    reason: T16-1 through T16-3 close the fixed-grid exponent and second-moment theorem
 claim_locks:
   prohibited:
     - logarithmically_efficient
     - bounded_relative_error
     - asymptotically_optimal
     - continuous_time_exact_simulation
+    - mesh_uniform_logarithmic_efficiency
   allowed:
     - exact_finite_grid_likelihood
     - unbiased_ordinary_importance_sampling
     - conditional_Rao_Blackwell_variance_ordering
     - defensive_likelihood_bound
+    - fixed_grid_logarithmic_efficiency_with_positive_isotropic_safety_mass

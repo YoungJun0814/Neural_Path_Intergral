@@ -63,6 +63,9 @@ def main() -> None:
             ),
             transport_config=CurvatureTransportConfig(
                 defensive_mass=float(config["defensive_mass"]),
+                asymptotic_safety_mass=float(
+                    config.get("asymptotic_safety_mass", 0.0)
+                ),
             ),
         )
         candidate = evaluate_rbergomi_cm_transport(
@@ -126,6 +129,9 @@ def main() -> None:
                 / (2.0 * math.log(probability)),
                 "best_action": trained.modes.modes[0].action_value,
                 "mode_count": len(trained.modes.modes),
+                "asymptotic_safety_mass": float(
+                    config.get("asymptotic_safety_mass", 0.0)
+                ),
                 "proposal_sha256": trained.proposal_sha256,
                 "maximum_likelihood_bound_violation": (
                     candidate.maximum_likelihood_bound_violation
@@ -143,8 +149,12 @@ def main() -> None:
         "source_provenance": source_provenance,
         "claim_boundary": {
             "empirical_diagnostic_only": True,
-            "large_deviation_principle_proved": False,
-            "asymptotic_efficiency_proved": False,
+            "fixed_grid_probability_exponent_proved": True,
+            "fixed_grid_asymptotic_efficiency_proved": bool(
+                float(config.get("asymptotic_safety_mass", 0.0)) > 0.0
+            ),
+            "continuous_large_deviation_principle_proved": False,
+            "mesh_uniform_asymptotic_efficiency_proved": False,
         },
         "records": records,
     }

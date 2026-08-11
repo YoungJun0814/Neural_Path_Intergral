@@ -38,6 +38,8 @@ primary records and do not support novelty decisions.
 | L12 | Pinski et al., *Kullback--Leibler approximation for probability measures on infinite dimensional spaces* (2015), DOI `10.1137/140962802` | Gaussian variational approximation and covariance parameterization in function space | Low-rank Gaussian covariance approximation is not independently novel. |
 | L13 | He, Zheng, Wang, *On the Error Rate of Importance Sampling with Randomized Quasi-Monte Carlo* (2023), DOI `10.1137/22M1510121` | RQMC rates under Gaussian/t proposals | Combining Gaussian IS and RQMC is not independently novel. |
 | L14 | Leao et al., *Adaptive Learning via Off-Model Training and Importance Sampling for Fully Non-Markovian Optimal Stochastic Control* (2026), arXiv `2604.13147` | dominating training laws, RN weights, neural dynamic programming and nonasymptotic error bounds for non-Markovian/rough settings | Off-model neural learning and generic non-Markovian IS are not V15 novelty. |
+| L15 | Gulisashvili, *Large deviation principle for Volterra type fractional stochastic volatility models* (2018), arXiv `1710.10711` | small-noise LDP for Volterra-type Gaussian stochastic-volatility models under explicit assumptions | A continuous Volterra small-noise LDP is prior art; V16 must align its exact family and numerical law rather than claim the LDP itself. |
+| L16 | Guyader, Touchette, *Efficient large deviation estimation based on importance sampling* (2020), DOI `10.1007/s10955-020-02589-x` | general joint-LDP necessary/sufficient framework for logarithmic IS efficiency | Generic logarithmic-efficiency criteria are prior art; only the conditional-Volterra specialization and exact safety mixture may be studied as a combination. |
 
 ## Exact overlap boundary
 
@@ -116,4 +118,5 @@ for any frozen proposal, but qualification and top-journal language stay locked.
 - <https://doi.org/10.1137/140962802>
 - <https://doi.org/10.1137/22M1510121>
 - <https://arxiv.org/abs/2604.13147>
-
+- <https://arxiv.org/abs/1710.10711>
+- <https://doi.org/10.1007/s10955-020-02589-x>

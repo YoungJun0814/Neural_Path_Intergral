@@ -1,5 +1,6 @@
 import math
 
+import pytest
 import torch
 
 from src.path_integral.baselines.rbergomi_common import RBergomiBaselineProblem
@@ -14,6 +15,7 @@ from src.path_integral.finite_rank_gaussian_transport import (
     DefensiveFiniteRankGaussianMixture,
     FiniteRankGaussianComponent,
     build_curvature_transport,
+    build_isotropic_small_noise_safety_component,
 )
 from src.path_integral.path_functionals import TerminalThresholdTask
 from src.path_integral.volterra_action import RBergomiConditionalAction
@@ -116,3 +118,60 @@ def test_curvature_builder_creates_exact_positive_defensive_transport() -> None:
     sample = transport.sample(512, path_seed=881, label_seed=882)
     assert torch.isfinite(sample.log_p_over_q).all()
     assert float(torch.max(torch.exp(sample.log_p_over_q))) <= 1.0 / 0.15 + 2e-12
+
+
+def test_small_noise_safety_component_matches_dense_isotropic_gaussian() -> None:
+    epsilon = 0.2
+    component = build_isotropic_small_noise_safety_component(3, epsilon=epsilon)
+    samples = torch.tensor(
+        [[0.0, 0.0, 0.0], [1.0, -0.5, 0.2], [-2.0, 0.3, 1.1]],
+        dtype=torch.float64,
+    )
+    proposal = torch.distributions.MultivariateNormal(
+        torch.zeros(3, dtype=torch.float64),
+        covariance_matrix=torch.eye(3, dtype=torch.float64) / epsilon,
+    )
+    reference = torch.distributions.MultivariateNormal(
+        torch.zeros(3, dtype=torch.float64),
+        covariance_matrix=torch.eye(3, dtype=torch.float64),
+    )
+    oracle = proposal.log_prob(samples) - reference.log_prob(samples)
+    torch.testing.assert_close(component.log_q_over_p(samples), oracle, rtol=1e-13, atol=1e-13)
+
+
+def test_curvature_builder_can_add_full_rank_asymptotic_safety_component() -> None:
+    problem = RBergomiBaselineProblem(
+        task_id="v16-safety",
+        task=TerminalThresholdTask(level=60.0),
+        spot=100.0,
+        maturity=1.0,
+        steps=4,
+        hurst=0.12,
+        eta=1.5,
+        xi=0.04,
+        rho=-0.7,
+    )
+    basis = build_blp_cameron_martin_basis(steps=problem.steps, modes_per_driver=2)
+    action = RBergomiConditionalAction(problem=problem, basis=basis, epsilon=0.25)
+    modes = find_rbergomi_conditional_modes(
+        action,
+        config=ModeSearchConfig(
+            methods=("lbfgs",),
+            random_starts=1,
+            random_seed=71,
+            start_scale=1.0,
+            solver=ActionSolverConfig(maximum_iterations=100, gradient_tolerance=1e-6),
+        ),
+    )
+    transport = build_curvature_transport(
+        action,
+        modes,
+        config=CurvatureTransportConfig(
+            defensive_mass=0.15,
+            asymptotic_safety_mass=0.05,
+        ),
+    )
+    assert float(transport.weights[0]) == pytest.approx(0.15)
+    assert float(transport.weights[1]) == pytest.approx(0.05)
+    assert transport.components[1].rank == problem.local_dimension
+    assert torch.all(transport.components[1].variance_eigenvalues == 4.0)

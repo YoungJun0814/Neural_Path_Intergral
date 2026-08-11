@@ -145,6 +145,20 @@ The published rough-Bergomi small-time scaling is not substituted for this proof
 Until these obligations are discharged, the phrases “logarithmically efficient,”
 “bounded relative error,” and “asymptotically optimal” are prohibited.
 
+### V16 fixed-grid closure (not a continuum closure)
+
+`G11_V16_FIXED_GRID_SMALL_NOISE_THEOREMS.md` proves three narrower statements:
+
+1. the exact contracted probability exponent on every fixed finite BLP grid;
+2. logarithmic efficiency of the exactly normalized full-grid safety component
+   `N(0,I/epsilon)`;
+3. inheritance of that exponent by any exact mixture containing the safety component
+   with fixed positive mass.
+
+These are recorded as T16-1 through T16-3. They do not change the open status of the
+continuous-time T15-5 theorem because covariance inflation in every coordinate is not
+an equivalent infinite-dimensional Wiener-measure change.
+
 ## 7. T15-6 to T15-9
 
 | ID | Subject | Status | Required closure |
@@ -158,6 +172,11 @@ Empirical mesh studies may falsify candidate rates, choose numerical resolution,
 quantify observed cost.  They cannot mark T15-6 or T15-7 as proved.
 
 ## 8. Gate conclusion
+
+V16 addendum: T15-1 through T15-4 and fixed-grid T16-1 through T16-3 now have
+complete proof chains and executable finite-dimensional oracles. The open status
+below refers to the continuous-time and mesh-uniform T15-5 claim, not the fixed-grid
+claim.
 
 T15-1 through T15-4 have complete proof chains and executable finite-dimensional
 oracles.  T15-5 is open, so the current result is not yet authorized to use a

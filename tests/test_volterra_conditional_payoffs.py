@@ -7,6 +7,7 @@ from scipy.special import log_ndtr
 
 from src.path_integral.baselines.rbergomi_common import RBergomiBaselineProblem
 from src.path_integral.path_functionals import TerminalThresholdTask
+from src.path_integral.rbergomi_fft import blp_fft_kernel
 from src.path_integral.rbergomi_local_volterra_transport import (
     evaluate_conditional_terminal_local,
 )
@@ -98,10 +99,40 @@ def test_small_noise_family_converges_to_deterministic_left_tail() -> None:
     assert bool((tiny.payoffs.left_probability < moderate.payoffs.left_probability).all())
 
 
+def test_small_noise_scales_the_volterra_wick_compensator() -> None:
+    problem = _problem(rho=-0.4)
+    local = torch.zeros(1, problem.local_dimension, dtype=torch.float64)
+    epsilon = 0.2
+    batch = evaluate_rbergomi_conditional_terminal(problem, local, epsilon=epsilon)
+    kernel = blp_fft_kernel(
+        problem.simulator(),
+        n_steps=problem.steps,
+        step_dt=problem.step_dt,
+        dtype=torch.float64,
+    )
+    expected_curve = problem.xi * torch.exp(
+        -0.5 * epsilon * problem.eta**2 * kernel.volterra_variance
+    )
+    expected_integral = problem.step_dt * torch.sum(expected_curve[:-1])
+    torch.testing.assert_close(
+        batch.integrated_variance[0],
+        expected_integral,
+        rtol=2e-13,
+        atol=2e-14,
+    )
+
+
+def test_small_noise_zero_control_variance_converges_to_forward_variance() -> None:
+    problem = _problem(rho=-0.4)
+    local = torch.zeros(1, problem.local_dimension, dtype=torch.float64)
+    tiny = evaluate_rbergomi_conditional_terminal(problem, local, epsilon=1e-8)
+    expected = problem.xi * problem.maturity
+    assert abs(float(tiny.integrated_variance[0]) - expected) < 2e-9
+
+
 @pytest.mark.parametrize("epsilon", [0.0, -0.1, 1.01, math.inf])
 def test_invalid_small_noise_scale_is_rejected(epsilon: float) -> None:
     problem = _problem()
     local = torch.zeros(1, problem.local_dimension, dtype=torch.float64)
     with pytest.raises(ValueError, match="epsilon"):
         evaluate_rbergomi_conditional_terminal(problem, local, epsilon=epsilon)
-

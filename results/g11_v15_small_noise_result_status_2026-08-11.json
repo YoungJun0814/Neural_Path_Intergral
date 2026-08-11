@@ -1,0 +1,12 @@
+{
+  "schema": "npi.g11.v16-result-quarantine.v1",
+  "date": "2026-08-11",
+  "status": "invalid_for_small_noise_claims",
+  "affected_results": [
+    "results/g11_v15_small_noise_development_v1_2026-08-11.json",
+    "results/g11_v15_small_noise_development_v2_2026-08-11.json"
+  ],
+  "reason": "The local innovations were scaled by sqrt(epsilon), but the rBergomi Wick compensator retained its unit-noise scale instead of epsilon.",
+  "consequence": "The epsilon-to-zero variance curve, finite-noise action, probability exponent diagnostic, and second-moment exponent diagnostic in the affected files are not evidence for the declared small-noise family.",
+  "retention_policy": "Files are retained only for provenance and must not be cited as valid numerical evidence."
+}

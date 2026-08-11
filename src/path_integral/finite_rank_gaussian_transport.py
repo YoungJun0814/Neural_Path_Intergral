@@ -102,6 +102,33 @@ class FiniteRankGaussianComponent:
         return self.mean + transformed
 
 
+def build_isotropic_small_noise_safety_component(
+    dimension: int,
+    *,
+    epsilon: float,
+) -> FiniteRankGaussianComponent:
+    """Return the fixed-grid safety law ``N(0, I / epsilon)``.
+
+    The full-rank representation is intentional: inflating only a selected
+    subspace does not cover a dominating point outside that subspace and hence
+    does not provide the mode-omission efficiency guarantee.
+    """
+
+    if isinstance(dimension, bool) or not isinstance(dimension, int) or dimension < 1:
+        raise ValueError("component dimension must be a positive integer")
+    if not math.isfinite(epsilon) or not 0.0 < epsilon <= 1.0:
+        raise ValueError("epsilon must lie in (0, 1]")
+    return FiniteRankGaussianComponent(
+        mean=torch.zeros(dimension, dtype=torch.float64),
+        directions=torch.eye(dimension, dtype=torch.float64),
+        variance_eigenvalues=torch.full(
+            (dimension,),
+            1.0 / epsilon,
+            dtype=torch.float64,
+        ),
+    )
+
+
 @dataclass(frozen=True)
 class DefensiveFiniteRankGaussianMixture:
     components: tuple[FiniteRankGaussianComponent, ...]
@@ -200,6 +227,7 @@ class FiniteRankMixtureSample:
 @dataclass(frozen=True)
 class CurvatureTransportConfig:
     defensive_mass: float = 0.1
+    asymptotic_safety_mass: float = 0.0
     minimum_variance: float = 0.05
     maximum_variance: float = 20.0
     positive_curvature_tolerance: float = 1e-7
@@ -207,6 +235,14 @@ class CurvatureTransportConfig:
     def __post_init__(self) -> None:
         if not 0.0 < self.defensive_mass < 1.0:
             raise ValueError("defensive mass must lie in (0, 1)")
+        if (
+            not math.isfinite(self.asymptotic_safety_mass)
+            or self.asymptotic_safety_mass < 0.0
+            or self.defensive_mass + self.asymptotic_safety_mass >= 1.0
+        ):
+            raise ValueError(
+                "asymptotic safety mass must be nonnegative and leave positive shifted mass"
+            )
         if not 0.0 < self.minimum_variance <= self.maximum_variance:
             raise ValueError("variance clipping bounds are invalid")
         if not math.isfinite(self.maximum_variance):
@@ -259,15 +295,34 @@ def build_curvature_transport(
             torch.tensor(-mode.action_value / action.epsilon, dtype=torch.float64)
             - 0.5 * torch.sum(torch.log(eigenvalues.detach()))
         )
+    components: tuple[FiniteRankGaussianComponent, ...]
+    fixed_weights = [config.defensive_mass]
+    if config.asymptotic_safety_mass > 0.0:
+        # For fixed finite dimension and epsilon -> 0, N(0, I/epsilon) gives
+        # an exact, normalized component whose second-moment exponent is twice
+        # the contracted probability exponent.  A fixed positive mixture mass
+        # therefore prevents missed Laplace modes from destroying logarithmic
+        # efficiency.  This full-rank construction is deliberately not claimed
+        # to define an equivalent change of Wiener measure in infinite dimension.
+        dimension = action.basis.dimension
+        broad = build_isotropic_small_noise_safety_component(
+            dimension,
+            epsilon=action.epsilon,
+        )
+        components = (natural, broad, *shifted)
+        fixed_weights.append(config.asymptotic_safety_mass)
+    else:
+        components = (natural, *shifted)
+    shifted_mass = 1.0 - sum(fixed_weights)
     relative_weights = torch.softmax(torch.stack(log_evidence), dim=0)
     weights = torch.cat(
         (
-            torch.tensor([config.defensive_mass], dtype=torch.float64),
-            (1.0 - config.defensive_mass) * relative_weights,
+            torch.tensor(fixed_weights, dtype=torch.float64),
+            shifted_mass * relative_weights,
         )
     )
     return DefensiveFiniteRankGaussianMixture(
-        components=(natural, *shifted),
+        components=components,
         weights=weights,
     )
 

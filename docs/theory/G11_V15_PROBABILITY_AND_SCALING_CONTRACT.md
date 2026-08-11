@@ -118,9 +118,11 @@ J_k(u) = 0.5||u||_2^2 + C_k(u).
 ```
 
 This reduction follows from a Hilbert-space projection of the independent price
-control. A full LDP/laplace-principle proof still requires exponential tightness,
-continuity/localization for the exponential Volterra map and boundary regularity. The
-formula is therefore a theorem target until those assumptions are proved.
+control. A full continuous-time LDP/Laplace-principle proof still requires
+exponential tightness, continuity/localization for the exponential Volterra map and
+boundary regularity. The corresponding fixed-BLP-grid statement is proved in
+`G11_V16_FIXED_GRID_SMALL_NOISE_THEOREMS.md`; the continuum formula remains a
+theorem target.
 
 The finite-epsilon conditional action used by the optimizer is
 
@@ -154,13 +156,18 @@ the `N` price variables for terminal claims.
 For small-noise evaluation at a local standard-normal coordinate `z`:
 
 1. simulate the BLP local law at `sqrt(epsilon) z`;
-2. recover the integrated variance `I_N`;
+2. multiply the finite-grid Wick compensator by `epsilon` and recover the integrated
+   variance `I_N`;
 3. replace the simulator's `-0.5 I_N` drift by `-0.5 epsilon I_N`;
 4. use conditional variance `epsilon(1-rho^2)I_N`.
 
 At `epsilon=1` this must reproduce V14 pathwise. The BLP auxiliary local coordinate
 does not automatically identify with a continuum Cameron--Martin control. That mesh
 identification is T15-7, not an implementation assumption.
+
+V15 small-noise development results produced before the Wick-compensator correction
+are invalid for asymptotic evidence and are explicitly quarantined by the V16 result
+status manifest.
 
 ## 7. Excluded cases
 
@@ -178,4 +185,3 @@ The probability space and small-noise regime are internally consistent and autho
 P2 finite-grid oracle implementation. Continuous-time LDP efficiency, mesh-uniform
 rates and novelty remain open. Qualification remains locked by the P0 external-review
 requirement and later theorem gates.
-

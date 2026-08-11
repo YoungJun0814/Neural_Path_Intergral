@@ -59,5 +59,7 @@ def test_theorem_ledger_prevents_open_asymptotic_claims() -> None:
     assert set(statuses.values()) <= allowed
     assert all(statuses[f"T15-{index}"] == "proved" for index in range(1, 5))
     assert statuses["T15-5"] == "open"
+    assert all(statuses[f"T16-{index}"] == "proved" for index in range(1, 4))
     assert ledger["gates"]["G5"]["pass"] is False
+    assert ledger["gates"]["G5_fixed_grid"]["pass"] is True
     assert "asymptotically_optimal" in ledger["claim_locks"]["prohibited"]
