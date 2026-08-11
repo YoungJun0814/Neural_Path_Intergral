@@ -219,3 +219,56 @@ def build_mesh_compatible_blp_drift_basis(
         modes_per_driver=modes,
         channel_separated=False,
     )
+
+
+def build_mesh_compatible_blp_hybrid_basis(
+    *,
+    steps: int,
+    maturity: float,
+    hurst: float,
+    drift_modes: int,
+    bridge_modes: int,
+) -> CameronMartinBasis:
+    """Combine continuum drift modes with explicit zero-increment BLP correctors.
+
+    The bridge columns are DCT envelopes of the unique cell-local direction
+    orthogonal to a constant Brownian drift.  They are legitimate finite-grid CM
+    directions but are labelled discretization correctors: each has zero Brownian
+    increment on every cell and converges weakly to zero under mesh refinement.
+    """
+
+    if not 1 <= drift_modes <= steps:
+        raise ValueError("drift_modes must lie between one and steps")
+    if not 0 <= bridge_modes <= steps:
+        raise ValueError("bridge_modes must lie between zero and steps")
+    drift_basis = build_mesh_compatible_blp_drift_basis(
+        steps=steps,
+        maturity=maturity,
+        hurst=hurst,
+        modes=drift_modes,
+    )
+    if bridge_modes == 0:
+        return drift_basis
+    step_dt = maturity / steps
+    unit_shift = piecewise_constant_drift_to_blp_standard_shift(
+        torch.ones(1, dtype=torch.float64),
+        hurst=hurst,
+        step_dt=step_dt,
+    )[0]
+    local_constant = unit_shift / math.sqrt(step_dt)
+    local_bridge = torch.stack((-local_constant[1], local_constant[0]))
+    temporal = build_blp_cameron_martin_basis(
+        steps=steps,
+        modes_per_driver=bridge_modes,
+        drivers=1,
+    ).matrix
+    bridge = (temporal[:, :, None] * local_bridge[None, None, :]).permute(0, 2, 1)
+    bridge = bridge.reshape(2 * steps, bridge_modes)
+    matrix = torch.cat((drift_basis.matrix, bridge), dim=1)
+    return CameronMartinBasis(
+        matrix=matrix,
+        steps=steps,
+        drivers=2,
+        modes_per_driver=drift_modes + bridge_modes,
+        channel_separated=False,
+    )

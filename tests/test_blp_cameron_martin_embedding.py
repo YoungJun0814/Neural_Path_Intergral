@@ -5,6 +5,7 @@ from src.path_integral.blp_cameron_martin_embedding import (
     blp_cell_cameron_martin_shapes,
     blp_local_observable_means_from_standard_shift,
     build_mesh_compatible_blp_drift_basis,
+    build_mesh_compatible_blp_hybrid_basis,
     build_mesh_compatible_blp_trace_safety_geometry,
     piecewise_constant_drift_to_blp_standard_shift,
 )
@@ -121,3 +122,32 @@ def test_mesh_drift_basis_has_continuum_rank_and_exact_energy() -> None:
         rtol=2e-13,
         atol=2e-14,
     )
+
+
+def test_hybrid_bridge_modes_are_orthogonal_and_have_zero_cell_increment() -> None:
+    basis = build_mesh_compatible_blp_hybrid_basis(
+        steps=8,
+        maturity=1.0,
+        hurst=0.12,
+        drift_modes=4,
+        bridge_modes=3,
+    )
+    assert basis.rank == 7
+    torch.testing.assert_close(
+        basis.matrix.T @ basis.matrix,
+        torch.eye(7, dtype=torch.float64),
+        rtol=0.0,
+        atol=2e-12,
+    )
+    for index in range(4, 7):
+        means = blp_local_observable_means_from_standard_shift(
+            basis.matrix[:, index].reshape(8, 2),
+            hurst=0.12,
+            step_dt=0.125,
+        )
+        torch.testing.assert_close(
+            means[:, 0],
+            torch.zeros(8, dtype=torch.float64),
+            rtol=0.0,
+            atol=2e-14,
+        )

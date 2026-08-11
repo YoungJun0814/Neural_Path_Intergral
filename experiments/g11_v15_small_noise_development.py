@@ -14,6 +14,7 @@ import yaml
 from src.path_integral.baselines.rbergomi_common import RBergomiBaselineProblem
 from src.path_integral.blp_cameron_martin_embedding import (
     build_mesh_compatible_blp_drift_basis,
+    build_mesh_compatible_blp_hybrid_basis,
 )
 from src.path_integral.cameron_martin_modes import ActionSolverConfig, ModeSearchConfig
 from src.path_integral.finite_rank_gaussian_transport import CurvatureTransportConfig
@@ -56,10 +57,20 @@ def main() -> None:
             hurst=problem.hurst,
             modes=int(config["modes"]),
         )
+    elif mode_basis_kind == "mesh_compatible_hybrid":
+        mode_basis = build_mesh_compatible_blp_hybrid_basis(
+            steps=problem.steps,
+            maturity=problem.maturity,
+            hurst=problem.hurst,
+            drift_modes=int(config["modes"]),
+            bridge_modes=int(config["bridge_modes"]),
+        )
     elif mode_basis_kind == "channel_dct":
         mode_basis = None
     else:
-        raise ValueError("mode_basis must be channel_dct or mesh_compatible_drift")
+        raise ValueError(
+            "mode_basis must be channel_dct, mesh_compatible_drift, or mesh_compatible_hybrid"
+        )
     for index, epsilon_value in enumerate(config["epsilons"]):
         epsilon = float(epsilon_value)
         trained = train_rbergomi_cm_transport(
