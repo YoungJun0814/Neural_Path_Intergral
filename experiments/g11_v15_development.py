@@ -58,6 +58,7 @@ from src.path_integral.v15_result_audit import (
     file_sha256,
     git_source_provenance,
 )
+from src.path_integral.v16_transport_policy import route_v16_hybrid_v1
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -204,31 +205,36 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
             reference_batch.unit_contributions
         )
 
+        resolved_candidate = dict(candidate_config)
+        route = None
+        if candidate_config.get("routing_policy") == "v16_hybrid_routing_v1":
+            route = route_v16_hybrid_v1(problem)
+            resolved_candidate.update(route.candidate_overrides())
         solver = ActionSolverConfig(
-            maximum_iterations=int(candidate_config["maximum_iterations"]),
-            gradient_tolerance=float(candidate_config["gradient_tolerance"]),
+            maximum_iterations=int(resolved_candidate["maximum_iterations"]),
+            gradient_tolerance=float(resolved_candidate["gradient_tolerance"]),
         )
-        basis_kind = str(candidate_config.get("mode_basis", "channel_dct"))
+        basis_kind = str(resolved_candidate.get("mode_basis", "channel_dct"))
         if basis_kind == "mesh_compatible_hybrid":
             candidate_basis = build_mesh_compatible_blp_hybrid_basis(
                 steps=problem.steps,
                 maturity=problem.maturity,
                 hurst=problem.hurst,
-                drift_modes=int(candidate_config["modes"]),
-                bridge_modes=int(candidate_config["bridge_modes"]),
+                drift_modes=int(resolved_candidate["modes"]),
+                bridge_modes=int(resolved_candidate["bridge_modes"]),
             )
         elif basis_kind == "mesh_compatible_drift":
             candidate_basis = build_mesh_compatible_blp_drift_basis(
                 steps=problem.steps,
                 maturity=problem.maturity,
                 hurst=problem.hurst,
-                modes=int(candidate_config["modes"]),
+                modes=int(resolved_candidate["modes"]),
             )
         elif basis_kind == "channel_dct":
             candidate_basis = None
         else:
             raise ValueError("unsupported candidate mode_basis")
-        adaptation_values = candidate_config.get("conditional_adaptation")
+        adaptation_values = resolved_candidate.get("conditional_adaptation")
         adaptation_config = (
             ConditionalTransportAdaptationConfig(
                 iterations=int(adaptation_values["iterations"]),
@@ -247,7 +253,7 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
         )
         trained = train_rbergomi_cm_transport(
             problem,
-            modes_per_driver=int(candidate_config["modes_per_driver"]),
+            modes_per_driver=int(resolved_candidate["modes_per_driver"]),
             basis=candidate_basis,
             adaptation_config=adaptation_config,
             adaptation_seed=(
@@ -257,26 +263,26 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
             ),
             mode_search=ModeSearchConfig(
                 methods=("lbfgs", "trust-ncg"),
-                random_starts=int(candidate_config["random_starts"]),
+                random_starts=int(resolved_candidate["random_starts"]),
                 random_seed=_seed(root_seed, f"{cell_id}-candidate-mode", used_seeds),
-                start_scale=float(candidate_config["start_scale"]),
+                start_scale=float(resolved_candidate["start_scale"]),
                 solver=solver,
             ),
             transport_config=CurvatureTransportConfig(
-                defensive_mass=float(candidate_config["defensive_mass"]),
+                defensive_mass=float(resolved_candidate["defensive_mass"]),
                 asymptotic_safety_mass=float(
-                    candidate_config.get("asymptotic_safety_mass", 0.0)
+                    resolved_candidate.get("asymptotic_safety_mass", 0.0)
                 ),
                 safety_spectrum_decay=(
-                    float(candidate_config["safety_spectrum_decay"])
-                    if "safety_spectrum_decay" in candidate_config
+                    float(resolved_candidate["safety_spectrum_decay"])
+                    if "safety_spectrum_decay" in resolved_candidate
                     else None
                 ),
                 safety_spectrum_scale=float(
-                    candidate_config.get("safety_spectrum_scale", 1.0)
+                    resolved_candidate.get("safety_spectrum_scale", 1.0)
                 ),
                 safety_complement_decay=float(
-                    candidate_config.get("safety_complement_decay", 2.0)
+                    resolved_candidate.get("safety_complement_decay", 2.0)
                 ),
             ),
         )
@@ -320,7 +326,7 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
             "mode_basis": basis_kind,
             "basis_rank": trained.basis.rank,
             "asymptotic_safety_mass": float(
-                candidate_config.get("asymptotic_safety_mass", 0.0)
+                resolved_candidate.get("asymptotic_safety_mass", 0.0)
             ),
             "conditional_adaptation": adaptation_config is not None,
             "adapt_covariance": (
@@ -337,6 +343,8 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
                 trained.adaptation_effective_sample_sizes
             ),
             "adaptation_tempering_powers": list(trained.adaptation_tempering_powers),
+            "routing_policy": route.policy_id if route is not None else None,
+            "routing_regime": route.regime if route is not None else None,
         }
 
         methods = [candidate_record]
