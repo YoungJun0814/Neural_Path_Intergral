@@ -30,3 +30,5 @@ gates:
   maximum_likelihood_normalization_z: 4.0
   maximum_likelihood_bound_violation: 0.0000000001
   minimum_strongest_comparator_over_candidate_work_ratio: 1.0
+  minimum_family_size: 2
+  minimum_family_pass_fraction: 1.0

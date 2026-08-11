@@ -1,0 +1,30 @@
+schema: npi.g11.v16-rough-high-eta-replicate-mixture-development-config.v11
+output_path: results/g11_v16_rough_high_eta_replicate_mixture_development_v11_2026-08-12.json
+artifacts:
+  baseline: {path: results/g11_v16_deep_tail_joint_ood_comparator_confirmation_v2_2026-08-11.json, sha256: 86b79ea906c19bdaea7a117d699e92747e609d236c95f9b6a63bc4f1970c2e97}
+  independent_reference: {path: results/g11_v16_deep_tail_joint_ood_smc_reference_v1_2026-08-11.json, sha256: 526b22d30327d7a9fdf308d3c7651202af8bc9ec80dc0a41a193adfdd8c56bd9}
+model: {spot: 100.0, maturity: 1.0, steps: 32, eta: 1.5, xi: 0.04, rho: -0.7}
+variants:
+  - {id: base-mix2-a, selection_family: base-mix2, reference_cell: rough-h005-eta200-k1-ood, initializer: v14_only, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, v14_initializer: {target_powers: [0.05, 0.10], shifted_weights: [0.5, 0.5], defensive_mass: 0.20, particles: 1024, replicates_per_power: 2, replicate_aggregation: mixture, pcn_sweeps: 3, maximum_stages: 96}, seed: 1731001}
+  - {id: base-mix2-b, selection_family: base-mix2, reference_cell: rough-h005-eta200-k1-ood, initializer: v14_only, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, v14_initializer: {target_powers: [0.05, 0.10], shifted_weights: [0.5, 0.5], defensive_mass: 0.20, particles: 1024, replicates_per_power: 2, replicate_aggregation: mixture, pcn_sweeps: 3, maximum_stages: 96}, seed: 1731002}
+  - {id: base-mix4-a, selection_family: base-mix4, reference_cell: rough-h005-eta200-k1-ood, initializer: v14_only, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, v14_initializer: {target_powers: [0.05, 0.10], shifted_weights: [0.5, 0.5], defensive_mass: 0.20, particles: 1024, replicates_per_power: 4, replicate_aggregation: mixture, pcn_sweeps: 3, maximum_stages: 96}, seed: 1731003}
+  - {id: base-mix4-b, selection_family: base-mix4, reference_cell: rough-h005-eta200-k1-ood, initializer: v14_only, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, v14_initializer: {target_powers: [0.05, 0.10], shifted_weights: [0.5, 0.5], defensive_mass: 0.20, particles: 1024, replicates_per_power: 4, replicate_aggregation: mixture, pcn_sweeps: 3, maximum_stages: 96}, seed: 1731004}
+  - {id: low-defense-mix4-a, selection_family: low-defense-mix4, reference_cell: rough-h005-eta200-k1-ood, initializer: v14_only, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, v14_initializer: {target_powers: [0.05, 0.10], shifted_weights: [0.5, 0.5], defensive_mass: 0.10, particles: 1024, replicates_per_power: 4, replicate_aggregation: mixture, pcn_sweeps: 3, maximum_stages: 96}, seed: 1731005}
+  - {id: low-defense-mix4-b, selection_family: low-defense-mix4, reference_cell: rough-h005-eta200-k1-ood, initializer: v14_only, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, v14_initializer: {target_powers: [0.05, 0.10], shifted_weights: [0.5, 0.5], defensive_mass: 0.10, particles: 1024, replicates_per_power: 4, replicate_aggregation: mixture, pcn_sweeps: 3, maximum_stages: 96}, seed: 1731006}
+  - {id: high-mix2-a, selection_family: high-mix2, reference_cell: rough-h005-eta200-k1-ood, initializer: v14_only, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, v14_initializer: {target_powers: [0.10, 0.25, 0.50], shifted_weights: [0.40, 0.35, 0.25], defensive_mass: 0.20, particles: 1024, replicates_per_power: 2, replicate_aggregation: mixture, pcn_sweeps: 3, maximum_stages: 96}, seed: 1731007}
+  - {id: high-mix2-b, selection_family: high-mix2, reference_cell: rough-h005-eta200-k1-ood, initializer: v14_only, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, v14_initializer: {target_powers: [0.10, 0.25, 0.50], shifted_weights: [0.40, 0.35, 0.25], defensive_mass: 0.20, particles: 1024, replicates_per_power: 2, replicate_aggregation: mixture, pcn_sweeps: 3, maximum_stages: 96}, seed: 1731008}
+  - {id: medium-mix2-a, selection_family: medium-mix2, reference_cell: rough-h005-eta200-k1-ood, initializer: v14_only, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, v14_initializer: {target_powers: [0.05, 0.10, 0.20], shifted_weights: [0.25, 0.35, 0.40], defensive_mass: 0.20, particles: 1024, replicates_per_power: 2, replicate_aggregation: mixture, pcn_sweeps: 3, maximum_stages: 96}, seed: 1731009}
+  - {id: medium-mix2-b, selection_family: medium-mix2, reference_cell: rough-h005-eta200-k1-ood, initializer: v14_only, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, v14_initializer: {target_powers: [0.05, 0.10, 0.20], shifted_weights: [0.25, 0.35, 0.40], defensive_mass: 0.20, particles: 1024, replicates_per_power: 2, replicate_aggregation: mixture, pcn_sweeps: 3, maximum_stages: 96}, seed: 1731010}
+mode_solver: {random_starts: 3, start_scale: 2.5, maximum_iterations: 280, gradient_tolerance: 0.000001}
+evaluation: {clusters: 8, samples_per_cluster: 32768, primary_query_count: 100}
+gates:
+  maximum_accuracy_z: 4.0
+  maximum_comparator_accuracy_z: 4.0
+  minimum_qualified_comparators: 2
+  maximum_cluster_to_pooled_se_ratio: 2.0
+  maximum_robust_relative_standard_error: 0.30
+  maximum_likelihood_normalization_z: 4.0
+  maximum_likelihood_bound_violation: 0.0000000001
+  minimum_strongest_comparator_over_candidate_work_ratio: 1.0
+  minimum_family_size: 2
+  minimum_family_pass_fraction: 1.0

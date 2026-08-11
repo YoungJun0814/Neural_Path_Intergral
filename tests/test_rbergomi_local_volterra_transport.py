@@ -87,3 +87,39 @@ def test_local_transport_exact_likelihood_pairing_and_bound() -> None:
     assert float(torch.max(batch.likelihood)) <= 5.0 * (1 + 1e-10)
     assert batch.maximum_likelihood_bound_violation < 1e-9
     assert all(not result.particles_are_final_inferential_units for result in trained.smc_results)
+
+
+def test_local_transport_can_retain_replicate_centres_as_exact_mixture() -> None:
+    problem = _problem()
+    trained = train_local_volterra_transport(
+        problem,
+        training_seed=11,
+        config=LocalVolterraTransportTrainingConfig(
+            target_powers=(0.2, 0.6),
+            shifted_weights=(0.5, 0.5),
+            defensive_weight=0.2,
+            replicates_per_power=2,
+            replicate_aggregation="mixture",
+            smc=AdaptiveResidualSMCConfig(
+                particles=32,
+                target_ess_fraction=0.65,
+                pcn_sweeps_per_stage=1,
+            ),
+        ),
+    )
+    assert len(trained.proposal.component_means) == 5
+    torch.testing.assert_close(
+        torch.tensor(trained.proposal.component_weights),
+        torch.tensor((0.2, 0.2, 0.2, 0.2, 0.2)),
+    )
+    assert len(set(trained.all_training_seeds)) == len(trained.all_training_seeds)
+    batch = evaluate_local_volterra_transport(
+        problem,
+        trained.proposal,
+        sample_count=10_000,
+        proposal_seed=102,
+        coordinate_seed=103,
+    )
+    likelihood_se = float(torch.std(batch.likelihood, unbiased=True)) / 10_000**0.5
+    assert abs(float(torch.mean(batch.likelihood)) - 1.0) <= 5 * likelihood_se
+    assert float(torch.max(batch.likelihood)) <= 5.0 * (1 + 1e-10)

@@ -6,6 +6,7 @@ import hashlib
 import math
 import time
 from dataclasses import dataclass
+from typing import Literal
 
 import torch
 
@@ -74,6 +75,7 @@ class LocalVolterraTransportTrainingConfig:
     shifted_weights: tuple[float, ...] = (0.4, 0.35, 0.25)
     defensive_weight: float = 0.2
     replicates_per_power: int = 1
+    replicate_aggregation: Literal["average", "mixture"] = "average"
     smc: AdaptiveResidualSMCConfig = AdaptiveResidualSMCConfig()
 
     def __post_init__(self) -> None:
@@ -95,6 +97,8 @@ class LocalVolterraTransportTrainingConfig:
             or self.replicates_per_power < 1
         ):
             raise ValueError("replicates per power must be a positive integer")
+        if self.replicate_aggregation not in {"average", "mixture"}:
+            raise ValueError("replicate aggregation must be average or mixture")
 
 
 @dataclass(frozen=True)
@@ -159,8 +163,13 @@ def train_local_volterra_transport(
                     )
                 )
             )
-        mean = torch.stack(power_means).mean(dim=0)
-        means.append(mean)
+        if config.replicate_aggregation == "average":
+            means.append(torch.stack(power_means).mean(dim=0))
+        else:
+            # Preserve independently discovered basins instead of placing one
+            # Gaussian at their arithmetic midpoint.  The frozen proposal is
+            # still a finite Gaussian mixture with an exact density.
+            means.extend(power_means)
         replicate_norms.append(tuple(float(torch.linalg.vector_norm(item)) for item in power_means))
         if len(power_means) == 1:
             minimum_cosines.append(1.0)
@@ -177,8 +186,16 @@ def train_local_volterra_transport(
     if len(set(all_seeds)) != len(all_seeds):
         raise AssertionError("local Volterra training streams collided")
     shifted_mass = 1.0 - config.defensive_weight
+    if config.replicate_aggregation == "average":
+        shifted_weights = config.shifted_weights
+    else:
+        shifted_weights = tuple(
+            weight / config.replicates_per_power
+            for weight in config.shifted_weights
+            for _ in range(config.replicates_per_power)
+        )
     weights = (config.defensive_weight,) + tuple(
-        shifted_mass * weight for weight in config.shifted_weights
+        shifted_mass * weight for weight in shifted_weights
     )
     proposal = freeze_baseline_proposal(
         method="defensive_cem",

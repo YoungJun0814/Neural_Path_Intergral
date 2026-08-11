@@ -441,6 +441,14 @@ def main() -> None:
                         replicates_per_power=int(
                             local_values.get("replicates_per_power", 1)
                         ),
+                        replicate_aggregation=cast(
+                            Literal["average", "mixture"],
+                            str(
+                                local_values.get(
+                                    "replicate_aggregation", "average"
+                                )
+                            ),
+                        ),
                         smc=AdaptiveResidualSMCConfig(
                             particles=int(local_values["particles"]),
                             target_ess_fraction=0.7,
@@ -493,6 +501,14 @@ def main() -> None:
                     defensive_weight=float(local_values["defensive_mass"]),
                     replicates_per_power=int(
                         local_values.get("replicates_per_power", 1)
+                    ),
+                    replicate_aggregation=cast(
+                        Literal["average", "mixture"],
+                        str(
+                            local_values.get(
+                                "replicate_aggregation", "average"
+                            )
+                        ),
                     ),
                     smc=AdaptiveResidualSMCConfig(
                         particles=int(local_values["particles"]),
@@ -676,6 +692,17 @@ def main() -> None:
         records.append(
             {
                 "variant_id": variant_id,
+                "selection_family": str(
+                    variant.get(
+                        "selection_family",
+                        (
+                            variant_id.rsplit("-", maxsplit=1)[0]
+                            if variant_id.rsplit("-", maxsplit=1)[-1]
+                            in {"a", "b"}
+                            else variant_id
+                        ),
+                    )
+                ),
                 "reference_cell": reference_cell,
                 "passed": not variant_failures,
                 "failures": variant_failures,
@@ -729,9 +756,30 @@ def main() -> None:
             passing_by_cell.setdefault(str(record["reference_cell"]), []).append(
                 str(record["variant_id"])
             )
+    family_records: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for record in records:
+        key = (str(record["reference_cell"]), str(record["selection_family"]))
+        family_records.setdefault(key, []).append(record)
+    passing_families_by_cell: dict[str, list[str]] = {}
+    minimum_family_size = int(gates.get("minimum_family_size", 1))
+    minimum_family_pass_fraction = float(
+        gates.get("minimum_family_pass_fraction", 0.0)
+    )
+    for (cell, family), members in family_records.items():
+        pass_fraction = sum(bool(item["passed"]) for item in members) / len(members)
+        if (
+            len(members) >= minimum_family_size
+            and pass_fraction >= minimum_family_pass_fraction
+        ):
+            passing_families_by_cell.setdefault(cell, []).append(family)
     for target in {str(item["reference_cell"]) for item in config["variants"]}:
         if target not in passing_by_cell:
             failures.append(f"{target}: no variant passed all gates")
+        if (
+            "minimum_family_pass_fraction" in gates
+            and target not in passing_families_by_cell
+        ):
+            failures.append(f"{target}: no training-seed-stable family passed")
     config_schema = str(config["schema"])
     version = config_schema.rsplit(".v", maxsplit=1)[-1]
     run_class = "confirmation" if "confirmation" in config_schema else "development"
@@ -747,6 +795,7 @@ def main() -> None:
         "passed": not failures,
         "failures": failures,
         "passing_variants_by_cell": passing_by_cell,
+        "passing_families_by_cell": passing_families_by_cell,
         "variants": records,
         "claim_boundary": {
             "development_selection_only": run_class == "development",
