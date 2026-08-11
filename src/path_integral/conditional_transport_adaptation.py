@@ -30,6 +30,7 @@ class ConditionalTransportAdaptationConfig:
     minimum_variance: float = 0.05
     maximum_variance: float = 20.0
     covariance_ridge: float = 1e-6
+    adapt_covariance: bool = True
 
     def __post_init__(self) -> None:
         if isinstance(self.iterations, bool) or not isinstance(self.iterations, int):
@@ -52,6 +53,8 @@ class ConditionalTransportAdaptationConfig:
             raise ValueError("maximum_variance must be finite")
         if not math.isfinite(self.covariance_ridge) or self.covariance_ridge <= 0.0:
             raise ValueError("covariance_ridge must be finite and positive")
+        if not isinstance(self.adapt_covariance, bool):
+            raise ValueError("adapt_covariance must be boolean")
 
 
 @dataclass(frozen=True)
@@ -156,19 +159,20 @@ def adapt_conditional_transport(
         coefficients = basis.project(draw.samples)
         fitted_mean = torch.sum(weights[:, None] * coefficients, dim=0)
         centered = coefficients - fitted_mean
-        fitted_covariance = centered.T @ (weights[:, None] * centered)
-        fitted_covariance = fitted_covariance + config.covariance_ridge * torch.eye(
-            basis.rank,
-            dtype=torch.float64,
-        )
         coefficient_mean = (
             (1.0 - config.smoothing) * coefficient_mean
             + config.smoothing * fitted_mean
         )
-        coefficient_covariance = (
-            (1.0 - config.smoothing) * coefficient_covariance
-            + config.smoothing * fitted_covariance
-        )
+        if config.adapt_covariance:
+            fitted_covariance = centered.T @ (weights[:, None] * centered)
+            fitted_covariance = fitted_covariance + config.covariance_ridge * torch.eye(
+                basis.rank,
+                dtype=torch.float64,
+            )
+            coefficient_covariance = (
+                (1.0 - config.smoothing) * coefficient_covariance
+                + config.smoothing * fitted_covariance
+            )
         eigenvalues, eigenvectors = torch.linalg.eigh(coefficient_covariance)
         eigenvalues = torch.clamp(
             eigenvalues,
