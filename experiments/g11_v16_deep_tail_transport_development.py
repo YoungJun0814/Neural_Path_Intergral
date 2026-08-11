@@ -47,6 +47,7 @@ from src.path_integral.v15_result_audit import file_sha256, git_source_provenanc
 from src.path_integral.v16_transport_policy import (
     route_v16_hybrid_v2,
     route_v16_hybrid_v3,
+    route_v16_hybrid_v4,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -220,13 +221,15 @@ def main() -> None:
             if routing_policy not in {
                 "v16_hybrid_routing_v2",
                 "v16_hybrid_routing_v3",
+                "v16_hybrid_routing_v4",
             }:
                 raise ValueError(f"unsupported routing policy: {routing_policy}")
-            route = (
-                route_v16_hybrid_v2(problem)
-                if routing_policy == "v16_hybrid_routing_v2"
-                else route_v16_hybrid_v3(problem)
-            )
+            if routing_policy == "v16_hybrid_routing_v2":
+                route = route_v16_hybrid_v2(problem)
+            elif routing_policy == "v16_hybrid_routing_v3":
+                route = route_v16_hybrid_v3(problem)
+            else:
+                route = route_v16_hybrid_v4(problem)
             routing_regime = route.regime
             variant.update(
                 {

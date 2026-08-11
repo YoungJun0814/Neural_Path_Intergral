@@ -4,6 +4,7 @@ from src.path_integral.v16_transport_policy import (
     route_v16_hybrid_v1,
     route_v16_hybrid_v2,
     route_v16_hybrid_v3,
+    route_v16_hybrid_v4,
 )
 
 
@@ -86,3 +87,25 @@ def test_v16_v3_routes_joint_extremes_to_confirmable_target_clusters() -> None:
     assert eta_rho.regime == "deep_high_vol_of_vol_strong_negative_correlation"
     assert eta_rho.tempered_particles == 4096
     assert eta_rho.candidate_overrides()["tempered_target"]["clustering"] == "kmeans"
+
+
+def test_v16_v4_bags_joint_extreme_training_replicates_only() -> None:
+    ordinary_rough = route_v16_hybrid_v4(
+        _problem(hurst=0.05, rho=-0.7, threshold=1.0)
+    )
+    rough_eta = route_v16_hybrid_v4(
+        _problem(hurst=0.05, rho=-0.7, threshold=1.0, eta=2.0)
+    )
+    rough_rho = route_v16_hybrid_v4(
+        _problem(hurst=0.05, rho=-0.9, threshold=1.0)
+    )
+    eta_rho = route_v16_hybrid_v4(
+        _problem(hurst=0.12, rho=-0.9, threshold=1.0, eta=2.0)
+    )
+    assert ordinary_rough.tempered_clustering == "kmeans"
+    for route in (rough_eta, rough_rho, eta_rho):
+        assert route.policy_id == "v16_hybrid_routing_v4"
+        assert route.tempered_clustering == "replicate_kmeans"
+        assert route.final_components == route.tempered_replicates == 4
+    assert rough_eta.tempered_particles == 8192
+    assert rough_rho.tempered_particles == eta_rho.tempered_particles == 4096

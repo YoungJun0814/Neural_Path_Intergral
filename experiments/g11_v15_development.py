@@ -68,6 +68,7 @@ from src.path_integral.v16_transport_policy import (
     route_v16_hybrid_v1,
     route_v16_hybrid_v2,
     route_v16_hybrid_v3,
+    route_v16_hybrid_v4,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -233,6 +234,9 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
             resolved_candidate.update(route.candidate_overrides())
         elif candidate_config.get("routing_policy") == "v16_hybrid_routing_v3":
             route = route_v16_hybrid_v3(problem)
+            resolved_candidate.update(route.candidate_overrides())
+        elif candidate_config.get("routing_policy") == "v16_hybrid_routing_v4":
+            route = route_v16_hybrid_v4(problem)
             resolved_candidate.update(route.candidate_overrides())
         solver = ActionSolverConfig(
             maximum_iterations=int(resolved_candidate["maximum_iterations"]),
