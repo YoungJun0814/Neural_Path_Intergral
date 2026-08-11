@@ -55,4 +55,5 @@ gates:
   p7_operator: pass_exact_correction_and_replicated_initializer_gain
   p8_baselines: pass_internal_confirmation_and_ood
   p9_v16_route: pass_named_cell_dominance_and_joint_extreme_correctness_fallback
-  qualification: internal_pass_external_reproduction_locked
+  internal_finite_grid_qualification: pass
+  qualification: locked
