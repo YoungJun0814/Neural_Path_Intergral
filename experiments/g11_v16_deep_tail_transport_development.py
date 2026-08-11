@@ -64,6 +64,37 @@ def _method_wnv(method: dict[str, Any]) -> float:
     )
 
 
+def _qualify_comparator(
+    method: dict[str, Any],
+    *,
+    reference_estimate: float,
+    reference_standard_error: float,
+    maximum_accuracy_z: float,
+) -> dict[str, Any]:
+    variance = float(method["sample_variance"])
+    units = int(method["inferential_units"])
+    method_standard_error = (
+        math.sqrt(variance / units) if variance >= 0.0 and units > 0 else math.inf
+    )
+    accuracy_z = abs(float(method["estimate"]) - reference_estimate) / math.sqrt(
+        method_standard_error**2 + reference_standard_error**2
+    )
+    qualified = (
+        variance > 0.0
+        and units > 1
+        and math.isfinite(accuracy_z)
+        and accuracy_z <= maximum_accuracy_z
+    )
+    return {
+        "method": str(method["method"]),
+        "qualified": qualified,
+        "estimate": float(method["estimate"]),
+        "standard_error": method_standard_error,
+        "external_accuracy_z": accuracy_z,
+        "work_normalized_variance": _method_wnv(method) if qualified else None,
+    }
+
+
 def _v14_seeded_transport(
     problem: RBergomiBaselineProblem,
     basis: CameronMartinBasis,
@@ -404,7 +435,36 @@ def main() -> None:
         baseline_methods = {
             item["method"]: item for item in baseline_cells[reference_cell]["methods"]
         }
-        v14_ratio = _method_wnv(baseline_methods["v14_local_volterra"]) / candidate_wnv
+        maximum_comparator_accuracy_z = float(
+            gates.get("maximum_comparator_accuracy_z", gates["maximum_accuracy_z"])
+        )
+        comparator_records = [
+            _qualify_comparator(
+                item,
+                reference_estimate=float(external["estimate"]),
+                reference_standard_error=float(external["standard_error"]),
+                maximum_accuracy_z=maximum_comparator_accuracy_z,
+            )
+            for name, item in baseline_methods.items()
+            if name != "v15_cm_transport"
+        ]
+        qualified_comparators = [
+            item for item in comparator_records if item["qualified"]
+        ]
+        comparator_ratios = {
+            str(item["method"]): float(item["work_normalized_variance"])
+            / candidate_wnv
+            for item in qualified_comparators
+        }
+        strongest_comparator_ratio = (
+            min(comparator_ratios.values()) if comparator_ratios else 0.0
+        )
+        v14_record = next(
+            item
+            for item in comparator_records
+            if item["method"] == "v14_local_volterra"
+        )
+        v14_ratio = comparator_ratios.get("v14_local_volterra")
         variant_failures = []
         if accuracy_z > float(gates["maximum_accuracy_z"]):
             variant_failures.append("external accuracy")
@@ -431,8 +491,23 @@ def main() -> None:
             gates["maximum_likelihood_bound_violation"]
         ):
             variant_failures.append("likelihood bound")
-        if v14_ratio < float(gates["minimum_v14_over_candidate_work_ratio"]):
-            variant_failures.append("V14 work ratio")
+        minimum_qualified = int(gates.get("minimum_qualified_comparators", 1))
+        if len(qualified_comparators) < minimum_qualified:
+            variant_failures.append("too few accuracy-qualified comparators")
+        if "minimum_strongest_comparator_over_candidate_work_ratio" in gates and (
+            strongest_comparator_ratio
+            < float(
+                gates["minimum_strongest_comparator_over_candidate_work_ratio"]
+            )
+        ):
+            variant_failures.append("strongest comparator work ratio")
+        if "minimum_v14_over_candidate_work_ratio" in gates:
+            if not v14_record["qualified"]:
+                variant_failures.append("V14 comparator accuracy")
+            elif v14_ratio is None or v14_ratio < float(
+                gates["minimum_v14_over_candidate_work_ratio"]
+            ):
+                variant_failures.append("V14 work ratio")
         records.append(
             {
                 "variant_id": variant_id,
@@ -466,6 +541,14 @@ def main() -> None:
                 "total_work_at_primary_query_count": total_work,
                 "work_normalized_variance": candidate_wnv,
                 "v14_over_candidate_work_ratio": v14_ratio,
+                "qualified_comparators": [
+                    item["method"] for item in qualified_comparators
+                ],
+                "comparator_diagnostics": comparator_records,
+                "comparator_over_candidate_work_ratios": comparator_ratios,
+                "strongest_comparator_over_candidate_work_ratio": (
+                    strongest_comparator_ratio
+                ),
                 "adaptation_effective_sample_sizes": list(
                     effective_sample_sizes
                 ),
