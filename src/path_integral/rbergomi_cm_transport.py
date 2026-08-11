@@ -47,6 +47,7 @@ class RBergomiCMTransportEvaluation:
     contribution: torch.Tensor
     conditional_probability: torch.Tensor
     likelihood: torch.Tensor
+    component_labels: torch.Tensor
     log_q_over_p: torch.Tensor
     evaluation_cost: BaselineCostLedger
     maximum_likelihood_bound_violation: float
@@ -179,6 +180,7 @@ def evaluate_rbergomi_cm_transport(
         contribution=contribution,
         conditional_probability=conditional.payoffs.left_probability,
         likelihood=likelihood,
+        component_labels=sample.labels,
         log_q_over_p=sample.log_q_over_p,
         evaluation_cost=cost,
         maximum_likelihood_bound_violation=violation,

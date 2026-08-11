@@ -136,6 +136,28 @@ def main() -> None:
         candidate_variance = float(torch.var(candidate.contribution, unbiased=True))
         candidate_se = math.sqrt(candidate_variance / candidate.contribution.numel())
         second_moment = candidate_variance + candidate_mean**2
+        squared_contribution = candidate.contribution.square()
+        total_squared_contribution = float(torch.sum(squared_contribution))
+        component_diagnostics = []
+        for component_index, component_weight in enumerate(trained.proposal.weights):
+            selected = candidate.component_labels == component_index
+            selected_count = int(torch.sum(selected))
+            component_diagnostics.append(
+                {
+                    "component_index": component_index,
+                    "configured_weight": float(component_weight),
+                    "sample_count": selected_count,
+                    "sample_fraction": selected_count / candidate.contribution.numel(),
+                    "second_moment_share": (
+                        float(torch.sum(squared_contribution[selected]))
+                        / max(total_squared_contribution, 1e-300)
+                    ),
+                    "mean_conditional_probability": float(
+                        torch.mean(candidate.conditional_probability[selected])
+                    ),
+                    "mean_likelihood": float(torch.mean(candidate.likelihood[selected])),
+                }
+            )
         records.append(
             {
                 "epsilon": epsilon,
@@ -166,6 +188,7 @@ def main() -> None:
                     config.get("safety_complement_decay", 2.0)
                 ),
                 "proposal_sha256": trained.proposal_sha256,
+                "component_diagnostics": component_diagnostics,
                 "maximum_likelihood_bound_violation": (
                     candidate.maximum_likelihood_bound_violation
                 ),
