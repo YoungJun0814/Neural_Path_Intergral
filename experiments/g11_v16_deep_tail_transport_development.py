@@ -38,6 +38,11 @@ from src.path_integral.rbergomi_local_volterra_transport import (
     train_local_volterra_transport,
 )
 from src.path_integral.residual_smc import AdaptiveResidualSMCConfig
+from src.path_integral.tempered_conditional_smc import TemperedSMCConfig
+from src.path_integral.tempered_target_transport import (
+    TemperedTargetTransportConfig,
+    fit_tempered_target_transport,
+)
 from src.path_integral.v15_result_audit import file_sha256, git_source_provenance
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -180,20 +185,23 @@ def main() -> None:
             drift_modes=int(variant["drift_modes"]),
             bridge_modes=int(variant["bridge_modes"]),
         )
-        adaptation = variant["adaptation"]
         seed = int(variant["seed"])
-        adaptation_config = ConditionalTransportAdaptationConfig(
-            iterations=int(adaptation["iterations"]),
-            samples_per_iteration=int(adaptation["samples"]),
-            smoothing=0.7,
-            minimum_ess_fraction=float(adaptation["minimum_ess_fraction"]),
-            minimum_variance=0.05,
-            maximum_variance=20.0,
-            adapt_covariance=bool(adaptation["adapt_covariance"]),
-            final_components=int(adaptation["final_components"]),
-        )
         initializer = str(variant.get("initializer", "cm_action"))
-        if initializer == "cm_action":
+        initializer_diagnostics: dict[str, float | int] = {}
+        adaptation_config = None
+        if initializer in {"cm_action", "v14_local"}:
+            adaptation = variant["adaptation"]
+            adaptation_config = ConditionalTransportAdaptationConfig(
+                iterations=int(adaptation["iterations"]),
+                samples_per_iteration=int(adaptation["samples"]),
+                smoothing=0.7,
+                minimum_ess_fraction=float(adaptation["minimum_ess_fraction"]),
+                minimum_variance=0.05,
+                maximum_variance=20.0,
+                adapt_covariance=bool(adaptation["adapt_covariance"]),
+                final_components=int(adaptation["final_components"]),
+            )
+        if initializer == "cm_action" and adaptation_config is not None:
             trained = train_rbergomi_cm_transport(
                 problem,
                 basis=basis,
@@ -221,7 +229,7 @@ def main() -> None:
             training_work = trained.training_cost.algorithmic_work_units
             effective_sample_sizes = trained.adaptation_effective_sample_sizes
             tempering_powers = trained.adaptation_tempering_powers
-        elif initializer == "v14_local":
+        elif initializer == "v14_local" and adaptation_config is not None:
             (
                 proposal,
                 training_work,
@@ -234,6 +242,51 @@ def main() -> None:
                 seed=seed,
                 adaptation_config=adaptation_config,
             )
+        elif initializer == "tempered_smc":
+            tempered = variant["tempered_smc"]
+            stages = int(tempered["temperature_stages"])
+            power = float(tempered["temperature_power"])
+            fitted = fit_tempered_target_transport(
+                problem,
+                basis,
+                config=TemperedTargetTransportConfig(
+                    smc=TemperedSMCConfig(
+                        particles=int(tempered["particles"]),
+                        temperatures=tuple(
+                            (index / stages) ** power
+                            for index in range(stages + 1)
+                        ),
+                        mutation_steps=int(tempered["mutation_steps"]),
+                        pcn_scale=float(tempered["pcn_scale"]),
+                        replicates=int(tempered["replicates"]),
+                        seed=seed,
+                        retain_final_particles=True,
+                    ),
+                    defensive_mass=float(variant["defensive_mass"]),
+                    safety_mass=float(variant["safety_mass"]),
+                    components=int(tempered["components"]),
+                ),
+            )
+            proposal = fitted.proposal
+            training_work = fitted.training_cost.algorithmic_work_units
+            effective_sample_sizes = (
+                fitted.minimum_incremental_ess_fraction
+                * int(tempered["particles"]),
+            )
+            tempering_powers = (1.0,)
+            initializer_diagnostics = {
+                "tempered_normalizer_estimate": fitted.normalizer_estimate,
+                "tempered_normalizer_standard_error": (
+                    fitted.normalizer_standard_error
+                ),
+                "tempered_minimum_incremental_ess_fraction": (
+                    fitted.minimum_incremental_ess_fraction
+                ),
+                "tempered_mutation_acceptance_rate": (
+                    fitted.mutation_acceptance_rate
+                ),
+                "tempered_fitted_particle_count": fitted.fitted_particle_count,
+            }
         else:
             raise ValueError(f"unsupported initializer: {initializer}")
         total_count = 0
@@ -369,6 +422,7 @@ def main() -> None:
                 "likelihood_normalization_z": likelihood_z,
                 "maximum_likelihood_bound_violation": maximum_bound_violation,
                 "initializer": initializer,
+                "initializer_diagnostics": initializer_diagnostics,
                 "training_work": training_work,
                 "evaluation_work": evaluation_work,
                 "total_work_at_primary_query_count": total_work,

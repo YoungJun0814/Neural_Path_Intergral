@@ -51,3 +51,28 @@ def test_gaussian_potential_matches_analytic_normalizer() -> None:
     assert 0.0 < result.mutation_acceptance_rate < 1.0
     assert 0.0 < result.minimum_incremental_ess_fraction <= 1.0
     assert result.potential_evaluations > 0
+
+
+def test_retained_final_particles_are_from_the_final_tempered_population() -> None:
+    config = TemperedSMCConfig(
+        particles=256,
+        temperatures=tuple((index / 8) ** 2 for index in range(9)),
+        mutation_steps=2,
+        pcn_scale=0.4,
+        replicates=3,
+        seed=2718,
+        retain_final_particles=True,
+    )
+
+    def log_potential(points: torch.Tensor) -> torch.Tensor:
+        return -0.5 * torch.sum(points.square(), dim=1)
+
+    result = estimate_tempered_normalizer(log_potential, dimension=2, config=config)
+    assert result.final_particles is not None
+    assert result.final_particles.shape == (3 * 256, 2)
+    assert torch.isfinite(result.final_particles).all()
+    # Target density is proportional to exp(-||x||^2/2) times N(0,I), hence
+    # each coordinate has variance 1/2.  This loose oracle detects accidentally
+    # returning the beta=0 population without making the SMC test brittle.
+    variance = torch.var(result.final_particles, dim=0, unbiased=True)
+    assert torch.max(torch.abs(variance - 0.5)) < 0.18

@@ -25,6 +25,7 @@ class TemperedSMCConfig:
     pcn_scale: float
     replicates: int
     seed: int
+    retain_final_particles: bool = False
 
     def __post_init__(self) -> None:
         integers = (self.particles, self.mutation_steps, self.replicates)
@@ -32,6 +33,8 @@ class TemperedSMCConfig:
             raise ValueError("SMC counts must be positive integers")
         if isinstance(self.seed, bool) or not isinstance(self.seed, int):
             raise ValueError("SMC seed must be an integer")
+        if not isinstance(self.retain_final_particles, bool):
+            raise ValueError("retain_final_particles must be boolean")
         if len(self.temperatures) < 2:
             raise ValueError("SMC requires at least two temperatures")
         if self.temperatures[0] != 0.0 or self.temperatures[-1] != 1.0:
@@ -59,6 +62,7 @@ class TemperedSMCResult:
     mutation_acceptance_rate: float
     minimum_incremental_ess_fraction: float
     potential_evaluations: int
+    final_particles: torch.Tensor | None
 
 
 def _validate_log_potential(values: torch.Tensor, particles: int) -> None:
@@ -87,6 +91,7 @@ def estimate_tempered_normalizer(
     proposed = 0
     evaluations = 0
     minimum_ess_fraction = 1.0
+    retained_final_particles = []
     retained = math.sqrt(1.0 - config.pcn_scale**2)
     for replicate in range(config.replicates):
         generator = torch.Generator().manual_seed(config.seed + 104_729 * replicate)
@@ -112,7 +117,8 @@ def estimate_tempered_normalizer(
                 config.particles * float(torch.sum(probabilities.square()))
             )
             minimum_ess_fraction = min(minimum_ess_fraction, ess_fraction)
-            if stage == len(config.temperatures) - 2:
+            final_stage = stage == len(config.temperatures) - 2
+            if final_stage and not config.retain_final_particles:
                 continue
             ancestors = torch.multinomial(
                 probabilities,
@@ -146,6 +152,8 @@ def estimate_tempered_normalizer(
                 log_value[accept] = candidate_log_value[accept]
                 accepted += int(torch.sum(accept))
                 proposed += config.particles
+            if final_stage:
+                retained_final_particles.append(particles.detach().clone())
         log_estimates.append(log_normalizer)
     log_replicates = torch.stack(log_estimates)
     estimates = torch.exp(log_replicates)
@@ -163,4 +171,9 @@ def estimate_tempered_normalizer(
         mutation_acceptance_rate=accepted / proposed if proposed else math.nan,
         minimum_incremental_ess_fraction=minimum_ess_fraction,
         potential_evaluations=evaluations,
+        final_particles=(
+            torch.cat(retained_final_particles, dim=0)
+            if retained_final_particles
+            else None
+        ),
     )

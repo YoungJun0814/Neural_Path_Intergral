@@ -40,6 +40,7 @@ from src.path_integral.path_functionals import TerminalThresholdTask
 from src.path_integral.rbergomi_cm_transport import (
     assert_transport_unchanged,
     evaluate_rbergomi_cm_transport,
+    finite_rank_transport_sha256,
     train_rbergomi_cm_transport,
 )
 from src.path_integral.rbergomi_local_volterra_transport import (
@@ -48,6 +49,11 @@ from src.path_integral.rbergomi_local_volterra_transport import (
     train_local_volterra_transport,
 )
 from src.path_integral.residual_smc import AdaptiveResidualSMCConfig
+from src.path_integral.tempered_conditional_smc import TemperedSMCConfig
+from src.path_integral.tempered_target_transport import (
+    TemperedTargetTransportConfig,
+    fit_tempered_target_transport,
+)
 from src.path_integral.v15_baseline_protocol import (
     V15BaselineProtocol,
     summarize_v15_method,
@@ -58,7 +64,10 @@ from src.path_integral.v15_result_audit import (
     file_sha256,
     git_source_provenance,
 )
-from src.path_integral.v16_transport_policy import route_v16_hybrid_v1
+from src.path_integral.v16_transport_policy import (
+    route_v16_hybrid_v1,
+    route_v16_hybrid_v2,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -218,6 +227,9 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
         if candidate_config.get("routing_policy") == "v16_hybrid_routing_v1":
             route = route_v16_hybrid_v1(problem)
             resolved_candidate.update(route.candidate_overrides())
+        elif candidate_config.get("routing_policy") == "v16_hybrid_routing_v2":
+            route = route_v16_hybrid_v2(problem)
+            resolved_candidate.update(route.candidate_overrides())
         solver = ActionSolverConfig(
             maximum_iterations=int(resolved_candidate["maximum_iterations"]),
             gradient_tolerance=float(resolved_candidate["gradient_tolerance"]),
@@ -259,53 +271,128 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
             if adaptation_values is not None
             else None
         )
-        trained = train_rbergomi_cm_transport(
-            problem,
-            modes_per_driver=int(resolved_candidate["modes_per_driver"]),
-            basis=candidate_basis,
-            adaptation_config=adaptation_config,
-            adaptation_seed=(
-                _seed(root_seed, f"{cell_id}-candidate-adaptation", used_seeds)
-                if adaptation_config is not None
-                else None
-            ),
-            mode_search=ModeSearchConfig(
-                methods=("lbfgs", "trust-ncg"),
-                random_starts=int(resolved_candidate["random_starts"]),
-                random_seed=_seed(root_seed, f"{cell_id}-candidate-mode", used_seeds),
-                start_scale=float(resolved_candidate["start_scale"]),
-                solver=solver,
-            ),
-            transport_config=CurvatureTransportConfig(
-                defensive_mass=float(resolved_candidate["defensive_mass"]),
-                asymptotic_safety_mass=float(
-                    resolved_candidate.get("asymptotic_safety_mass", 0.0)
+        initializer = route.initializer if route is not None else "cm_action"
+        initializer_diagnostics: dict[str, Any] = {}
+        adaptation_effective_sample_sizes: tuple[float, ...]
+        adaptation_tempering_powers: tuple[float, ...]
+        if initializer == "tempered_smc":
+            if candidate_basis is None:
+                raise ValueError("tempered target transport requires an explicit basis")
+            tempered = resolved_candidate["tempered_target"]
+            stages = int(tempered["temperature_stages"])
+            power = float(tempered["temperature_power"])
+            fitted = fit_tempered_target_transport(
+                problem,
+                candidate_basis,
+                config=TemperedTargetTransportConfig(
+                    smc=TemperedSMCConfig(
+                        particles=int(tempered["particles"]),
+                        temperatures=tuple(
+                            (index / stages) ** power
+                            for index in range(stages + 1)
+                        ),
+                        mutation_steps=int(tempered["mutation_steps"]),
+                        pcn_scale=float(tempered["pcn_scale"]),
+                        replicates=int(tempered["replicates"]),
+                        seed=_seed(
+                            root_seed,
+                            f"{cell_id}-candidate-tempered-target",
+                            used_seeds,
+                        ),
+                        retain_final_particles=True,
+                    ),
+                    defensive_mass=float(resolved_candidate["defensive_mass"]),
+                    safety_mass=float(
+                        resolved_candidate.get("asymptotic_safety_mass", 0.0)
+                    ),
+                    components=int(tempered["components"]),
                 ),
-                safety_spectrum_decay=(
-                    float(resolved_candidate["safety_spectrum_decay"])
-                    if "safety_spectrum_decay" in resolved_candidate
+            )
+            candidate_proposal = fitted.proposal
+            candidate_proposal_sha256 = finite_rank_transport_sha256(
+                candidate_proposal
+            )
+            candidate_training_cost = fitted.training_cost
+            adaptation_effective_sample_sizes = (
+                fitted.minimum_incremental_ess_fraction
+                * int(tempered["particles"]),
+            )
+            adaptation_tempering_powers = (1.0,)
+            mode_count = 0
+            best_action = None
+            initializer_diagnostics = {
+                "normalizer_estimate": fitted.normalizer_estimate,
+                "normalizer_standard_error": fitted.normalizer_standard_error,
+                "minimum_incremental_ess_fraction": (
+                    fitted.minimum_incremental_ess_fraction
+                ),
+                "mutation_acceptance_rate": fitted.mutation_acceptance_rate,
+                "fitted_particle_count": fitted.fitted_particle_count,
+            }
+        else:
+            trained = train_rbergomi_cm_transport(
+                problem,
+                modes_per_driver=int(resolved_candidate["modes_per_driver"]),
+                basis=candidate_basis,
+                adaptation_config=adaptation_config,
+                adaptation_seed=(
+                    _seed(root_seed, f"{cell_id}-candidate-adaptation", used_seeds)
+                    if adaptation_config is not None
                     else None
                 ),
-                safety_spectrum_scale=float(
-                    resolved_candidate.get("safety_spectrum_scale", 1.0)
+                mode_search=ModeSearchConfig(
+                    methods=("lbfgs", "trust-ncg"),
+                    random_starts=int(resolved_candidate["random_starts"]),
+                    random_seed=_seed(
+                        root_seed,
+                        f"{cell_id}-candidate-mode",
+                        used_seeds,
+                    ),
+                    start_scale=float(resolved_candidate["start_scale"]),
+                    solver=solver,
                 ),
-                safety_complement_decay=float(
-                    resolved_candidate.get("safety_complement_decay", 2.0)
+                transport_config=CurvatureTransportConfig(
+                    defensive_mass=float(resolved_candidate["defensive_mass"]),
+                    asymptotic_safety_mass=float(
+                        resolved_candidate.get("asymptotic_safety_mass", 0.0)
+                    ),
+                    safety_spectrum_decay=(
+                        float(resolved_candidate["safety_spectrum_decay"])
+                        if "safety_spectrum_decay" in resolved_candidate
+                        else None
+                    ),
+                    safety_spectrum_scale=float(
+                        resolved_candidate.get("safety_spectrum_scale", 1.0)
+                    ),
+                    safety_complement_decay=float(
+                        resolved_candidate.get("safety_complement_decay", 2.0)
+                    ),
                 ),
-            ),
-        )
+            )
+            candidate_proposal = trained.proposal
+            candidate_proposal_sha256 = trained.proposal_sha256
+            candidate_training_cost = trained.training_cost
+            adaptation_effective_sample_sizes = (
+                trained.adaptation_effective_sample_sizes
+            )
+            adaptation_tempering_powers = trained.adaptation_tempering_powers
+            mode_count = len(trained.modes.modes)
+            best_action = trained.modes.modes[0].action_value
         candidate_eval = evaluate_rbergomi_cm_transport(
             problem,
-            trained.proposal,
+            candidate_proposal,
             sample_count=int(evaluation["iid_units"]),
             path_seed=_seed(root_seed, f"{cell_id}-candidate-path", used_seeds),
             label_seed=_seed(root_seed, f"{cell_id}-candidate-label", used_seeds),
         )
-        assert_transport_unchanged(trained.proposal, trained.proposal_sha256)
+        assert_transport_unchanged(
+            candidate_proposal,
+            candidate_proposal_sha256,
+        )
         candidate_record, candidate_summary = _record(
             "v15_cm_transport",
             candidate_eval.contribution,
-            training_cost=trained.training_cost,
+            training_cost=candidate_training_cost,
             evaluation_cost=candidate_eval.evaluation_cost,
             reference_mean=reference_mean,
             reference_se=reference_se,
@@ -316,7 +403,7 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
             / candidate_eval.likelihood.numel()
         )
         candidate_record["exactness"] = {
-            "proposal_sha256": trained.proposal_sha256,
+            "proposal_sha256": candidate_proposal_sha256,
             "proposal_hash_unchanged": True,
             "maximum_likelihood_bound_violation": (
                 candidate_eval.maximum_likelihood_bound_violation
@@ -327,12 +414,14 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
             )
             / max(likelihood_se, torch.finfo(torch.float64).tiny),
         }
-        candidate_record["mode_count"] = len(trained.modes.modes)
-        candidate_record["best_action"] = trained.modes.modes[0].action_value
+        candidate_record["mode_count"] = mode_count
+        candidate_record["best_action"] = best_action
         candidate_record["architecture"] = {
             "version": "v16_hybrid_trace",
             "mode_basis": basis_kind,
-            "basis_rank": trained.basis.rank,
+            "basis_rank": candidate_basis.rank if candidate_basis is not None else 0,
+            "initializer": initializer,
+            "initializer_diagnostics": initializer_diagnostics,
             "asymptotic_safety_mass": float(
                 resolved_candidate.get("asymptotic_safety_mass", 0.0)
             ),
@@ -348,9 +437,9 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
                 else 0
             ),
             "adaptation_effective_sample_sizes": list(
-                trained.adaptation_effective_sample_sizes
+                adaptation_effective_sample_sizes
             ),
-            "adaptation_tempering_powers": list(trained.adaptation_tempering_powers),
+            "adaptation_tempering_powers": list(adaptation_tempering_powers),
             "routing_policy": route.policy_id if route is not None else None,
             "routing_regime": route.regime if route is not None else None,
         }
