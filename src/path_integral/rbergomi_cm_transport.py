@@ -20,6 +20,10 @@ from src.path_integral.cameron_martin_modes import (
     RBergomiModeSearchResult,
     find_rbergomi_conditional_modes,
 )
+from src.path_integral.conditional_transport_adaptation import (
+    ConditionalTransportAdaptationConfig,
+    adapt_conditional_transport,
+)
 from src.path_integral.finite_rank_gaussian_transport import (
     CurvatureTransportConfig,
     DefensiveFiniteRankGaussianMixture,
@@ -40,6 +44,8 @@ class RBergomiCMTransportTrainingResult:
     action: RBergomiConditionalAction
     modes: RBergomiModeSearchResult
     training_cost: BaselineCostLedger
+    adaptation_effective_sample_sizes: tuple[float, ...] = ()
+    adaptation_tempering_powers: tuple[float, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -84,6 +90,8 @@ def train_rbergomi_cm_transport(
     epsilon: float = 1.0,
     modes_per_driver: int = 8,
     basis: CameronMartinBasis | None = None,
+    adaptation_config: ConditionalTransportAdaptationConfig | None = None,
+    adaptation_seed: int | None = None,
     mode_search: ModeSearchConfig | None = None,
     transport_config: CurvatureTransportConfig | None = None,
 ) -> RBergomiCMTransportTrainingResult:
@@ -118,6 +126,23 @@ def train_rbergomi_cm_transport(
         peak_memory_bytes=process_peak_resident_memory_bytes(),
         measurement_mode="standardized_hardware_wall",
     )
+    adaptation_effective_sample_sizes: tuple[float, ...] = ()
+    adaptation_tempering_powers: tuple[float, ...] = ()
+    if adaptation_config is not None:
+        if adaptation_seed is None:
+            raise ValueError("adaptation_seed is required when adaptation is enabled")
+        adapted = adapt_conditional_transport(
+            problem,
+            basis,
+            proposal,
+            epsilon=epsilon,
+            seed=adaptation_seed,
+            config=adaptation_config,
+        )
+        proposal = adapted.proposal
+        cost = cost.plus(adapted.training_cost)
+        adaptation_effective_sample_sizes = adapted.effective_sample_sizes
+        adaptation_tempering_powers = adapted.tempering_powers
     return RBergomiCMTransportTrainingResult(
         proposal=proposal,
         proposal_sha256=finite_rank_transport_sha256(proposal),
@@ -125,6 +150,8 @@ def train_rbergomi_cm_transport(
         action=action,
         modes=modes,
         training_cost=cost,
+        adaptation_effective_sample_sizes=adaptation_effective_sample_sizes,
+        adaptation_tempering_powers=adaptation_tempering_powers,
     )
 
 

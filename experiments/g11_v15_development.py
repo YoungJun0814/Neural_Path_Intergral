@@ -32,6 +32,9 @@ from src.path_integral.blp_cameron_martin_embedding import (
     build_mesh_compatible_blp_hybrid_basis,
 )
 from src.path_integral.cameron_martin_modes import ActionSolverConfig, ModeSearchConfig
+from src.path_integral.conditional_transport_adaptation import (
+    ConditionalTransportAdaptationConfig,
+)
 from src.path_integral.finite_rank_gaussian_transport import CurvatureTransportConfig
 from src.path_integral.path_functionals import TerminalThresholdTask
 from src.path_integral.rbergomi_cm_transport import (
@@ -225,10 +228,31 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
             candidate_basis = None
         else:
             raise ValueError("unsupported candidate mode_basis")
+        adaptation_values = candidate_config.get("conditional_adaptation")
+        adaptation_config = (
+            ConditionalTransportAdaptationConfig(
+                iterations=int(adaptation_values["iterations"]),
+                samples_per_iteration=int(adaptation_values["samples_per_iteration"]),
+                smoothing=float(adaptation_values["smoothing"]),
+                minimum_ess_fraction=float(
+                    adaptation_values["minimum_ess_fraction"]
+                ),
+                minimum_variance=float(adaptation_values["minimum_variance"]),
+                maximum_variance=float(adaptation_values["maximum_variance"]),
+            )
+            if adaptation_values is not None
+            else None
+        )
         trained = train_rbergomi_cm_transport(
             problem,
             modes_per_driver=int(candidate_config["modes_per_driver"]),
             basis=candidate_basis,
+            adaptation_config=adaptation_config,
+            adaptation_seed=(
+                _seed(root_seed, f"{cell_id}-candidate-adaptation", used_seeds)
+                if adaptation_config is not None
+                else None
+            ),
             mode_search=ModeSearchConfig(
                 methods=("lbfgs", "trust-ncg"),
                 random_starts=int(candidate_config["random_starts"]),
@@ -296,6 +320,11 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
             "asymptotic_safety_mass": float(
                 candidate_config.get("asymptotic_safety_mass", 0.0)
             ),
+            "conditional_adaptation": adaptation_config is not None,
+            "adaptation_effective_sample_sizes": list(
+                trained.adaptation_effective_sample_sizes
+            ),
+            "adaptation_tempering_powers": list(trained.adaptation_tempering_powers),
         }
 
         methods = [candidate_record]
