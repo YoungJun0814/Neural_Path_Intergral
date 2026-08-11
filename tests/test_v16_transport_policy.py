@@ -5,6 +5,7 @@ from src.path_integral.v16_transport_policy import (
     route_v16_hybrid_v2,
     route_v16_hybrid_v3,
     route_v16_hybrid_v4,
+    route_v16_hybrid_v5,
 )
 
 
@@ -109,3 +110,28 @@ def test_v16_v4_bags_joint_extreme_training_replicates_only() -> None:
         assert route.final_components == route.tempered_replicates == 4
     assert rough_eta.tempered_particles == 8192
     assert rough_rho.tempered_particles == eta_rho.tempered_particles == 4096
+
+
+def test_v16_v5_uses_confirmed_hybrid_and_fail_closed_joint_fallback() -> None:
+    k2 = route_v16_hybrid_v5(
+        _problem(hurst=0.05, rho=-0.7, threshold=2.0)
+    )
+    k1 = route_v16_hybrid_v5(
+        _problem(hurst=0.05, rho=-0.7, threshold=1.0)
+    )
+    rough_eta = route_v16_hybrid_v5(
+        _problem(hurst=0.05, rho=-0.7, threshold=1.0, eta=2.0)
+    )
+    eta_rho = route_v16_hybrid_v5(
+        _problem(hurst=0.12, rho=-0.9, threshold=1.0, eta=2.0)
+    )
+    assert k2.initializer == "v14_tempered_hybrid"
+    assert k2.hybrid_target_mass == 0.8
+    assert k2.candidate_overrides()["target_mass"] == 0.8
+    assert k1.initializer == "tempered_smc"
+    for fallback in (rough_eta, eta_rho):
+        assert fallback.initializer == "v14_only"
+        assert fallback.comparator_dominance_claim is False
+        assert fallback.candidate_overrides()["v14_initializer"][
+            "defensive_mass"
+        ] == 0.2

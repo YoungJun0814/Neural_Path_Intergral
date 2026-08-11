@@ -19,7 +19,12 @@ V16Regime = Literal[
     "strong_negative_correlation",
     "regular",
 ]
-V16Initializer = Literal["cm_action", "tempered_smc"]
+V16Initializer = Literal[
+    "cm_action",
+    "tempered_smc",
+    "v14_only",
+    "v14_tempered_hybrid",
+]
 
 
 @dataclass(frozen=True)
@@ -47,6 +52,14 @@ class V16TransportRoute:
         "replicate_kmeans",
     ] = "pca_quantile"
     tempered_kmeans_iterations: int = 25
+    v14_target_powers: tuple[float, ...] = (0.05, 0.10)
+    v14_shifted_weights: tuple[float, ...] = (0.5, 0.5)
+    v14_defensive_mass: float = 0.20
+    v14_particles: int = 1024
+    v14_pcn_sweeps: int = 3
+    v14_maximum_stages: int = 96
+    hybrid_target_mass: float = 0.0
+    comparator_dominance_claim: bool = True
 
     def candidate_overrides(self) -> dict:
         overrides = {
@@ -59,7 +72,7 @@ class V16TransportRoute:
             "safety_spectrum_scale": 4.0,
             "safety_complement_decay": 2.0,
         }
-        if self.initializer == "tempered_smc":
+        if self.initializer in {"tempered_smc", "v14_tempered_hybrid"}:
             overrides["conditional_adaptation"] = None
             overrides["tempered_target"] = {
                 "particles": self.tempered_particles,
@@ -72,6 +85,12 @@ class V16TransportRoute:
                 "clustering": self.tempered_clustering,
                 "kmeans_iterations": self.tempered_kmeans_iterations,
             }
+            if self.initializer == "v14_tempered_hybrid":
+                overrides["v14_initializer"] = self.v14_overrides()
+                overrides["target_mass"] = self.hybrid_target_mass
+        elif self.initializer == "v14_only":
+            overrides["conditional_adaptation"] = None
+            overrides["v14_initializer"] = self.v14_overrides()
         else:
             overrides["conditional_adaptation"] = {
                 "iterations": self.adaptation_iterations,
@@ -84,6 +103,16 @@ class V16TransportRoute:
                 "final_components": self.final_components,
             }
         return overrides
+
+    def v14_overrides(self) -> dict:
+        return {
+            "target_powers": list(self.v14_target_powers),
+            "shifted_weights": list(self.v14_shifted_weights),
+            "defensive_mass": self.v14_defensive_mass,
+            "particles": self.v14_particles,
+            "pcn_sweeps": self.v14_pcn_sweeps,
+            "maximum_stages": self.v14_maximum_stages,
+        }
 
 
 def route_v16_hybrid_v1(problem: RBergomiBaselineProblem) -> V16TransportRoute:
@@ -321,3 +350,68 @@ def route_v16_hybrid_v4(problem: RBergomiBaselineProblem) -> V16TransportRoute:
         tempered_clustering="replicate_kmeans",
         tempered_kmeans_iterations=25,
     )
+
+
+def route_v16_hybrid_v5(problem: RBergomiBaselineProblem) -> V16TransportRoute:
+    """Use only confirmed novel routes and fail closed to exact V14.
+
+    The policy contains no estimated event probability.  Joint structural
+    extremes are assigned the V14 residual fallback after repeated fresh-seed
+    falsification of V3/V4 and target/residual hybrids.  The fallback retains
+    exact ordinary-IS likelihoods but carries no comparator-dominance claim.
+    """
+
+    v3 = route_v16_hybrid_v3(problem)
+    if not isinstance(problem.task, TerminalThresholdTask):
+        return replace(v3, policy_id="v16_hybrid_routing_v5")
+    threshold_ratio = problem.task.level / problem.spot
+    if threshold_ratio > 0.02:
+        return replace(v3, policy_id="v16_hybrid_routing_v5")
+    rough = problem.hurst <= 0.075
+    high_eta = problem.eta >= 1.9
+    strong_rho = problem.rho <= -0.85
+    joint_extreme = sum((rough, high_eta, strong_rho)) >= 2
+    if joint_extreme:
+        if rough and high_eta:
+            regime: V16Regime = "deep_rough_high_vol_of_vol"
+        elif rough:
+            regime = "deep_rough_strong_negative_correlation"
+        else:
+            regime = "deep_high_vol_of_vol_strong_negative_correlation"
+        return V16TransportRoute(
+            policy_id="v16_hybrid_routing_v5",
+            regime=regime,
+            initializer="v14_only",
+            drift_modes=16,
+            bridge_modes=8,
+            defensive_mass=0.20,
+            safety_mass=0.0,
+            adaptation_iterations=0,
+            adaptation_samples=0,
+            adapt_covariance=False,
+            final_components=3,
+            comparator_dominance_claim=False,
+        )
+    if rough and threshold_ratio >= 0.015:
+        return V16TransportRoute(
+            policy_id="v16_hybrid_routing_v5",
+            regime="deep_rough",
+            initializer="v14_tempered_hybrid",
+            drift_modes=16,
+            bridge_modes=8,
+            defensive_mass=0.10,
+            safety_mass=0.01,
+            adaptation_iterations=0,
+            adaptation_samples=0,
+            adapt_covariance=False,
+            final_components=5,
+            tempered_particles=4096,
+            tempered_temperature_stages=32,
+            tempered_temperature_power=2.0,
+            tempered_mutation_steps=4,
+            tempered_pcn_scale=0.30,
+            tempered_replicates=4,
+            tempered_clustering="kmeans",
+            hybrid_target_mass=0.80,
+        )
+    return replace(v3, policy_id="v16_hybrid_routing_v5")

@@ -58,6 +58,7 @@ from src.path_integral.v16_transport_policy import (
     route_v16_hybrid_v2,
     route_v16_hybrid_v3,
     route_v16_hybrid_v4,
+    route_v16_hybrid_v5,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -232,14 +233,17 @@ def main() -> None:
                 "v16_hybrid_routing_v2",
                 "v16_hybrid_routing_v3",
                 "v16_hybrid_routing_v4",
+                "v16_hybrid_routing_v5",
             }:
                 raise ValueError(f"unsupported routing policy: {routing_policy}")
             if routing_policy == "v16_hybrid_routing_v2":
                 route = route_v16_hybrid_v2(problem)
             elif routing_policy == "v16_hybrid_routing_v3":
                 route = route_v16_hybrid_v3(problem)
-            else:
+            elif routing_policy == "v16_hybrid_routing_v4":
                 route = route_v16_hybrid_v4(problem)
+            else:
+                route = route_v16_hybrid_v5(problem)
             routing_regime = route.regime
             variant.update(
                 {
@@ -248,9 +252,15 @@ def main() -> None:
                     "bridge_modes": route.bridge_modes,
                     "defensive_mass": route.defensive_mass,
                     "safety_mass": route.safety_mass,
+                    "require_comparator_dominance": (
+                        route.comparator_dominance_claim
+                    ),
                 }
             )
-            if route.initializer == "tempered_smc":
+            if route.initializer in {
+                "tempered_smc",
+                "v14_tempered_hybrid",
+            }:
                 variant["tempered_smc"] = {
                     "particles": route.tempered_particles,
                     "temperature_stages": route.tempered_temperature_stages,
@@ -262,6 +272,11 @@ def main() -> None:
                     "clustering": route.tempered_clustering,
                     "kmeans_iterations": route.tempered_kmeans_iterations,
                 }
+                if route.initializer == "v14_tempered_hybrid":
+                    variant["v14_initializer"] = route.v14_overrides()
+                    variant["target_mass"] = route.hybrid_target_mass
+            elif route.initializer == "v14_only":
+                variant["v14_initializer"] = route.v14_overrides()
             else:
                 variant["adaptation"] = {
                     "iterations": route.adaptation_iterations,
@@ -840,10 +855,17 @@ def main() -> None:
         minimum_qualified = int(gates.get("minimum_qualified_comparators", 1))
         if len(qualified_comparators) < minimum_qualified:
             variant_failures.append("too few accuracy-qualified comparators")
-        if "minimum_strongest_comparator_over_candidate_work_ratio" in gates and (
+        require_comparator_dominance = bool(
+            variant.get("require_comparator_dominance", True)
+        )
+        if (
+            require_comparator_dominance
+            and "minimum_strongest_comparator_over_candidate_work_ratio" in gates
+            and (
             strongest_comparator_ratio
             < float(
                 gates["minimum_strongest_comparator_over_candidate_work_ratio"]
+            )
             )
         ):
             variant_failures.append("strongest comparator work ratio")
@@ -892,6 +914,12 @@ def main() -> None:
                 "initializer": initializer,
                 "routing_policy": routing_policy,
                 "routing_regime": routing_regime,
+                "claim_role": (
+                    "dominance_candidate"
+                    if require_comparator_dominance
+                    else "correctness_fallback"
+                ),
+                "require_comparator_dominance": require_comparator_dominance,
                 "initializer_diagnostics": initializer_diagnostics,
                 "training_work": training_work,
                 "evaluation_work": evaluation_work,
