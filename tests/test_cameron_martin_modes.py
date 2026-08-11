@@ -56,6 +56,29 @@ def test_multistart_search_recovers_both_modes_of_symmetric_action() -> None:
     assert all(len(mode.methods) == 2 for mode in result.modes if mode.action_value < 1e-10)
 
 
+def test_supplied_only_search_does_not_charge_hidden_cold_or_random_starts() -> None:
+    target = torch.tensor([1.0, -2.0], dtype=torch.float64)
+
+    def action(point: torch.Tensor) -> torch.Tensor:
+        difference = point - target
+        return 0.5 * torch.dot(difference, difference)
+
+    result = find_action_modes(
+        action,
+        2,
+        config=ModeSearchConfig(
+            methods=("lbfgs",),
+            random_starts=0,
+            include_zero_start=False,
+            solver=ActionSolverConfig(gradient_tolerance=1e-9),
+        ),
+        supplied_starts=(torch.tensor([0.9, -1.8], dtype=torch.float64),),
+    )
+    assert len(result.attempts) == 1
+    assert result.modes
+    assert torch.max(torch.abs(result.modes[0].coefficients - target)) < 1e-7
+
+
 def _problem() -> RBergomiBaselineProblem:
     return RBergomiBaselineProblem(
         task_id="v15-mode",

@@ -189,7 +189,8 @@ def main() -> None:
             prediction,
             mode_search=ModeSearchConfig(
                 methods=("lbfgs",),
-                random_starts=1,
+                random_starts=0,
+                include_zero_start=False,
                 random_seed=int(config["seed"]) + 100_003 + 1009 * index,
                 start_scale=2.0,
                 solver=solver,

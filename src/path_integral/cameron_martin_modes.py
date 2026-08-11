@@ -213,6 +213,7 @@ def optimize_action(
 class ModeSearchConfig:
     methods: tuple[SolverMethod, ...] = ("lbfgs", "trust-ncg")
     random_starts: int = 8
+    include_zero_start: bool = True
     random_seed: int = 1729
     start_scale: float = 2.0
     merge_distance: float = 1e-4
@@ -225,9 +226,20 @@ class ModeSearchConfig:
             raise ValueError("mode search requires supported solvers")
         if len(set(self.methods)) != len(self.methods):
             raise ValueError("mode-search solvers must be unique")
-        integers = (self.random_starts, self.maximum_modes)
-        if any(isinstance(x, bool) or not isinstance(x, int) or x < 1 for x in integers):
-            raise ValueError("mode-search counts must be positive integers")
+        if (
+            isinstance(self.random_starts, bool)
+            or not isinstance(self.random_starts, int)
+            or self.random_starts < 0
+        ):
+            raise ValueError("random_starts must be a nonnegative integer")
+        if (
+            isinstance(self.maximum_modes, bool)
+            or not isinstance(self.maximum_modes, int)
+            or self.maximum_modes < 1
+        ):
+            raise ValueError("maximum_modes must be a positive integer")
+        if not isinstance(self.include_zero_start, bool):
+            raise ValueError("include_zero_start must be boolean")
         if isinstance(self.random_seed, bool) or not isinstance(self.random_seed, int):
             raise ValueError("mode-search seed must be an integer")
         positives = (self.start_scale, self.merge_distance, self.action_merge_tolerance)
@@ -259,14 +271,16 @@ def _deterministic_starts(
     scale: float,
     seed: int,
     supplied: Sequence[torch.Tensor],
+    include_zero: bool,
 ) -> tuple[torch.Tensor, ...]:
-    starts = [torch.zeros(dimension, dtype=torch.float64)]
+    starts = [torch.zeros(dimension, dtype=torch.float64)] if include_zero else []
     for item in supplied:
         if item.shape != (dimension,) or item.dtype != torch.float64 or item.device.type != "cpu":
             raise ValueError("supplied mode start has the wrong contract")
         starts.append(item.detach().clone())
     generator = torch.Generator().manual_seed(seed)
-    while len(starts) < count + 1 + len(supplied):
+    target_count = count + int(include_zero) + len(supplied)
+    while len(starts) < target_count:
         direction = torch.randn(dimension, dtype=torch.float64, generator=generator)
         norm = torch.linalg.vector_norm(direction)
         radius = scale * (0.25 + 0.75 * torch.rand((), generator=generator).item())
@@ -292,7 +306,10 @@ def find_action_modes(
         scale=config.start_scale,
         seed=config.random_seed,
         supplied=supplied_starts,
+        include_zero=config.include_zero_start,
     )
+    if not starts:
+        raise ValueError("mode search requires at least one initial point")
     attempts: list[ActionOptimizationResult] = []
     for method in config.methods:
         solver = ActionSolverConfig(
