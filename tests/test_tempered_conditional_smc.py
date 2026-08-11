@@ -49,4 +49,5 @@ def test_gaussian_potential_matches_analytic_normalizer() -> None:
     oracle = (1.0 + coefficient) ** (-0.5 * dimension)
     assert abs(result.mean - oracle) <= 4.0 * result.standard_error + 0.008
     assert 0.0 < result.mutation_acceptance_rate < 1.0
+    assert 0.0 < result.minimum_incremental_ess_fraction <= 1.0
     assert result.potential_evaluations > 0

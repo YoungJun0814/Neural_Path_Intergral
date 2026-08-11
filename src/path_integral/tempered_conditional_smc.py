@@ -57,6 +57,7 @@ class TemperedSMCResult:
     standard_error: float
     log_replicate_estimates: torch.Tensor
     mutation_acceptance_rate: float
+    minimum_incremental_ess_fraction: float
     potential_evaluations: int
 
 
@@ -85,6 +86,7 @@ def estimate_tempered_normalizer(
     accepted = 0
     proposed = 0
     evaluations = 0
+    minimum_ess_fraction = 1.0
     retained = math.sqrt(1.0 - config.pcn_scale**2)
     for replicate in range(config.replicates):
         generator = torch.Generator().manual_seed(config.seed + 104_729 * replicate)
@@ -105,9 +107,13 @@ def estimate_tempered_normalizer(
             if not torch.isfinite(log_ratio):
                 raise FloatingPointError("all SMC incremental weights vanished")
             log_normalizer = log_normalizer + log_ratio
+            probabilities = torch.softmax(increment, dim=0)
+            ess_fraction = 1.0 / (
+                config.particles * float(torch.sum(probabilities.square()))
+            )
+            minimum_ess_fraction = min(minimum_ess_fraction, ess_fraction)
             if stage == len(config.temperatures) - 2:
                 continue
-            probabilities = torch.softmax(increment, dim=0)
             ancestors = torch.multinomial(
                 probabilities,
                 config.particles,
@@ -155,5 +161,6 @@ def estimate_tempered_normalizer(
         standard_error=standard_error,
         log_replicate_estimates=log_replicates,
         mutation_acceptance_rate=accepted / proposed if proposed else math.nan,
+        minimum_incremental_ess_fraction=minimum_ess_fraction,
         potential_evaluations=evaluations,
     )
