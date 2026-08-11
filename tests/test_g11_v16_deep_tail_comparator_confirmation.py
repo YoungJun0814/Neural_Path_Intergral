@@ -35,3 +35,21 @@ def test_comparator_aggregation_charges_training_and_uses_between_cluster_se() -
         result["work_normalized_variance"],
         result["sample_variance"] * 107.0 / 6,
     )
+
+
+def test_zero_hit_comparator_is_recorded_with_infinite_relative_error() -> None:
+    def evaluate(_: int) -> tuple[torch.Tensor, BaselineCostLedger]:
+        return torch.zeros(3, dtype=torch.float64), BaselineCostLedger()
+
+    result = _aggregate_clusters(
+        method="missed-tail",
+        training_cost=BaselineCostLedger(),
+        clusters=2,
+        evaluate=evaluate,
+        reference_estimate=1e-8,
+        reference_standard_error=1e-9,
+        query_count=1,
+    )
+    assert result["estimate"] == 0.0
+    assert math.isinf(result["robust_relative_standard_error"])
+    assert result["accuracy_z"] == 10.0

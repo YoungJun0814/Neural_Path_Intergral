@@ -90,6 +90,9 @@ def _aggregate_clusters(
         training_cost.algorithmic_work_units
         + query_count * evaluation_cost.algorithmic_work_units
     )
+    robust_relative_standard_error = (
+        robust_standard_error / abs(estimate) if estimate != 0.0 else math.inf
+    )
     return {
         "method": method,
         "estimate": estimate,
@@ -97,7 +100,7 @@ def _aggregate_clusters(
         "standard_error": standard_error,
         "between_cluster_standard_error": between_cluster_standard_error,
         "robust_standard_error": robust_standard_error,
-        "robust_relative_standard_error": robust_standard_error / abs(estimate),
+        "robust_relative_standard_error": robust_relative_standard_error,
         "accuracy_z": accuracy_z,
         "inferential_units": count,
         "training_cost": asdict(training_cost),
