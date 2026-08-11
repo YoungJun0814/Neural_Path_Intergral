@@ -46,7 +46,7 @@ class V14TemperedHybridResult:
     target_mass: float
 
 
-def _convert_local_proposal(
+def convert_local_proposal(
     means: tuple[tuple[float, ...], ...],
     weights: tuple[float, ...],
 ) -> DefensiveFiniteRankGaussianMixture:
@@ -89,7 +89,7 @@ def fit_v14_tempered_hybrid_transport(
         training_seed=local_seed,
         config=config.local,
     )
-    local_proposal = _convert_local_proposal(
+    local_proposal = convert_local_proposal(
         local.proposal.component_means,
         local.proposal.component_weights,
     )

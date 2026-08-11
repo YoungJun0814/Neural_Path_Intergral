@@ -45,6 +45,7 @@ from src.path_integral.tempered_target_transport import (
 )
 from src.path_integral.v14_tempered_hybrid_transport import (
     V14TemperedHybridConfig,
+    convert_local_proposal,
     fit_v14_tempered_hybrid_transport,
 )
 from src.path_integral.v15_result_audit import file_sha256, git_source_provenance
@@ -273,7 +274,7 @@ def main() -> None:
         )
         seed = int(variant["seed"])
         initializer = str(variant.get("initializer", "cm_action"))
-        initializer_diagnostics: dict[str, float | int] = {}
+        initializer_diagnostics: dict[str, Any] = {}
         adaptation_config = None
         if initializer in {"cm_action", "v14_local"}:
             adaptation = variant["adaptation"]
@@ -475,6 +476,47 @@ def main() -> None:
                 ),
                 "tempered_fitted_particle_count": (
                     hybrid.target.fitted_particle_count
+                ),
+            }
+        elif initializer == "v14_only":
+            local_values = variant["v14_initializer"]
+            local = train_local_volterra_transport(
+                problem,
+                training_seed=seed,
+                config=LocalVolterraTransportTrainingConfig(
+                    target_powers=tuple(
+                        float(value) for value in local_values["target_powers"]
+                    ),
+                    shifted_weights=tuple(
+                        float(value) for value in local_values["shifted_weights"]
+                    ),
+                    defensive_weight=float(local_values["defensive_mass"]),
+                    replicates_per_power=int(
+                        local_values.get("replicates_per_power", 1)
+                    ),
+                    smc=AdaptiveResidualSMCConfig(
+                        particles=int(local_values["particles"]),
+                        target_ess_fraction=0.7,
+                        pcn_scale=0.25,
+                        pcn_sweeps_per_stage=int(local_values["pcn_sweeps"]),
+                        maximum_stages=int(local_values["maximum_stages"]),
+                    ),
+                ),
+            )
+            proposal = convert_local_proposal(
+                local.proposal.component_means,
+                local.proposal.component_weights,
+            )
+            training_work = local.proposal.training_cost.algorithmic_work_units
+            effective_sample_sizes = ()
+            tempering_powers = tuple(
+                float(value) for value in local_values["target_powers"]
+            )
+            initializer_diagnostics = {
+                "local_component_count": len(proposal.components),
+                "local_mean_norms": list(local.mean_norms),
+                "local_replicate_mean_minimum_cosines": list(
+                    local.replicate_mean_minimum_cosines
                 ),
             }
         else:
