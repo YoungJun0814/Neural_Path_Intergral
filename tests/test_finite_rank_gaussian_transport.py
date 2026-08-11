@@ -17,6 +17,7 @@ from src.path_integral.finite_rank_gaussian_transport import (
     build_curvature_transport,
     build_isotropic_small_noise_safety_component,
     build_trace_class_small_noise_safety_component,
+    combine_defensive_gaussian_mixtures,
 )
 from src.path_integral.path_functionals import TerminalThresholdTask
 from src.path_integral.volterra_action import RBergomiConditionalAction
@@ -82,6 +83,27 @@ def test_defensive_mixture_exact_likelihood_and_normalization() -> None:
     ) < 2e-13
     frequencies = torch.bincount(drawn.labels, minlength=2).to(torch.float64) / drawn.labels.numel()
     assert torch.max(torch.abs(frequencies - mixture.weights)) < 0.004
+
+
+def test_combined_mixture_preserves_all_components_and_defensive_bound() -> None:
+    left = DefensiveFiniteRankGaussianMixture(
+        components=(FiniteRankGaussianComponent.natural(3), _component()),
+        weights=torch.tensor([0.2, 0.8], dtype=torch.float64),
+    )
+    right = DefensiveFiniteRankGaussianMixture(
+        components=(FiniteRankGaussianComponent.natural(3),),
+        weights=torch.ones(1, dtype=torch.float64),
+    )
+    combined = combine_defensive_gaussian_mixtures(
+        (left, right),
+        (0.4, 0.6),
+    )
+    assert len(combined.components) == 3
+    assert math.isclose(combined.defensive_mass, 0.4 * 0.2 + 0.6)
+    sample = combined.sample(20_000, path_seed=1231, label_seed=1232)
+    assert float(torch.max(torch.exp(sample.log_p_over_q))) <= (
+        1.0 / combined.defensive_mass + 1e-12
+    )
 
 
 def test_curvature_builder_creates_exact_positive_defensive_transport() -> None:

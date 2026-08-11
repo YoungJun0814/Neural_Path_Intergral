@@ -43,6 +43,10 @@ from src.path_integral.tempered_target_transport import (
     TemperedTargetTransportConfig,
     fit_tempered_target_transport,
 )
+from src.path_integral.v14_tempered_hybrid_transport import (
+    V14TemperedHybridConfig,
+    fit_v14_tempered_hybrid_transport,
+)
 from src.path_integral.v15_result_audit import file_sha256, git_source_provenance
 from src.path_integral.v16_transport_policy import (
     route_v16_hybrid_v2,
@@ -377,6 +381,101 @@ def main() -> None:
                     fitted.mutation_acceptance_rate
                 ),
                 "tempered_fitted_particle_count": fitted.fitted_particle_count,
+            }
+        elif initializer == "v14_tempered_hybrid":
+            tempered = variant["tempered_smc"]
+            stages = int(tempered["temperature_stages"])
+            power = float(tempered["temperature_power"])
+            local_values = variant["v14_initializer"]
+            hybrid = fit_v14_tempered_hybrid_transport(
+                problem,
+                basis,
+                target_seed=seed,
+                local_seed=seed + 1,
+                config=V14TemperedHybridConfig(
+                    target=TemperedTargetTransportConfig(
+                        smc=TemperedSMCConfig(
+                            particles=int(tempered["particles"]),
+                            temperatures=tuple(
+                                (index / stages) ** power
+                                for index in range(stages + 1)
+                            ),
+                            mutation_steps=int(tempered["mutation_steps"]),
+                            pcn_scale=float(tempered["pcn_scale"]),
+                            replicates=int(tempered["replicates"]),
+                            seed=seed,
+                            retain_final_particles=True,
+                        ),
+                        defensive_mass=float(variant["defensive_mass"]),
+                        safety_mass=float(variant["safety_mass"]),
+                        components=int(tempered["components"]),
+                        clustering=cast(
+                            Literal[
+                                "pca_quantile",
+                                "kmeans",
+                                "replicate_kmeans",
+                            ],
+                            str(tempered.get("clustering", "pca_quantile")),
+                        ),
+                        kmeans_iterations=int(
+                            tempered.get("kmeans_iterations", 25)
+                        ),
+                        covariance_scales=tuple(
+                            float(value)
+                            for value in tempered.get(
+                                "covariance_scales",
+                                [1.0],
+                            )
+                        ),
+                    ),
+                    local=LocalVolterraTransportTrainingConfig(
+                        target_powers=tuple(
+                            float(value) for value in local_values["target_powers"]
+                        ),
+                        shifted_weights=tuple(
+                            float(value)
+                            for value in local_values["shifted_weights"]
+                        ),
+                        defensive_weight=float(local_values["defensive_mass"]),
+                        replicates_per_power=int(
+                            local_values.get("replicates_per_power", 1)
+                        ),
+                        smc=AdaptiveResidualSMCConfig(
+                            particles=int(local_values["particles"]),
+                            target_ess_fraction=0.7,
+                            pcn_scale=0.25,
+                            pcn_sweeps_per_stage=int(local_values["pcn_sweeps"]),
+                            maximum_stages=int(local_values["maximum_stages"]),
+                        ),
+                    ),
+                    target_mass=float(variant["target_mass"]),
+                ),
+            )
+            proposal = hybrid.proposal
+            training_work = hybrid.training_cost.algorithmic_work_units
+            effective_sample_sizes = (
+                hybrid.target.minimum_incremental_ess_fraction
+                * int(tempered["particles"]),
+            )
+            tempering_powers = (1.0,)
+            initializer_diagnostics = {
+                "target_mass": hybrid.target_mass,
+                "local_component_count": hybrid.local_component_count,
+                "tempered_normalizer_estimate": (
+                    hybrid.target.normalizer_estimate
+                ),
+                "tempered_normalizer_standard_error": (
+                    hybrid.target.normalizer_standard_error
+                ),
+                "tempered_minimum_incremental_ess_fraction": (
+                    hybrid.target.minimum_incremental_ess_fraction
+                ),
+                "tempered_mutation_acceptance_rate": (
+                    hybrid.target.mutation_acceptance_rate
+                ),
+                "tempered_fitted_particle_count": (
+                    hybrid.target.fitted_particle_count
+                ),
             }
         else:
             raise ValueError(f"unsupported initializer: {initializer}")

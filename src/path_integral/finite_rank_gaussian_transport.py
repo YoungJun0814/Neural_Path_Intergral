@@ -267,6 +267,40 @@ class FiniteRankMixtureSample:
     log_p_over_q: torch.Tensor
 
 
+def combine_defensive_gaussian_mixtures(
+    proposals: tuple[DefensiveFiniteRankGaussianMixture, ...],
+    family_weights: tuple[float, ...],
+) -> DefensiveFiniteRankGaussianMixture:
+    """Return the exact balance mixture of already normalized proposals."""
+
+    if not proposals or len(proposals) != len(family_weights):
+        raise ValueError("one positive family weight is required per proposal")
+    if any(
+        not math.isfinite(weight) or weight <= 0.0 for weight in family_weights
+    ) or not math.isclose(sum(family_weights), 1.0, abs_tol=1e-12):
+        raise ValueError("family weights must be positive and sum to one")
+    dimension = proposals[0].dimension
+    if any(proposal.dimension != dimension for proposal in proposals):
+        raise ValueError("combined proposals must have a common dimension")
+    components = tuple(
+        component for proposal in proposals for component in proposal.components
+    )
+    weights = torch.cat(
+        tuple(
+            family_weight * proposal.weights
+            for proposal, family_weight in zip(
+                proposals,
+                family_weights,
+                strict=True,
+            )
+        )
+    )
+    return DefensiveFiniteRankGaussianMixture(
+        components=components,
+        weights=weights,
+    )
+
+
 @dataclass(frozen=True)
 class CurvatureTransportConfig:
     defensive_mass: float = 0.1
