@@ -311,7 +311,7 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
                     ),
                     components=int(tempered["components"]),
                     clustering=cast(
-                        Literal["pca_quantile", "kmeans"],
+                        Literal["pca_quantile", "kmeans", "replicate_kmeans"],
                         str(tempered.get("clustering", "pca_quantile")),
                     ),
                     kmeans_iterations=int(tempered.get("kmeans_iterations", 25)),

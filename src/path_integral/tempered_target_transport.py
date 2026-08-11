@@ -36,7 +36,9 @@ class TemperedTargetTransportConfig:
     defensive_mass: float = 0.15
     safety_mass: float = 0.02
     components: int = 3
-    clustering: Literal["pca_quantile", "kmeans"] = "pca_quantile"
+    clustering: Literal["pca_quantile", "kmeans", "replicate_kmeans"] = (
+        "pca_quantile"
+    )
     kmeans_iterations: int = 25
     minimum_variance: float = 0.05
     maximum_variance: float = 20.0
@@ -53,8 +55,19 @@ class TemperedTargetTransportConfig:
             raise ValueError("components must be an integer")
         if self.components < 1:
             raise ValueError("components must be positive")
-        if self.clustering not in {"pca_quantile", "kmeans"}:
+        if self.clustering not in {
+            "pca_quantile",
+            "kmeans",
+            "replicate_kmeans",
+        }:
             raise ValueError("unsupported tempered target clustering method")
+        if (
+            self.clustering == "replicate_kmeans"
+            and self.components % self.smc.replicates != 0
+        ):
+            raise ValueError(
+                "replicate_kmeans components must be divisible by SMC replicates"
+            )
         if (
             isinstance(self.kmeans_iterations, bool)
             or not isinstance(self.kmeans_iterations, int)
@@ -154,6 +167,33 @@ def _kmeans_labels(
     return labels
 
 
+def _replicate_kmeans_labels(
+    coefficients: torch.Tensor,
+    *,
+    particles_per_replicate: int,
+    replicates: int,
+    components: int,
+    iterations: int,
+) -> torch.Tensor:
+    if coefficients.shape[0] != particles_per_replicate * replicates:
+        raise ValueError("retained SMC particles do not match the replicate layout")
+    components_per_replicate = components // replicates
+    labels = torch.empty(coefficients.shape[0], dtype=torch.int64)
+    for replicate in range(replicates):
+        start = replicate * particles_per_replicate
+        stop = start + particles_per_replicate
+        if components_per_replicate == 1:
+            local = torch.zeros(particles_per_replicate, dtype=torch.int64)
+        else:
+            local = _kmeans_labels(
+                coefficients[start:stop],
+                components_per_replicate,
+                iterations,
+            )
+        labels[start:stop] = local + replicate * components_per_replicate
+    return labels
+
+
 def _fit_component(
     coefficients: torch.Tensor,
     basis: CameronMartinBasis,
@@ -210,6 +250,14 @@ def fit_tempered_target_transport(
         raise RuntimeError("too few final particles for the requested mixture")
     if config.components == 1:
         labels = torch.zeros(coefficients.shape[0], dtype=torch.int64)
+    elif config.clustering == "replicate_kmeans":
+        labels = _replicate_kmeans_labels(
+            coefficients,
+            particles_per_replicate=config.smc.particles,
+            replicates=config.smc.replicates,
+            components=config.components,
+            iterations=config.kmeans_iterations,
+        )
     elif config.clustering == "kmeans":
         labels = _kmeans_labels(
             coefficients,

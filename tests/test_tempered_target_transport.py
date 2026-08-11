@@ -10,6 +10,7 @@ from src.path_integral.tempered_conditional_smc import TemperedSMCConfig
 from src.path_integral.tempered_target_transport import (
     TemperedTargetTransportConfig,
     _kmeans_labels,
+    _replicate_kmeans_labels,
     fit_tempered_target_transport,
 )
 
@@ -75,3 +76,21 @@ def test_kmeans_clustering_separates_two_target_modes_deterministically() -> Non
     assert int(torch.sum(labels[:100] == labels[0])) == 100
     assert int(torch.sum(labels[100:] == labels[100])) == 100
     assert labels[0] != labels[100]
+
+
+def test_replicate_clustering_guarantees_components_per_smc_replicate() -> None:
+    generator = torch.Generator().manual_seed(773)
+    points = torch.randn((4 * 40, 3), generator=generator, dtype=torch.float64)
+    labels = _replicate_kmeans_labels(
+        points,
+        particles_per_replicate=40,
+        replicates=4,
+        components=8,
+        iterations=10,
+    )
+    for replicate in range(4):
+        block = labels[40 * replicate : 40 * (replicate + 1)]
+        assert set(int(value) for value in torch.unique(block)) == {
+            2 * replicate,
+            2 * replicate + 1,
+        }
