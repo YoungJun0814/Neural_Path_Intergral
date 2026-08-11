@@ -1,0 +1,55 @@
+schema_version: g11-v15-theorem-ledger-v1
+date: '2026-08-11'
+allowed_statuses: [proved, conditional, falsified, open]
+theorems:
+  T15-1:
+    title: conditional representation
+    status: proved
+    scope: continuous_under_stated_integrability_and_finite_grid_oracle
+  T15-2:
+    title: exact likelihood unbiasedness and Rao-Blackwell ordering
+    status: proved
+    scope: frozen_finite_dimensional_proposal
+  T15-3:
+    title: zero-variance target identity
+    status: proved
+    scope: any_dominating_proposal_with_finite_second_moment
+  T15-4:
+    title: defensive robustness
+    status: proved
+    scope: bounded_payoff_and_positive_natural_mixture_mass
+  T15-5:
+    title: small-noise rare-event efficiency
+    status: open
+    scope: declared_small_noise_gaussian_volterra_family
+  T15-6:
+    title: finite-grid convergence
+    status: open
+    scope: continuous_rough_bergomi
+  T15-7:
+    title: transport mesh consistency
+    status: open
+    scope: Galerkin_mode_and_subspace_limit
+  T15-8:
+    title: end-to-end complexity
+    status: open
+    scope: bias_variance_training_and_evaluation_work
+  T15-9:
+    title: operator-assisted certification
+    status: conditional
+    scope: frozen_corrected_or_fallback_proposal
+gates:
+  G5:
+    pass: false
+    reason: T15-5 remains open
+claim_locks:
+  prohibited:
+    - logarithmically_efficient
+    - bounded_relative_error
+    - asymptotically_optimal
+    - continuous_time_exact_simulation
+  allowed:
+    - exact_finite_grid_likelihood
+    - unbiased_ordinary_importance_sampling
+    - conditional_Rao_Blackwell_variance_ordering
+    - defensive_likelihood_bound

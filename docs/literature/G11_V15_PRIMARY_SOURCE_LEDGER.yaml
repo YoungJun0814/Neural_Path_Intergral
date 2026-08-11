@@ -1,0 +1,52 @@
+schema: npi.g11.v15-literature-ledger.v1
+date: "2026-08-11"
+search_status: internal_complete_external_pending
+submission_novelty_authorized: false
+development_authorized: true
+decisive_sources:
+  - id: L2
+    doi: 10.1080/14697688.2018.1459812
+    overlap: conditional_lognormal_rbergomi_monte_carlo
+  - id: L3
+    doi: 10.1137/22M1495718
+    overlap: numerical_preintegration_smoothing_mlmc
+  - id: L4
+    doi: 10.1111/1467-9965.00065
+    overlap: gaussian_ldp_most_important_path_and_curvature
+  - id: L7
+    doi: 10.1017/jpr.2018.72
+    overlap: rough_bergomi_pathwise_ldp_and_rkhs
+  - id: L8
+    doi: 10.1137/22M1524758
+    overlap: ldp_adaptive_is_likelihood_informed_subspace
+  - id: L10
+    doi: 10.1137/21M1427760
+    overlap: nonasymptotic_suboptimal_is_bounds
+  - id: L11
+    doi: 10.1007/s00780-024-00549-x
+    overlap: neural_cameron_martin_importance_sampling_for_options
+  - id: L12
+    doi: 10.1137/140962802
+    overlap: infinite_dimensional_gaussian_variational_covariance
+  - id: L14
+    arxiv: "2604.13147"
+    overlap: neural_non_markovian_off_model_importance_sampling
+candidate_claim:
+  short_name: conditional_multimode_cm_transport
+  required_features:
+    - complete_independent_price_driver_contraction
+    - conditional_zero_variance_target
+    - reduced_small_noise_action
+    - exact_defensive_multimode_balance_likelihood
+    - equivalence_preserving_finite_rank_transport
+    - gaussian_volterra_mesh_consistency
+    - exactness_independent_of_operator
+external_review:
+  required_reviewers: 2
+  completed_reviewers: 0
+  status: pending
+locks:
+  qualification: true
+  submission: true
+  top_journal_language: true
+

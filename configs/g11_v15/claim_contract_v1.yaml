@@ -1,0 +1,47 @@
+schema: npi.g11.v15-claim-contract.v1
+date: "2026-08-11"
+stage: development_contract
+title: Exact Conditional Cameron-Martin Transport for Rare Events in Gaussian Volterra Models
+primary_asymptotic_regime: small_noise
+small_time_claim_authorized: false
+continuous_exact_simulation_claim_authorized: false
+external_novelty_review:
+  required: 2
+  completed: 0
+  submission_lock: true
+allowed_current_claims:
+  - exact_terminal_conditioning_under_declared_finite_grid
+  - ordinary_is_unbiased_conditional_on_frozen_proposal
+  - defensive_balance_likelihood_bound
+  - v14_frozen_three_cell_empirical_efficiency
+candidate_v15_claims_locked:
+  - conditional_small_noise_action_contraction
+  - multimode_rare_event_efficiency
+  - mesh_consistent_cameron_martin_transport
+  - operator_assisted_certified_amortization
+prohibited_claims:
+  - first_conditional_mc_for_rbergomi
+  - first_neural_cameron_martin_importance_sampler
+  - first_ldp_importance_sampler_for_stochastic_volatility
+  - first_low_rank_gaussian_transport
+  - continuous_time_exact_simulation
+  - small_time_efficiency_from_unmatched_scaling
+  - self_normalized_final_estimator
+nonnegotiable:
+  final_estimator: ordinary_importance_sampling
+  training_final_independence: true
+  balance_denominator: full_mixture
+  natural_defensive_component: required
+  covariance_changes: equivalence_preserving_finite_rank_only
+  failures_retained: true
+gates:
+  p0_internal_literature: pass_with_external_lock
+  p1_probability_contract: pass_for_implementation
+  p2_oracle: pending
+  p3_mode_solver: pending
+  p4_exact_transport: pending
+  p5_theory: pending
+  p6_mesh: pending
+  p7_operator: pending
+  p8_baselines: pending
+  qualification: locked
