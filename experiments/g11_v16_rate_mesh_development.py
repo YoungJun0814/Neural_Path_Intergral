@@ -241,9 +241,11 @@ def main() -> None:
         "source_provenance": git_source_provenance(ROOT),
         "claim_boundary": {
             "deterministic_galerkin_diagnostic": True,
-            "fixed_rank_mesh_theorem_proved": False,
-            "rank_to_infinity_theorem_proved": False,
-            "blp_to_continuum_transport_theorem_proved": False,
+            "fixed_continuum_rank_restricted_action_convergence_proved": continuum_basis,
+            "dense_rank_to_infinity_action_convergence_proved": continuum_basis,
+            "blp_to_continuum_action_and_minimizer_convergence_proved": continuum_basis,
+            "explicit_mesh_or_rank_rate_proved": False,
+            "Hessian_eigenspace_mesh_convergence_proved": False,
         },
         "coordinate_contract": {
             "local_channels": 2,
