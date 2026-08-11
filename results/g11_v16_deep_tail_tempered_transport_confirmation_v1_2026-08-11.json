@@ -28,7 +28,7 @@
   },
   "schema": "npi.g11.v16-deep-tail-transport-confirmation.v1",
   "source_provenance": {
-    "git_commit": "ab361d2d6d63a62627f713bb8a58fd1ab2555007",
+    "git_commit": "401b485f0e2b5bc54329800ac30648cdec3f22ee",
     "source_changes_before_run": [],
     "source_dirty_before_run": false
   },
@@ -236,6 +236,53 @@
           "standard_error": 4.666970675574895e-09
         }
       ],
+      "comparator_diagnostics": [
+        {
+          "estimate": 1.8124816125730804e-12,
+          "external_accuracy_z": 36.85659752642548,
+          "method": "conditional_rbergomi",
+          "qualified": false,
+          "standard_error": 1.5276563952517186e-12,
+          "work_normalized_variance": null
+        },
+        {
+          "estimate": 9.49295041932371e-08,
+          "external_accuracy_z": 1.0347836082789663,
+          "method": "v14_local_volterra",
+          "qualified": true,
+          "standard_error": 4.3001687611936636e-08,
+          "work_normalized_variance": 2.6873522730790446e-06
+        },
+        {
+          "estimate": 3.193024583378536e-08,
+          "external_accuracy_z": 3.7398162067566245,
+          "method": "defensive_cem",
+          "qualified": true,
+          "standard_error": 4.748188443191e-09,
+          "work_normalized_variance": 2.531278490197928e-08
+        },
+        {
+          "estimate": 3.472345279218733e-08,
+          "external_accuracy_z": 1.3265842461564001,
+          "method": "ld_subspace_is",
+          "qualified": true,
+          "standard_error": 1.1745073264118937e-08,
+          "work_normalized_variance": 1.54526364528338e-07
+        },
+        {
+          "estimate": 1.1546753136970622e-17,
+          "external_accuracy_z": 36.857945741453875,
+          "method": "smoothing_rqmc",
+          "qualified": false,
+          "standard_error": 1.1529278438174114e-17,
+          "work_normalized_variance": null
+        }
+      ],
+      "comparator_over_candidate_work_ratios": {
+        "defensive_cem": 0.14579956494691926,
+        "ld_subspace_is": 0.8900591858345488,
+        "v14_local_volterra": 15.47892868332327
+      },
       "estimate": 4.8085395068842345e-08,
       "evaluation_work": 1528823808.0,
       "external_accuracy_z": 1.3408416544992134,
@@ -255,12 +302,20 @@
       "maximum_cluster_accuracy_z": 5.214211736226653,
       "maximum_likelihood_bound_violation": 0.0,
       "passed": true,
+      "qualified_comparators": [
+        "v14_local_volterra",
+        "defensive_cem",
+        "ld_subspace_is"
+      ],
       "reference_cell": "rough-h005-k1",
       "relative_standard_error": 0.022146166410864802,
       "robust_relative_standard_error": 0.022146166410864802,
       "robust_standard_error": 1.0649071611267604e-09,
+      "routing_policy": null,
+      "routing_regime": null,
       "sample_variance": 2.3782275401783565e-12,
       "standard_error": 1.0649071611267604e-09,
+      "strongest_comparator_over_candidate_work_ratio": 0.14579956494691926,
       "total_work_at_primary_query_count": 153094717440.0,
       "training_work": 212336640.0,
       "v14_over_candidate_work_ratio": 15.47892868332327,
