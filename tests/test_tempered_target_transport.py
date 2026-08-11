@@ -94,3 +94,46 @@ def test_replicate_clustering_guarantees_components_per_smc_replicate() -> None:
             2 * replicate,
             2 * replicate + 1,
         }
+
+
+def test_multiscale_fit_adds_normalized_tail_covering_components() -> None:
+    problem = RBergomiBaselineProblem(
+        task_id="tempered-multiscale-test",
+        task=TerminalThresholdTask(level=50.0),
+        spot=100.0,
+        maturity=1.0,
+        steps=3,
+        hurst=0.12,
+        eta=1.5,
+        xi=0.04,
+        rho=-0.7,
+    )
+    basis = build_mesh_compatible_blp_hybrid_basis(
+        steps=3,
+        maturity=1.0,
+        hurst=0.12,
+        drift_modes=2,
+        bridge_modes=1,
+    )
+    fitted = fit_tempered_target_transport(
+        problem,
+        basis,
+        config=TemperedTargetTransportConfig(
+            smc=TemperedSMCConfig(
+                particles=64,
+                temperatures=(0.0, 0.25, 1.0),
+                mutation_steps=1,
+                pcn_scale=0.3,
+                replicates=2,
+                seed=998,
+                retain_final_particles=True,
+            ),
+            components=2,
+            covariance_scales=(1.0, 2.0),
+        ),
+    )
+    assert len(fitted.proposal.components) == 2 + 2 * 2
+    assert torch.isclose(
+        torch.sum(fitted.proposal.weights),
+        torch.tensor(1.0, dtype=torch.float64),
+    )

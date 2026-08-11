@@ -352,6 +352,10 @@ def main() -> None:
                         str(tempered.get("clustering", "pca_quantile")),
                     ),
                     kmeans_iterations=int(tempered.get("kmeans_iterations", 25)),
+                    covariance_scales=tuple(
+                        float(value)
+                        for value in tempered.get("covariance_scales", [1.0])
+                    ),
                 ),
             )
             proposal = fitted.proposal

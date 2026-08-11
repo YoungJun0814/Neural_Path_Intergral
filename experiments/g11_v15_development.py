@@ -319,6 +319,10 @@ def run(config_path: Path) -> tuple[dict[str, Any], Path]:
                         str(tempered.get("clustering", "pca_quantile")),
                     ),
                     kmeans_iterations=int(tempered.get("kmeans_iterations", 25)),
+                    covariance_scales=tuple(
+                        float(value)
+                        for value in tempered.get("covariance_scales", [1.0])
+                    ),
                 ),
             )
             candidate_proposal = fitted.proposal

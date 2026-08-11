@@ -43,6 +43,7 @@ class TemperedTargetTransportConfig:
     minimum_variance: float = 0.05
     maximum_variance: float = 20.0
     covariance_ridge: float = 1e-6
+    covariance_scales: tuple[float, ...] = (1.0,)
 
     def __post_init__(self) -> None:
         if not self.smc.retain_final_particles:
@@ -80,6 +81,13 @@ class TemperedTargetTransportConfig:
             raise ValueError("maximum variance must be finite")
         if not math.isfinite(self.covariance_ridge) or self.covariance_ridge <= 0.0:
             raise ValueError("covariance ridge must be finite and positive")
+        if not self.covariance_scales or any(
+            not math.isfinite(value) or value <= 0.0
+            for value in self.covariance_scales
+        ):
+            raise ValueError("covariance scales must be finite and positive")
+        if tuple(sorted(set(self.covariance_scales))) != self.covariance_scales:
+            raise ValueError("covariance scales must be unique and increasing")
 
 
 @dataclass(frozen=True)
@@ -198,6 +206,8 @@ def _fit_component(
     coefficients: torch.Tensor,
     basis: CameronMartinBasis,
     config: TemperedTargetTransportConfig,
+    *,
+    covariance_scale: float,
 ) -> FiniteRankGaussianComponent:
     mean = torch.mean(coefficients, dim=0)
     centered = coefficients - mean
@@ -208,7 +218,7 @@ def _fit_component(
     )
     eigenvalues, eigenvectors = torch.linalg.eigh(covariance)
     eigenvalues = torch.clamp(
-        eigenvalues,
+        covariance_scale * eigenvalues,
         min=config.minimum_variance,
         max=config.maximum_variance,
     )
@@ -273,8 +283,19 @@ def fit_tempered_target_transport(
         count = int(torch.sum(selected))
         if count < 2:
             raise RuntimeError("tempered target split produced an empty component")
-        adaptive_components.append(_fit_component(coefficients[selected], basis, config))
-        adaptive_weights.append(count / coefficients.shape[0])
+        cluster_weight = count / coefficients.shape[0]
+        for covariance_scale in config.covariance_scales:
+            adaptive_components.append(
+                _fit_component(
+                    coefficients[selected],
+                    basis,
+                    config,
+                    covariance_scale=covariance_scale,
+                )
+            )
+            adaptive_weights.append(
+                cluster_weight / len(config.covariance_scales)
+            )
     directions, spectrum = build_mesh_compatible_blp_trace_safety_geometry(
         steps=problem.steps,
         maturity=problem.maturity,
