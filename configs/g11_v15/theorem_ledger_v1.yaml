@@ -70,6 +70,10 @@ theorems:
     title: mesh-compatible trace safety covariance convergence
     status: proved
     scope: trace_norm_main_cosine_spectrum_and_vanishing_BLP_bridge_complement
+  T16-9:
+    title: joint mesh-noise logarithmic efficiency
+    status: proved
+    scope: every_diverging_BLP_grid_schedule_under_T16_4_through_T16_8_assumptions
 gates:
   G5:
     pass: true
@@ -86,13 +90,16 @@ gates:
   G6_mesh_identification:
     pass: true
     reason: T16-6 through T16-8 prove qualitative target action and safety-operator convergence
+  G6_joint_mesh_noise:
+    pass: true
+    reason: T16-9 proves the joint probability and safety-mixture second-moment exponents
 claim_locks:
   prohibited:
     - unqualified_logarithmic_efficiency_outside_T16_5_scope
     - bounded_relative_error
     - asymptotically_optimal
     - continuous_time_exact_simulation
-    - simultaneous_mesh_noise_logarithmic_efficiency
+    - simultaneous_mesh_noise_complexity_rate
   allowed:
     - exact_finite_grid_likelihood
     - unbiased_ordinary_importance_sampling
@@ -104,3 +111,4 @@ claim_locks:
     - continuous_logarithmic_efficiency_under_T16_5_scope
     - qualitative_BLP_probability_and_rate_action_convergence
     - trace_norm_mesh_convergence_of_the_T16_8_safety_operator
+    - joint_mesh_noise_logarithmic_efficiency_under_T16_9_scope

@@ -1,0 +1,119 @@
+{
+  "artifact_bindings": {
+    "candidate": {
+      "path": "results/g11_v16_small_noise_development_v8_hybrid_trace_2026-08-11.json",
+      "sha256": "e3f9b7b90c64a593552e9182110e3aa2ff5c61bf20c83a6fb8470db0ba2b667e"
+    },
+    "continuum_mesh": {
+      "path": "results/g11_v16_rate_mesh_development_v2_2026-08-11.json",
+      "sha256": "4ca43e69a7759021c596973e9874321af2d11956ecca566ee3b0a6d96325a9d7"
+    },
+    "hybrid_mesh": {
+      "path": "results/g11_v16_rate_mesh_development_v3_hybrid_2026-08-11.json",
+      "sha256": "f32c054d562f0e729132805ca366a7a9cd8c75bad5e02baac932345c6fc64c1d"
+    },
+    "isotropic_reference": {
+      "path": "results/g11_v16_small_noise_development_v3_2026-08-11.json",
+      "sha256": "ed3acb482dedd131452e30465012100a1653c0fdfc813ba2b81753b9b3746f86"
+    },
+    "unrelated_reference": {
+      "path": "results/g11_v16_tempered_smc_reference_v1_2026-08-11.json",
+      "sha256": "1bbabe61bbab0edd4be3fc3d169730a298fe4de1d7b83e9f85a56613a3983144"
+    }
+  },
+  "cells": [
+    {
+      "candidate_estimate": 0.025013459025891863,
+      "candidate_relative_variance": 0.33195109093080916,
+      "candidate_standard_error": 8.320514384730972e-05,
+      "epsilon": 0.5,
+      "isotropic_v3_relative_variance": 0.40717454305533995,
+      "relative_variance_improvement_fraction": 0.18474497830849657,
+      "second_moment_exponent_ratio": 0.9604028346935133,
+      "unrelated_reference_estimate": 0.024868620037814367,
+      "unrelated_reference_standard_error": 0.00022330390768707725,
+      "unrelated_reference_z": 0.6077965395796361
+    },
+    {
+      "candidate_estimate": 0.00427467363007972,
+      "candidate_relative_variance": 0.3098444878256869,
+      "candidate_standard_error": 1.3737706129846135e-05,
+      "epsilon": 0.25,
+      "isotropic_v3_relative_variance": 0.3953300336432712,
+      "relative_variance_improvement_fraction": 0.21623843002710685,
+      "second_moment_exponent_ratio": 0.97552857362086,
+      "unrelated_reference_estimate": 0.004274851243108629,
+      "unrelated_reference_standard_error": 6.0599737525851426e-05,
+      "unrelated_reference_z": 0.002858393085180493
+    },
+    {
+      "candidate_estimate": 0.00014927292779833004,
+      "candidate_relative_variance": 0.31737545982852716,
+      "candidate_standard_error": 4.85519967296105e-07,
+      "epsilon": 0.125,
+      "isotropic_v3_relative_variance": 0.3874551894939057,
+      "relative_variance_improvement_fraction": 0.18087183128690765,
+      "second_moment_exponent_ratio": 0.985285099936163,
+      "unrelated_reference_estimate": 0.00014665429963935176,
+      "unrelated_reference_standard_error": 3.859209130828884e-06,
+      "unrelated_reference_z": 0.6732331559952448
+    },
+    {
+      "candidate_estimate": 2.3543826678736591e-07,
+      "candidate_relative_variance": 0.3030089566235509,
+      "candidate_standard_error": 7.482455757513649e-10,
+      "epsilon": 0.0625,
+      "isotropic_v3_relative_variance": 0.3859559237398741,
+      "relative_variance_improvement_fraction": 0.2149130561660395,
+      "second_moment_exponent_ratio": 0.9911217596220541,
+      "unrelated_reference_estimate": 2.2945510105963544e-07,
+      "unrelated_reference_standard_error": 1.1624980330328905e-08,
+      "unrelated_reference_z": 0.5136189587803663
+    }
+  ],
+  "claim_boundary": {
+    "authorizes_joint_mesh_noise_limit": false,
+    "confirms_frozen_matrix_only": true,
+    "proves_new_asymptotic_rate": false
+  },
+  "config_binding": {
+    "path": "configs/g11_v15/hybrid_closure_audit_v1.yaml",
+    "sha256": "c16c1e7ecbf2623beec81601894a53b955ae50df6323675476878dd6f925c6cf"
+  },
+  "deepest_epsilon": 0.0625,
+  "deepest_second_moment_exponent_ratio": 0.9911217596220541,
+  "failures": [],
+  "maximum_unrelated_reference_z": 0.6732331559952448,
+  "mesh": {
+    "bridge_coefficient_norms": [
+      0.13638825978373367,
+      0.08791771981940505,
+      0.05744824196451752,
+      0.03754408213764529,
+      0.02449405483371608
+    ],
+    "hybrid_action_gaps": [
+      0.009462884582859599,
+      0.003895526559910434,
+      0.0016559734506420565,
+      0.0007058531464707585,
+      0.0003001746062851751
+    ],
+    "last_action_gap_decay_rate": 1.2335661252142927,
+    "last_bridge_decay_rate": 0.6161538991751241,
+    "steps": [
+      8,
+      16,
+      32,
+      64,
+      128
+    ]
+  },
+  "passed": true,
+  "schema": "npi.g11.v16-hybrid-closure-audit.v1",
+  "source_provenance": {
+    "git_commit": "4db07736207bc75c2d59382ac899137c897fabe3",
+    "source_changes_before_run": [],
+    "source_dirty_before_run": false
+  }
+}

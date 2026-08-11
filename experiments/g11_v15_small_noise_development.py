@@ -225,7 +225,11 @@ def main() -> None:
                 float(config.get("asymptotic_safety_mass", 0.0)) > 0.0
                 and "safety_spectrum_decay" in config
             ),
-            "mesh_uniform_asymptotic_efficiency_proved": False,
+            "joint_mesh_noise_asymptotic_efficiency_proved_under_T16_9_scope": bool(
+                float(config.get("asymptotic_safety_mass", 0.0)) > 0.0
+                and "safety_spectrum_decay" in config
+            ),
+            "joint_mesh_noise_work_complexity_proved": False,
         },
         "mode_basis": {
             "kind": mode_basis_kind,

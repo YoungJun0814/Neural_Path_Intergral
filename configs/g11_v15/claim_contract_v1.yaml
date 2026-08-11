@@ -20,9 +20,10 @@ allowed_current_claims:
   - continuous_trace_class_safety_mixture_logarithmic_efficiency_under_T16_5_scope
   - qualitative_BLP_terminal_probability_and_rate_action_convergence
   - trace_norm_mesh_consistency_of_the_T16_8_safety_operator
+  - joint_mesh_noise_logarithmic_efficiency_under_T16_9_scope
 candidate_v15_claims_locked:
-  - mesh_uniform_multimode_rare_event_efficiency
-  - simultaneous_noise_mesh_efficiency_and_complexity
+  - quantitative_mesh_uniform_relative_error
+  - simultaneous_noise_mesh_work_complexity
   - operator_assisted_certified_amortization
 prohibited_claims:
   - first_conditional_mc_for_rbergomi
