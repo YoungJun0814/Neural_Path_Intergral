@@ -226,7 +226,12 @@ def main() -> None:
     )
     gates = config["gates"]
     for replication, training_seed in enumerate(config["operator"]["training_seeds"]):
+        # The trainer receives an already constructed model, so the experiment must
+        # seed construction itself.  Reusing the seed for the shuffled control gives
+        # both fits exactly the same initial parameters.
+        torch.manual_seed(int(training_seed))
         learned = _new_model(config, rank)
+        torch.manual_seed(int(training_seed))
         shuffled = _new_model(config, rank)
         training_started = time.perf_counter()
         learned_training = train_volterra_transport_operator(
@@ -368,8 +373,13 @@ def main() -> None:
         + int(operator_values["hidden_features"]) ** 2
         + int(operator_values["hidden_features"]) * output_features
     )
+    result_schema = (
+        "npi.g11.v16-operator-confirmation.v2"
+        if str(config["schema"]).endswith(".v2")
+        else "npi.g11.v16-operator-confirmation.v1"
+    )
     payload = {
-        "schema": "npi.g11.v16-operator-confirmation.v1",
+        "schema": result_schema,
         "config_binding": {
             "path": config_path.relative_to(ROOT).as_posix(),
             "sha256": file_sha256(config_path),
@@ -392,6 +402,8 @@ def main() -> None:
             "natural_fallback_exact": True,
             "exactness_independent_of_prediction": True,
             "teacher_and_training_cost_reported_separately": True,
+            "model_initialization_bound_to_training_seed": True,
+            "learned_and_shuffled_initial_parameters_identical_per_seed": True,
             "global_amortized_cost_advantage_proved": False,
         },
     }

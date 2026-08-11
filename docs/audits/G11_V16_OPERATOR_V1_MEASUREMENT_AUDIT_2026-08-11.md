@@ -38,3 +38,13 @@ The confirmation artifact must count the correction attempts actually contained 
 the certificate, compare against cold start, include multiple training seeds and a
 shuffled-teacher control, and disclose teacher construction and neural training
 costs separately.  V1 remains immutable at its recorded source commit.
+
+## Post-confirmation V1 seed audit
+
+The first replicated confirmation also constructed each network before the trainer
+set `training_seed`.  The run was reproducible from its clean source, but the named
+seed did not control initial parameters and learned/shuffled networks did not share
+the same initialization.  Its positive result is retained as development evidence,
+not as the final replicated claim.  V2 explicitly seeds model construction and
+reuses identical initial parameters for the learned and shuffled fits in each
+replication.
