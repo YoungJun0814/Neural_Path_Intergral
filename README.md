@@ -10,7 +10,23 @@
 
 ## Research status
 
-The current frontier is **V15 Exact Conditional Cameron–Martin Transport**.  The
+**Current frontier (2026-08-12): V16 fail-closed exact conditional path-space
+transport.** The V5 router integrates out the complete independent price driver,
+uses exact defensive residual/tempered Gaussian transports, and evaluates ordinary
+importance-sampling estimates with the full balance likelihood. Fresh clean-source
+confirmation authorizes finite-grid dominance claims in four named cells. The
+strongest-qualified-comparator/V16 training-inclusive ratios are 5.978 (canonical
+rough K1), 1.280 (rough K2 OOD), 5.023 (rough K0.5 OOD), and 1.815 (regular OOD).
+Three joint-extreme cells use an explicit V14 correctness fallback; they pass
+accuracy and likelihood gates but carry no dominance claim. See the
+[Korean model guide](docs/G11_V16_CURRENT_MODEL_GUIDE_KO.md),
+[T16-12/T16-13 note](docs/theory/G11_V16_BALANCE_SELECTION_AND_ROUTING_THEOREMS.md),
+and [final V16 audit](docs/audits/G11_V16_FINAL_IMPLEMENTATION_AND_CLAIM_AUDIT_2026-08-12.md).
+Top-journal submission remains locked on external novelty review, independent
+hardware/person reproduction, and quantitative continuous relative-bias/end-to-end
+complexity.
+
+The former frontier was **V15 Exact Conditional Cameron–Martin Transport**.  The
 finite-grid core conditions out the complete independent rBergomi price driver,
 solves a low-rank Cameron–Martin action with two independently implemented
 optimizers, and evaluates an exact defensive multimode finite-rank Gaussian
@@ -649,6 +665,7 @@ and prevent selective reporting.
 | G11 V12 | Exact conditional residual Gaussian-mixture transport | Exactness passes; adaptive mixture misses deep-tail support and performance gate fails |
 | G11 V13 | SMC-trained low-rank structured ECRPT | Full 12-record development and audit complete; correctness mechanisms pass, accuracy/tail-safe/performance gates fail; qualification blocked |
 | G11 V14 | Exact conditional local-Volterra transport | Development and disjoint-seed qualification pass; 3/3 cells favorable, qualified geometric work ratio 2.42 with lower bound 1.81; distribution-free tail claim remains blocked |
+| G11 V16 | Exact conditional fail-closed path-space transport | Four named finite-grid dominance cells pass; three joint-extreme correctness fallbacks pass without dominance; top-journal locks remain external/continuous-complexity |
 
 Earlier neural VFO, mixture, and residual-controller tracks were tested against strong
 baselines and stopped when their gates failed. See the phase reviews under
@@ -657,23 +674,14 @@ baselines and stopped when their gates failed. See the phase reviews under
 
 ## What remains before a journal claim
 
-V14 resolves the terminal-event support and cost failure by integrating the complete
-price driver and transporting only the local Volterra law. Frozen development and
-disjoint-seed qualification now pass the empirical accuracy and training-inclusive
-performance gates. Before a journal claim, the result still needs external hardware
-reproduction, a current primary-source novelty audit, manuscript-level proof review,
-and broader tests across meshes and task families. The distribution-free bounded-
-range tail certificate remains resource censored and is not an authorized claim.
-
-See [the V13 development report](V13_STRUCTURED_ECRPT_DEVELOPMENT_REPORT.md) for the
-audited result and redesign requirements.
-
-The successful terminal-event redesign and its exact claim boundary are documented
-in [the V14 report](V14_LOCAL_VOLTERRA_TRANSPORT_REPORT.md).
-
-Until those items are complete, the defensible description is **qualified PhD-level
-working-paper core with a positive frozen result**, not a top-journal-ready final
-manuscript.
+V16 closes the local finite-grid implementation, exactness, named-cell confirmation,
+and fail-closed routing gates. The remaining blockers are not hidden engineering
+tasks: two independent novelty reviews are still 0/2, no independent person/hardware
+reproduction exists, and the quantitative continuous relative mesh-bias/end-to-end
+complexity gate remains open. Joint-extreme fallback cells also do not support a
+uniform-dominance statement. The defensible status is therefore **a strong PhD-level
+working-paper core with positive frozen finite-grid results**, not a top-journal-ready
+final manuscript.
 
 ## Research integrity
 
