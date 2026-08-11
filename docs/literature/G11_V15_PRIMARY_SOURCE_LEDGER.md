@@ -43,6 +43,9 @@ primary records and do not support novelty decisions.
 | L17 | Rozanov, *On the Density of One Gaussian Measure with Respect to Another* (1962), DOI `10.1137/1107006` | equivalence criteria and densities for Gaussian process measures | Gaussian covariance equivalence and determinant densities are classical prior art; V16 novelty cannot rest on Feldman--Hajek/Rozanov alone. |
 | L18 | Bayer, Fukasawa, Nakahara, *On the Weak Convergence Rate in the Discretization of Rough Volatility Models* (2023), DOI `10.1137/22M1482871` | general and structure-dependent weak-error bounds for rough-volatility discretizations | V16 may use this as a boundary, but cannot assign its rates to the nonlinear conditional digital without matching the payoff and scheme assumptions. |
 | L19 | Gassiat, *Weak Error Rates of Numerical Schemes for Rough Volatility* (2023), DOI `10.1137/22M1485760` | sharper rates for specified integrands, tests and hybrid-type schemes | The qualitative T16-7 limit is defensible; an explicit rate remains locked until the exact conditional payoff assumptions are checked. |
+| L20 | Jacquier, Žurič, *Random Neural Networks for Rough Volatility* (2026), DOI `10.1007/s00245-026-10392-5` | reservoir/random neural solvers for rough-volatility path-dependent PDE/BSDE problems with convergence analysis | Neural treatment of rough memory is not novel. This work solves a different pricing/PDE problem and does not supply the present rare-event transport or exact defensive likelihood. |
+| L21 | Jouravlev, *Learning-Enhanced Control Variates for Option Pricing under Rough Volatility* (2025 preprint), SSRN `5668450` | independently trained low-rank learned control variates for unbiased rBergomi pricing and equal-wall-clock comparisons | Learned unbiased variance reduction for rBergomi is adjacent prior art. V16 must compare mechanisms and cannot claim the first learning-enhanced unbiased rBergomi estimator. |
+| L22 | Cui, Dolgov, Scheichl, *Deep Importance Sampling Using Tensor Trains ...* (2024), DOI `10.1137/23M1546981` | compositional transport toward rare-event targets and separate normalization estimation in high dimension | Learned/deep path transport and bridging distributions are prior art in general. V16's defensible distinction is the conditional Gaussian-Volterra contraction, exact ordinary-IS balance likelihood, and joint mesh/noise theorem, not the word “transport.” |
 
 ## Exact overlap boundary
 
@@ -126,3 +129,6 @@ for any frozen proposal, but qualification and top-journal language stay locked.
 - <https://doi.org/10.1137/1107006>
 - <https://doi.org/10.1137/22M1482871>
 - <https://doi.org/10.1137/22M1485760>
+- <https://doi.org/10.1007/s00245-026-10392-5>
+- <https://ssrn.com/abstract=5668450>
+- <https://doi.org/10.1137/23M1546981>

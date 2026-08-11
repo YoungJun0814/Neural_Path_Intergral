@@ -46,6 +46,15 @@ decisive_sources:
   - id: L19
     doi: 10.1137/22M1485760
     overlap: hybrid_rough_volatility_weak_error_rates
+  - id: L20
+    doi: 10.1007/s00245-026-10392-5
+    overlap: random_neural_rough_volatility_PPDE_BSDE_solver
+  - id: L21
+    ssrn: "5668450"
+    overlap: learned_unbiased_control_variates_for_rbergomi
+  - id: L22
+    doi: 10.1137/23M1546981
+    overlap: deep_transport_importance_sampling_for_rare_events
 candidate_claim:
   short_name: conditional_multimode_cm_transport
   required_features:
