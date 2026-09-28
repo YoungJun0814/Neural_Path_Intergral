@@ -138,7 +138,9 @@ def select_defensive_proposal_by_second_moment(
         (square_sums - sums.square() / sample_count) / (sample_count - 1),
         min=0.0,
     )
-    log_factor = math.log(2.0 * candidate_count / confidence_delta)
+    # Maurer--Pontil's stated deviation is one-sided.  The oracle-excess
+    # statement below needs both signs for each of J fixed proposals.
+    log_factor = math.log(4.0 * candidate_count / confidence_delta)
     estimates = []
     radii = []
     for index, (candidate_id, proposal) in enumerate(

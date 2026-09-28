@@ -1,0 +1,30 @@
+schema: npi.post-audit.r0-smoke-config.v1
+output_path: results/post_audit/r0_smoke_v1.json
+task:
+  task_id: r0-terminal-left-smoke
+  spot: 100.0
+  strike: 80.0
+  maturity: 1.0
+  steps: 4
+  hurst: 0.12
+  eta: 1.5
+  xi: 0.04
+  rho: -0.7
+training_rep: 0
+reference_units: 4096
+evaluation:
+  clusters: 3
+  units_per_cluster: 256
+ce:
+  iterations: 2
+  samples_per_iteration: 512
+  elite_fraction: 0.1
+  smoothing: 0.7
+  defensive_mass: 0.2
+  covariance_rank: 2
+  minimum_target_ess: 20.0
+qualification:
+  maximum_relative_se: 0.25
+  maximum_reference_relative_se: 0.10
+  relative_equivalence_margin: 0.25
+  confidence_z: 1.96

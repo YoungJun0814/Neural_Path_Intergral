@@ -70,8 +70,8 @@ Consequently a finite-bank simultaneous empirical-Bernstein certificate is
 available. With probability at least `1-gamma`, all candidate risks lie within
 
 ```text
-r_j = sqrt(2 S_j^2 log(2J/gamma)/n)
-      + 7 B_j log(2J/gamma)/(3(n-1)),
+r_j = sqrt(2 S_j^2 log(4J/gamma)/n)
+      + 7 B_j log(4J/gamma)/(3(n-1)),
 B_j = 1/(delta_j delta_G)
 ```
 
@@ -80,6 +80,12 @@ of their empirical means. If the empirical-risk minimizer `s` is selected, then
 ```text
 M2(Q_s) <= min_j M2(Q_j) + r_s + max_j r_j.
 ```
+
+The factor `4J/gamma` allocates the error probability across both deviation
+directions and all `J` frozen candidates when invoking the one-sided
+Maurer--Pontil empirical-Bernstein form. A one-sided UCB alone has a different
+claim. The bound requires independent validation draws and is often numerically
+vacuous for rare events; it is not an observed speed guarantee.
 
 Most importantly, if selection is completed before a fresh final sample is drawn,
 then conditional on all training and validation data,

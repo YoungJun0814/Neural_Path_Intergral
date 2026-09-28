@@ -1,0 +1,835 @@
+{
+  "claim_context": {
+    "ce_elite_threshold_history": [
+      -0.046687586636431064,
+      0.9261669813020849
+    ],
+    "ce_fitting_ess_history": [
+      148.5017620050916,
+      347.232473681174
+    ],
+    "ce_target_ess_history": [
+      148.5017620050916,
+      347.232473681174
+    ],
+    "ce_target_reached": true,
+    "fresh_confirmation": false,
+    "purpose": "R0 two-method schema and timing smoke only",
+    "source_dirty_at_start": true
+  },
+  "comparisons": [
+    {
+      "candidate": "weighted_conditional_ce",
+      "comparator": "conditional_natural",
+      "reported_proxy_ratio": 2.700045435676974
+    }
+  ],
+  "manifest": {
+    "config": {
+      "ce": {
+        "covariance_rank": 2,
+        "defensive_mass": 0.2,
+        "elite_fraction": 0.1,
+        "iterations": 2,
+        "minimum_target_ess": 20.0,
+        "samples_per_iteration": 512,
+        "smoothing": 0.7
+      },
+      "evaluation": {
+        "clusters": 3,
+        "units_per_cluster": 256
+      },
+      "output_path": "results/post_audit/r0_smoke_v1.json",
+      "qualification": {
+        "confidence_z": 1.96,
+        "maximum_reference_relative_se": 0.1,
+        "maximum_relative_se": 0.25,
+        "relative_equivalence_margin": 0.25
+      },
+      "reference_units": 4096,
+      "schema": "npi.post-audit.r0-smoke-config.v1",
+      "task": {
+        "eta": 1.5,
+        "hurst": 0.12,
+        "maturity": 1.0,
+        "rho": -0.7,
+        "spot": 100.0,
+        "steps": 4,
+        "strike": 80.0,
+        "task_id": "r0-terminal-left-smoke",
+        "xi": 0.04
+      },
+      "training_rep": 0
+    },
+    "convention": "BLP-local-2N-left-endpoint-epsilon1",
+    "level": 0,
+    "payoff_id": "terminal_left_conditional_cdf",
+    "qualification_policy": {
+      "confidence_z": 1.96,
+      "maximum_reference_relative_se": 0.1,
+      "maximum_relative_se": 0.25,
+      "relative_equivalence_margin": 0.25
+    },
+    "seed_ledger": {
+      "records": [
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 0,
+            "role": "final",
+            "stream": "conditional_natural:label",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 1442135899580253817
+        },
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 0,
+            "role": "final",
+            "stream": "conditional_natural:path",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 4558600821515532379
+        },
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 0,
+            "role": "final",
+            "stream": "weighted_conditional_ce:label",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 7403957422322085377
+        },
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 0,
+            "role": "final",
+            "stream": "weighted_conditional_ce:path",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 4965927595208999087
+        },
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 1,
+            "role": "final",
+            "stream": "conditional_natural:label",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 103243719945234099
+        },
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 1,
+            "role": "final",
+            "stream": "conditional_natural:path",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 4867949541212843170
+        },
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 1,
+            "role": "final",
+            "stream": "weighted_conditional_ce:label",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 240226034472795378
+        },
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 1,
+            "role": "final",
+            "stream": "weighted_conditional_ce:path",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 9198772192073894628
+        },
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 2,
+            "role": "final",
+            "stream": "conditional_natural:label",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 5137121305481246052
+        },
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 2,
+            "role": "final",
+            "stream": "conditional_natural:path",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 6278923305504243938
+        },
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 2,
+            "role": "final",
+            "stream": "weighted_conditional_ce:label",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 5886571155908909003
+        },
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 2,
+            "role": "final",
+            "stream": "weighted_conditional_ce:path",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 1640310165184528122
+        },
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 0,
+            "role": "reference",
+            "stream": "reference",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 9138425669160200464
+        },
+        {
+          "key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 0,
+            "role": "training",
+            "stream": "weighted_conditional_ce",
+            "task": "r0-terminal-left-smoke"
+          },
+          "seed": 7323180771954502040
+        }
+      ],
+      "schema": "npi.g11.seed-ledger.v1"
+    },
+    "source": {
+      "config_digest": "bf6f2ccd2b0193ad064aa0e1f37459a079d9127086f1144040f298c105784742",
+      "runtime": {
+        "cuda": "12.8",
+        "deterministic_algorithms": false,
+        "dtype": "float64",
+        "os": "Windows-10-10.0.26200-SP0",
+        "packages": {
+          "PyYAML": "6.0.2",
+          "numpy": "1.26.2",
+          "psutil": "5.9.5",
+          "scipy": "1.15.3"
+        },
+        "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+        "python": "3.10.11",
+        "pytorch": "2.12.0.dev20260408+cu128",
+        "torch_threads": 16
+      },
+      "source_commit": "3f9047d8e586cb707cf8fe2a889f928bef9fb0f0",
+      "source_dirty": true,
+      "source_patch_digest": "19980312dd892d7150e5d859f77793b49ab221240c2fb7d50c82a4758a323c9e",
+      "source_tree_digest": "2c61902f6847015efdd383437ec4146b3358a559531fb6203848ece7d7a38cf2"
+    },
+    "steps": 4,
+    "task_id": "r0-terminal-left-smoke",
+    "timing_context": {
+      "concurrent_timed_jobs": false,
+      "power_mode": "not_recorded_smoke",
+      "warmup": "not_performed_smoke"
+    },
+    "training_rep": 0
+  },
+  "methods": [
+    {
+      "clusters": [
+        {
+          "cost": {
+            "cpu_seconds": 0.109375,
+            "peak_memory_bytes": 578940928,
+            "proxy_work_units": 5120,
+            "stage": "inference",
+            "wall_seconds": 0.003874000161886215
+          },
+          "evaluation_rep": 0,
+          "label_seed": 1442135899580253817,
+          "label_seed_key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 0,
+            "role": "final",
+            "stream": "conditional_natural:label",
+            "task": "r0-terminal-left-smoke"
+          },
+          "maximum_contribution": 0.9711375164993652,
+          "moments": {
+            "count": 256,
+            "m2": 10.291427291824503,
+            "mean": 0.11931627509156345
+          },
+          "normalization_moments": {
+            "count": 256,
+            "m2": 0.0,
+            "mean": 1.0
+          },
+          "raw_sample_count": 256,
+          "seed": 4558600821515532379,
+          "seed_key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 0,
+            "role": "final",
+            "stream": "conditional_natural:path",
+            "task": "r0-terminal-left-smoke"
+          }
+        },
+        {
+          "cost": {
+            "cpu_seconds": 0.0,
+            "peak_memory_bytes": 578994176,
+            "proxy_work_units": 5120,
+            "stage": "inference",
+            "wall_seconds": 0.003936400171369314
+          },
+          "evaluation_rep": 1,
+          "label_seed": 103243719945234099,
+          "label_seed_key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 1,
+            "role": "final",
+            "stream": "conditional_natural:label",
+            "task": "r0-terminal-left-smoke"
+          },
+          "maximum_contribution": 0.9519891943504316,
+          "moments": {
+            "count": 256,
+            "m2": 9.120117352973189,
+            "mean": 0.12114764012618413
+          },
+          "normalization_moments": {
+            "count": 256,
+            "m2": 0.0,
+            "mean": 1.0
+          },
+          "raw_sample_count": 256,
+          "seed": 4867949541212843170,
+          "seed_key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 1,
+            "role": "final",
+            "stream": "conditional_natural:path",
+            "task": "r0-terminal-left-smoke"
+          }
+        },
+        {
+          "cost": {
+            "cpu_seconds": 0.0,
+            "peak_memory_bytes": 578998272,
+            "proxy_work_units": 5120,
+            "stage": "inference",
+            "wall_seconds": 0.0034018000587821007
+          },
+          "evaluation_rep": 2,
+          "label_seed": 5137121305481246052,
+          "label_seed_key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 2,
+            "role": "final",
+            "stream": "conditional_natural:label",
+            "task": "r0-terminal-left-smoke"
+          },
+          "maximum_contribution": 0.9284972847131271,
+          "moments": {
+            "count": 256,
+            "m2": 7.6050160904338435,
+            "mean": 0.10362279159866505
+          },
+          "normalization_moments": {
+            "count": 256,
+            "m2": 0.0,
+            "mean": 1.0
+          },
+          "raw_sample_count": 256,
+          "seed": 6278923305504243938,
+          "seed_key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 2,
+            "role": "final",
+            "stream": "conditional_natural:path",
+            "task": "r0-terminal-left-smoke"
+          }
+        }
+      ],
+      "defensive_mass": 1.0,
+      "dimension": 8,
+      "fit_cost": {
+        "cpu_seconds": 0.0,
+        "peak_memory_bytes": 0,
+        "proxy_work_units": 0.0,
+        "stage": "fit",
+        "wall_seconds": 0.0
+      },
+      "fit_seed": null,
+      "fitted": false,
+      "inferential_unit": "iid_path",
+      "method_id": "conditional_natural",
+      "offline_cost": {
+        "cpu_seconds": 0.0,
+        "peak_memory_bytes": 0,
+        "proxy_work_units": 0.0,
+        "stage": "offline",
+        "wall_seconds": 0.0
+      },
+      "payoff_id": "terminal_left_conditional_cdf",
+      "points_per_unit": 1,
+      "proposal_digest": "36bdf0ab225e2107cf82975f9a5471131283534cbccf29b86c5d0a5bf09a0806",
+      "proposal_parameters": {
+        "components": [
+          {
+            "directions": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "eigenvalues": [],
+            "mean": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ],
+        "weights": [
+          1.0
+        ]
+      },
+      "reported": {
+        "accuracy_z": 2.287288374005911,
+        "estimate": 0.11469556893880421,
+        "normalization_z": 0.0,
+        "peak_memory_bytes": 578998272,
+        "qualification": "qualified",
+        "relative_standard_error": 0.059097842894120456,
+        "sample_variance": 0.035285620457630756,
+        "standard_error": 0.0067782607137972135,
+        "total_cpu_seconds": 0.109375,
+        "total_proxy_work": 15360.0,
+        "total_wall_seconds": 0.01121220039203763
+      },
+      "selection_cost": {
+        "cpu_seconds": 0.0,
+        "peak_memory_bytes": 0,
+        "proxy_work_units": 0.0,
+        "stage": "selection",
+        "wall_seconds": 0.0
+      },
+      "training_substream_ledger": null
+    },
+    {
+      "clusters": [
+        {
+          "cost": {
+            "cpu_seconds": 0.125,
+            "peak_memory_bytes": 579010560,
+            "proxy_work_units": 5120,
+            "stage": "inference",
+            "wall_seconds": 0.00466340035200119
+          },
+          "evaluation_rep": 0,
+          "label_seed": 7403957422322085377,
+          "label_seed_key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 0,
+            "role": "final",
+            "stream": "weighted_conditional_ce:label",
+            "task": "r0-terminal-left-smoke"
+          },
+          "maximum_contribution": 0.35658425960673534,
+          "moments": {
+            "count": 256,
+            "m2": 1.4334183421767976,
+            "mean": 0.12434906087932937
+          },
+          "normalization_moments": {
+            "count": 256,
+            "m2": 314.7143471574307,
+            "mean": 1.0407158587046539
+          },
+          "raw_sample_count": 256,
+          "seed": 4965927595208999087,
+          "seed_key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 0,
+            "role": "final",
+            "stream": "weighted_conditional_ce:path",
+            "task": "r0-terminal-left-smoke"
+          }
+        },
+        {
+          "cost": {
+            "cpu_seconds": 0.0,
+            "peak_memory_bytes": 579010560,
+            "proxy_work_units": 5120,
+            "stage": "inference",
+            "wall_seconds": 0.005156099796295166
+          },
+          "evaluation_rep": 1,
+          "label_seed": 240226034472795378,
+          "label_seed_key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 1,
+            "role": "final",
+            "stream": "weighted_conditional_ce:label",
+            "task": "r0-terminal-left-smoke"
+          },
+          "maximum_contribution": 0.34718271612810647,
+          "moments": {
+            "count": 256,
+            "m2": 1.5583139839239055,
+            "mean": 0.12342259003797265
+          },
+          "normalization_moments": {
+            "count": 256,
+            "m2": 275.37502389991334,
+            "mean": 1.0995254195936632
+          },
+          "raw_sample_count": 256,
+          "seed": 9198772192073894628,
+          "seed_key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 1,
+            "role": "final",
+            "stream": "weighted_conditional_ce:path",
+            "task": "r0-terminal-left-smoke"
+          }
+        },
+        {
+          "cost": {
+            "cpu_seconds": 0.0,
+            "peak_memory_bytes": 579010560,
+            "proxy_work_units": 5120,
+            "stage": "inference",
+            "wall_seconds": 0.004413899965584278
+          },
+          "evaluation_rep": 2,
+          "label_seed": 5886571155908909003,
+          "label_seed_key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 2,
+            "role": "final",
+            "stream": "weighted_conditional_ce:label",
+            "task": "r0-terminal-left-smoke"
+          },
+          "maximum_contribution": 0.319842578161913,
+          "moments": {
+            "count": 256,
+            "m2": 1.3039575927215041,
+            "mean": 0.12415309213932957
+          },
+          "normalization_moments": {
+            "count": 256,
+            "m2": 276.9488025161957,
+            "mean": 0.9786067690156613
+          },
+          "raw_sample_count": 256,
+          "seed": 1640310165184528122,
+          "seed_key": {
+            "level": 0,
+            "protocol": "post-audit-r0-smoke",
+            "regime": "r0-smoke",
+            "replicate": 2,
+            "role": "final",
+            "stream": "weighted_conditional_ce:path",
+            "task": "r0-terminal-left-smoke"
+          }
+        }
+      ],
+      "defensive_mass": 0.2,
+      "dimension": 8,
+      "fit_cost": {
+        "cpu_seconds": 0.046875,
+        "peak_memory_bytes": 578904064,
+        "proxy_work_units": 20480,
+        "stage": "fit",
+        "wall_seconds": 0.01676440006121993
+      },
+      "fit_seed": {
+        "seed": 7323180771954502040,
+        "seed_key": {
+          "level": 0,
+          "protocol": "post-audit-r0-smoke",
+          "regime": "r0-smoke",
+          "replicate": 0,
+          "role": "training",
+          "stream": "weighted_conditional_ce",
+          "task": "r0-terminal-left-smoke"
+        }
+      },
+      "fitted": true,
+      "inferential_unit": "iid_path",
+      "method_id": "weighted_conditional_ce",
+      "offline_cost": {
+        "cpu_seconds": 0.0,
+        "peak_memory_bytes": 0,
+        "proxy_work_units": 0.0,
+        "stage": "offline",
+        "wall_seconds": 0.0
+      },
+      "payoff_id": "terminal_left_conditional_cdf",
+      "points_per_unit": 1,
+      "proposal_digest": "8639eefc5bef81994d61b2e4b7e9128873696735b12b513d55bef55b9a6937ee",
+      "proposal_parameters": {
+        "components": [
+          {
+            "directions": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "eigenvalues": [],
+            "mean": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "directions": [
+              [
+                0.6409010616485655,
+                -0.31313763432959607
+              ],
+              [
+                0.18212447600522513,
+                -0.5577983184695652
+              ],
+              [
+                0.5057975282127314,
+                -0.0640096033758717
+              ],
+              [
+                0.2121949514965128,
+                -0.10644777837092784
+              ],
+              [
+                0.4128120873031997,
+                0.4612914961398208
+              ],
+              [
+                0.1588394175570988,
+                0.42043481759600165
+              ],
+              [
+                0.23854116333251232,
+                0.4288436998755625
+              ],
+              [
+                0.0517010718778272,
+                -0.04376413890033837
+              ]
+            ],
+            "eigenvalues": [
+              0.7344292980422854,
+              1.2251988673083727
+            ],
+            "mean": [
+              0.7053220586808285,
+              0.1499753594001072,
+              0.6019262714135651,
+              0.07129472175208948,
+              0.5803197758803288,
+              0.11868896402548147,
+              0.44407049239802876,
+              -0.05122023867946009
+            ]
+          }
+        ],
+        "weights": [
+          0.2,
+          0.8
+        ]
+      },
+      "reported": {
+        "accuracy_z": 1.8643433212801632,
+        "estimate": 0.12397491435221053,
+        "normalization_z": 1.0314819875848389,
+        "peak_memory_bytes": 579010560,
+        "qualification": "qualified",
+        "relative_standard_error": 0.021782640472375325,
+        "sample_variance": 0.005600797885745371,
+        "standard_error": 0.0027005009869277255,
+        "total_cpu_seconds": 0.171875,
+        "total_proxy_work": 35840,
+        "total_wall_seconds": 0.030997800175100565
+      },
+      "selection_cost": {
+        "cpu_seconds": 0.0,
+        "peak_memory_bytes": 0,
+        "proxy_work_units": 0.0,
+        "stage": "selection",
+        "wall_seconds": 0.0
+      },
+      "training_substream_ledger": {
+        "records": [
+          {
+            "key": {
+              "level": 0,
+              "protocol": "post-audit-ce",
+              "regime": "r0-terminal-left-smoke",
+              "replicate": 7323180771954502040,
+              "role": "training",
+              "stream": "label",
+              "task": "r0-terminal-left-smoke"
+            },
+            "seed": 1926506608522320411
+          },
+          {
+            "key": {
+              "level": 0,
+              "protocol": "post-audit-ce",
+              "regime": "r0-terminal-left-smoke",
+              "replicate": 7323180771954502040,
+              "role": "training",
+              "stream": "path",
+              "task": "r0-terminal-left-smoke"
+            },
+            "seed": 6297033309315012821
+          },
+          {
+            "key": {
+              "level": 1,
+              "protocol": "post-audit-ce",
+              "regime": "r0-terminal-left-smoke",
+              "replicate": 7323180771954502040,
+              "role": "training",
+              "stream": "label",
+              "task": "r0-terminal-left-smoke"
+            },
+            "seed": 2349323297448631466
+          },
+          {
+            "key": {
+              "level": 1,
+              "protocol": "post-audit-ce",
+              "regime": "r0-terminal-left-smoke",
+              "replicate": 7323180771954502040,
+              "role": "training",
+              "stream": "path",
+              "task": "r0-terminal-left-smoke"
+            },
+            "seed": 9127811866149954419
+          }
+        ],
+        "schema": "npi.g11.seed-ledger.v1"
+      }
+    }
+  ],
+  "reference": {
+    "cost": {
+      "cpu_seconds": 0.078125,
+      "peak_memory_bytes": 576811008,
+      "proxy_work_units": 49152,
+      "stage": "reference",
+      "wall_seconds": 0.024457099847495556
+    },
+    "independent": true,
+    "inferential_unit": "iid_path",
+    "moments": {
+      "count": 4096,
+      "m2": 186.3175742615926,
+      "mean": 0.13197223236223027
+    },
+    "points_per_unit": 1,
+    "raw_sample_count": 4096,
+    "reported": {
+      "estimate": 0.13197223236223027,
+      "standard_error": 0.003332882351496305
+    },
+    "seed": 9138425669160200464,
+    "seed_key": {
+      "level": 0,
+      "protocol": "post-audit-r0-smoke",
+      "regime": "r0-smoke",
+      "replicate": 0,
+      "role": "reference",
+      "stream": "reference",
+      "task": "r0-terminal-left-smoke"
+    }
+  },
+  "schema": "npi.post-audit.measurement.v1"
+}

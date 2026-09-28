@@ -9,6 +9,7 @@ from typing import Any
 
 import yaml
 
+from src.path_integral.legacy_v16_semantic_adapter import audit_legacy_v16_config
 from src.path_integral.v15_result_audit import file_sha256, git_source_provenance
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,6 +25,7 @@ def _load_bound(binding: dict[str, str]) -> dict[str, Any]:
 
 
 def build_audit(config: dict[str, Any]) -> dict[str, Any]:
+    legacy_review = audit_legacy_v16_config(ROOT, config)
     canonical = _load_bound(config["artifacts"]["canonical_confirmation"])
     ood = _load_bound(config["artifacts"]["ood_confirmation"])
     theorems = _load_bound(config["artifacts"]["theorem_ledger"])
@@ -116,6 +118,12 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
             "quantitative continuous relative-bias/end-to-end complexity open"
         )
 
+    if legacy_review["semantic_validity"] != "pass":
+        internal_failures.append("post-audit legacy arithmetic or binding review failed")
+    # Historical files preserve their original passed flags. They have only one
+    # independent proposal fit, unmatched CEM conditioning, and proxy work.
+    # Re-running this entry point must not re-authorize the old empirical claim.
+    internal_failures.append("post-audit statistical qualification is unresolved")
     return {
         "schema": "npi.g11.v16-final-policy-audit.v1",
         "passed": not internal_failures,
@@ -127,6 +135,7 @@ def build_audit(config: dict[str, Any]) -> dict[str, Any]:
         "dominance_cells": dominance_summary,
         "correctness_fallback_cells": fallback_summary,
         "artifact_bindings": config["artifacts"],
+        "post_audit_legacy_review": legacy_review,
         "source_provenance": git_source_provenance(ROOT),
     }
 
@@ -144,7 +153,8 @@ def main() -> None:
         "path": config_path.relative_to(ROOT).as_posix(),
         "sha256": file_sha256(config_path),
     }
-    output = ROOT / str(config["output_path"])
+    # Never overwrite the frozen historical result named in the old config.
+    output = ROOT / "results/post_audit/legacy_v16_reaudit_v1.json"
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(
         json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
