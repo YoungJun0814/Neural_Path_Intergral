@@ -63,6 +63,7 @@ class TemperedSMCResult:
     minimum_incremental_ess_fraction: float
     potential_evaluations: int
     final_particles: torch.Tensor | None
+    replicate_diagnostics: tuple[dict[str, object], ...] = ()
 
 
 def _validate_log_potential(values: torch.Tensor, particles: int) -> None:
@@ -92,6 +93,7 @@ def estimate_tempered_normalizer(
     evaluations = 0
     minimum_ess_fraction = 1.0
     retained_final_particles = []
+    replicate_diagnostics: list[dict[str, object]] = []
     retained = math.sqrt(1.0 - config.pcn_scale**2)
     for replicate in range(config.replicates):
         generator = torch.Generator().manual_seed(config.seed + 104_729 * replicate)
@@ -104,6 +106,8 @@ def estimate_tempered_normalizer(
         evaluations += config.particles
         _validate_log_potential(log_value, config.particles)
         log_normalizer = torch.zeros((), dtype=torch.float64)
+        lineage = torch.arange(config.particles)
+        stage_records: list[dict[str, object]] = []
         for stage, (beta_left, beta_right) in enumerate(
             zip(config.temperatures[:-1], config.temperatures[1:], strict=True)
         ):
@@ -116,9 +120,19 @@ def estimate_tempered_normalizer(
             ess_fraction = 1.0 / (
                 config.particles * float(torch.sum(probabilities.square()))
             )
+            maximum_incremental_weight_fraction = float(torch.max(probabilities))
             minimum_ess_fraction = min(minimum_ess_fraction, ess_fraction)
             final_stage = stage == len(config.temperatures) - 2
             if final_stage and not config.retain_final_particles:
+                stage_records.append({
+                    "stage": stage, "beta": beta_right,
+                    "incremental_ess_fraction": ess_fraction,
+                    "maximum_incremental_weight_fraction": maximum_incremental_weight_fraction,
+                    "log_normalizer": float(log_normalizer),
+                    "resampled": False,
+                    "unique_initial_ancestors": int(torch.unique(lineage).numel()),
+                    "mutation_acceptance": None,
+                })
                 continue
             ancestors = torch.multinomial(
                 probabilities,
@@ -128,6 +142,8 @@ def estimate_tempered_normalizer(
             )
             particles = particles[ancestors]
             log_value = log_value[ancestors]
+            lineage = lineage[ancestors]
+            stage_accepted = 0
             for _ in range(config.mutation_steps):
                 innovation = torch.randn(
                     particles.shape,
@@ -151,10 +167,28 @@ def estimate_tempered_normalizer(
                 particles[accept] = candidate[accept]
                 log_value[accept] = candidate_log_value[accept]
                 accepted += int(torch.sum(accept))
+                stage_accepted += int(torch.sum(accept))
                 proposed += config.particles
+            stage_records.append({
+                "stage": stage, "beta": beta_right,
+                "incremental_ess_fraction": ess_fraction,
+                "maximum_incremental_weight_fraction": maximum_incremental_weight_fraction,
+                "log_normalizer": float(log_normalizer),
+                "resampled": True,
+                "unique_initial_ancestors": int(torch.unique(lineage).numel()),
+                "mutation_acceptance": stage_accepted / (
+                    config.mutation_steps * config.particles
+                ),
+            })
             if final_stage:
                 retained_final_particles.append(particles.detach().clone())
         log_estimates.append(log_normalizer)
+        replicate_diagnostics.append({
+            "replicate": replicate,
+            "stages": stage_records,
+            "final_unique_initial_ancestors": int(torch.unique(lineage).numel()),
+            "resampling_stages": sum(bool(item["resampled"]) for item in stage_records),
+        })
     log_replicates = torch.stack(log_estimates)
     estimates = torch.exp(log_replicates)
     if not torch.isfinite(estimates).all():
@@ -176,4 +210,5 @@ def estimate_tempered_normalizer(
             if retained_final_particles
             else None
         ),
+        replicate_diagnostics=tuple(replicate_diagnostics),
     )

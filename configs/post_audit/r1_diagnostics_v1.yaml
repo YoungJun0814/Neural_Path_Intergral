@@ -1,0 +1,39 @@
+schema: npi.post-audit.r1-diagnostic-config.v1
+output_path: results/post_audit/r1_diagnostics_v1.json
+torch_threads: 1
+model: {spot: 100.0, maturity: 1.0, hurst: 0.05, eta: 1.5, xi: 0.04, rho: -0.7}
+cells:
+  - {id: canonical-h005-k1, threshold: 1.0, rank_sweep: true}
+  - {id: rough-h005-k2, threshold: 2.0, rank_sweep: false}
+  - {id: regular-h012-k1, hurst: 0.12, threshold: 1.0, rank_sweep: false}
+  - {id: high-eta200-k1, eta: 2.0, threshold: 1.0, rank_sweep: true}
+  - {id: strong-rho090-k1, rho: -0.9, threshold: 1.0, rank_sweep: false}
+  - {id: joint-h012-eta200-rho090-k1, hurst: 0.12, eta: 2.0, rho: -0.9, threshold: 1.0, rank_sweep: true}
+ce:
+  iterations: 3
+  samples_per_iteration: 512
+  elite_fraction: 0.1
+  smoothing: 0.7
+  defensive_mass: 0.1
+  maximum_mean_norm: 20.0
+  covariance_rank: 8
+  covariance_shrinkage: 0.5
+  minimum_eigenvalue: 0.25
+  maximum_eigenvalue: 4.0
+  minimum_target_ess: 20.0
+experiment:
+  steps: 32
+  independent_training_seeds: 5
+  bank_count: 512
+  evaluation_count: 1024
+  defensive_mass: 0.1
+  diagnostic_rank: 16
+  rank_sweep: [8, 16, 24, 48, 64]
+  optimizer_steps: 50
+  nested_outer_replicates: 3
+  nested_outer_count: 32
+  nested_inner_counts: [16, 64, 256]
+  smc_particles: 256
+  smc_levels: 48
+  smc_independent_banks: 2
+  smc_pcn_scale: 0.55
