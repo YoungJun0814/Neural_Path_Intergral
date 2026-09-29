@@ -1,0 +1,21 @@
+schema: npi.post-audit.r15-fresh-ablation-config.v1
+smc_design_path: results/post_audit/r15_reference_design_v1.json
+first_crosscheck_path: results/post_audit/r15_reference_crosscheck_v1.json
+mixture_crosscheck_path: results/post_audit/r15_mixture_independent_v1.json
+mixture_design_path: results/post_audit/r15_mixture_design_v1.json
+refined_reference_path: results/post_audit/r15_reference_refinement_v1.json
+output_path: results/post_audit/r15_fresh_ablation_v1.json
+torch_threads: 1
+independent_training_repetitions: 3
+bank_count: 4096
+final_count: 8192
+defensive_mass: 0.1
+optimizer_steps: 50
+bases: [dct, target_pca]
+ranks: [16, 32]
+objectives: [kl, m2]
+qualification:
+  maximum_relative_se: 0.05
+  maximum_reference_relative_se: 0.05
+  relative_equivalence_margin: 0.25
+  confidence_z: 1.96

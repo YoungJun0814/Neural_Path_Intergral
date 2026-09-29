@@ -1,0 +1,24 @@
+schema: npi.post-audit.r15-reference-design-config.v1
+output_path: results/post_audit/r15_reference_design_v1.json
+torch_threads: 1
+model: {spot: 100.0, maturity: 1.0, hurst: 0.05, eta: 1.5, xi: 0.04, rho: -0.7}
+cells:
+  - {id: canonical-h005-k1, threshold: 1.0}
+  - {id: high-eta200-k1, eta: 2.0, threshold: 1.0}
+design:
+  steps: 32
+  particles: 256
+  levels: 48
+  independent_replicates: 24
+  minimum_median_unique_initial_ancestors: 16
+  minimum_median_final_weight_ess_fraction: 0.10
+  reference_target_relative_se: 0.05
+  reference_minimum_replicates: 64
+  reference_maximum_replicates: 512
+  candidates:
+    - {id: original-calendar, bridge_power: 4, resample_every: 1, resampling_scheme: multinomial, mutation_steps: 1, pcn_scale: 0.55}
+    - {id: stratified-every-stage, bridge_power: 4, resample_every: 1, resampling_scheme: stratified, mutation_steps: 1, pcn_scale: 0.55}
+    - {id: multinomial-every-fourth, bridge_power: 4, resample_every: 4, resampling_scheme: multinomial, mutation_steps: 1, pcn_scale: 0.55}
+    - {id: stratified-every-fourth, bridge_power: 4, resample_every: 4, resampling_scheme: stratified, mutation_steps: 1, pcn_scale: 0.55}
+    - {id: lower-power-bridge, bridge_power: 2, resample_every: 4, resampling_scheme: stratified, mutation_steps: 1, pcn_scale: 0.55}
+    - {id: stronger-mutation, bridge_power: 4, resample_every: 4, resampling_scheme: stratified, mutation_steps: 2, pcn_scale: 0.35}

@@ -119,8 +119,18 @@ class RBergomiBaselineProblem:
         ):
             raise ValueError("latent sample must be finite CPU float64")
 
-    def simulate_latent(self, latent: torch.Tensor) -> TwoDriverRBergomiPaths:
+    def simulate_latent(
+        self,
+        latent: torch.Tensor,
+        *,
+        variance_compensator_scale: float = 1.0,
+    ) -> TwoDriverRBergomiPaths:
         self._validate_latent(latent, self.latent_dimension)
+        if (
+            not math.isfinite(variance_compensator_scale)
+            or variance_compensator_scale < 0.0
+        ):
+            raise ValueError("variance_compensator_scale must be finite and nonnegative")
         local = latent[:, : self.local_dimension].reshape(-1, self.steps, 2)
         price = latent[:, self.local_dimension :]
         return simulate_rbergomi_fft(
@@ -134,9 +144,15 @@ class RBergomiBaselineProblem:
                 price_standard_normal=price,
             ),
             dtype=torch.float64,
+            variance_compensator_scale=variance_compensator_scale,
         )
 
-    def simulate_local(self, local_latent: torch.Tensor) -> TwoDriverRBergomiPaths:
+    def simulate_local(
+        self,
+        local_latent: torch.Tensor,
+        *,
+        variance_compensator_scale: float = 1.0,
+    ) -> TwoDriverRBergomiPaths:
         self._validate_latent(local_latent, self.local_dimension)
         full = torch.cat(
             (
@@ -145,7 +161,10 @@ class RBergomiBaselineProblem:
             ),
             dim=1,
         )
-        return self.simulate_latent(full)
+        return self.simulate_latent(
+            full,
+            variance_compensator_scale=variance_compensator_scale,
+        )
 
     def hard_event(self, paths: TwoDriverRBergomiPaths) -> torch.Tensor:
         return self.task.hard_event_from_log_spot(paths.log_spot, paths.step_dt)

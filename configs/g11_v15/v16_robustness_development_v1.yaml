@@ -1,0 +1,51 @@
+schema: npi.g11.v15-experiment-config.v1
+protocol_id: g11-v16-robustness-development-v1
+stage: development
+output_path: results/g11_v16_robustness_development_v1_2026-08-11.json
+root_seed: 1617201
+model: {spot: 100.0, maturity: 1.0, steps: 32, eta: 1.5, xi: 0.04, rho: -0.7}
+cells:
+  - {cell_id: canonical-h012-k50, hurst: 0.12, threshold: 50.0}
+  - {cell_id: rough-h005-k70, hurst: 0.05, threshold: 70.0}
+  - {cell_id: smooth-h020-k35, hurst: 0.20, threshold: 35.0}
+  - {cell_id: weak-correlation, hurst: 0.12, threshold: 50.0, rho: -0.4}
+  - {cell_id: strong-correlation, hurst: 0.12, threshold: 50.0, rho: -0.9}
+  - {cell_id: high-vol-of-vol, hurst: 0.12, threshold: 50.0, eta: 2.0}
+protocol:
+  primary_comparators: [conditional_rbergomi, v14_local_volterra, defensive_cem, ld_subspace_is, smoothing_rqmc]
+  query_counts: [1, 10, 100, 1000]
+  primary_query_count: 100
+candidate:
+  modes_per_driver: 3
+  mode_basis: mesh_compatible_hybrid
+  modes: 8
+  bridge_modes: 3
+  random_starts: 3
+  start_scale: 2.0
+  maximum_iterations: 220
+  gradient_tolerance: 0.000001
+  defensive_mass: 0.15
+  asymptotic_safety_mass: 0.02
+  safety_spectrum_decay: 2.0
+  safety_spectrum_scale: 4.0
+  safety_complement_decay: 2.0
+baselines:
+  defensive_mass: 0.20
+  v14_target_powers: [0.10]
+  v14_shifted_weights: [1.0]
+  v14_particles: 512
+  v14_pcn_sweeps: 2
+  v14_maximum_stages: 64
+  cem_iterations: 5
+  cem_samples: 1024
+  cem_time_bins: 8
+  ld_optimizer_steps: 100
+  ld_restarts: 2
+evaluation:
+  reference_iid: 75000
+  iid_units: 12000
+  rqmc_randomizations: 20
+  rqmc_points: 256
+gates:
+  maximum_accuracy_z: 4.0
+  minimum_work_ratio: 1.0

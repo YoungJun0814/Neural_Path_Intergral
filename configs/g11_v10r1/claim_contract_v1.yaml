@@ -1,0 +1,91 @@
+schema: npi.g11.v10r1-terminal-claim-contract.v1
+protocol_id: g11-v10r1-full-latent-cem-dcs-terminal-v1
+date: "2026-08-11"
+design_status: outcome-blind-v10-correction
+
+claim:
+  estimand: finite_grid_terminal_probability
+  finite_grid_only: true
+  self_normalization_allowed: false
+  exact_likelihood_required: true
+  full_latent_dimension_required: true
+  post_training_proposal_mutation_allowed: false
+  training_inclusive_total_work: true
+  algorithmic_work_primary: true
+  wall_time_secondary: true
+  inferential_unit: independent_training_and_evaluation_cluster
+  uniform_superiority_claim_allowed: false
+  multiplicative_theorem_claim_allowed: false
+  barrier_claim_allowed: false
+  continuum_unbiasedness_claim_allowed: false
+  top_journal_claim_authorized: false
+  submission_authorized: false
+
+model:
+  spot: 100.0
+  maturity: 1.0
+  steps: 128
+  eta: 1.5
+  xi: 0.04
+  rho: -0.7
+
+estimators:
+  candidate: full_3n_defensive_cem_exact_scalar_dcs
+  mechanism_control: raw_same_frozen_full_3n_mixture
+  primary_comparators: [conditional_rbergomi, smoothing_rqmc, defensive_cem]
+
+theory:
+  path: docs/theory/G11_V10R1_FULL_LATENT_DCS_THEOREMS.md
+  exact_claims:
+    - ordinary_mean_unbiasedness
+    - conditional_expectation_identity
+    - rao_blackwell_variance_nonincrease
+    - defensive_full_and_residual_likelihood_bounds
+
+relative_rmse_target: 0.20
+amortization_query_counts: [1, 10, 100, 1000]
+primary_query_count: 100
+proposal_replicates: 4
+
+artifact_policy:
+  v10_results_are_diagnostic_only: true
+  existing_reference_may_be_reused_only_after_clean_reaudit: true
+  fresh_v10r1_proposal_bank: true
+  fresh_v10r1_seed_namespaces: true
+  immutable_outputs: true
+  source_commit_must_contain_exact_config: true
+  clean_worktree_required: true
+
+gate:
+  maximum_exactness_error: 0.0000000001
+  maximum_combined_reference_z: 4.0
+  maximum_paired_difference_z: 4.0
+  minimum_likelihood_normalization_pass_fraction: 0.95
+  development:
+    confidence: 0.95
+    minimum_passing_hurst_groups: 1
+    minimum_dcs_vs_raw_geometric_ratio: 1.10
+    minimum_dcs_vs_raw_lower_bound: 1.00
+    minimum_dcs_vs_best_geometric_ratio: 0.80
+    minimum_dcs_vs_best_lower_bound: 0.67
+  qualification:
+    confidence: 0.95
+    minimum_passing_hurst_groups: 3
+    minimum_dcs_vs_raw_geometric_ratio: 1.10
+    minimum_dcs_vs_raw_lower_bound: 1.00
+    minimum_dcs_vs_best_geometric_ratio: 0.80
+    minimum_dcs_vs_best_lower_bound: 0.67
+
+cells:
+  - {cell_id: h0.05-terminal_left_tail-p1e-02, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.01, threshold: 50.20592042422368}
+  - {cell_id: h0.05-terminal_left_tail-p1e-03, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.001, threshold: 31.92790645389728}
+  - {cell_id: h0.05-terminal_left_tail-p1e-04, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.0001, threshold: 18.320946011895387}
+  - {cell_id: h0.05-terminal_left_tail-p1e-05, task: terminal_left_tail, hurst: 0.05, nominal_probability: 0.00001, threshold: 10.199729956015094}
+  - {cell_id: h0.12-terminal_left_tail-p1e-02, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.01, threshold: 46.41141383480874}
+  - {cell_id: h0.12-terminal_left_tail-p1e-03, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.001, threshold: 24.672468432835625}
+  - {cell_id: h0.12-terminal_left_tail-p1e-04, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.0001, threshold: 10.391658226080532}
+  - {cell_id: h0.12-terminal_left_tail-p1e-05, task: terminal_left_tail, hurst: 0.12, nominal_probability: 0.00001, threshold: 3.3641964170773018}
+  - {cell_id: h0.20-terminal_left_tail-p1e-02, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.01, threshold: 45.29897333205014}
+  - {cell_id: h0.20-terminal_left_tail-p1e-03, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.001, threshold: 21.431743260451416}
+  - {cell_id: h0.20-terminal_left_tail-p1e-04, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.0001, threshold: 7.656661839363003}
+  - {cell_id: h0.20-terminal_left_tail-p1e-05, task: terminal_left_tail, hurst: 0.20, nominal_probability: 0.00001, threshold: 1.884327900748765}

@@ -1,4 +1,4 @@
-# Hybrid DCS-MGI for Rare Events under Rough Volatility
+# Exact Conditional Residual Path-Space Transport for Gaussian Volterra Rare Events
 
 [![CI](https://github.com/YoungJun0814/Neural_Path_Intergral/actions/workflows/ci.yml/badge.svg)](https://github.com/YoungJun0814/Neural_Path_Intergral/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
@@ -10,7 +10,55 @@
 
 ## Research status
 
-The current frontier is **V9 terminal-only, regime-conditional DCS**.  Its fresh
+**Current frontier (2026-08-12): V16 fail-closed exact conditional path-space
+transport.** The V5 router integrates out the complete independent price driver,
+uses exact defensive residual/tempered Gaussian transports, and evaluates ordinary
+importance-sampling estimates with the full balance likelihood. Fresh clean-source
+confirmation authorizes finite-grid dominance claims in four named cells. The
+strongest-qualified-comparator/V16 training-inclusive ratios are 5.978 (canonical
+rough K1), 1.280 (rough K2 OOD), 5.023 (rough K0.5 OOD), and 1.815 (regular OOD).
+Three joint-extreme cells use an explicit V14 correctness fallback; they pass
+accuracy and likelihood gates but carry no dominance claim. See the
+[Korean model guide](docs/G11_V16_CURRENT_MODEL_GUIDE_KO.md),
+[T16-12/T16-13 note](docs/theory/G11_V16_BALANCE_SELECTION_AND_ROUTING_THEOREMS.md),
+and [final V16 audit](docs/audits/G11_V16_FINAL_IMPLEMENTATION_AND_CLAIM_AUDIT_2026-08-12.md).
+Top-journal submission remains locked on external novelty review, independent
+hardware/person reproduction, and quantitative continuous relative-bias/end-to-end
+complexity.
+
+The former frontier was **V15 Exact Conditional Cameron–Martin Transport**.  The
+finite-grid core conditions out the complete independent rBergomi price driver,
+solves a low-rank Cameron–Martin action with two independently implemented
+optimizers, and evaluates an exact defensive multimode finite-rank Gaussian
+proposal.  A three-cell frozen qualification passes integrity, accuracy,
+likelihood, and training-inclusive numerical gates; the strongest-primary/V15
+100-query work ratios are 1.43, 4.69, and 3.96.  A separate small-noise diagnostic
+reaches probability about `1.34e-6` with relative variance 0.50.  These are
+finite-grid empirical results.  The small-noise efficiency theorem and
+continuous-time mesh theorem remain open, so top-journal and asymptotic-optimality
+claims are explicitly locked.  See the
+[V15 theorem ledger](docs/theory/G11_V15_THEOREMS.md),
+[manuscript draft](docs/manuscript/G11_V15_MANUSCRIPT_DRAFT.md),
+[final claim audit](docs/audits/G11_V15_FINAL_CLAIM_AUDIT_2026-08-11.md), and
+[reproduction protocol](docs/reproduction/G11_V15_REPRODUCTION_PROTOCOL.md).
+
+The sections below preserve the historical progression and negative results that
+led to V15.
+
+The former V12 frontier was **Exact Conditional Residual Path-Space Transport
+(ECRPT)**.  P0--P4 correctness infrastructure is implemented: tail-safe allocation,
+exact defensive residual mixtures, finite-grid rBergomi conditioning, task-conditioned
+proposal emission, exact residual coupling flows, and signed residual MLMC.  Three
+12-record development studies (one-pass, adaptive, and annealed CE) and their
+independent audits are complete.  All pass exactness, paired-identity, and likelihood-
+normalization checks, but all fail the frozen accuracy/censoring/performance gates.
+The best-primary-over-ECRPT descriptive geometric work ratios are 0.528, 0.163, and
+0.014 respectively, so qualification and submission remain locked.  See
+[the V12 plan](EXACT_CONDITIONAL_RESIDUAL_PATH_SPACE_TRANSPORT_PLAN_V12.md),
+[the theorem contract](docs/theory/G11_V12_ECRPT_THEOREMS.md), and
+[the development report](ECRPT_V12_DEVELOPMENT_REPORT.md).
+
+The preceding **V9 terminal-only, regime-conditional DCS** study remains preserved.  Its fresh
 reference and reference-gated proposal bank pass independent audits.  The complete
 12-cell by 4-cluster development matrix is technically valid and confirms a
 same-mixture DCS total-work gain at `K=100` in all three Hurst groups (geometric
@@ -175,7 +223,7 @@ strict frozen headline **failed** because one recovered Windows checkpoint
 one-factor crossover qualification later passed its declared gates and independent
 audit. Neither artifact may be relabelled as V5 achieved-RMSE confirmation.
 
-The complete local regression suite passed **898/898 tests on 2026-08-02**.
+The complete local regression suite passed **929/929 tests on 2026-08-11**.
 
 This repository is **not yet a finished journal submission**. The present estimator
 targets a declared finite grid rather than a continuously monitored event. V7
@@ -614,6 +662,10 @@ and prevent selective reporting.
 | G11 V7 | Same-proposal Rao--Blackwell DCS | Development, qualification, confirmation, and Linux software-environment reproduction pass |
 | G11 V8 | Theory plus strong external comparators | Complete authorized execution; broad 24-cell performance route falsified and closed |
 | G11 V9 | Terminal regime-conditional DCS | Same-mixture work gain passes; best-primary, accuracy, and resource gates fail; qualification blocked |
+| G11 V12 | Exact conditional residual Gaussian-mixture transport | Exactness passes; adaptive mixture misses deep-tail support and performance gate fails |
+| G11 V13 | SMC-trained low-rank structured ECRPT | Full 12-record development and audit complete; correctness mechanisms pass, accuracy/tail-safe/performance gates fail; qualification blocked |
+| G11 V14 | Exact conditional local-Volterra transport | Development and disjoint-seed qualification pass; 3/3 cells favorable, qualified geometric work ratio 2.42 with lower bound 1.81; distribution-free tail claim remains blocked |
+| G11 V16 | Exact conditional fail-closed path-space transport | Four named finite-grid dominance cells pass; three joint-extreme correctness fallbacks pass without dominance; top-journal locks remain external/continuous-complexity |
 
 Earlier neural VFO, mixture, and residual-controller tracks were tested against strong
 baselines and stopped when their gates failed. See the phase reviews under
@@ -622,23 +674,14 @@ baselines and stopped when their gates failed. See the phase reviews under
 
 ## What remains before a journal claim
 
-V9 cannot be repaired by weakening its gate.  The next valid protocol must be a new
-V10 model that applies exact conditional smoothing to a stronger, full-dimensional
-CEM proposal rather than the current rank-one bank.  It must then:
-
-1. derive the proposal-conditional Gaussian law and exact mixture likelihood before
-   implementation;
-2. test whether the hybrid retains the V9 same-proposal gain while closing the
-   2.4--3.4x gap to the best comparator;
-3. freeze fresh references, seeds, accuracy/resource gates, and cluster-level
-   qualification before observing V10 outcomes;
-4. retain conditional MC, smoothing RQMC, and defensive CEM under the same
-   training-inclusive target-work contract; and
-5. obtain external mathematical review, a current primary-source novelty audit, and
-   independent physical-hardware reproduction before manuscript submission.
-
-Until those items are complete, the defensible description is **PhD-level research
-prototype and strong working-paper core**, not a top-journal-ready final manuscript.
+V16 closes the local finite-grid implementation, exactness, named-cell confirmation,
+and fail-closed routing gates. The remaining blockers are not hidden engineering
+tasks: two independent novelty reviews are still 0/2, no independent person/hardware
+reproduction exists, and the quantitative continuous relative mesh-bias/end-to-end
+complexity gate remains open. Joint-extreme fallback cells also do not support a
+uniform-dominance statement. The defensible status is therefore **a strong PhD-level
+working-paper core with positive frozen finite-grid results**, not a top-journal-ready
+final manuscript.
 
 ## Research integrity
 

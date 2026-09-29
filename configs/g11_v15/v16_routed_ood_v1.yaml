@@ -1,0 +1,44 @@
+schema: npi.g11.v15-experiment-config.v1
+protocol_id: g11-v16-routed-ood-v1
+stage: qualification
+output_path: results/g11_v16_routed_ood_v1_2026-08-11.json
+root_seed: 1618001
+model: {spot: 100.0, maturity: 1.0, steps: 32, eta: 1.5, xi: 0.04, rho: -0.7}
+cells:
+  - {cell_id: rough-boundary-h007-k40, hurst: 0.07, threshold: 40.0}
+  - {cell_id: regular-boundary-h009-k40, hurst: 0.09, threshold: 40.0}
+  - {cell_id: unseen-h016-k35, hurst: 0.16, threshold: 35.0}
+  - {cell_id: strong-boundary-rho086-k35, hurst: 0.12, threshold: 35.0, rho: -0.86}
+  - {cell_id: regular-boundary-rho084-k35, hurst: 0.12, threshold: 35.0, rho: -0.84}
+  - {cell_id: mixed-ood-k30, hurst: 0.16, threshold: 30.0, eta: 1.8, xi: 0.05, rho: -0.55}
+protocol:
+  primary_comparators: [conditional_rbergomi, v14_local_volterra, defensive_cem, ld_subspace_is, smoothing_rqmc]
+  query_counts: [1, 10, 100, 1000]
+  primary_query_count: 100
+candidate:
+  routing_policy: v16_hybrid_routing_v1
+  modes_per_driver: 3
+  random_starts: 3
+  start_scale: 2.0
+  maximum_iterations: 240
+  gradient_tolerance: 0.000001
+baselines:
+  defensive_mass: 0.20
+  v14_target_powers: [0.10]
+  v14_shifted_weights: [1.0]
+  v14_particles: 512
+  v14_pcn_sweeps: 2
+  v14_maximum_stages: 64
+  cem_iterations: 5
+  cem_samples: 1024
+  cem_time_bins: 8
+  ld_optimizer_steps: 100
+  ld_restarts: 2
+evaluation:
+  reference_iid: 150000
+  iid_units: 30000
+  rqmc_randomizations: 32
+  rqmc_points: 256
+gates:
+  maximum_accuracy_z: 4.0
+  minimum_work_ratio: 1.0

@@ -1,0 +1,146 @@
+schema_version: g11-v15-theorem-ledger-v1
+date: '2026-08-11'
+allowed_statuses: [proved, conditional, falsified, open]
+theorems:
+  T15-1:
+    title: conditional representation
+    status: proved
+    scope: continuous_under_stated_integrability_and_finite_grid_oracle
+  T15-2:
+    title: exact likelihood unbiasedness and Rao-Blackwell ordering
+    status: proved
+    scope: frozen_finite_dimensional_proposal
+  T15-3:
+    title: zero-variance target identity
+    status: proved
+    scope: any_dominating_proposal_with_finite_second_moment
+  T15-4:
+    title: defensive robustness
+    status: proved
+    scope: bounded_payoff_and_positive_natural_mixture_mass
+  T15-5:
+    title: small-noise rare-event efficiency
+    status: proved
+    scope: T16_4_terminal_left_tail_with_positive_trace_class_safety_mixture_mass
+  T15-6:
+    title: finite-grid convergence
+    status: proved
+    scope: qualitative_BLP_terminal_probability_and_full_rate_action_convergence
+  T15-7:
+    title: transport mesh consistency
+    status: conditional
+    scope: safety_operator_and_minimizers_proved_Hessian_subspaces_need_gap
+  T15-8:
+    title: end-to-end complexity
+    status: conditional
+    scope: T16_11_closes_joint_grid_log_work_continuum_relative_bias_rate_open
+  T15-9:
+    title: operator-assisted certification
+    status: proved
+    scope: T16_10_predictor_independent_exactness_and_local_Newton_bound_under_explicit_basin_assumptions
+  T16-1:
+    title: fixed-grid conditional small-noise probability exponent
+    status: proved
+    scope: fixed_finite_blp_grid_full_2N_local_space
+  T16-2:
+    title: fixed-grid isotropic-safety logarithmic efficiency
+    status: proved
+    scope: fixed_finite_blp_grid_positive_broad_mass
+  T16-3:
+    title: fixed-grid mixture efficiency inheritance
+    status: proved
+    scope: exact_mixture_dominating_positive_broad_component
+  T16-4:
+    title: continuous Wick-corrected Volterra terminal probability exponent
+    status: proved
+    scope: constant_xi_definition3_volterra_kernel_fixed_terminal_left_tail
+  T16-5:
+    title: trace-class continuous safety transport
+    status: proved
+    scope: exact_equivalence_density_and_terminal_left_tail_logarithmic_efficiency
+  T16-6:
+    title: BLP full-rate-action Gamma convergence
+    status: proved
+    scope: uniform_grid_Riemann_Liouville_kernel_constant_xi_terminal_left_tail
+  T16-7:
+    title: fixed-noise BLP terminal probability convergence
+    status: proved
+    scope: qualitative_convergence_without_explicit_rate
+  T16-8:
+    title: mesh-compatible trace safety covariance convergence
+    status: proved
+    scope: trace_norm_main_cosine_spectrum_and_vanishing_BLP_bridge_complement
+  T16-9:
+    title: joint mesh-noise logarithmic efficiency
+    status: proved
+    scope: every_diverging_BLP_grid_schedule_under_T16_4_through_T16_8_assumptions
+  T16-10:
+    title: operator correction exactness and local quadratic bound
+    status: proved
+    scope: frozen_prediction_exact_defensive_fallback_and_explicit_local_Newton_assumptions
+  T16-11:
+    title: joint-grid logarithmic sampling and work complexity
+    status: proved
+    scope: stochastic_relative_RMSE_for_joint_grid_target_with_subexponential_setup_and_path_work
+  T16-12:
+    title: exact balance mixtures and independent finite-bank risk selection
+    status: proved
+    scope: frozen_finite_grid_defensive_proposals_independent_validation_and_fresh_final_evaluation
+  T16-13:
+    title: fail-closed structural routing exactness
+    status: proved
+    scope: deterministic_parameter_only_route_exact_likelihood_and_role_scoped_empirical_claims
+gates:
+  G5:
+    pass: true
+    reason: T16-4 and T16-5 prove the continuous probability and exact trace-safety second-moment exponents
+  G5_fixed_grid:
+    pass: true
+    reason: T16-1 through T16-3 close the fixed-grid exponent and second-moment theorem
+  G5_continuous_probability:
+    pass: true
+    reason: T16-4 closes the continuous probability exponent; T16-5 separately closes proposal efficiency
+  G5_continuous_transport:
+    pass: true
+    reason: T16-5 closes continuous trace-class safety-mixture logarithmic efficiency
+  G6_mesh_identification:
+    pass: true
+    reason: T16-6 through T16-8 prove qualitative target action and safety-operator convergence
+  G6_joint_mesh_noise:
+    pass: true
+    reason: T16-9 proves the joint probability and safety-mixture second-moment exponents
+  G7_operator_certification:
+    pass: true
+    reason: T16-10 proves predictor-independent exactness and a scoped local correction bound
+  G8_full_continuum_complexity:
+    pass: false
+    reason: T16-11 closes log-scale joint-grid work but a quantitative continuous relative-bias rate is unavailable
+  G9_fail_closed_routing:
+    pass: true
+    reason: T16-12 and T16-13 prove balance-mixture, independent-selection, and structural-routing exactness without asserting uniform dominance
+claim_locks:
+  prohibited:
+    - unqualified_logarithmic_efficiency_outside_T16_5_scope
+    - bounded_relative_error
+    - asymptotically_optimal
+    - continuous_time_exact_simulation
+    - simultaneous_mesh_noise_complexity_rate
+    - uniform_neural_operator_generalization
+    - continuous_target_relative_RMSE_complexity
+  allowed:
+    - exact_finite_grid_likelihood
+    - unbiased_ordinary_importance_sampling
+    - conditional_Rao_Blackwell_variance_ordering
+    - defensive_likelihood_bound
+    - fixed_grid_logarithmic_efficiency_with_positive_isotropic_safety_mass
+    - continuous_small_noise_probability_exponent_under_T16_4_scope
+    - exact_equivalent_trace_class_gaussian_safety_transport
+    - continuous_logarithmic_efficiency_under_T16_5_scope
+    - qualitative_BLP_probability_and_rate_action_convergence
+    - trace_norm_mesh_convergence_of_the_T16_8_safety_operator
+    - joint_mesh_noise_logarithmic_efficiency_under_T16_9_scope
+    - operator_assisted_exactness_and_local_Newton_bound_under_T16_10_scope
+    - joint_grid_subexponential_sampling_work_under_T16_11_scope
+    - exact_balance_mixture_second_moment_inheritance_under_T16_12_scope
+    - independent_finite_bank_selection_exactness_under_T16_12_scope
+    - fail_closed_structural_routing_exactness_under_T16_13_scope

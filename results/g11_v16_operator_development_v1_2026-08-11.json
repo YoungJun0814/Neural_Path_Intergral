@@ -1,0 +1,171 @@
+{
+  "claim_boundary": {
+    "deterministic_correction_required": true,
+    "exactness_independent_of_prediction": true,
+    "global_amortized_cost_advantage_proved": false,
+    "operator_is_initializer_only": true
+  },
+  "config_binding": {
+    "path": "configs/g11_v15/v16_operator_development_v1.yaml",
+    "sha256": "2583f293d0499b9a60201badb5f4065df9e0f93583ad6076be489e6d65cb55f4"
+  },
+  "failures": [],
+  "holdouts": [
+    {
+      "action_gap": 1.0302869668521453e-13,
+      "corrected_action": 6.108168748126856,
+      "features": [
+        0.11,
+        0.30010459245033816,
+        -0.7250050877529992,
+        -3.3524072174927233,
+        -0.2231435513142097,
+        -0.8675005677047231,
+        0.0
+      ],
+      "function_evaluation_speedup": 1.4285714285714286,
+      "maximum_likelihood_bound_violation": 0.0,
+      "predicted_function_evaluations": 14,
+      "predicted_gradient_norm": 1.278426159164801e-06,
+      "predicted_initial_action": 6.108249955944358,
+      "task_id": "interior-a",
+      "used_natural_fallback": false,
+      "zero_function_evaluations": 20,
+      "zero_initial_action": 45.374483055900164,
+      "zero_start_action": 6.108168748126959
+    },
+    {
+      "action_gap": 3.6859404417555197e-13,
+      "corrected_action": 4.42536447268662,
+      "features": [
+        0.18,
+        0.5596157879354227,
+        -0.5229842775913438,
+        -2.900422093749666,
+        0.1823215567939546,
+        -1.0216512475319814,
+        0.0
+      ],
+      "function_evaluation_speedup": 1.8,
+      "maximum_likelihood_bound_violation": 0.0,
+      "predicted_function_evaluations": 10,
+      "predicted_gradient_norm": 2.8343843431742786e-07,
+      "predicted_initial_action": 4.433545851991787,
+      "task_id": "interior-b",
+      "used_natural_fallback": false,
+      "zero_function_evaluations": 18,
+      "zero_initial_action": 32.988248304488266,
+      "zero_start_action": 4.425364472686988
+    },
+    {
+      "action_gap": 8.668621376273222e-13,
+      "corrected_action": 5.569236544860433,
+      "features": [
+        0.08,
+        0.47000362924573563,
+        -0.8673005276940532,
+        -3.2188758248682006,
+        0.0,
+        -0.916290731874155,
+        0.0
+      ],
+      "function_evaluation_speedup": 1.6666666666666667,
+      "maximum_likelihood_bound_violation": 0.0,
+      "predicted_function_evaluations": 12,
+      "predicted_gradient_norm": 1.5908556244426876e-06,
+      "predicted_initial_action": 5.573190217462748,
+      "task_id": "boundary-h",
+      "used_natural_fallback": false,
+      "zero_function_evaluations": 20,
+      "zero_initial_action": 60.51903518424301,
+      "zero_start_action": 5.569236544859566
+    },
+    {
+      "action_gap": 7.016609515630989e-13,
+      "corrected_action": 4.4053299375922865,
+      "features": [
+        0.14,
+        0.47000362924573563,
+        -1.2211735176846021,
+        -3.2188758248682006,
+        0.0,
+        -0.9675840262617056,
+        0.0
+      ],
+      "function_evaluation_speedup": 1.5833333333333333,
+      "maximum_likelihood_bound_violation": 0.0,
+      "predicted_function_evaluations": 12,
+      "predicted_gradient_norm": 6.275568098216168e-07,
+      "predicted_initial_action": 4.538776679728948,
+      "task_id": "boundary-rho",
+      "used_natural_fallback": false,
+      "zero_function_evaluations": 19,
+      "zero_initial_action": 102.9623894457164,
+      "zero_start_action": 4.405329937592988
+    },
+    {
+      "action_gap": 2.1049828546892968e-13,
+      "corrected_action": 5.120230017674695,
+      "features": [
+        0.24,
+        0.4054651081081644,
+        -0.6183813135744636,
+        -3.2188758248682006,
+        0.0,
+        -1.0498221244986778,
+        0.0
+      ],
+      "function_evaluation_speedup": 2.111111111111111,
+      "maximum_likelihood_bound_violation": 0.0,
+      "predicted_function_evaluations": 9,
+      "predicted_gradient_norm": 2.53870149001375e-07,
+      "predicted_initial_action": 5.12128994237178,
+      "task_id": "extrapolation-h",
+      "used_natural_fallback": false,
+      "zero_function_evaluations": 19,
+      "zero_initial_action": 42.13405562946083,
+      "zero_start_action": 5.120230017674905
+    },
+    {
+      "action_gap": 3.2596148002994596e-13,
+      "corrected_action": 4.8554668755851385,
+      "features": [
+        0.16,
+        0.8329091229351039,
+        -0.2027325540540822,
+        -2.5257286443082556,
+        0.4054651081081644,
+        -1.1394342831883648,
+        0.0
+      ],
+      "function_evaluation_speedup": 1.5833333333333333,
+      "maximum_likelihood_bound_violation": 0.0,
+      "predicted_function_evaluations": 12,
+      "predicted_gradient_norm": 2.510495195672124e-07,
+      "predicted_initial_action": 4.883064028949928,
+      "task_id": "extrapolation-mixed",
+      "used_natural_fallback": false,
+      "zero_function_evaluations": 19,
+      "zero_initial_action": 41.334093176998266,
+      "zero_start_action": 4.855466875585464
+    }
+  ],
+  "median_function_evaluation_speedup": 1.5833333333333333,
+  "operator_training": {
+    "final_loss": 0.003118219387377039,
+    "initial_loss": 6.26813729944776,
+    "work_units": 104448000
+  },
+  "passed": true,
+  "schema": "npi.g11.v16-operator-development.v1",
+  "source_provenance": {
+    "git_commit": "717f87474f9c4cd4d10ceb59bb203b9b7813d2f6",
+    "source_changes_before_run": [],
+    "source_dirty_before_run": false
+  },
+  "teacher_bank": {
+    "count": 24,
+    "function_evaluations": 829,
+    "rank": 11
+  }
+}

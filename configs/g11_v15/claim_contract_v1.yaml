@@ -1,0 +1,59 @@
+schema: npi.g11.v15-claim-contract.v1
+date: "2026-08-11"
+stage: development_contract
+title: Exact Conditional Residual Path-Space Transport for Rare Events in Gaussian Volterra Models
+primary_asymptotic_regime: small_noise
+small_time_claim_authorized: false
+continuous_exact_simulation_claim_authorized: false
+external_novelty_review:
+  required: 2
+  completed: 0
+  submission_lock: true
+allowed_current_claims:
+  - exact_terminal_conditioning_under_declared_finite_grid
+  - ordinary_is_unbiased_conditional_on_frozen_proposal
+  - defensive_balance_likelihood_bound
+  - v14_frozen_three_cell_empirical_efficiency
+  - fixed_grid_conditional_small_noise_probability_exponent
+  - fixed_grid_logarithmic_efficiency_with_positive_isotropic_safety_mass
+  - continuous_small_noise_probability_exponent_under_T16_4_scope
+  - continuous_trace_class_safety_mixture_logarithmic_efficiency_under_T16_5_scope
+  - qualitative_BLP_terminal_probability_and_rate_action_convergence
+  - trace_norm_mesh_consistency_of_the_T16_8_safety_operator
+  - joint_mesh_noise_logarithmic_efficiency_under_T16_9_scope
+  - exact_balance_mixture_and_independent_selection_under_T16_12_scope
+  - fail_closed_structural_routing_under_T16_13_scope
+  - v16_confirmed_finite_grid_dominance_in_named_cells_only
+  - v16_correctness_fallback_without_dominance_claim
+candidate_v15_claims_locked:
+  - quantitative_mesh_uniform_relative_error
+  - continuous_target_relative_RMSE_complexity
+  - uniform_operator_generalization
+prohibited_claims:
+  - first_conditional_mc_for_rbergomi
+  - first_neural_cameron_martin_importance_sampler
+  - first_ldp_importance_sampler_for_stochastic_volatility
+  - first_low_rank_gaussian_transport
+  - continuous_time_exact_simulation
+  - small_time_efficiency_from_unmatched_scaling
+  - self_normalized_final_estimator
+nonnegotiable:
+  final_estimator: ordinary_importance_sampling
+  training_final_independence: true
+  balance_denominator: full_mixture
+  natural_defensive_component: required
+  covariance_changes: fixed_grid_full_rank_allowed_continuum_equivalence_preserving_only
+  failures_retained: true
+gates:
+  p0_internal_literature: pass_with_external_lock
+  p1_probability_contract: pass_for_implementation
+  p2_oracle: pass
+  p3_mode_solver: pass_with_continuum_basis_replacement
+  p4_exact_transport: pass
+  p5_theory: pass_for_T16_4_T16_5_scope
+  p6_mesh: pass_qualitative_and_joint_exponent_quantitative_relative_bias_rate_open
+  p7_operator: pass_exact_correction_and_replicated_initializer_gain
+  p8_baselines: pass_internal_confirmation_and_ood
+  p9_v16_route: pass_named_cell_dominance_and_joint_extreme_correctness_fallback
+  internal_finite_grid_qualification: pass
+  qualification: locked

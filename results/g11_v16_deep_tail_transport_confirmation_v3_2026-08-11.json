@@ -1,0 +1,531 @@
+{
+  "artifact_bindings": {
+    "baseline": {
+      "path": "results/g11_v16_deep_tail_heterogeneous_confirmation_v1_2026-08-11.json",
+      "sha256": "4e4d18fab389ebf9503edbe54889ee66d30ce025cbf6daf9ff019e4e4084c61d"
+    },
+    "independent_reference": {
+      "path": "results/g11_v16_deep_tail_heterogeneous_smc_reference_v1_2026-08-11.json",
+      "sha256": "4f544ec7e7239aee29d0833d597c528c68d67a817efa457a1cc2b239e057b2af"
+    }
+  },
+  "claim_boundary": {
+    "development_selection_only": false,
+    "fresh_confirmation_required_after_selection": false,
+    "independent_evaluation_clusters": true,
+    "proposal_frozen_across_clusters": true
+  },
+  "config_binding": {
+    "path": "configs/g11_v15/v16_deep_tail_transport_confirmation_v3.yaml",
+    "sha256": "0c02670382f81ebda7c9dbb32ad0334b5eed932b92b02b35c8690d65dcb835b7"
+  },
+  "failures": [
+    "rough-h005-k1: no variant passed all gates"
+  ],
+  "passed": false,
+  "passing_variants_by_cell": {
+    "high-eta200-k1": [
+      "high-eta-deep-v2-confirmation"
+    ],
+    "strong-rho090-k1": [
+      "strong-deep-v2-confirmation"
+    ]
+  },
+  "schema": "npi.g11.v16-deep-tail-transport-confirmation.v3",
+  "source_provenance": {
+    "git_commit": "f1b9003f75584bc8bf55be91a49df8db69ff7f0c",
+    "source_changes_before_run": [],
+    "source_dirty_before_run": false
+  },
+  "variants": [
+    {
+      "adaptation_effective_sample_sizes": [
+        819.2000000000074,
+        819.2000000000033,
+        819.2000000000004,
+        819.2000000000023,
+        819.2000000000032,
+        819.2000000000002,
+        819.2000000000008,
+        819.2000000000069,
+        819.200000000003,
+        819.2000000000027,
+        819.2000000000018
+      ],
+      "adaptation_tempering_powers": [
+        0.6115749026782389,
+        0.8639866990524361,
+        0.7443315434334066,
+        0.7737883988474099,
+        0.7031411765708437,
+        0.7509985239633652,
+        0.7664347221239645,
+        0.7304445977061613,
+        0.8055855561488432,
+        0.8300498330979664,
+        0.8090902751528191
+      ],
+      "between_cluster_standard_error": 1.1337759950069428e-09,
+      "cluster_to_pooled_se_ratio": 1.0339205925012704,
+      "clusters": [
+        {
+          "cluster": 0,
+          "estimate": 3.776661166482236e-08,
+          "external_accuracy_z": 7.365018416701177,
+          "standard_error": 1.0374318551684132e-09
+        },
+        {
+          "cluster": 1,
+          "estimate": 3.9175189324178424e-08,
+          "external_accuracy_z": 5.794227893746615,
+          "standard_error": 1.3743255818265317e-09
+        },
+        {
+          "cluster": 2,
+          "estimate": 4.096727833893455e-08,
+          "external_accuracy_z": 4.14578750377319,
+          "standard_error": 1.8211971152969408e-09
+        },
+        {
+          "cluster": 3,
+          "estimate": 3.840536343027601e-08,
+          "external_accuracy_z": 6.142396728665012,
+          "standard_error": 1.396006835375559e-09
+        },
+        {
+          "cluster": 4,
+          "estimate": 4.364051052191916e-08,
+          "external_accuracy_z": 1.681078065158551,
+          "standard_error": 3.787227523717611e-09
+        },
+        {
+          "cluster": 5,
+          "estimate": 4.1117405714830715e-08,
+          "external_accuracy_z": 3.7579800827183876,
+          "standard_error": 2.0599650278925567e-09
+        },
+        {
+          "cluster": 6,
+          "estimate": 4.148206202867997e-08,
+          "external_accuracy_z": 2.444346443174012,
+          "standard_error": 3.3865633719370137e-09
+        },
+        {
+          "cluster": 7,
+          "estimate": 3.7552093885771567e-08,
+          "external_accuracy_z": 5.951846922917819,
+          "standard_error": 1.6721687532487116e-09
+        },
+        {
+          "cluster": 8,
+          "estimate": 5.2575983958301066e-08,
+          "external_accuracy_z": 0.17127004142385183,
+          "standard_error": 1.2575000114903097e-08
+        },
+        {
+          "cluster": 9,
+          "estimate": 3.93908044972315e-08,
+          "external_accuracy_z": 3.8133206736599643,
+          "standard_error": 2.5453760579723053e-09
+        },
+        {
+          "cluster": 10,
+          "estimate": 4.082695162022315e-08,
+          "external_accuracy_z": 3.5909614765437268,
+          "standard_error": 2.291410107613491e-09
+        },
+        {
+          "cluster": 11,
+          "estimate": 4.001267272407787e-08,
+          "external_accuracy_z": 3.540893420617583,
+          "standard_error": 2.5982574035650497e-09
+        },
+        {
+          "cluster": 12,
+          "estimate": 3.721891743679672e-08,
+          "external_accuracy_z": 7.339457053749407,
+          "standard_error": 1.1659704520583798e-09
+        },
+        {
+          "cluster": 13,
+          "estimate": 5.220652283766703e-08,
+          "external_accuracy_z": 0.14621057292762948,
+          "standard_error": 1.2213886761225124e-08
+        },
+        {
+          "cluster": 14,
+          "estimate": 5.242250027248438e-08,
+          "external_accuracy_z": 0.16977971998140562,
+          "standard_error": 1.1777025339734086e-08
+        },
+        {
+          "cluster": 15,
+          "estimate": 3.7429862503944026e-08,
+          "external_accuracy_z": 6.41576731847687,
+          "standard_error": 1.4907661441809217e-09
+        },
+        {
+          "cluster": 16,
+          "estimate": 4.0986281219535846e-08,
+          "external_accuracy_z": 4.154736252307083,
+          "standard_error": 1.809328381341808e-09
+        },
+        {
+          "cluster": 17,
+          "estimate": 3.9346076971989813e-08,
+          "external_accuracy_z": 5.119290514335611,
+          "standard_error": 1.6733157235149021e-09
+        },
+        {
+          "cluster": 18,
+          "estimate": 4.4009065548820894e-08,
+          "external_accuracy_z": 1.632242683637604,
+          "standard_error": 3.6750496358485187e-09
+        },
+        {
+          "cluster": 19,
+          "estimate": 4.024241419691685e-08,
+          "external_accuracy_z": 4.332761922798,
+          "standard_error": 1.906799960781036e-09
+        },
+        {
+          "cluster": 20,
+          "estimate": 4.6991833595318325e-08,
+          "external_accuracy_z": 0.6713731384508705,
+          "standard_error": 4.903492668478081e-09
+        },
+        {
+          "cluster": 21,
+          "estimate": 3.917459200769361e-08,
+          "external_accuracy_z": 5.862769177160524,
+          "standard_error": 1.3423023790319917e-09
+        },
+        {
+          "cluster": 22,
+          "estimate": 3.8193588412245885e-08,
+          "external_accuracy_z": 6.764916439893206,
+          "standard_error": 1.1791218933340953e-09
+        },
+        {
+          "cluster": 23,
+          "estimate": 5.638091427741851e-08,
+          "external_accuracy_z": 0.5141270871216694,
+          "standard_error": 1.1533738074409834e-08
+        }
+      ],
+      "estimate": 4.239647904125326e-08,
+      "evaluation_work": 869793792.0,
+      "external_accuracy_z": 4.510586313989536,
+      "external_reference_estimate": 5.040956244730212e-08,
+      "external_reference_standard_error": 1.3676715134739613e-09,
+      "failures": [
+        "external accuracy"
+      ],
+      "initializer": "cm_action",
+      "likelihood_normalization_mean": 0.999477595919274,
+      "likelihood_normalization_z": 0.2908499983821034,
+      "maximum_cluster_accuracy_z": 7.365018416701177,
+      "maximum_likelihood_bound_violation": 0.0,
+      "passed": false,
+      "reference_cell": "rough-h005-k1",
+      "relative_standard_error": 0.025864868917174415,
+      "robust_relative_standard_error": 0.026742220595812664,
+      "robust_standard_error": 1.1337759950069428e-09,
+      "sample_variance": 1.8913474450815693e-12,
+      "standard_error": 1.096579372951748e-09,
+      "total_work_at_primary_query_count": 87412024320.0,
+      "training_work": 432645120.0,
+      "v14_over_candidate_work_ratio": 25.56661768648085,
+      "variant_id": "rough-deep-v2-confirmation",
+      "work_normalized_variance": 1.0511176355173747e-07
+    },
+    {
+      "adaptation_effective_sample_sizes": [
+        819.2000000000021,
+        819.2000000000004,
+        1191.038319506449,
+        819.2000000000027,
+        819.2000000000016
+      ],
+      "adaptation_tempering_powers": [
+        0.9037334875156606,
+        0.9775746877776017,
+        1.0,
+        0.9668803766649559,
+        0.889901968306626
+      ],
+      "between_cluster_standard_error": 1.659553816104122e-08,
+      "cluster_to_pooled_se_ratio": 1.2435581453010627,
+      "clusters": [
+        {
+          "cluster": 0,
+          "estimate": 2.384223202798869e-06,
+          "external_accuracy_z": 0.1857959315148,
+          "standard_error": 2.9660514077627354e-08
+        },
+        {
+          "cluster": 1,
+          "estimate": 2.4079552968058757e-06,
+          "external_accuracy_z": 0.40844900308786997,
+          "standard_error": 3.5250324984608434e-08
+        },
+        {
+          "cluster": 2,
+          "estimate": 2.371876569530643e-06,
+          "external_accuracy_z": 0.06764656491313288,
+          "standard_error": 2.2013636294072155e-08
+        },
+        {
+          "cluster": 3,
+          "estimate": 2.390801206020076e-06,
+          "external_accuracy_z": 0.25448858903296995,
+          "standard_error": 2.13955811575e-08
+        },
+        {
+          "cluster": 4,
+          "estimate": 2.4490175201799168e-06,
+          "external_accuracy_z": 0.799088619746494,
+          "standard_error": 3.522047365883203e-08
+        },
+        {
+          "cluster": 5,
+          "estimate": 2.464898165100869e-06,
+          "external_accuracy_z": 0.7198465562712161,
+          "standard_error": 9.71762347370715e-08
+        },
+        {
+          "cluster": 6,
+          "estimate": 2.4273623248081744e-06,
+          "external_accuracy_z": 0.5661005471360113,
+          "standard_error": 4.8162280048000154e-08
+        },
+        {
+          "cluster": 7,
+          "estimate": 2.554586002750555e-06,
+          "external_accuracy_z": 1.1705152443021334,
+          "standard_error": 1.28137295845474e-07
+        },
+        {
+          "cluster": 8,
+          "estimate": 2.4295729590027595e-06,
+          "external_accuracy_z": 0.6089739543014121,
+          "standard_error": 3.7791442207573715e-08
+        },
+        {
+          "cluster": 9,
+          "estimate": 2.58830086302747e-06,
+          "external_accuracy_z": 1.6684652462605059,
+          "standard_error": 8.999505131752342e-08
+        },
+        {
+          "cluster": 10,
+          "estimate": 2.3878059338392407e-06,
+          "external_accuracy_z": 0.22329363959463824,
+          "standard_error": 2.4675145153913312e-08
+        },
+        {
+          "cluster": 11,
+          "estimate": 2.3897307099034204e-06,
+          "external_accuracy_z": 0.24244714890451724,
+          "standard_error": 2.4151770378063355e-08
+        },
+        {
+          "cluster": 12,
+          "estimate": 2.3911145163076326e-06,
+          "external_accuracy_z": 0.2562902340287275,
+          "standard_error": 2.3694275523041636e-08
+        },
+        {
+          "cluster": 13,
+          "estimate": 2.3681141286385915e-06,
+          "external_accuracy_z": 0.030321582365335015,
+          "standard_error": 2.5521412833109922e-08
+        },
+        {
+          "cluster": 14,
+          "estimate": 2.3407076270077183e-06,
+          "external_accuracy_z": 0.24092636938931716,
+          "standard_error": 1.913501945590657e-08
+        },
+        {
+          "cluster": 15,
+          "estimate": 2.4014543533952744e-06,
+          "external_accuracy_z": 0.35366556562655216,
+          "standard_error": 2.8394954164712458e-08
+        }
+      ],
+      "estimate": 2.421720086194818e-06,
+      "evaluation_work": 538968064.0,
+      "external_accuracy_z": 0.5646410155373635,
+      "external_reference_estimate": 2.3650126741040278e-06,
+      "external_reference_standard_error": 9.905027097245092e-08,
+      "failures": [],
+      "initializer": "cm_action",
+      "likelihood_normalization_mean": 1.0006499798079307,
+      "likelihood_normalization_z": 0.23087703297259385,
+      "maximum_cluster_accuracy_z": 1.6684652462605059,
+      "maximum_likelihood_bound_violation": 0.0,
+      "passed": true,
+      "reference_cell": "strong-rho090-k1",
+      "relative_standard_error": 0.005510630605591965,
+      "robust_relative_standard_error": 0.006852789575329216,
+      "robust_standard_error": 1.659553816104122e-08,
+      "sample_variance": 1.8674560986044327e-10,
+      "standard_error": 1.3345204825161976e-08,
+      "total_work_at_primary_query_count": 53920603492.0,
+      "training_work": 23797092.0,
+      "v14_over_candidate_work_ratio": 8.648426689369336,
+      "variant_id": "strong-deep-v2-confirmation",
+      "work_normalized_variance": 9.60296247783345e-06
+    },
+    {
+      "adaptation_effective_sample_sizes": [
+        819.2000000000057,
+        819.2000000000022,
+        819.2000000000035,
+        819.2000000000019,
+        819.200000000004,
+        875.99562408257,
+        3047.1579886191266,
+        2275.1872043205703,
+        2393.759492057397,
+        1479.7694596760073
+      ],
+      "adaptation_tempering_powers": [
+        0.8287552364826798,
+        0.9450516200408039,
+        0.8438344639824278,
+        0.9745874611683991,
+        0.8782462587270583,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "between_cluster_standard_error": 9.581992957355036e-08,
+      "cluster_to_pooled_se_ratio": 1.1825066821566526,
+      "clusters": [
+        {
+          "cluster": 0,
+          "estimate": 2.464004797812689e-05,
+          "external_accuracy_z": 0.6872108295120639,
+          "standard_error": 3.620641339877106e-07
+        },
+        {
+          "cluster": 1,
+          "estimate": 2.4355196208565992e-05,
+          "external_accuracy_z": 0.2684146806752472,
+          "standard_error": 2.545296675330846e-07
+        },
+        {
+          "cluster": 2,
+          "estimate": 2.432908054564458e-05,
+          "external_accuracy_z": 0.22739869929945633,
+          "standard_error": 2.3528133293708434e-07
+        },
+        {
+          "cluster": 3,
+          "estimate": 2.479514750615078e-05,
+          "external_accuracy_z": 0.989445123250733,
+          "standard_error": 2.8352626959212867e-07
+        },
+        {
+          "cluster": 4,
+          "estimate": 2.4294682863065828e-05,
+          "external_accuracy_z": 0.1675626636308174,
+          "standard_error": 2.435099794992952e-07
+        },
+        {
+          "cluster": 5,
+          "estimate": 2.4703132836734394e-05,
+          "external_accuracy_z": 0.8424146471671675,
+          "standard_error": 2.7580493117824666e-07
+        },
+        {
+          "cluster": 6,
+          "estimate": 2.4350859562240977e-05,
+          "external_accuracy_z": 0.2573772235214941,
+          "standard_error": 2.7383854487511414e-07
+        },
+        {
+          "cluster": 7,
+          "estimate": 2.5233867253512047e-05,
+          "external_accuracy_z": 1.5829869168384954,
+          "standard_error": 3.79021302008039e-07
+        },
+        {
+          "cluster": 8,
+          "estimate": 2.4556339320798137e-05,
+          "external_accuracy_z": 0.5698556368950992,
+          "standard_error": 3.366625447658566e-07
+        },
+        {
+          "cluster": 9,
+          "estimate": 2.4302148417041483e-05,
+          "external_accuracy_z": 0.17573550403772523,
+          "standard_error": 2.780922919369695e-07
+        },
+        {
+          "cluster": 10,
+          "estimate": 2.4189662048423335e-05,
+          "external_accuracy_z": 0.010494008238227086,
+          "standard_error": 3.225378384257909e-07
+        },
+        {
+          "cluster": 11,
+          "estimate": 2.4145992441761398e-05,
+          "external_accuracy_z": 0.08634895281855826,
+          "standard_error": 2.286342671620981e-07
+        },
+        {
+          "cluster": 12,
+          "estimate": 2.5378390158034562e-05,
+          "external_accuracy_z": 1.4085029427118942,
+          "standard_error": 6.468536465459893e-07
+        },
+        {
+          "cluster": 13,
+          "estimate": 2.4264570769582636e-05,
+          "external_accuracy_z": 0.11753767886945722,
+          "standard_error": 2.284327612984771e-07
+        },
+        {
+          "cluster": 14,
+          "estimate": 2.4623308986628328e-05,
+          "external_accuracy_z": 0.6827532471561066,
+          "standard_error": 3.2447011129424556e-07
+        },
+        {
+          "cluster": 15,
+          "estimate": 2.5133419638632855e-05,
+          "external_accuracy_z": 1.5654177265368614,
+          "standard_error": 2.690849084001225e-07
+        }
+      ],
+      "estimate": 2.458099040843402e-05,
+      "evaluation_work": 381681664.0,
+      "external_accuracy_z": 0.7081782816616743,
+      "external_reference_estimate": 2.4196216029102332e-05,
+      "external_reference_standard_error": 5.348138330073268e-07,
+      "failures": [],
+      "initializer": "cm_action",
+      "likelihood_normalization_mean": 1.00391943810206,
+      "likelihood_normalization_z": 1.3952666228296986,
+      "maximum_cluster_accuracy_z": 1.5829869168384954,
+      "maximum_likelihood_bound_violation": 0.0,
+      "passed": true,
+      "reference_cell": "high-eta200-k1",
+      "relative_standard_error": 0.003296498378339253,
+      "robust_relative_standard_error": 0.0038981313601047355,
+      "robust_standard_error": 9.581992957355036e-08,
+      "sample_variance": 6.885007232879096e-09,
+      "standard_error": 8.103119501937547e-08,
+      "total_work_at_primary_query_count": 38263237986.0,
+      "training_work": 95071586.0,
+      "v14_over_candidate_work_ratio": 3.143880287642221,
+      "variant_id": "high-eta-deep-v2-confirmation",
+      "work_normalized_variance": 0.00025123850849817676
+    }
+  ]
+}

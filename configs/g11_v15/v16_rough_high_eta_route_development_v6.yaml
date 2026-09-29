@@ -1,0 +1,32 @@
+schema: npi.g11.v16-rough-high-eta-route-development-config.v6
+output_path: results/g11_v16_rough_high_eta_route_development_v6_2026-08-11.json
+artifacts:
+  baseline:
+    path: results/g11_v16_deep_tail_joint_ood_comparator_confirmation_v2_2026-08-11.json
+    sha256: 86b79ea906c19bdaea7a117d699e92747e609d236c95f9b6a63bc4f1970c2e97
+  independent_reference:
+    path: results/g11_v16_deep_tail_joint_ood_smc_reference_v1_2026-08-11.json
+    sha256: 526b22d30327d7a9fdf308d3c7651202af8bc9ec80dc0a41a193adfdd8c56bd9
+model: {spot: 100.0, maturity: 1.0, steps: 32, eta: 1.5, xi: 0.04, rho: -0.7}
+variants:
+  - {id: rough-eta-r24-c3, reference_cell: rough-h005-eta200-k1-ood, initializer: tempered_smc, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, defensive_mass: 0.10, safety_mass: 0.01, tempered_smc: {particles: 4096, temperature_stages: 32, temperature_power: 2.0, mutation_steps: 4, pcn_scale: 0.30, replicates: 4, components: 3, clustering: kmeans, kmeans_iterations: 25}, seed: 1724001}
+  - {id: rough-eta-r24-c5, reference_cell: rough-h005-eta200-k1-ood, initializer: tempered_smc, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, defensive_mass: 0.10, safety_mass: 0.01, tempered_smc: {particles: 4096, temperature_stages: 32, temperature_power: 2.0, mutation_steps: 4, pcn_scale: 0.30, replicates: 4, components: 5, clustering: kmeans, kmeans_iterations: 25}, seed: 1724002}
+  - {id: rough-eta-r24-c8, reference_cell: rough-h005-eta200-k1-ood, initializer: tempered_smc, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, defensive_mass: 0.10, safety_mass: 0.01, tempered_smc: {particles: 4096, temperature_stages: 32, temperature_power: 2.0, mutation_steps: 4, pcn_scale: 0.30, replicates: 4, components: 8, clustering: kmeans, kmeans_iterations: 25}, seed: 1724003}
+  - {id: rough-eta-r40-c5, reference_cell: rough-h005-eta200-k1-ood, initializer: tempered_smc, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 24, bridge_modes: 16, defensive_mass: 0.10, safety_mass: 0.01, tempered_smc: {particles: 4096, temperature_stages: 32, temperature_power: 2.0, mutation_steps: 4, pcn_scale: 0.30, replicates: 4, components: 5, clustering: kmeans, kmeans_iterations: 25}, seed: 1724004}
+  - {id: rough-eta-r64-c5, reference_cell: rough-h005-eta200-k1-ood, initializer: tempered_smc, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 32, bridge_modes: 32, defensive_mass: 0.10, safety_mass: 0.01, tempered_smc: {particles: 4096, temperature_stages: 32, temperature_power: 2.0, mutation_steps: 4, pcn_scale: 0.30, replicates: 4, components: 5, clustering: kmeans, kmeans_iterations: 25}, seed: 1724005}
+  - {id: rough-eta-r24-c5-low-mass, reference_cell: rough-h005-eta200-k1-ood, initializer: tempered_smc, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, defensive_mass: 0.05, safety_mass: 0.005, tempered_smc: {particles: 4096, temperature_stages: 32, temperature_power: 2.0, mutation_steps: 4, pcn_scale: 0.30, replicates: 4, components: 5, clustering: kmeans, kmeans_iterations: 25}, seed: 1724006}
+  - {id: rough-eta-r24-c5-p8192, reference_cell: rough-h005-eta200-k1-ood, initializer: tempered_smc, hurst: 0.05, eta: 2.0, threshold: 1.0, drift_modes: 16, bridge_modes: 8, defensive_mass: 0.10, safety_mass: 0.01, tempered_smc: {particles: 8192, temperature_stages: 32, temperature_power: 2.0, mutation_steps: 4, pcn_scale: 0.30, replicates: 4, components: 5, clustering: kmeans, kmeans_iterations: 25}, seed: 1724007}
+mode_solver: {random_starts: 3, start_scale: 2.5, maximum_iterations: 280, gradient_tolerance: 0.000001}
+evaluation:
+  clusters: 12
+  samples_per_cluster: 32768
+  primary_query_count: 100
+gates:
+  maximum_accuracy_z: 4.0
+  maximum_comparator_accuracy_z: 4.0
+  minimum_qualified_comparators: 2
+  maximum_cluster_to_pooled_se_ratio: 2.0
+  maximum_robust_relative_standard_error: 0.25
+  maximum_likelihood_normalization_z: 4.0
+  maximum_likelihood_bound_violation: 0.0000000001
+  minimum_strongest_comparator_over_candidate_work_ratio: 1.0

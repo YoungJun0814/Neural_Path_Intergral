@@ -1,0 +1,26 @@
+schema: npi.post-audit.r15-mixture-design-config.v1
+design_path: results/post_audit/r15_reference_design_v1.json
+reference_crosscheck_path: results/post_audit/r15_reference_crosscheck_v1.json
+output_path: results/post_audit/r15_mixture_design_v1.json
+torch_threads: 1
+training:
+  independent_smc_banks: 3
+  defensive_mass: 0.1
+  covariance_shrinkage: 0.5
+  minimum_variance: 0.25
+  maximum_variance: 4.0
+  minimum_cluster_mass: 0.01
+  feature_rank: 4
+  candidates:
+    - {id: one-shift-identity, clusters: 1, covariance_rank: 0}
+    - {id: two-shift-identity, clusters: 2, covariance_rank: 0}
+    - {id: four-shift-identity, clusters: 4, covariance_rank: 0}
+    - {id: two-shift-lowrank, clusters: 2, covariance_rank: 8}
+    - {id: four-shift-lowrank, clusters: 4, covariance_rank: 8}
+pilot_evaluation:
+  clusters: 12
+  units_per_cluster: 8192
+  bank_probe_count: 512
+selection:
+  maximum_descriptive_reference_z: 3.0
+  maximum_pilot_relative_se: 0.25

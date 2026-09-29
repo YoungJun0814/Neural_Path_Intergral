@@ -1,0 +1,417 @@
+"""Frozen structural routing policy for the V16 practical transport."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, replace
+from typing import Literal
+
+from src.path_integral.baselines.rbergomi_common import RBergomiBaselineProblem
+from src.path_integral.path_functionals import TerminalThresholdTask
+
+V16Regime = Literal[
+    "deep_rough",
+    "deep_rough_high_vol_of_vol",
+    "deep_rough_strong_negative_correlation",
+    "deep_high_vol_of_vol",
+    "deep_high_vol_of_vol_strong_negative_correlation",
+    "deep_strong_negative_correlation",
+    "rough",
+    "strong_negative_correlation",
+    "regular",
+]
+V16Initializer = Literal[
+    "cm_action",
+    "tempered_smc",
+    "v14_only",
+    "v14_tempered_hybrid",
+]
+
+
+@dataclass(frozen=True)
+class V16TransportRoute:
+    policy_id: str
+    regime: V16Regime
+    initializer: V16Initializer
+    drift_modes: int
+    bridge_modes: int
+    defensive_mass: float
+    safety_mass: float
+    adaptation_iterations: int
+    adaptation_samples: int
+    adapt_covariance: bool
+    final_components: int
+    tempered_particles: int = 0
+    tempered_temperature_stages: int = 0
+    tempered_temperature_power: float = 0.0
+    tempered_mutation_steps: int = 0
+    tempered_pcn_scale: float = 0.0
+    tempered_replicates: int = 0
+    tempered_clustering: Literal[
+        "pca_quantile",
+        "kmeans",
+        "replicate_kmeans",
+    ] = "pca_quantile"
+    tempered_kmeans_iterations: int = 25
+    v14_target_powers: tuple[float, ...] = (0.05, 0.10)
+    v14_shifted_weights: tuple[float, ...] = (0.5, 0.5)
+    v14_defensive_mass: float = 0.20
+    v14_particles: int = 1024
+    v14_pcn_sweeps: int = 3
+    v14_maximum_stages: int = 96
+    hybrid_target_mass: float = 0.0
+    comparator_dominance_claim: bool = True
+
+    def candidate_overrides(self) -> dict:
+        overrides = {
+            "mode_basis": "mesh_compatible_hybrid",
+            "modes": self.drift_modes,
+            "bridge_modes": self.bridge_modes,
+            "defensive_mass": self.defensive_mass,
+            "asymptotic_safety_mass": self.safety_mass,
+            "safety_spectrum_decay": 2.0,
+            "safety_spectrum_scale": 4.0,
+            "safety_complement_decay": 2.0,
+        }
+        if self.initializer in {"tempered_smc", "v14_tempered_hybrid"}:
+            overrides["conditional_adaptation"] = None
+            overrides["tempered_target"] = {
+                "particles": self.tempered_particles,
+                "temperature_stages": self.tempered_temperature_stages,
+                "temperature_power": self.tempered_temperature_power,
+                "mutation_steps": self.tempered_mutation_steps,
+                "pcn_scale": self.tempered_pcn_scale,
+                "replicates": self.tempered_replicates,
+                "components": self.final_components,
+                "clustering": self.tempered_clustering,
+                "kmeans_iterations": self.tempered_kmeans_iterations,
+            }
+            if self.initializer == "v14_tempered_hybrid":
+                overrides["v14_initializer"] = self.v14_overrides()
+                overrides["target_mass"] = self.hybrid_target_mass
+        elif self.initializer == "v14_only":
+            overrides["conditional_adaptation"] = None
+            overrides["v14_initializer"] = self.v14_overrides()
+        else:
+            overrides["conditional_adaptation"] = {
+                "iterations": self.adaptation_iterations,
+                "samples_per_iteration": self.adaptation_samples,
+                "smoothing": 0.7,
+                "minimum_ess_fraction": 0.1,
+                "minimum_variance": 0.05,
+                "maximum_variance": 20.0,
+                "adapt_covariance": self.adapt_covariance,
+                "final_components": self.final_components,
+            }
+        return overrides
+
+    def v14_overrides(self) -> dict:
+        return {
+            "target_powers": list(self.v14_target_powers),
+            "shifted_weights": list(self.v14_shifted_weights),
+            "defensive_mass": self.v14_defensive_mass,
+            "particles": self.v14_particles,
+            "pcn_sweeps": self.v14_pcn_sweeps,
+            "maximum_stages": self.v14_maximum_stages,
+        }
+
+
+def route_v16_hybrid_v1(problem: RBergomiBaselineProblem) -> V16TransportRoute:
+    """Resolve a route from model structure only, never from evaluation outcomes."""
+
+    if problem.hurst <= 0.075:
+        return V16TransportRoute(
+            policy_id="v16_hybrid_routing_v1",
+            regime="rough",
+            initializer="cm_action",
+            drift_modes=16,
+            bridge_modes=8,
+            defensive_mass=0.15,
+            safety_mass=0.02,
+            adaptation_iterations=4,
+            adaptation_samples=8192,
+            adapt_covariance=False,
+            final_components=3,
+        )
+    if problem.rho <= -0.85:
+        return V16TransportRoute(
+            policy_id="v16_hybrid_routing_v1",
+            regime="strong_negative_correlation",
+            initializer="cm_action",
+            drift_modes=8,
+            bridge_modes=3,
+            defensive_mass=0.10,
+            safety_mass=0.01,
+            adaptation_iterations=4,
+            adaptation_samples=8192,
+            adapt_covariance=False,
+            final_components=3,
+        )
+    return V16TransportRoute(
+        policy_id="v16_hybrid_routing_v1",
+        regime="regular",
+        initializer="cm_action",
+        drift_modes=8,
+        bridge_modes=3,
+        defensive_mass=0.15,
+        safety_mass=0.02,
+        adaptation_iterations=3,
+        adaptation_samples=4096,
+        adapt_covariance=True,
+        final_components=1,
+    )
+
+
+def route_v16_hybrid_v2(problem: RBergomiBaselineProblem) -> V16TransportRoute:
+    """Route deep terminal tails without consulting a probability estimate.
+
+    The threshold ratio is an observed task definition, not an oracle event
+    probability.  Deep-tail branches are frozen from independent confirmation
+    experiments; shallower tasks retain the V1 policy verbatim.
+    """
+
+    if not isinstance(problem.task, TerminalThresholdTask):
+        return replace(
+            route_v16_hybrid_v1(problem),
+            policy_id="v16_hybrid_routing_v2",
+        )
+    threshold_ratio = problem.task.level / problem.spot
+    if threshold_ratio > 0.02:
+        v1 = route_v16_hybrid_v1(problem)
+        return replace(v1, policy_id="v16_hybrid_routing_v2")
+    if problem.hurst <= 0.075:
+        return V16TransportRoute(
+            policy_id="v16_hybrid_routing_v2",
+            regime="deep_rough",
+            initializer="tempered_smc",
+            drift_modes=16,
+            bridge_modes=8,
+            defensive_mass=0.15,
+            safety_mass=0.02,
+            adaptation_iterations=0,
+            adaptation_samples=0,
+            adapt_covariance=True,
+            final_components=5,
+            tempered_particles=4096,
+            tempered_temperature_stages=32,
+            tempered_temperature_power=2.0,
+            tempered_mutation_steps=4,
+            tempered_pcn_scale=0.30,
+            tempered_replicates=4,
+        )
+    if problem.eta >= 1.9:
+        return V16TransportRoute(
+            policy_id="v16_hybrid_routing_v2",
+            regime="deep_high_vol_of_vol",
+            initializer="cm_action",
+            drift_modes=8,
+            bridge_modes=3,
+            defensive_mass=0.10,
+            safety_mass=0.01,
+            adaptation_iterations=10,
+            adaptation_samples=16384,
+            adapt_covariance=True,
+            final_components=1,
+        )
+    if problem.rho <= -0.85:
+        return V16TransportRoute(
+            policy_id="v16_hybrid_routing_v2",
+            regime="deep_strong_negative_correlation",
+            initializer="cm_action",
+            drift_modes=8,
+            bridge_modes=3,
+            defensive_mass=0.10,
+            safety_mass=0.01,
+            adaptation_iterations=4,
+            adaptation_samples=8192,
+            adapt_covariance=False,
+            final_components=3,
+        )
+    v1 = route_v16_hybrid_v1(problem)
+    return replace(v1, policy_id="v16_hybrid_routing_v2")
+
+
+def route_v16_hybrid_v3(problem: RBergomiBaselineProblem) -> V16TransportRoute:
+    """Resolve independently confirmed deep and joint-extreme routes.
+
+    V3 leaves the frozen V2 policy unchanged.  It replaces only terminal tails at
+    or below the predeclared two-percent strike ratio, using full-space target-mode
+    clustering selected in the joint-regime development matrix.
+    """
+
+    if not isinstance(problem.task, TerminalThresholdTask):
+        return replace(
+            route_v16_hybrid_v2(problem),
+            policy_id="v16_hybrid_routing_v3",
+        )
+    if problem.task.level / problem.spot > 0.02:
+        return replace(
+            route_v16_hybrid_v2(problem),
+            policy_id="v16_hybrid_routing_v3",
+        )
+    if problem.hurst <= 0.075:
+        high_eta = problem.eta >= 1.9
+        return V16TransportRoute(
+            policy_id="v16_hybrid_routing_v3",
+            regime=(
+                "deep_rough_high_vol_of_vol" if high_eta else "deep_rough"
+            ),
+            initializer="tempered_smc",
+            drift_modes=16,
+            bridge_modes=8,
+            defensive_mass=0.10,
+            safety_mass=0.01,
+            adaptation_iterations=0,
+            adaptation_samples=0,
+            adapt_covariance=True,
+            final_components=5,
+            tempered_particles=8192 if high_eta else 4096,
+            tempered_temperature_stages=32,
+            tempered_temperature_power=2.0,
+            tempered_mutation_steps=4,
+            tempered_pcn_scale=0.30,
+            tempered_replicates=4,
+            tempered_clustering="kmeans",
+            tempered_kmeans_iterations=25,
+        )
+    if problem.eta >= 1.9 and problem.rho <= -0.85:
+        return V16TransportRoute(
+            policy_id="v16_hybrid_routing_v3",
+            regime="deep_high_vol_of_vol_strong_negative_correlation",
+            initializer="tempered_smc",
+            drift_modes=16,
+            bridge_modes=8,
+            defensive_mass=0.10,
+            safety_mass=0.01,
+            adaptation_iterations=0,
+            adaptation_samples=0,
+            adapt_covariance=True,
+            final_components=5,
+            tempered_particles=4096,
+            tempered_temperature_stages=32,
+            tempered_temperature_power=2.0,
+            tempered_mutation_steps=4,
+            tempered_pcn_scale=0.30,
+            tempered_replicates=4,
+            tempered_clustering="kmeans",
+            tempered_kmeans_iterations=25,
+        )
+    return replace(
+        route_v16_hybrid_v2(problem),
+        policy_id="v16_hybrid_routing_v3",
+    )
+
+
+def route_v16_hybrid_v4(problem: RBergomiBaselineProblem) -> V16TransportRoute:
+    """Bag independent target fits in joint deep-tail regimes.
+
+    V4 changes only the joint-extreme branches whose global target clustering was
+    falsified by fresh proposal-training seeds.  Each of four independent SMC
+    replicates contributes one Gaussian component, preventing a single global
+    clustering decision from deleting an observed target mode.
+    """
+
+    v3 = route_v16_hybrid_v3(problem)
+    if not isinstance(problem.task, TerminalThresholdTask):
+        return replace(v3, policy_id="v16_hybrid_routing_v4")
+    if problem.task.level / problem.spot > 0.02:
+        return replace(v3, policy_id="v16_hybrid_routing_v4")
+    rough = problem.hurst <= 0.075
+    high_eta = problem.eta >= 1.9
+    strong_rho = problem.rho <= -0.85
+    if not ((rough and (high_eta or strong_rho)) or (high_eta and strong_rho)):
+        return replace(v3, policy_id="v16_hybrid_routing_v4")
+    if rough and high_eta:
+        regime: V16Regime = "deep_rough_high_vol_of_vol"
+        particles = 8192
+    elif rough:
+        regime = "deep_rough_strong_negative_correlation"
+        particles = 4096
+    else:
+        regime = "deep_high_vol_of_vol_strong_negative_correlation"
+        particles = 4096
+    return V16TransportRoute(
+        policy_id="v16_hybrid_routing_v4",
+        regime=regime,
+        initializer="tempered_smc",
+        drift_modes=16,
+        bridge_modes=8,
+        defensive_mass=0.10,
+        safety_mass=0.01,
+        adaptation_iterations=0,
+        adaptation_samples=0,
+        adapt_covariance=True,
+        final_components=4,
+        tempered_particles=particles,
+        tempered_temperature_stages=32,
+        tempered_temperature_power=2.0,
+        tempered_mutation_steps=4,
+        tempered_pcn_scale=0.30,
+        tempered_replicates=4,
+        tempered_clustering="replicate_kmeans",
+        tempered_kmeans_iterations=25,
+    )
+
+
+def route_v16_hybrid_v5(problem: RBergomiBaselineProblem) -> V16TransportRoute:
+    """Use only confirmed novel routes and fail closed to exact V14.
+
+    The policy contains no estimated event probability.  Joint structural
+    extremes are assigned the V14 residual fallback after repeated fresh-seed
+    falsification of V3/V4 and target/residual hybrids.  The fallback retains
+    exact ordinary-IS likelihoods but carries no comparator-dominance claim.
+    """
+
+    v3 = route_v16_hybrid_v3(problem)
+    if not isinstance(problem.task, TerminalThresholdTask):
+        return replace(v3, policy_id="v16_hybrid_routing_v5")
+    threshold_ratio = problem.task.level / problem.spot
+    if threshold_ratio > 0.02:
+        return replace(v3, policy_id="v16_hybrid_routing_v5")
+    rough = problem.hurst <= 0.075
+    high_eta = problem.eta >= 1.9
+    strong_rho = problem.rho <= -0.85
+    joint_extreme = sum((rough, high_eta, strong_rho)) >= 2
+    if joint_extreme:
+        if rough and high_eta:
+            regime: V16Regime = "deep_rough_high_vol_of_vol"
+        elif rough:
+            regime = "deep_rough_strong_negative_correlation"
+        else:
+            regime = "deep_high_vol_of_vol_strong_negative_correlation"
+        return V16TransportRoute(
+            policy_id="v16_hybrid_routing_v5",
+            regime=regime,
+            initializer="v14_only",
+            drift_modes=16,
+            bridge_modes=8,
+            defensive_mass=0.20,
+            safety_mass=0.0,
+            adaptation_iterations=0,
+            adaptation_samples=0,
+            adapt_covariance=False,
+            final_components=3,
+            comparator_dominance_claim=False,
+        )
+    if rough and threshold_ratio >= 0.015:
+        return V16TransportRoute(
+            policy_id="v16_hybrid_routing_v5",
+            regime="deep_rough",
+            initializer="v14_tempered_hybrid",
+            drift_modes=16,
+            bridge_modes=8,
+            defensive_mass=0.10,
+            safety_mass=0.01,
+            adaptation_iterations=0,
+            adaptation_samples=0,
+            adapt_covariance=False,
+            final_components=5,
+            tempered_particles=4096,
+            tempered_temperature_stages=32,
+            tempered_temperature_power=2.0,
+            tempered_mutation_steps=4,
+            tempered_pcn_scale=0.30,
+            tempered_replicates=4,
+            tempered_clustering="kmeans",
+            hybrid_target_mass=0.80,
+        )
+    return replace(v3, policy_id="v16_hybrid_routing_v5")

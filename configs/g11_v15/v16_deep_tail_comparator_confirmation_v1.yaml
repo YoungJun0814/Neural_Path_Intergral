@@ -1,0 +1,32 @@
+schema: npi.g11.v16-deep-tail-comparator-confirmation-config.v1
+output_path: results/g11_v16_deep_tail_comparator_confirmation_v1_2026-08-11.json
+artifacts:
+  independent_reference:
+    path: results/g11_v16_deep_tail_heterogeneous_smc_reference_v1_2026-08-11.json
+    sha256: 4f544ec7e7239aee29d0833d597c528c68d67a817efa457a1cc2b239e057b2af
+model: {spot: 100.0, maturity: 1.0, steps: 32, hurst: 0.12, eta: 1.5, xi: 0.04, rho: -0.7}
+cells:
+  - {cell_id: rough-h005-k1, hurst: 0.05, threshold: 1.0}
+baselines:
+  defensive_mass: 0.20
+  v14_target_powers: [0.05, 0.10]
+  v14_shifted_weights: [0.5, 0.5]
+  v14_particles: 1024
+  v14_pcn_sweeps: 3
+  v14_maximum_stages: 96
+  cem_iterations: 7
+  cem_samples: 2048
+  cem_time_bins: 8
+  ld_optimizer_steps: 150
+  ld_restarts: 3
+sampling:
+  clusters: 16
+  iid_per_cluster: 65536
+  rqmc_randomizations_per_cluster: 8
+  rqmc_points: 512
+  primary_query_count: 100
+seed: 1721001
+gates:
+  maximum_accuracy_z: 4.0
+  maximum_robust_relative_standard_error: 0.25
+  minimum_qualified_comparators: 3

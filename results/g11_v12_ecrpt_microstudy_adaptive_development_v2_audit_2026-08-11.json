@@ -1,0 +1,12 @@
+{
+  "aggregate_match": true,
+  "config_hash_match": true,
+  "decision_match": true,
+  "failures": [],
+  "passed": true,
+  "proposal_hashes_match": true,
+  "result_sha256": "b630afc666ae1e667b9f5386b550fb6b0cca53ce5fc7707bc13830881675f41a",
+  "roster_match": true,
+  "seed_ledger_match": true,
+  "summaries_match": true
+}

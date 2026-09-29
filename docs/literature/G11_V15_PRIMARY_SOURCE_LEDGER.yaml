@@ -1,0 +1,75 @@
+schema: npi.g11.v15-literature-ledger.v1
+date: "2026-08-11"
+search_status: internal_complete_external_pending
+submission_novelty_authorized: false
+development_authorized: true
+decisive_sources:
+  - id: L2
+    doi: 10.1080/14697688.2018.1459812
+    overlap: conditional_lognormal_rbergomi_monte_carlo
+  - id: L3
+    doi: 10.1137/22M1495718
+    overlap: numerical_preintegration_smoothing_mlmc
+  - id: L4
+    doi: 10.1111/1467-9965.00065
+    overlap: gaussian_ldp_most_important_path_and_curvature
+  - id: L7
+    doi: 10.1017/jpr.2018.72
+    overlap: rough_bergomi_pathwise_ldp_and_rkhs
+  - id: L8
+    doi: 10.1137/22M1524758
+    overlap: ldp_adaptive_is_likelihood_informed_subspace
+  - id: L10
+    doi: 10.1137/21M1427760
+    overlap: nonasymptotic_suboptimal_is_bounds
+  - id: L11
+    doi: 10.1007/s00780-024-00549-x
+    overlap: neural_cameron_martin_importance_sampling_for_options
+  - id: L12
+    doi: 10.1137/140962802
+    overlap: infinite_dimensional_gaussian_variational_covariance
+  - id: L14
+    arxiv: "2604.13147"
+    overlap: neural_non_markovian_off_model_importance_sampling
+  - id: L15
+    arxiv: "1710.10711"
+    overlap: volterra_stochastic_volatility_small_noise_ldp
+  - id: L16
+    doi: 10.1007/s10955-020-02589-x
+    overlap: general_joint_ldp_importance_sampling_efficiency_criteria
+  - id: L17
+    doi: 10.1137/1107006
+    overlap: gaussian_process_measure_equivalence_and_density
+  - id: L18
+    doi: 10.1137/22M1482871
+    overlap: rough_volatility_weak_discretization_rates
+  - id: L19
+    doi: 10.1137/22M1485760
+    overlap: hybrid_rough_volatility_weak_error_rates
+  - id: L20
+    doi: 10.1007/s00245-026-10392-5
+    overlap: random_neural_rough_volatility_PPDE_BSDE_solver
+  - id: L21
+    ssrn: "5668450"
+    overlap: learned_unbiased_control_variates_for_rbergomi
+  - id: L22
+    doi: 10.1137/23M1546981
+    overlap: deep_transport_importance_sampling_for_rare_events
+candidate_claim:
+  short_name: conditional_multimode_cm_transport
+  required_features:
+    - complete_independent_price_driver_contraction
+    - conditional_zero_variance_target
+    - reduced_small_noise_action
+    - exact_defensive_multimode_balance_likelihood
+    - equivalence_preserving_finite_rank_transport
+    - gaussian_volterra_mesh_consistency
+    - exactness_independent_of_operator
+external_review:
+  required_reviewers: 2
+  completed_reviewers: 0
+  status: pending
+locks:
+  qualification: true
+  submission: true
+  top_journal_language: true
