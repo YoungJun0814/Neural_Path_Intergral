@@ -1,0 +1,13 @@
+schema: npi.post-audit.r15-hybrid-bank-pilot-config.v1
+smc_design_path: results/post_audit/r15_reference_design_v1.json
+first_crosscheck_path: results/post_audit/r15_reference_crosscheck_v1.json
+mixture_crosscheck_path: results/post_audit/r15_mixture_independent_v1.json
+mixture_design_path: results/post_audit/r15_mixture_design_v1.json
+output_path: results/post_audit/r15_hybrid_bank_pilot_v1.json
+torch_threads: 1
+bank_repetitions: 20
+bank_count: 512
+ce_mixture_weights: [1.0, 0.75, 0.5, 0.25, 0.0]
+selection:
+  minimum_median_ess_factor_over_best_parent: 1.5
+  minimum_tenth_percentile_ess: 2.0

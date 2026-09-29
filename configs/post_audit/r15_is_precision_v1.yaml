@@ -1,0 +1,14 @@
+schema: npi.post-audit.r15-is-precision-config.v1
+smc_design_path: results/post_audit/r15_reference_design_v1.json
+mixture_crosscheck_path: results/post_audit/r15_mixture_independent_v1.json
+refined_reference_path: results/post_audit/r15_reference_refinement_v1.json
+output_path: results/post_audit/r15_is_precision_v1.json
+torch_threads: 1
+evaluation:
+  clusters: 640
+  units_per_cluster: 8192
+qualification:
+  maximum_relative_se: 0.05
+  maximum_reference_relative_se: 0.05
+  relative_equivalence_margin: 0.25
+  confidence_z: 1.96

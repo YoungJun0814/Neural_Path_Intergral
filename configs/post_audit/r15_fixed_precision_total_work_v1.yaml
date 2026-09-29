@@ -1,0 +1,19 @@
+schema: npi.post-audit.r15-fixed-precision-total-work-config.v1
+smc_design_path: results/post_audit/r15_reference_design_v1.json
+mixture_design_path: results/post_audit/r15_mixture_design_v1.json
+refined_reference_path: results/post_audit/r15_reference_refinement_v1.json
+is_precision_path: results/post_audit/r15_is_precision_v1.json
+output_path: results/post_audit/r15_fixed_precision_total_work_v1.json
+torch_threads: 1
+smc_replicates:
+  canonical-h005-k1: 256
+  high-eta200-k1: 128
+is_training_banks: 3
+is_final:
+  clusters: 640
+  units_per_cluster: 8192
+qualification:
+  maximum_relative_se: 0.05
+  maximum_anchor_relative_se: 0.05
+  relative_equivalence_margin: 0.25
+  confidence_z: 1.96
