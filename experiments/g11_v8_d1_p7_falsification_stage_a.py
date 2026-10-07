@@ -190,6 +190,9 @@ def _validate_config(config: dict[str, Any]) -> None:
 
 def _problem(cell: dict[str, Any], model: dict[str, Any]) -> RBergomiBaselineProblem:
     threshold = float(cell["threshold"])
+    hurst_value = cell.get("hurst", model.get("hurst"))
+    if hurst_value is None:
+        raise ValueError("D1 requires a Hurst parameter in the cell or model")
     task: TerminalThresholdTask | DiscreteBarrierHitTask
     if cell["task"] == "terminal_left_tail":
         task = TerminalThresholdTask(threshold)
@@ -203,7 +206,7 @@ def _problem(cell: dict[str, Any], model: dict[str, Any]) -> RBergomiBaselinePro
         spot=float(model["spot"]),
         maturity=float(model["maturity"]),
         steps=int(model["steps"]),
-        hurst=float(cell.get("hurst", model.get("hurst"))),
+        hurst=float(hurst_value),
         eta=float(model["eta"]),
         xi=float(model["xi"]),
         rho=float(model["rho"]),
