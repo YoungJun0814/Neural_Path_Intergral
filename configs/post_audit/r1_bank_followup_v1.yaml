@@ -1,0 +1,32 @@
+schema: npi.post-audit.r1-bank-followup-config.v1
+output_path: results/post_audit/r1_bank_followup_v1.json
+torch_threads: 1
+model: {spot: 100.0, maturity: 1.0, hurst: 0.05, eta: 1.5, xi: 0.04, rho: -0.7}
+cells:
+  - {id: canonical-h005-k1, threshold: 1.0}
+  - {id: high-eta200-k1, eta: 2.0, threshold: 1.0}
+  - {id: joint-h012-eta200-rho090-k1, hurst: 0.12, eta: 2.0, rho: -0.9, threshold: 1.0}
+ce:
+  iterations: 3
+  samples_per_iteration: 4096
+  elite_fraction: 0.1
+  smoothing: 0.7
+  defensive_mass: 0.1
+  maximum_mean_norm: 20.0
+  covariance_rank: 8
+  covariance_shrinkage: 0.5
+  minimum_eigenvalue: 0.25
+  maximum_eigenvalue: 4.0
+  minimum_target_ess: 20.0
+experiment:
+  steps: 32
+  independent_training_seeds: 5
+  evaluation_count: 2048
+  rank: 16
+  defensive_mass: 0.1
+  optimizer_steps: 50
+  smc_particles: 256
+  smc_levels: 48
+  smc_pcn_scales: [0.35, 0.75]
+  reference_pcn_scale: 0.55
+  reference_replicates: 32

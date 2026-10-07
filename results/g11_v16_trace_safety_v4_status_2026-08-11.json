@@ -1,0 +1,9 @@
+{
+  "schema": "npi.g11.v16-result-scope-correction.v1",
+  "date": "2026-08-11",
+  "result": "results/g11_v16_small_noise_development_v4_trace_2026-08-11.json",
+  "fixed_grid_numerical_evidence_valid": true,
+  "mesh_compatible_trace_class_evidence_valid": false,
+  "reason": "The v4 spectrum was summable on each frozen grid but assigned fixed low-frequency mass independently to both BLP local channels. The second channel does not converge to fixed continuum directions under mesh refinement.",
+  "replacement": "configs/g11_v15/small_noise_development_v5_mesh_trace.yaml"
+}

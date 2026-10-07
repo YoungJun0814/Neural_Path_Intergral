@@ -1,0 +1,24 @@
+schema: npi.post-audit.r15-reference-crosscheck-config.v1
+design_path: results/post_audit/r15_reference_design_v1.json
+output_path: results/post_audit/r15_reference_crosscheck_v1.json
+torch_threads: 1
+accuracy:
+  maximum_reference_relative_se: 0.05
+  relative_equivalence_margin: 0.25
+  confidence_z: 1.96
+is_training:
+  independent_ce_fits: 3
+  iterations: 5
+  samples_per_iteration: 4096
+  elite_fraction: 0.1
+  smoothing: 0.7
+  defensive_mass: 0.1
+  maximum_mean_norm: 20.0
+  covariance_rank: 8
+  covariance_shrinkage: 0.5
+  minimum_eigenvalue: 0.25
+  maximum_eigenvalue: 4.0
+  minimum_target_ess: 20.0
+is_evaluation:
+  clusters: 20
+  units_per_cluster: 8192

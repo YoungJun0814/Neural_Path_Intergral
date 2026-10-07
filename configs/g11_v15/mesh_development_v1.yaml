@@ -1,0 +1,10 @@
+schema: npi.g11.v15-mesh-config.v1
+task_id: g11-v15-mesh-h012-k50
+output_path: results/g11_v15_mesh_development_v1_2026-08-11.json
+model: {spot: 100.0, maturity: 1.0, hurst: 0.12, eta: 1.5, xi: 0.04, rho: -0.7}
+threshold: 50.0
+steps: [16, 32, 64, 128, 256]
+sample_count: 10000
+seed: 1515201
+target_rmse: 0.0005
+bias_multiplier: 2.0

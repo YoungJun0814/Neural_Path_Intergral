@@ -1,0 +1,17 @@
+{
+  "aggregate_match": true,
+  "config_hash_match": true,
+  "decision_match": true,
+  "failures": [],
+  "passed": true,
+  "proposal_hashes_match": true,
+  "result_path": "results\\g11_v14_local_volterra_qualification_v1_2026-08-11.json",
+  "result_sha256": "bdb29c5d249bdd68d4d836965a5ed5eae46c8f6412d6afd236278cf09ea8c08d",
+  "roster_match": true,
+  "schema": "npi.g11.v14-local-volterra-audit.v1",
+  "seed_ledger_match": true,
+  "smc_contracts_match": true,
+  "stage": "qualification",
+  "summaries_match": true,
+  "tail_certificates_match": true
+}

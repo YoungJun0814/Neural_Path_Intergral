@@ -1,0 +1,279 @@
+import math
+
+import pytest
+import torch
+
+from src.path_integral.baselines.rbergomi_common import RBergomiBaselineProblem
+from src.path_integral.cameron_martin_basis import build_blp_cameron_martin_basis
+from src.path_integral.cameron_martin_modes import (
+    ActionSolverConfig,
+    ModeSearchConfig,
+    find_rbergomi_conditional_modes,
+)
+from src.path_integral.finite_rank_gaussian_transport import (
+    CurvatureTransportConfig,
+    DefensiveFiniteRankGaussianMixture,
+    FiniteRankGaussianComponent,
+    build_curvature_transport,
+    build_isotropic_small_noise_safety_component,
+    build_trace_class_small_noise_safety_component,
+    combine_defensive_gaussian_mixtures,
+)
+from src.path_integral.path_functionals import TerminalThresholdTask
+from src.path_integral.volterra_action import RBergomiConditionalAction
+
+
+def _component() -> FiniteRankGaussianComponent:
+    angle = 0.37
+    direction = torch.tensor(
+        [[math.cos(angle)], [math.sin(angle)], [0.0]],
+        dtype=torch.float64,
+    )
+    return FiniteRankGaussianComponent(
+        mean=torch.tensor([0.3, -0.2, 0.1], dtype=torch.float64),
+        directions=direction,
+        variance_eigenvalues=torch.tensor([2.4], dtype=torch.float64),
+    )
+
+
+def test_component_density_matches_dense_gaussian_oracle() -> None:
+    component = _component()
+    samples = torch.tensor(
+        [[0.0, 0.0, 0.0], [1.0, -0.5, 0.2], [-2.0, 0.3, 1.1]],
+        dtype=torch.float64,
+    )
+    covariance = torch.eye(3, dtype=torch.float64) + component.directions @ (
+        torch.diag(component.variance_eigenvalues - 1.0) @ component.directions.T
+    )
+    proposal = torch.distributions.MultivariateNormal(component.mean, covariance_matrix=covariance)
+    reference = torch.distributions.MultivariateNormal(
+        torch.zeros(3, dtype=torch.float64),
+        torch.eye(3, dtype=torch.float64),
+    )
+    oracle = proposal.log_prob(samples) - reference.log_prob(samples)
+    assert torch.max(torch.abs(component.log_q_over_p(samples) - oracle)) < 2e-12
+
+
+def test_component_sampler_has_prescribed_mean_and_covariance() -> None:
+    component = _component()
+    generator = torch.Generator().manual_seed(8128)
+    standard = torch.randn((120_000, 3), dtype=torch.float64, generator=generator)
+    samples = component.transform_standard_normal(standard)
+    empirical_mean = torch.mean(samples, dim=0)
+    centered = samples - empirical_mean
+    empirical_covariance = centered.T @ centered / samples.shape[0]
+    target_covariance = torch.eye(3, dtype=torch.float64) + component.directions @ (
+        torch.diag(component.variance_eigenvalues - 1.0) @ component.directions.T
+    )
+    assert torch.max(torch.abs(empirical_mean - component.mean)) < 0.012
+    assert torch.max(torch.abs(empirical_covariance - target_covariance)) < 0.025
+
+
+def test_defensive_mixture_exact_likelihood_and_normalization() -> None:
+    mixture = DefensiveFiniteRankGaussianMixture(
+        components=(FiniteRankGaussianComponent.natural(3), _component()),
+        weights=torch.tensor([0.2, 0.8], dtype=torch.float64),
+    )
+    drawn = mixture.sample(160_000, path_seed=931, label_seed=932)
+    likelihood = torch.exp(drawn.log_p_over_q)
+    assert abs(float(torch.mean(likelihood)) - 1.0) < 0.008
+    assert float(torch.max(likelihood)) <= 5.0 + 2e-12
+    assert torch.max(
+        torch.abs(mixture.log_q_over_p(drawn.samples) - drawn.log_q_over_p)
+    ) < 2e-13
+    frequencies = torch.bincount(drawn.labels, minlength=2).to(torch.float64) / drawn.labels.numel()
+    assert torch.max(torch.abs(frequencies - mixture.weights)) < 0.004
+
+
+def test_combined_mixture_preserves_all_components_and_defensive_bound() -> None:
+    left = DefensiveFiniteRankGaussianMixture(
+        components=(FiniteRankGaussianComponent.natural(3), _component()),
+        weights=torch.tensor([0.2, 0.8], dtype=torch.float64),
+    )
+    right = DefensiveFiniteRankGaussianMixture(
+        components=(FiniteRankGaussianComponent.natural(3),),
+        weights=torch.ones(1, dtype=torch.float64),
+    )
+    combined = combine_defensive_gaussian_mixtures(
+        (left, right),
+        (0.4, 0.6),
+    )
+    assert len(combined.components) == 3
+    assert math.isclose(combined.defensive_mass, 0.4 * 0.2 + 0.6)
+    sample = combined.sample(20_000, path_seed=1231, label_seed=1232)
+    assert float(torch.max(torch.exp(sample.log_p_over_q))) <= (
+        1.0 / combined.defensive_mass + 1e-12
+    )
+
+
+def test_curvature_builder_creates_exact_positive_defensive_transport() -> None:
+    problem = RBergomiBaselineProblem(
+        task_id="v15-transport",
+        task=TerminalThresholdTask(level=60.0),
+        spot=100.0,
+        maturity=1.0,
+        steps=8,
+        hurst=0.12,
+        eta=1.5,
+        xi=0.04,
+        rho=-0.7,
+    )
+    basis = build_blp_cameron_martin_basis(steps=problem.steps, modes_per_driver=2)
+    action = RBergomiConditionalAction(problem=problem, basis=basis, epsilon=1.0)
+    modes = find_rbergomi_conditional_modes(
+        action,
+        config=ModeSearchConfig(
+            methods=("lbfgs", "trust-ncg"),
+            random_starts=1,
+            random_seed=12,
+            start_scale=1.0,
+            solver=ActionSolverConfig(maximum_iterations=100, gradient_tolerance=1e-6),
+        ),
+    )
+    transport = build_curvature_transport(
+        action,
+        modes,
+        config=CurvatureTransportConfig(defensive_mass=0.15),
+    )
+    assert math.isclose(transport.defensive_mass, 0.15, abs_tol=1e-14)
+    assert transport.components[0].is_natural()
+    assert all(component.rank == basis.rank for component in transport.components[1:])
+    sample = transport.sample(512, path_seed=881, label_seed=882)
+    assert torch.isfinite(sample.log_p_over_q).all()
+    assert float(torch.max(torch.exp(sample.log_p_over_q))) <= 1.0 / 0.15 + 2e-12
+
+
+def test_small_noise_safety_component_matches_dense_isotropic_gaussian() -> None:
+    epsilon = 0.2
+    component = build_isotropic_small_noise_safety_component(3, epsilon=epsilon)
+    samples = torch.tensor(
+        [[0.0, 0.0, 0.0], [1.0, -0.5, 0.2], [-2.0, 0.3, 1.1]],
+        dtype=torch.float64,
+    )
+    proposal = torch.distributions.MultivariateNormal(
+        torch.zeros(3, dtype=torch.float64),
+        covariance_matrix=torch.eye(3, dtype=torch.float64) / epsilon,
+    )
+    reference = torch.distributions.MultivariateNormal(
+        torch.zeros(3, dtype=torch.float64),
+        covariance_matrix=torch.eye(3, dtype=torch.float64),
+    )
+    oracle = proposal.log_prob(samples) - reference.log_prob(samples)
+    torch.testing.assert_close(component.log_q_over_p(samples), oracle, rtol=1e-13, atol=1e-13)
+
+
+def test_curvature_builder_can_add_full_rank_asymptotic_safety_component() -> None:
+    problem = RBergomiBaselineProblem(
+        task_id="v16-safety",
+        task=TerminalThresholdTask(level=60.0),
+        spot=100.0,
+        maturity=1.0,
+        steps=4,
+        hurst=0.12,
+        eta=1.5,
+        xi=0.04,
+        rho=-0.7,
+    )
+    basis = build_blp_cameron_martin_basis(steps=problem.steps, modes_per_driver=2)
+    action = RBergomiConditionalAction(problem=problem, basis=basis, epsilon=0.25)
+    modes = find_rbergomi_conditional_modes(
+        action,
+        config=ModeSearchConfig(
+            methods=("lbfgs",),
+            random_starts=1,
+            random_seed=71,
+            start_scale=1.0,
+            solver=ActionSolverConfig(maximum_iterations=100, gradient_tolerance=1e-6),
+        ),
+    )
+    transport = build_curvature_transport(
+        action,
+        modes,
+        config=CurvatureTransportConfig(
+            defensive_mass=0.15,
+            asymptotic_safety_mass=0.05,
+        ),
+    )
+    assert float(transport.weights[0]) == pytest.approx(0.15)
+    assert float(transport.weights[1]) == pytest.approx(0.05)
+    assert transport.components[1].rank == problem.local_dimension
+    assert torch.all(transport.components[1].variance_eigenvalues == 4.0)
+
+
+def test_trace_class_safety_component_matches_dense_covariance() -> None:
+    angle = 0.41
+    directions = torch.tensor(
+        [[math.cos(angle), -math.sin(angle)], [math.sin(angle), math.cos(angle)]],
+        dtype=torch.float64,
+    )
+    spectrum = torch.tensor([1.0, 0.25], dtype=torch.float64)
+    epsilon = 0.2
+    component = build_trace_class_small_noise_safety_component(
+        directions,
+        spectrum,
+        epsilon=epsilon,
+    )
+    covariance = torch.eye(2, dtype=torch.float64) + directions @ (
+        torch.diag(spectrum / epsilon) @ directions.T
+    )
+    samples = torch.tensor([[0.0, 0.0], [1.0, -0.5], [-2.0, 0.3]], dtype=torch.float64)
+    proposal = torch.distributions.MultivariateNormal(
+        torch.zeros(2, dtype=torch.float64),
+        covariance_matrix=covariance,
+    )
+    reference = torch.distributions.MultivariateNormal(
+        torch.zeros(2, dtype=torch.float64),
+        covariance_matrix=torch.eye(2, dtype=torch.float64),
+    )
+    torch.testing.assert_close(
+        component.log_q_over_p(samples),
+        proposal.log_prob(samples) - reference.log_prob(samples),
+        rtol=2e-13,
+        atol=2e-13,
+    )
+
+
+def test_curvature_builder_trace_class_spectrum_is_positive_and_summable_by_design() -> None:
+    problem = RBergomiBaselineProblem(
+        task_id="v16-trace-safety",
+        task=TerminalThresholdTask(level=60.0),
+        spot=100.0,
+        maturity=1.0,
+        steps=4,
+        hurst=0.12,
+        eta=1.5,
+        xi=0.04,
+        rho=-0.7,
+    )
+    basis = build_blp_cameron_martin_basis(steps=problem.steps, modes_per_driver=2)
+    action = RBergomiConditionalAction(problem=problem, basis=basis, epsilon=0.25)
+    modes = find_rbergomi_conditional_modes(
+        action,
+        config=ModeSearchConfig(
+            methods=("lbfgs",),
+            random_starts=1,
+            random_seed=81,
+            start_scale=1.0,
+            solver=ActionSolverConfig(maximum_iterations=100, gradient_tolerance=1e-6),
+        ),
+    )
+    transport = build_curvature_transport(
+        action,
+        modes,
+        config=CurvatureTransportConfig(
+            defensive_mass=0.15,
+            asymptotic_safety_mass=0.05,
+            safety_spectrum_decay=2.0,
+            safety_spectrum_scale=0.8,
+        ),
+    )
+    safety = transport.components[1]
+    covariance_spectrum = action.epsilon * (safety.variance_eigenvalues - 1.0)
+    expected = torch.cat(
+        (
+            0.8 / torch.arange(1, 5, dtype=torch.float64).square(),
+            torch.full((4,), 0.8 / 4**2, dtype=torch.float64),
+        )
+    )
+    torch.testing.assert_close(covariance_spectrum, expected, rtol=1e-13, atol=1e-13)
+    assert bool((covariance_spectrum > 0.0).all())

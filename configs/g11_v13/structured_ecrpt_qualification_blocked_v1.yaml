@@ -1,0 +1,29 @@
+schema: npi.g11.v13-structured-ecrpt-qualification-blocked.v1
+protocol_id: g11-v13-structured-ecrpt-qualification-v1
+stage: qualification
+status: blocked
+date: "2026-08-11"
+authorization_rule: development_stage_pass_must_be_true
+authorization_observed: false
+qualification_executed: false
+source_development:
+  path: results/g11_v13_structured_ecrpt_development_v1_2026-08-11.json
+  sha256: 65dae19f013ec18dd4945efb95df899fa804842b97d9ac2a5b7980eb537f66fd
+source_audit:
+  path: results/g11_v13_structured_ecrpt_development_v1_audit_2026-08-11.json
+  sha256: 5ccaa0e2f048017b3f975d9c031a3ff4c0aea17a95badc63ed5de5c0bc9f94b2
+development_gate:
+  stage_pass: false
+  correctness_pass: false
+  performance_pass: false
+  blockers: [candidate_accuracy, primary_accuracy, tail_safe_uncensored, performance]
+prohibited_actions:
+  - allocate qualification seeds
+  - tune on a qualification namespace
+  - describe development evidence as qualification
+  - authorize a broad performance or submission claim
+unblock_requirements:
+  - new development protocol with a materially improved support-covering proposal
+  - non-censored tail-safe evidence at the declared target accuracy
+  - candidate and all primary comparator accuracy gates pass
+  - training-inclusive performance gate passes without changing thresholds post hoc

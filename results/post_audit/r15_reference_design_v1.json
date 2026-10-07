@@ -1,0 +1,903 @@
+{
+  "cells": [
+    {
+      "candidates": [
+        {
+          "candidate": {
+            "bridge_power": 4,
+            "id": "original-calendar",
+            "mutation_steps": 1,
+            "pcn_scale": 0.55,
+            "resample_every": 1,
+            "resampling_scheme": "multinomial"
+          },
+          "cost_normalized_cv2": 8342.564367422145,
+          "log_replicate_estimates": [
+            -17.29151343525709,
+            -17.337042017508264,
+            -16.86881843191258,
+            -17.306559545390225,
+            -15.601625934720728,
+            -17.305977925729497,
+            -17.275037471987183,
+            -16.42406461361663,
+            -18.096336059144207,
+            -16.368541571792605,
+            -16.772112911563475,
+            -16.749920223445816,
+            -19.507938349291063,
+            -16.206795993825352,
+            -18.053920802703068,
+            -16.620097524770422,
+            -19.671331548865766,
+            -16.942644975434064,
+            -18.20301395763668,
+            -17.3517139481543,
+            -18.03379530493403,
+            -18.151793265251786,
+            -16.303346577901575,
+            -16.65422683240718
+          ],
+          "mean": 4.440330409318374e-08,
+          "median_final_weight_ess_fraction": 0.9798138172897497,
+          "median_resampling_stages": 47.0,
+          "median_unique_initial_ancestors": 4.0,
+          "minimum_unique_initial_ancestors": 2,
+          "mutation_acceptance_rate": 0.43560574578900707,
+          "potential_evaluations_per_rep": 12288.0,
+          "relative_se": 0.16819131297610881,
+          "seed": 7336441945248557854,
+          "standard_error": 7.46825001591e-09,
+          "wall_seconds": 5.768653299659491
+        },
+        {
+          "candidate": {
+            "bridge_power": 4,
+            "id": "stratified-every-stage",
+            "mutation_steps": 1,
+            "pcn_scale": 0.55,
+            "resample_every": 1,
+            "resampling_scheme": "stratified"
+          },
+          "cost_normalized_cv2": 5661.151810528689,
+          "log_replicate_estimates": [
+            -17.065003613180068,
+            -17.400243643806068,
+            -15.92253780109069,
+            -19.056281725787066,
+            -16.86981845461161,
+            -17.388496234226025,
+            -17.897484403596756,
+            -17.75374902909834,
+            -16.71545659418971,
+            -16.338635056289036,
+            -17.129119643904865,
+            -16.90425680830291,
+            -16.811779039923884,
+            -16.065400167719893,
+            -17.383403446693684,
+            -17.870475064022433,
+            -16.114110187806677,
+            -16.680414117069454,
+            -17.80438559111223,
+            -17.38825161666257,
+            -18.22042169275929,
+            -16.097155575326486,
+            -16.529062155610717,
+            -16.92835306716355
+          ],
+          "mean": 4.800944170695146e-08,
+          "median_final_weight_ess_fraction": 0.981395655990042,
+          "median_resampling_stages": 47.0,
+          "median_unique_initial_ancestors": 8.0,
+          "minimum_unique_initial_ancestors": 3,
+          "mutation_acceptance_rate": 0.4359381925975177,
+          "potential_evaluations_per_rep": 12288.0,
+          "relative_se": 0.13854988778827584,
+          "seed": 2289908125714558823,
+          "standard_error": 6.6517027612758955e-09,
+          "wall_seconds": 5.790239799767733
+        },
+        {
+          "candidate": {
+            "bridge_power": 4,
+            "id": "multinomial-every-fourth",
+            "mutation_steps": 1,
+            "pcn_scale": 0.55,
+            "resample_every": 4,
+            "resampling_scheme": "multinomial"
+          },
+          "cost_normalized_cv2": 22100.51120104126,
+          "log_replicate_estimates": [
+            -18.58709423383917,
+            -17.471268943844407,
+            -17.12908086483808,
+            -15.486128995524295,
+            -19.21695921663884,
+            -18.174390102752312,
+            -18.343877654642284,
+            -17.926470539895742,
+            -17.778999679414472,
+            -19.152853280292074,
+            -17.221521748145733,
+            -18.158143075270914,
+            -17.3956567719422,
+            -17.580851143133113,
+            -17.849769536546717,
+            -16.56337287992154,
+            -18.32451932955935,
+            -17.147589202111227,
+            -17.756750106694604,
+            -16.97410134114582,
+            -17.433939803524588,
+            -18.168787737818484,
+            -19.81246618031898,
+            -18.876623239369824
+          ],
+          "mean": 2.763526365177421e-08,
+          "median_final_weight_ess_fraction": 0.7721298011972937,
+          "median_resampling_stages": 11.0,
+          "median_unique_initial_ancestors": 8.0,
+          "minimum_unique_initial_ancestors": 6,
+          "mutation_acceptance_rate": 0.43632258421985815,
+          "potential_evaluations_per_rep": 12288.0,
+          "relative_se": 0.2737505103354379,
+          "seed": 3073369126238023007,
+          "standard_error": 7.565167527927567e-09,
+          "wall_seconds": 5.655972700100392
+        },
+        {
+          "candidate": {
+            "bridge_power": 4,
+            "id": "stratified-every-fourth",
+            "mutation_steps": 1,
+            "pcn_scale": 0.55,
+            "resample_every": 4,
+            "resampling_scheme": "stratified"
+          },
+          "cost_normalized_cv2": 29944.797620854908,
+          "log_replicate_estimates": [
+            -15.916219587083711,
+            -17.56334474332218,
+            -16.896666391991324,
+            -18.55139575125198,
+            -17.76574351313866,
+            -16.447713524127288,
+            -17.11350526660478,
+            -18.10439450847048,
+            -16.884903193778033,
+            -18.0439837800332,
+            -17.911220923607267,
+            -16.83254991149471,
+            -14.817891550425408,
+            -17.283265628194034,
+            -16.28460480539175,
+            -18.11960944053436,
+            -16.47361918050455,
+            -18.425209082087573,
+            -18.291316475511675,
+            -18.36507286511055,
+            -17.8088966946863,
+            -18.22217298527905,
+            -17.52791344374444,
+            -18.108629729145346
+          ],
+          "mean": 4.733954083241597e-08,
+          "median_final_weight_ess_fraction": 0.7551403337570981,
+          "median_resampling_stages": 11.0,
+          "median_unique_initial_ancestors": 9.0,
+          "minimum_unique_initial_ancestors": 5,
+          "mutation_acceptance_rate": 0.43421016179078015,
+          "potential_evaluations_per_rep": 12288.0,
+          "relative_se": 0.3186504007061577,
+          "seed": 3051617085162334003,
+          "standard_error": 1.5084763655494862e-08,
+          "wall_seconds": 5.690184600185603
+        },
+        {
+          "candidate": {
+            "bridge_power": 2,
+            "id": "lower-power-bridge",
+            "mutation_steps": 1,
+            "pcn_scale": 0.55,
+            "resample_every": 4,
+            "resampling_scheme": "stratified"
+          },
+          "cost_normalized_cv2": 29123.68114943563,
+          "log_replicate_estimates": [
+            -18.09249688929636,
+            -16.73840463546809,
+            -14.563149060731828,
+            -16.669553925982022,
+            -16.131523626168097,
+            -17.569068714584322,
+            -16.90214737625825,
+            -16.906561905303302,
+            -14.442369578945026,
+            -17.565988651789617,
+            -18.1167586426616,
+            -17.291816905028192,
+            -18.349474745156876,
+            -16.38187619904382,
+            -15.628017918048648,
+            -16.601743778154347,
+            -15.54569190437908,
+            -17.37157063948743,
+            -18.043313787734192,
+            -17.29590235843511,
+            -17.897348764718224,
+            -18.269847765286023,
+            -16.27928396358567,
+            -17.524459464247183
+          ],
+          "mean": 8.816527861298034e-08,
+          "median_final_weight_ess_fraction": 0.9321003875647802,
+          "median_resampling_stages": 11.0,
+          "median_unique_initial_ancestors": 6.5,
+          "minimum_unique_initial_ancestors": 3,
+          "mutation_acceptance_rate": 0.2509696365248227,
+          "potential_evaluations_per_rep": 12288.0,
+          "relative_se": 0.31425117603695646,
+          "seed": 7568930868490296624,
+          "standard_error": 2.7706042489754996e-08,
+          "wall_seconds": 5.662913100328296
+        },
+        {
+          "candidate": {
+            "bridge_power": 4,
+            "id": "stronger-mutation",
+            "mutation_steps": 2,
+            "pcn_scale": 0.35,
+            "resample_every": 4,
+            "resampling_scheme": "stratified"
+          },
+          "cost_normalized_cv2": 6380.885067412507,
+          "log_replicate_estimates": [
+            -17.033277378774788,
+            -17.190590866267506,
+            -16.910883750524754,
+            -17.349137744842,
+            -16.311907050192048,
+            -16.3696799903239,
+            -17.02803402592186,
+            -16.587548796064443,
+            -17.815294000928866,
+            -16.44542824408298,
+            -15.94796019506662,
+            -16.78601989552372,
+            -19.283260039578963,
+            -17.03798406157713,
+            -17.243875848088663,
+            -16.66961565156157,
+            -16.817898562593165,
+            -16.68145481596245,
+            -18.161872137569972,
+            -16.889627507516874,
+            -16.647829545061352,
+            -17.591491126431286,
+            -16.841927048233483,
+            -16.913534446319506
+          ],
+          "mean": 4.7799847246098725e-08,
+          "median_final_weight_ess_fraction": 0.8042785986907102,
+          "median_resampling_stages": 11.0,
+          "median_unique_initial_ancestors": 16.0,
+          "minimum_unique_initial_ancestors": 10,
+          "mutation_acceptance_rate": 0.5904463098404256,
+          "potential_evaluations_per_rep": 24320.0,
+          "relative_se": 0.10455698583593799,
+          "seed": 2035271988861241183,
+          "standard_error": 4.997807951470344e-09,
+          "wall_seconds": 10.860041100066155
+        }
+      ],
+      "cell": {
+        "id": "canonical-h005-k1",
+        "threshold": 1.0
+      },
+      "task_id": "canonical-h005-k1-n32"
+    },
+    {
+      "candidates": [
+        {
+          "candidate": {
+            "bridge_power": 4,
+            "id": "original-calendar",
+            "mutation_steps": 1,
+            "pcn_scale": 0.55,
+            "resample_every": 1,
+            "resampling_scheme": "multinomial"
+          },
+          "cost_normalized_cv2": 1290.2627340849522,
+          "log_replicate_estimates": [
+            -12.420228407263007,
+            -12.387937098603702,
+            -12.862661740615852,
+            -12.195231613667074,
+            -12.275009467186528,
+            -12.164818917172207,
+            -12.309992336108204,
+            -12.518674701050411,
+            -12.342452845525905,
+            -12.249591958398286,
+            -13.11899554954731,
+            -11.874101849063212,
+            -11.818211815794717,
+            -12.66008201272653,
+            -12.328618317393405,
+            -11.896433697105547,
+            -12.39856262903453,
+            -13.503568972040437,
+            -12.459544918597889,
+            -12.29092741821529,
+            -12.468162059797617,
+            -12.263069934484559,
+            -12.614150048518994,
+            -12.445810092009577
+          ],
+          "mean": 4.316447201276016e-06,
+          "median_final_weight_ess_fraction": 0.9886923692585058,
+          "median_resampling_stages": 47.0,
+          "median_unique_initial_ancestors": 5.0,
+          "minimum_unique_initial_ancestors": 4,
+          "mutation_acceptance_rate": 0.4391934009308511,
+          "potential_evaluations_per_rep": 12288.0,
+          "relative_se": 0.06614436550221343,
+          "seed": 7496218618307311788,
+          "standard_error": 2.855086613522071e-07,
+          "wall_seconds": 5.690702399704605
+        },
+        {
+          "candidate": {
+            "bridge_power": 4,
+            "id": "stratified-every-stage",
+            "mutation_steps": 1,
+            "pcn_scale": 0.55,
+            "resample_every": 1,
+            "resampling_scheme": "stratified"
+          },
+          "cost_normalized_cv2": 1216.1621805682985,
+          "log_replicate_estimates": [
+            -12.413494080078113,
+            -12.040769658371833,
+            -12.07432649884305,
+            -12.116940629023595,
+            -12.015115318246313,
+            -11.95569361844409,
+            -12.308557347213753,
+            -12.625598890163642,
+            -12.42689968414189,
+            -12.807777155025892,
+            -12.036956985109235,
+            -12.022730992994916,
+            -12.516484193778343,
+            -13.371204765784015,
+            -12.275533081166568,
+            -12.555113605141308,
+            -12.120341753490372,
+            -12.859690239172323,
+            -12.150393455681005,
+            -12.878741123790455,
+            -11.881772462266355,
+            -12.275034878449826,
+            -12.592139436531939,
+            -12.444454117181941
+          ],
+          "mean": 4.512744186415298e-06,
+          "median_final_weight_ess_fraction": 0.9882158560040362,
+          "median_resampling_stages": 47.0,
+          "median_unique_initial_ancestors": 15.5,
+          "minimum_unique_initial_ancestors": 11,
+          "mutation_acceptance_rate": 0.4390756593528369,
+          "potential_evaluations_per_rep": 12288.0,
+          "relative_se": 0.06421692781170485,
+          "seed": 2841388340203523213,
+          "standard_error": 2.897945676517219e-07,
+          "wall_seconds": 5.804347299970686
+        },
+        {
+          "candidate": {
+            "bridge_power": 4,
+            "id": "multinomial-every-fourth",
+            "mutation_steps": 1,
+            "pcn_scale": 0.55,
+            "resample_every": 4,
+            "resampling_scheme": "multinomial"
+          },
+          "cost_normalized_cv2": 2342.6542155618636,
+          "log_replicate_estimates": [
+            -12.149285821730842,
+            -12.847151815643025,
+            -11.750569962819739,
+            -12.192760168343273,
+            -11.789660244266305,
+            -12.784574305216506,
+            -12.774047270965852,
+            -13.101054744269986,
+            -12.509583236855196,
+            -12.106505961142485,
+            -11.961805590104234,
+            -12.140499969334511,
+            -12.97938887942638,
+            -12.32623106524095,
+            -12.163538767306774,
+            -12.652016834520596,
+            -13.001172529872623,
+            -11.723373908640966,
+            -12.864161110284513,
+            -13.501511361817352,
+            -12.485765750572,
+            -12.181677131436771,
+            -12.177774243768388,
+            -12.499320232567086
+          ],
+          "mean": 4.347126052982331e-06,
+          "median_final_weight_ess_fraction": 0.8523486021389264,
+          "median_resampling_stages": 11.0,
+          "median_unique_initial_ancestors": 13.0,
+          "minimum_unique_initial_ancestors": 9,
+          "mutation_acceptance_rate": 0.43406817929964536,
+          "potential_evaluations_per_rep": 12288.0,
+          "relative_se": 0.0891267094542432,
+          "seed": 3514448377760451033,
+          "standard_error": 3.874450406851272e-07,
+          "wall_seconds": 5.669135899748653
+        },
+        {
+          "candidate": {
+            "bridge_power": 4,
+            "id": "stratified-every-fourth",
+            "mutation_steps": 1,
+            "pcn_scale": 0.55,
+            "resample_every": 4,
+            "resampling_scheme": "stratified"
+          },
+          "cost_normalized_cv2": 2213.234094287022,
+          "log_replicate_estimates": [
+            -12.135635934364352,
+            -12.154003479799588,
+            -12.551950106913171,
+            -12.754819234805073,
+            -12.2971761370752,
+            -13.089962558142552,
+            -13.032734695144594,
+            -12.585725199053204,
+            -12.502415481656993,
+            -12.165318342871863,
+            -12.194483258181453,
+            -12.628014262728993,
+            -12.568844318231386,
+            -11.724868988030568,
+            -12.798049167903137,
+            -12.415126719864832,
+            -12.768356310396587,
+            -13.22979315288342,
+            -12.181838980902443,
+            -12.151044736693436,
+            -13.391774099160122,
+            -11.759392342747072,
+            -12.9096850413873,
+            -12.18788912406432
+          ],
+          "mean": 4.037991747741818e-06,
+          "median_final_weight_ess_fraction": 0.8506284646848341,
+          "median_resampling_stages": 11.0,
+          "median_unique_initial_ancestors": 17.0,
+          "minimum_unique_initial_ancestors": 12,
+          "mutation_acceptance_rate": 0.436194453679078,
+          "potential_evaluations_per_rep": 12288.0,
+          "relative_se": 0.08662982831265312,
+          "seed": 6248784252294557705,
+          "standard_error": 3.498105318347838e-07,
+          "wall_seconds": 5.750598200131208
+        },
+        {
+          "candidate": {
+            "bridge_power": 2,
+            "id": "lower-power-bridge",
+            "mutation_steps": 1,
+            "pcn_scale": 0.55,
+            "resample_every": 4,
+            "resampling_scheme": "stratified"
+          },
+          "cost_normalized_cv2": 1892.8863939818093,
+          "log_replicate_estimates": [
+            -12.889422459559476,
+            -12.325273199109327,
+            -12.758789397374791,
+            -11.844574891026387,
+            -12.597278447295828,
+            -12.075125369180993,
+            -12.188362011095812,
+            -11.904873088992364,
+            -12.554919539027537,
+            -12.439240433166432,
+            -12.239899656101123,
+            -12.785506796037911,
+            -12.620908729677833,
+            -12.281428005353991,
+            -12.2916930081505,
+            -12.201826660963233,
+            -12.195875801460286,
+            -12.125380213761424,
+            -12.891980418236843,
+            -12.204953557222346,
+            -13.032681191630703,
+            -12.429144990687846,
+            -11.564553501659637,
+            -13.095139472886299
+          ],
+          "mean": 4.431349289697031e-06,
+          "median_final_weight_ess_fraction": 0.9573815782028803,
+          "median_resampling_stages": 11.0,
+          "median_unique_initial_ancestors": 13.0,
+          "minimum_unique_initial_ancestors": 8,
+          "mutation_acceptance_rate": 0.265296016179078,
+          "potential_evaluations_per_rep": 12288.0,
+          "relative_se": 0.08011540870664116,
+          "seed": 1328296805630300000,
+          "standard_error": 3.5501935946596163e-07,
+          "wall_seconds": 5.587158699985594
+        },
+        {
+          "candidate": {
+            "bridge_power": 4,
+            "id": "stronger-mutation",
+            "mutation_steps": 2,
+            "pcn_scale": 0.35,
+            "resample_every": 4,
+            "resampling_scheme": "stratified"
+          },
+          "cost_normalized_cv2": 2630.697559246804,
+          "log_replicate_estimates": [
+            -12.51983186089997,
+            -12.767653793100568,
+            -12.271141242458391,
+            -12.203368294462772,
+            -12.34837191735365,
+            -12.544711612823132,
+            -12.376240742420297,
+            -12.75538820028542,
+            -12.295157605530509,
+            -12.227650030302847,
+            -11.999129992928824,
+            -12.611320187560938,
+            -12.119389451250346,
+            -11.709688144996274,
+            -12.213006874846002,
+            -12.741730134007824,
+            -12.771633512717148,
+            -12.818427109015008,
+            -12.321210344353275,
+            -12.552443178643024,
+            -12.859419007064712,
+            -12.177957805166265,
+            -12.552414746531358,
+            -11.866468605639
+          ],
+          "mean": 4.315126956395982e-06,
+          "median_final_weight_ess_fraction": 0.8734845025584161,
+          "median_resampling_stages": 11.0,
+          "median_unique_initial_ancestors": 27.0,
+          "minimum_unique_initial_ancestors": 17,
+          "mutation_acceptance_rate": 0.5986120345744681,
+          "potential_evaluations_per_rep": 24320.0,
+          "relative_se": 0.06713485492624785,
+          "seed": 1549591962824686319,
+          "standard_error": 2.896954222059857e-07,
+          "wall_seconds": 11.043668899685144
+        }
+      ],
+      "cell": {
+        "eta": 2.0,
+        "id": "high-eta200-k1",
+        "threshold": 1.0
+      },
+      "task_id": "high-eta200-k1-n32"
+    }
+  ],
+  "config": {
+    "cells": [
+      {
+        "id": "canonical-h005-k1",
+        "threshold": 1.0
+      },
+      {
+        "eta": 2.0,
+        "id": "high-eta200-k1",
+        "threshold": 1.0
+      }
+    ],
+    "design": {
+      "candidates": [
+        {
+          "bridge_power": 4,
+          "id": "original-calendar",
+          "mutation_steps": 1,
+          "pcn_scale": 0.55,
+          "resample_every": 1,
+          "resampling_scheme": "multinomial"
+        },
+        {
+          "bridge_power": 4,
+          "id": "stratified-every-stage",
+          "mutation_steps": 1,
+          "pcn_scale": 0.55,
+          "resample_every": 1,
+          "resampling_scheme": "stratified"
+        },
+        {
+          "bridge_power": 4,
+          "id": "multinomial-every-fourth",
+          "mutation_steps": 1,
+          "pcn_scale": 0.55,
+          "resample_every": 4,
+          "resampling_scheme": "multinomial"
+        },
+        {
+          "bridge_power": 4,
+          "id": "stratified-every-fourth",
+          "mutation_steps": 1,
+          "pcn_scale": 0.55,
+          "resample_every": 4,
+          "resampling_scheme": "stratified"
+        },
+        {
+          "bridge_power": 2,
+          "id": "lower-power-bridge",
+          "mutation_steps": 1,
+          "pcn_scale": 0.55,
+          "resample_every": 4,
+          "resampling_scheme": "stratified"
+        },
+        {
+          "bridge_power": 4,
+          "id": "stronger-mutation",
+          "mutation_steps": 2,
+          "pcn_scale": 0.35,
+          "resample_every": 4,
+          "resampling_scheme": "stratified"
+        }
+      ],
+      "independent_replicates": 24,
+      "levels": 48,
+      "minimum_median_final_weight_ess_fraction": 0.1,
+      "minimum_median_unique_initial_ancestors": 16,
+      "particles": 256,
+      "reference_maximum_replicates": 512,
+      "reference_minimum_replicates": 64,
+      "reference_target_relative_se": 0.05,
+      "steps": 32
+    },
+    "model": {
+      "eta": 1.5,
+      "hurst": 0.05,
+      "maturity": 1.0,
+      "rho": -0.7,
+      "spot": 100.0,
+      "xi": 0.04
+    },
+    "output_path": "results/post_audit/r15_reference_design_v1.json",
+    "schema": "npi.post-audit.r15-reference-design-config.v1",
+    "torch_threads": 1
+  },
+  "prespecified_reference_counts": {
+    "canonical-h005-k1": 105,
+    "high-eta200-k1": 64
+  },
+  "reference_rule": "counts_from_independent_pilot_only_not_production_outcomes",
+  "role": "development_selection_not_reference",
+  "schema": "npi.post-audit.r15-reference-design.v1",
+  "seed_ledger": {
+    "records": [
+      {
+        "key": {
+          "level": 0,
+          "protocol": "post-audit-r15",
+          "regime": "conditional-smc",
+          "replicate": 0,
+          "role": "design",
+          "stream": "lower-power-bridge",
+          "task": "canonical-h005-k1-n32"
+        },
+        "seed": 7568930868490296624
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "post-audit-r15",
+          "regime": "conditional-smc",
+          "replicate": 0,
+          "role": "design",
+          "stream": "multinomial-every-fourth",
+          "task": "canonical-h005-k1-n32"
+        },
+        "seed": 3073369126238023007
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "post-audit-r15",
+          "regime": "conditional-smc",
+          "replicate": 0,
+          "role": "design",
+          "stream": "original-calendar",
+          "task": "canonical-h005-k1-n32"
+        },
+        "seed": 7336441945248557854
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "post-audit-r15",
+          "regime": "conditional-smc",
+          "replicate": 0,
+          "role": "design",
+          "stream": "stratified-every-fourth",
+          "task": "canonical-h005-k1-n32"
+        },
+        "seed": 3051617085162334003
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "post-audit-r15",
+          "regime": "conditional-smc",
+          "replicate": 0,
+          "role": "design",
+          "stream": "stratified-every-stage",
+          "task": "canonical-h005-k1-n32"
+        },
+        "seed": 2289908125714558823
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "post-audit-r15",
+          "regime": "conditional-smc",
+          "replicate": 0,
+          "role": "design",
+          "stream": "stronger-mutation",
+          "task": "canonical-h005-k1-n32"
+        },
+        "seed": 2035271988861241183
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "post-audit-r15",
+          "regime": "conditional-smc",
+          "replicate": 0,
+          "role": "design",
+          "stream": "lower-power-bridge",
+          "task": "high-eta200-k1-n32"
+        },
+        "seed": 1328296805630300000
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "post-audit-r15",
+          "regime": "conditional-smc",
+          "replicate": 0,
+          "role": "design",
+          "stream": "multinomial-every-fourth",
+          "task": "high-eta200-k1-n32"
+        },
+        "seed": 3514448377760451033
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "post-audit-r15",
+          "regime": "conditional-smc",
+          "replicate": 0,
+          "role": "design",
+          "stream": "original-calendar",
+          "task": "high-eta200-k1-n32"
+        },
+        "seed": 7496218618307311788
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "post-audit-r15",
+          "regime": "conditional-smc",
+          "replicate": 0,
+          "role": "design",
+          "stream": "stratified-every-fourth",
+          "task": "high-eta200-k1-n32"
+        },
+        "seed": 6248784252294557705
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "post-audit-r15",
+          "regime": "conditional-smc",
+          "replicate": 0,
+          "role": "design",
+          "stream": "stratified-every-stage",
+          "task": "high-eta200-k1-n32"
+        },
+        "seed": 2841388340203523213
+      },
+      {
+        "key": {
+          "level": 0,
+          "protocol": "post-audit-r15",
+          "regime": "conditional-smc",
+          "replicate": 0,
+          "role": "design",
+          "stream": "stronger-mutation",
+          "task": "high-eta200-k1-n32"
+        },
+        "seed": 1549591962824686319
+      }
+    ],
+    "schema": "npi.g11.seed-ledger.v1"
+  },
+  "selected_candidate_id": "stronger-mutation",
+  "selection_status": "diversity_gate_pass",
+  "selection_table": [
+    {
+      "id": "original-calendar",
+      "minimum_cell_median_ancestors": 4.0,
+      "qualifies_diversity_gate": false,
+      "worst_cell_cost_normalized_cv2": 8342.564367422145
+    },
+    {
+      "id": "stratified-every-stage",
+      "minimum_cell_median_ancestors": 8.0,
+      "qualifies_diversity_gate": false,
+      "worst_cell_cost_normalized_cv2": 5661.151810528689
+    },
+    {
+      "id": "multinomial-every-fourth",
+      "minimum_cell_median_ancestors": 8.0,
+      "qualifies_diversity_gate": false,
+      "worst_cell_cost_normalized_cv2": 22100.51120104126
+    },
+    {
+      "id": "stratified-every-fourth",
+      "minimum_cell_median_ancestors": 9.0,
+      "qualifies_diversity_gate": false,
+      "worst_cell_cost_normalized_cv2": 29944.797620854908
+    },
+    {
+      "id": "lower-power-bridge",
+      "minimum_cell_median_ancestors": 6.5,
+      "qualifies_diversity_gate": false,
+      "worst_cell_cost_normalized_cv2": 29123.68114943563
+    },
+    {
+      "id": "stronger-mutation",
+      "minimum_cell_median_ancestors": 16.0,
+      "qualifies_diversity_gate": true,
+      "worst_cell_cost_normalized_cv2": 6380.885067412507
+    }
+  ],
+  "source": {
+    "config_digest": "89184ead869fab693e94d095465623ccabee8122dedaffee8afdacb539ab6a4f",
+    "runtime": {
+      "cuda": "12.8",
+      "deterministic_algorithms": false,
+      "dtype": "float64",
+      "os": "Windows-10-10.0.26200-SP0",
+      "packages": {
+        "PyYAML": "6.0.2",
+        "numpy": "1.26.2",
+        "psutil": "5.9.5",
+        "scipy": "1.15.3"
+      },
+      "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+      "python": "3.10.11",
+      "pytorch": "2.12.0.dev20260408+cu128",
+      "torch_threads": 1
+    },
+    "source_commit": "657b28cae04f93623c65368feec6e6bb5f332d97",
+    "source_dirty": true,
+    "source_patch_digest": "b1ecf4012df44c4f99693cf5f15a49dd7bb166d1b303081bacb0d19d82ec90b8",
+    "source_tree_digest": "0548ef66e7f4eeff44210502a1503bc782d84868853be93868381331e59b5ff8"
+  }
+}

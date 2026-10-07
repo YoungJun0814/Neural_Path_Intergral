@@ -1,0 +1,396 @@
+{
+  "confirmation_summaries": [
+    {
+      "accuracy_z_matches": true,
+      "accuracy_z_recomputed": 1.2072524378859109,
+      "added_to_qualified_by_candidate_runner": [],
+      "baseline_nonfinite_rse_methods": [],
+      "baseline_rse": {
+        "conditional_rbergomi": 0.5181335376827958,
+        "defensive_cem": 0.21920335619157794,
+        "ld_subspace_is": 0.14911135081293259,
+        "smoothing_rqmc": 0.987322972496538,
+        "v14_local_volterra": 0.08228962745080047
+      },
+      "candidate_evaluation_work": 1528823808.0,
+      "candidate_training_work": 212336640.0,
+      "cell": "rough-h005-k1",
+      "estimate": 4.8375655921483e-08,
+      "evaluation_clusters": 32,
+      "evaluation_samples": 2097152,
+      "horizon_ratios": {
+        "1": {
+          "comparator_over_candidate": 5.327105841134794,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "10": {
+          "comparator_over_candidate": 5.911164873061817,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "100": {
+          "comparator_over_candidate": 5.977590449508442,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "1000": {
+          "comparator_over_candidate": 5.98432432963704,
+          "strongest_comparator": "v14_local_volterra"
+        }
+      },
+      "initializer": "tempered_smc",
+      "primary_ratio_matches": true,
+      "reference_estimate": 5.040956244730212e-08,
+      "reference_rse": 0.027131191922241293,
+      "relative_difference_from_reference": -0.04034763301001376,
+      "removed_from_qualified_by_candidate_runner": [],
+      "robust_rse": 0.02033626761052259,
+      "role": "canonical_dominance",
+      "training_fits_per_confirmation_variant": 1
+    },
+    {
+      "accuracy_z_matches": true,
+      "accuracy_z_recomputed": 1.2068222962999284,
+      "added_to_qualified_by_candidate_runner": [
+        "conditional_rbergomi",
+        "ld_subspace_is",
+        "smoothing_rqmc"
+      ],
+      "baseline_nonfinite_rse_methods": [],
+      "baseline_rse": {
+        "conditional_rbergomi": 0.38199585755846344,
+        "defensive_cem": 0.12755035127227413,
+        "ld_subspace_is": 0.25862274214949454,
+        "smoothing_rqmc": 0.9404394763071143,
+        "v14_local_volterra": 0.04264515654189628
+      },
+      "candidate_evaluation_work": 1931476992.0,
+      "candidate_training_work": 219635712.0,
+      "cell": "rough-h005-k2-ood",
+      "estimate": 1.9763509674608982e-07,
+      "evaluation_clusters": 32,
+      "evaluation_samples": 2097152,
+      "horizon_ratios": {
+        "1": {
+          "comparator_over_candidate": 1.1640293350495379,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "10": {
+          "comparator_over_candidate": 1.2680914485188428,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "100": {
+          "comparator_over_candidate": 1.2796678264210766,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "1000": {
+          "comparator_over_candidate": 1.280838495036673,
+          "strongest_comparator": "v14_local_volterra"
+        }
+      },
+      "initializer": "v14_tempered_hybrid",
+      "primary_ratio_matches": true,
+      "reference_estimate": 1.8667930122254788e-07,
+      "reference_rse": 0.04289243759009376,
+      "relative_difference_from_reference": 0.05868778944314279,
+      "removed_from_qualified_by_candidate_runner": [],
+      "robust_rse": 0.021645135162799593,
+      "role": "dominance_candidate",
+      "training_fits_per_confirmation_variant": 1
+    },
+    {
+      "accuracy_z_matches": true,
+      "accuracy_z_recomputed": 1.1281017748386466,
+      "added_to_qualified_by_candidate_runner": [
+        "conditional_rbergomi",
+        "ld_subspace_is"
+      ],
+      "baseline_nonfinite_rse_methods": [
+        "smoothing_rqmc"
+      ],
+      "baseline_rse": {
+        "conditional_rbergomi": 0.6476075948851467,
+        "defensive_cem": 0.136766736666898,
+        "ld_subspace_is": 0.27818689267648716,
+        "smoothing_rqmc": null,
+        "v14_local_volterra": 0.06862702268294729
+      },
+      "candidate_evaluation_work": 1528823808.0,
+      "candidate_training_work": 212336640.0,
+      "cell": "rough-h005-k05-ood",
+      "estimate": 1.3912880282320824e-08,
+      "evaluation_clusters": 32,
+      "evaluation_samples": 2097152,
+      "horizon_ratios": {
+        "1": {
+          "comparator_over_candidate": 4.48036695064864,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "10": {
+          "comparator_over_candidate": 4.9679737264483395,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "100": {
+          "comparator_over_candidate": 5.023429698175906,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "1000": {
+          "comparator_over_candidate": 5.029051536720709,
+          "strongest_comparator": "v14_local_volterra"
+        }
+      },
+      "initializer": "tempered_smc",
+      "primary_ratio_matches": true,
+      "reference_estimate": 1.45914182732342e-08,
+      "reference_rse": 0.037380557115923266,
+      "relative_difference_from_reference": -0.046502538561179696,
+      "removed_from_qualified_by_candidate_runner": [],
+      "robust_rse": 0.018223935102879795,
+      "role": "dominance_candidate",
+      "training_fits_per_confirmation_variant": 1
+    },
+    {
+      "accuracy_z_matches": true,
+      "accuracy_z_recomputed": 1.3798549154306823,
+      "added_to_qualified_by_candidate_runner": [
+        "smoothing_rqmc"
+      ],
+      "baseline_nonfinite_rse_methods": [],
+      "baseline_rse": {
+        "conditional_rbergomi": 0.21148977288566337,
+        "defensive_cem": 0.1705797939310988,
+        "ld_subspace_is": 0.13532622119422033,
+        "smoothing_rqmc": 0.8199944694479853,
+        "v14_local_volterra": 0.031876049093792096
+      },
+      "candidate_evaluation_work": 606076928.0,
+      "candidate_training_work": 7796736.0,
+      "cell": "rough-h005-eta200-k1-ood",
+      "estimate": 4.370439670195558e-06,
+      "evaluation_clusters": 32,
+      "evaluation_samples": 2097152,
+      "horizon_ratios": {
+        "1": {
+          "comparator_over_candidate": 0.4710571955016935,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "10": {
+          "comparator_over_candidate": 0.4710571955016935,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "100": {
+          "comparator_over_candidate": 0.4710571955016935,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "1000": {
+          "comparator_over_candidate": 0.4710571955016935,
+          "strongest_comparator": "v14_local_volterra"
+        }
+      },
+      "initializer": "v14_only",
+      "primary_ratio_matches": true,
+      "reference_estimate": 4.7352184377088775e-06,
+      "reference_rse": 0.03697624985980991,
+      "relative_difference_from_reference": -0.07703525662267374,
+      "removed_from_qualified_by_candidate_runner": [],
+      "robust_rse": 0.04531916018950211,
+      "role": "correctness_fallback",
+      "training_fits_per_confirmation_variant": 1
+    },
+    {
+      "accuracy_z_matches": true,
+      "accuracy_z_recomputed": 0.33663634326227326,
+      "added_to_qualified_by_candidate_runner": [],
+      "baseline_nonfinite_rse_methods": [
+        "smoothing_rqmc"
+      ],
+      "baseline_rse": {
+        "conditional_rbergomi": 0.5996167056336633,
+        "defensive_cem": 0.04297454412387211,
+        "ld_subspace_is": 0.18975780532696176,
+        "smoothing_rqmc": null,
+        "v14_local_volterra": 0.1506613280426108
+      },
+      "candidate_evaluation_work": 606076928.0,
+      "candidate_training_work": 10285056.0,
+      "cell": "rough-h005-rho090-k1-ood",
+      "estimate": 9.222137186047287e-08,
+      "evaluation_clusters": 32,
+      "evaluation_samples": 2097152,
+      "horizon_ratios": {
+        "1": {
+          "comparator_over_candidate": 0.5977801542926999,
+          "strongest_comparator": "defensive_cem"
+        },
+        "10": {
+          "comparator_over_candidate": 0.6042404642701524,
+          "strongest_comparator": "defensive_cem"
+        },
+        "100": {
+          "comparator_over_candidate": 0.6048973468676578,
+          "strongest_comparator": "defensive_cem"
+        },
+        "1000": {
+          "comparator_over_candidate": 0.6049631454830374,
+          "strongest_comparator": "defensive_cem"
+        }
+      },
+      "initializer": "v14_only",
+      "primary_ratio_matches": true,
+      "reference_estimate": 9.48045732161525e-08,
+      "reference_rse": 0.06981315466739667,
+      "relative_difference_from_reference": -0.0272476450032636,
+      "removed_from_qualified_by_candidate_runner": [],
+      "robust_rse": 0.04210518455327987,
+      "role": "correctness_fallback",
+      "training_fits_per_confirmation_variant": 1
+    },
+    {
+      "accuracy_z_matches": true,
+      "accuracy_z_recomputed": 2.5313719715671117,
+      "added_to_qualified_by_candidate_runner": [
+        "smoothing_rqmc"
+      ],
+      "baseline_nonfinite_rse_methods": [],
+      "baseline_rse": {
+        "conditional_rbergomi": 0.10902561769089028,
+        "defensive_cem": 0.011506681916827249,
+        "ld_subspace_is": 0.01292351674631444,
+        "smoothing_rqmc": 0.3379731189680848,
+        "v14_local_volterra": 0.005641314500988267
+      },
+      "candidate_evaluation_work": 606076928.0,
+      "candidate_training_work": 9289728.0,
+      "cell": "eta200-rho090-k1-ood",
+      "estimate": 3.611804173180809e-05,
+      "evaluation_clusters": 32,
+      "evaluation_samples": 2097152,
+      "horizon_ratios": {
+        "1": {
+          "comparator_over_candidate": 0.6381512775887549,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "10": {
+          "comparator_over_candidate": 0.6386154236027106,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "100": {
+          "comparator_over_candidate": 0.6386625424081331,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "1000": {
+          "comparator_over_candidate": 0.638667261438544,
+          "strongest_comparator": "v14_local_volterra"
+        }
+      },
+      "initializer": "v14_only",
+      "primary_ratio_matches": true,
+      "reference_estimate": 3.3055262097144844e-05,
+      "reference_rse": 0.035773835597177506,
+      "relative_difference_from_reference": 0.09265634093785602,
+      "removed_from_qualified_by_candidate_runner": [],
+      "robust_rse": 0.007090751433855666,
+      "role": "correctness_fallback",
+      "training_fits_per_confirmation_variant": 1
+    },
+    {
+      "accuracy_z_matches": true,
+      "accuracy_z_recomputed": 0.442087552462004,
+      "added_to_qualified_by_candidate_runner": [
+        "conditional_rbergomi"
+      ],
+      "baseline_nonfinite_rse_methods": [],
+      "baseline_rse": {
+        "conditional_rbergomi": 0.3573100289038178,
+        "defensive_cem": 0.013969014884895487,
+        "ld_subspace_is": 0.03914277826181722,
+        "smoothing_rqmc": 0.5175395692160653,
+        "v14_local_volterra": 0.010138723130572298
+      },
+      "candidate_evaluation_work": 763363328.0,
+      "candidate_training_work": 7167549.0,
+      "cell": "regular-h012-k1-ood",
+      "estimate": 1.2730713544680234e-06,
+      "evaluation_clusters": 32,
+      "evaluation_samples": 2097152,
+      "horizon_ratios": {
+        "1": {
+          "comparator_over_candidate": 1.821648334522548,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "10": {
+          "comparator_over_candidate": 1.8160290326195971,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "100": {
+          "comparator_over_candidate": 1.8154618794757649,
+          "strongest_comparator": "v14_local_volterra"
+        },
+        "1000": {
+          "comparator_over_candidate": 1.8154051114419354,
+          "strongest_comparator": "v14_local_volterra"
+        }
+      },
+      "initializer": "cm_action",
+      "primary_ratio_matches": true,
+      "reference_estimate": 1.3010659560441208e-06,
+      "reference_rse": 0.048228022872409876,
+      "relative_difference_from_reference": -0.021516665966124227,
+      "removed_from_qualified_by_candidate_runner": [],
+      "robust_rse": 0.006692668809922243,
+      "role": "dominance_candidate",
+      "training_fits_per_confirmation_variant": 1
+    }
+  ],
+  "historical_audit_reproduced_pass": true,
+  "input_sha256": {
+    "configs/g11_v15/claim_contract_v1.yaml": "c33b3699e4b15947ec35ad45764f2f19e930f363bcef74412db85de4b5dfa632",
+    "configs/g11_v15/theorem_ledger_v1.yaml": "71240e6951df6fbbce3f6da4ad61b66a2952bf1b22cb7b50c3202f4090bf3b5c",
+    "configs/g11_v15/v16_final_policy_audit_v1.yaml": "0601a6491d6f4d14a8a54bd7fbf85172c52685a5216d4950bcbea1b2afa939b6",
+    "docs/literature/G11_V15_PRIMARY_SOURCE_LEDGER.yaml": "226a45ea91b528b60e8851826ac6fdd89a320c1e6172d07d48054c0ef7202f83",
+    "experiments/g11_v16_deep_tail_transport_development.py": "563258c696be66f9bf24f1fef671bdfbf62901f3966463de0b9d5fb8d0c6ab24",
+    "experiments/g11_v16_final_policy_audit.py": "062ae375fd808d686f0a454e557ead6dbf73b3896f183f087e75865eee0c0799",
+    "results/g11_v16_deep_tail_routed_v3_confirmation_2026-08-11.json": "2488f70d6ed21e8cb2f70b458745e6a02a969fd59c742a8a7531018303211dcc",
+    "results/g11_v16_final_v5_joint_ood_confirmation_v15_2026-08-12.json": "eb456d1a04b94055832776ad4a2785721b3eb0246d6feb8170c31a7b37c09179",
+    "results/g11_v16_operator_confirmation_v2_2026-08-11.json": "40bb6ef8818fa78fd4b305fad5df22dbe9feeda3376d7db59da4a01a26a03de8",
+    "src/path_integral/defensive_proposal_selection.py": "3adf2c228f7ecabf394a8b8d5f273d53874351d0dc411d3527d7468af15f477d"
+  },
+  "note_on_horizons": "Same existing frozen proposals and qualified comparator sets. Query count changes only the amortization arithmetic, not the task distribution. Ratios are work-proxy point estimates, not wall-time confidence bounds.",
+  "operator_summaries": [
+    {
+      "correction_faster_tasks": 1,
+      "holdout_tasks": 12,
+      "median_function_evaluation_speedup": 1.9,
+      "median_recorded_cold_over_correction_wall_ratio": 0.794077672541244,
+      "total_recorded_cold_over_correction_wall_ratio": 0.8182015712073436,
+      "training_seed": 1618202
+    },
+    {
+      "correction_faster_tasks": 0,
+      "holdout_tasks": 12,
+      "median_function_evaluation_speedup": 1.9,
+      "median_recorded_cold_over_correction_wall_ratio": 0.6675319357959388,
+      "total_recorded_cold_over_correction_wall_ratio": 0.67629912239999,
+      "training_seed": 1618203
+    },
+    {
+      "correction_faster_tasks": 4,
+      "holdout_tasks": 12,
+      "median_function_evaluation_speedup": 1.7777777777777777,
+      "median_recorded_cold_over_correction_wall_ratio": 0.8861145716572685,
+      "total_recorded_cold_over_correction_wall_ratio": 0.8304594291535311,
+      "training_seed": 1618204
+    }
+  ],
+  "operator_timing_caveat": "Single-run recorded correction timings only; cold records are reused across training replications. Not controlled repeated wall-time benchmarks; teacher/training costs excluded here.",
+  "schema": "npi.review.v16-reorientation.2026-09-27.v1",
+  "scope": "existing-artifact recalculation, source review, and in-memory semantic probes; not fresh scientific confirmation",
+  "semantic_probes": {
+    "impossible_accuracy_and_rse_with_stale_pass": {
+      "accepted_by_semantic_layer": true,
+      "internal_failures": []
+    },
+    "nan_dominance_ratio_with_stale_pass": {
+      "accepted_by_semantic_layer": true,
+      "internal_failures": []
+    }
+  }
+}

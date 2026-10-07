@@ -1,0 +1,16 @@
+{
+  "aggregate_match": true,
+  "config_hash_match": true,
+  "decision_match": true,
+  "failures": [],
+  "passed": true,
+  "proposal_hashes_match": true,
+  "result_path": "results\\g11_v13_structured_ecrpt_development_v1_2026-08-11.json",
+  "result_sha256": "65dae19f013ec18dd4945efb95df899fa804842b97d9ac2a5b7980eb537f66fd",
+  "roster_match": true,
+  "schema": "npi.g11.v13-structured-ecrpt-development-audit.v1",
+  "seed_ledger_match": true,
+  "smc_contracts_match": true,
+  "summaries_match": true,
+  "tail_certificates_match": true
+}

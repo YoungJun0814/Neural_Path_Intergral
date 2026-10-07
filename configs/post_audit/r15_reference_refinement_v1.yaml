@@ -1,0 +1,9 @@
+schema: npi.post-audit.r15-reference-refinement-config.v1
+design_path: results/post_audit/r15_reference_design_v1.json
+first_crosscheck_path: results/post_audit/r15_reference_crosscheck_v1.json
+output_path: results/post_audit/r15_reference_refinement_v1.json
+torch_threads: 1
+fixed_new_replicates:
+  canonical-h005-k1: 512
+  high-eta200-k1: 256
+maximum_reference_relative_se: 0.05

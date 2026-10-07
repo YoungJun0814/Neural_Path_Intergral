@@ -1,0 +1,39 @@
+schema: npi.g11.v15-experiment-config.v1
+protocol_id: g11-v15-development-v1
+stage: development
+output_path: results/g11_v15_development_v1_2026-08-11.json
+root_seed: 1515001
+model: {spot: 100.0, maturity: 1.0, steps: 16, eta: 1.5, xi: 0.04, rho: -0.7}
+cells:
+  - {cell_id: h0.12-k70, hurst: 0.12, threshold: 70.0}
+protocol:
+  primary_comparators: [conditional_rbergomi, v14_local_volterra, defensive_cem, ld_subspace_is, smoothing_rqmc]
+  query_counts: [1, 10, 100, 1000]
+  primary_query_count: 100
+candidate:
+  modes_per_driver: 2
+  random_starts: 1
+  start_scale: 1.0
+  maximum_iterations: 100
+  gradient_tolerance: 0.000001
+  defensive_mass: 0.20
+baselines:
+  defensive_mass: 0.20
+  v14_target_powers: [0.10]
+  v14_shifted_weights: [1.0]
+  v14_particles: 128
+  v14_pcn_sweeps: 1
+  v14_maximum_stages: 32
+  cem_iterations: 3
+  cem_samples: 256
+  cem_time_bins: 4
+  ld_optimizer_steps: 40
+  ld_restarts: 1
+evaluation:
+  reference_iid: 20000
+  iid_units: 4000
+  rqmc_randomizations: 8
+  rqmc_points: 128
+gates:
+  maximum_accuracy_z: 4.0
+  minimum_work_ratio: 1.0

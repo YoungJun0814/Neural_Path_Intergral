@@ -1,0 +1,35 @@
+schema: npi.g11.v16-deep-tail-tempered-transport-confirmation-config.v1
+output_path: results/g11_v16_deep_tail_tempered_transport_confirmation_v1_2026-08-11.json
+artifacts:
+  baseline:
+    path: results/g11_v16_deep_tail_heterogeneous_confirmation_v1_2026-08-11.json
+    sha256: 4e4d18fab389ebf9503edbe54889ee66d30ce025cbf6daf9ff019e4e4084c61d
+  independent_reference:
+    path: results/g11_v16_deep_tail_heterogeneous_smc_reference_v1_2026-08-11.json
+    sha256: 4f544ec7e7239aee29d0833d597c528c68d67a817efa457a1cc2b239e057b2af
+model: {spot: 100.0, maturity: 1.0, steps: 32, eta: 1.5, xi: 0.04, rho: -0.7}
+variants:
+  - id: rough-tempered-target-5-confirmation
+    reference_cell: rough-h005-k1
+    initializer: tempered_smc
+    hurst: 0.05
+    threshold: 1.0
+    drift_modes: 16
+    bridge_modes: 8
+    defensive_mass: 0.15
+    safety_mass: 0.02
+    tempered_smc: {particles: 4096, temperature_stages: 32, temperature_power: 2.0, mutation_steps: 4, pcn_scale: 0.30, replicates: 4, components: 5}
+    clusters: 32
+    seed: 1719001
+mode_solver: {random_starts: 3, start_scale: 2.5, maximum_iterations: 280, gradient_tolerance: 0.000001}
+evaluation:
+  clusters: 32
+  samples_per_cluster: 65536
+  primary_query_count: 100
+gates:
+  maximum_accuracy_z: 4.0
+  maximum_cluster_to_pooled_se_ratio: 2.0
+  maximum_robust_relative_standard_error: 0.10
+  maximum_likelihood_normalization_z: 4.0
+  maximum_likelihood_bound_violation: 0.0000000001
+  minimum_v14_over_candidate_work_ratio: 1.0

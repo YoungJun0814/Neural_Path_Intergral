@@ -1,0 +1,209 @@
+{
+  "artifact_bindings": {
+    "experiment": {
+      "path": "results/g11_v16_deep_tail_heterogeneous_confirmation_v1_2026-08-11.json",
+      "sha256": "4e4d18fab389ebf9503edbe54889ee66d30ce025cbf6daf9ff019e4e4084c61d"
+    },
+    "independent_reference": {
+      "path": "results/g11_v16_deep_tail_heterogeneous_smc_reference_v1_2026-08-11.json",
+      "sha256": "4f544ec7e7239aee29d0833d597c528c68d67a817efa457a1cc2b239e057b2af"
+    }
+  },
+  "cells": [
+    {
+      "accuracy_qualified_comparators": [
+        "defensive_cem",
+        "ld_subspace_is",
+        "v14_local_volterra"
+      ],
+      "candidate_estimate": 3.0377439799132293e-08,
+      "candidate_external_accuracy_z": 8.811386698899206,
+      "candidate_standard_error": 1.816035604954059e-09,
+      "cell_id": "rough-h005-k1",
+      "comparators": [
+        {
+          "accuracy_qualified": false,
+          "estimate": 1.8124816125730804e-12,
+          "external_accuracy_z": 36.85659752642548,
+          "method": "conditional_rbergomi",
+          "standard_error": 1.5276563952517186e-12,
+          "work_ratio_over_v16": null
+        },
+        {
+          "accuracy_qualified": true,
+          "estimate": 3.193024583378536e-08,
+          "external_accuracy_z": 3.7398162067566245,
+          "method": "defensive_cem",
+          "standard_error": 4.748188443191e-09,
+          "work_ratio_over_v16": 2.680441787875983
+        },
+        {
+          "accuracy_qualified": true,
+          "estimate": 3.472345279218733e-08,
+          "external_accuracy_z": 1.3265842461564001,
+          "method": "ld_subspace_is",
+          "standard_error": 1.1745073264118937e-08,
+          "work_ratio_over_v16": 16.3632301390088
+        },
+        {
+          "accuracy_qualified": false,
+          "estimate": 1.1546753136970622e-17,
+          "external_accuracy_z": 36.857945741453875,
+          "method": "smoothing_rqmc",
+          "standard_error": 1.1529278438174114e-17,
+          "work_ratio_over_v16": null
+        },
+        {
+          "accuracy_qualified": true,
+          "estimate": 9.49295041932371e-08,
+          "external_accuracy_z": 1.0347836082789663,
+          "method": "v14_local_volterra",
+          "standard_error": 4.3001687611936636e-08,
+          "work_ratio_over_v16": 284.57126939601716
+        }
+      ],
+      "independent_reference_estimate": 5.040956244730212e-08,
+      "independent_reference_signal_to_noise": 36.85794574989651,
+      "independent_reference_standard_error": 1.3676715134739613e-09,
+      "minimum_qualified_comparator_over_v16_work_ratio": 2.680441787875983
+    },
+    {
+      "accuracy_qualified_comparators": [
+        "conditional_rbergomi",
+        "defensive_cem",
+        "ld_subspace_is",
+        "v14_local_volterra"
+      ],
+      "candidate_estimate": 2.2988677866260763e-06,
+      "candidate_external_accuracy_z": 0.6515134003906714,
+      "candidate_standard_error": 2.2279276781124277e-08,
+      "cell_id": "strong-rho090-k1",
+      "comparators": [
+        {
+          "accuracy_qualified": true,
+          "estimate": 8.686366485190251e-06,
+          "external_accuracy_z": 0.7277163822302296,
+          "method": "conditional_rbergomi",
+          "standard_error": 8.68599772640487e-06,
+          "work_ratio_over_v16": 28421.2000524866
+        },
+        {
+          "accuracy_qualified": true,
+          "estimate": 2.479651077771632e-06,
+          "external_accuracy_z": 0.7974207669593903,
+          "method": "defensive_cem",
+          "standard_error": 1.0419410736533888e-07,
+          "work_ratio_over_v16": 9.459682398446096
+        },
+        {
+          "accuracy_qualified": true,
+          "estimate": 2.324639114092633e-06,
+          "external_accuracy_z": 0.29976171895436926,
+          "method": "ld_subspace_is",
+          "standard_error": 9.126461766871359e-08,
+          "work_ratio_over_v16": 7.246983202560616
+        },
+        {
+          "accuracy_qualified": false,
+          "estimate": 7.91230416689187e-16,
+          "external_accuracy_z": 23.876892512192963,
+          "method": "smoothing_rqmc",
+          "standard_error": 7.910520667973887e-16,
+          "work_ratio_over_v16": null
+        },
+        {
+          "accuracy_qualified": true,
+          "estimate": 2.6868317340056e-06,
+          "external_accuracy_z": 1.2442365406158888,
+          "method": "v14_local_volterra",
+          "standard_error": 2.3893039763435806e-07,
+          "work_ratio_over_v16": 64.50651663677884
+        }
+      ],
+      "independent_reference_estimate": 2.3650126741040278e-06,
+      "independent_reference_signal_to_noise": 23.876892520181134,
+      "independent_reference_standard_error": 9.905027097245092e-08,
+      "minimum_qualified_comparator_over_v16_work_ratio": 7.246983202560616
+    },
+    {
+      "accuracy_qualified_comparators": [
+        "conditional_rbergomi",
+        "defensive_cem",
+        "ld_subspace_is",
+        "v14_local_volterra"
+      ],
+      "candidate_estimate": 2.3915796297181684e-05,
+      "candidate_external_accuracy_z": 0.31506338984683985,
+      "candidate_standard_error": 7.114417690480282e-07,
+      "cell_id": "high-eta200-k1",
+      "comparators": [
+        {
+          "accuracy_qualified": true,
+          "estimate": 2.582974415753859e-05,
+          "external_accuracy_z": 0.14855644430678447,
+          "method": "conditional_rbergomi",
+          "standard_error": 1.0982996281162201e-05,
+          "work_ratio_over_v16": 63.259447187613446
+        },
+        {
+          "accuracy_qualified": true,
+          "estimate": 2.3125807455769297e-05,
+          "external_accuracy_z": 0.8366365206942847,
+          "method": "defensive_cem",
+          "standard_error": 1.1622765912062273e-06,
+          "work_ratio_over_v16": 1.6386641449238106
+        },
+        {
+          "accuracy_qualified": true,
+          "estimate": 2.3667822370937968e-05,
+          "external_accuracy_z": 0.21691463226877156,
+          "method": "ld_subspace_is",
+          "standard_error": 2.376517807874255e-06,
+          "work_ratio_over_v16": 6.8409316839241
+        },
+        {
+          "accuracy_qualified": false,
+          "estimate": 3.326208904758396e-07,
+          "external_accuracy_z": 39.89029141281521,
+          "method": "smoothing_rqmc",
+          "standard_error": 2.6805611346094724e-07,
+          "work_ratio_over_v16": null
+        },
+        {
+          "accuracy_qualified": true,
+          "estimate": 2.4870470231994606e-05,
+          "external_accuracy_z": 0.7402190898032478,
+          "method": "v14_local_volterra",
+          "standard_error": 7.373499851869616e-07,
+          "work_ratio_over_v16": 0.8540714173233613
+        }
+      ],
+      "independent_reference_estimate": 2.4196216029102332e-05,
+      "independent_reference_signal_to_noise": 45.24231524275262,
+      "independent_reference_standard_error": 5.348138330073268e-07,
+      "minimum_qualified_comparator_over_v16_work_ratio": 0.8540714173233613
+    }
+  ],
+  "claim_boundary": {
+    "deep_tail_development_evidence": true,
+    "independent_reference_family": true,
+    "supersedes_v1_low_SNR_reference_decision": true,
+    "universal_dominance_claim": false,
+    "untouched_external_reproduction": false
+  },
+  "config_binding": {
+    "path": "configs/g11_v15/v16_deep_tail_heterogeneous_closure_audit_v1.yaml",
+    "sha256": "9c919c7b7a250ece3907856d79a6914effc5a9ad939c8ab3bc518d749b2ba03f"
+  },
+  "failures": [
+    "rough-h005-k1: candidate external accuracy failed",
+    "high-eta200-k1: external-reference work gate failed"
+  ],
+  "passed": false,
+  "schema": "npi.g11.v16-deep-tail-closure-audit.v1",
+  "source_provenance": {
+    "git_commit": "fde42cc62c79a4299ff9c68de0a153558fdd8df2",
+    "source_changes_before_run": [],
+    "source_dirty_before_run": false
+  }
+}

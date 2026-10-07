@@ -1,0 +1,33 @@
+schema: npi.g11.v16-operator-development-config.v1
+task_id: g11-v16-regular-operator-development-v1
+output_path: results/g11_v16_operator_development_v1_2026-08-11.json
+seed: 1618101
+steps: 32
+teacher_count: 24
+teacher_ranges:
+  hurst: [0.08, 0.22]
+  eta: [1.1, 2.1]
+  rho: [-0.82, -0.30]
+  xi: [0.025, 0.07]
+  maturity: [0.6, 1.4]
+  strike_ratio: [0.30, 0.60]
+holdouts:
+  - {id: interior-a, hurst: 0.11, eta: 1.35, rho: -0.62, xi: 0.035, maturity: 0.8, strike_ratio: 0.42}
+  - {id: interior-b, hurst: 0.18, eta: 1.75, rho: -0.48, xi: 0.055, maturity: 1.2, strike_ratio: 0.36}
+  - {id: boundary-h, hurst: 0.08, eta: 1.6, rho: -0.70, xi: 0.04, maturity: 1.0, strike_ratio: 0.40}
+  - {id: boundary-rho, hurst: 0.14, eta: 1.6, rho: -0.84, xi: 0.04, maturity: 1.0, strike_ratio: 0.38}
+  - {id: extrapolation-h, hurst: 0.24, eta: 1.5, rho: -0.55, xi: 0.04, maturity: 1.0, strike_ratio: 0.35}
+  - {id: extrapolation-mixed, hurst: 0.16, eta: 2.3, rho: -0.20, xi: 0.08, maturity: 1.5, strike_ratio: 0.32}
+mode_solver:
+  maximum_iterations: 160
+  gradient_tolerance: 0.000001
+operator:
+  hidden_features: 64
+  epochs: 800
+  learning_rate: 0.003
+evaluation_samples: 10000
+gates:
+  maximum_action_gap: 0.0000001
+  maximum_gradient_norm: 0.00001
+  minimum_median_function_evaluation_speedup: 1.0
+  maximum_likelihood_bound_violation: 0.0000000001

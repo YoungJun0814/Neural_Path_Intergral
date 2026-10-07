@@ -1,0 +1,23 @@
+schema: npi.g11.v16-deep-tail-smc-reference-config.v1
+task_id: g11-v16-deep-tail-joint-ood-independent-smc-v1
+output_path: results/g11_v16_deep_tail_joint_ood_smc_reference_v1_2026-08-11.json
+model: {spot: 100.0, maturity: 1.0, steps: 32, hurst: 0.12, eta: 1.5, xi: 0.04, rho: -0.7}
+cells:
+  - {cell_id: rough-h005-k2-ood, hurst: 0.05, threshold: 2.0}
+  - {cell_id: rough-h005-k05-ood, hurst: 0.05, threshold: 0.5}
+  - {cell_id: rough-h005-eta200-k1-ood, hurst: 0.05, eta: 2.0, threshold: 1.0}
+  - {cell_id: rough-h005-rho090-k1-ood, hurst: 0.05, rho: -0.90, threshold: 1.0}
+  - {cell_id: eta200-rho090-k1-ood, hurst: 0.12, eta: 2.0, rho: -0.90, threshold: 1.0}
+  - {cell_id: regular-h012-k1-ood, hurst: 0.12, threshold: 1.0}
+particles: 2048
+temperature_stages: 32
+temperature_power: 2.0
+mutation_steps: 4
+pcn_scale: 0.30
+replicates: 16
+seed: 1720001
+gates:
+  minimum_reference_signal_to_noise: 8.0
+  minimum_incremental_ess_fraction: 0.10
+  minimum_mutation_acceptance_rate: 0.10
+  maximum_mutation_acceptance_rate: 0.95

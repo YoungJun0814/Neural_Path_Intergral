@@ -1,0 +1,52 @@
+schema: npi.g11.v12-ecrpt-claim-contract.v1
+protocol_id: g11-v12-ecrpt-development-v1
+date: "2026-08-11"
+status: development-only
+
+claim:
+  estimand: finite_grid_rare_event_probability
+  ordinary_mean_required: true
+  self_normalization_allowed: false
+  exact_residual_likelihood_required: true
+  defensive_target_component_required: true
+  training_evaluation_independence_required: true
+  continuous_monitoring_claim_allowed: false
+  universal_rough_rate_claim_allowed: false
+  top_journal_claim_authorized: false
+  submission_authorized: false
+
+model:
+  primary_family: gaussian_volterra
+  primary_adapter: rough_bergomi_blp_fft
+  dtype: float64
+
+transport:
+  family: defensive_residual_gaussian_translation_mixture
+  integrated_rank: 1
+  direction_support: independent_price_block_only
+  direction_strictly_positive: true
+  residual_means_orthogonal: true
+  training_objective: conditional_target_weighted_cross_entropy
+  final_objective: ordinary_second_moment_and_total_work
+
+allocation:
+  plugin_variance_only_allowed: false
+  zero_final_variance_can_certify: false
+  bounded_second_moment_ucb_required: true
+  minimum_rqmc_randomizations: 16
+  streaming_required_above_units: 65536
+
+development_gate:
+  representative_cells: 3
+  minimum_training_replicates: 4
+  maximum_combined_reference_z: 4.0
+  maximum_exactness_error: 1.0e-10
+  maximum_resource_censored_primary_records: 0
+  minimum_best_primary_over_ecrpt_geometric_ratio: 1.5
+  minimum_one_sided_lower_ratio: 1.0
+  minimum_cells_favoring_ecrpt: 2
+
+authorization:
+  task_amortized_performance_requires_micro_gate: true
+  residual_mlmc_performance_requires_micro_gate: true
+  correctness_oracle_implementation_allowed: true
