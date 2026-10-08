@@ -15,6 +15,8 @@ from typing import Literal
 
 import torch
 
+from src.path_integral.finite_rank_gaussian_transport import DefensiveFiniteRankGaussianMixture
+
 LogPotential = Callable[[torch.Tensor], torch.Tensor]
 ResamplingScheme = Literal["multinomial", "stratified"]
 
@@ -30,6 +32,7 @@ class WeightedSMCConfig:
     resample_every: int = 1
     resampling_scheme: ResamplingScheme = "multinomial"
     retain_final_particles: bool = False
+    independence_every: int = 0
 
     def __post_init__(self) -> None:
         for name in ("particles", "replicates", "resample_every"):
@@ -52,6 +55,8 @@ class WeightedSMCConfig:
             raise ValueError("unsupported resampling scheme")
         if not isinstance(self.retain_final_particles, bool):
             raise ValueError("retain_final_particles must be boolean")
+        if isinstance(self.independence_every, bool) or not isinstance(self.independence_every, int) or self.independence_every < 0:
+            raise ValueError("independence_every must be a nonnegative integer")
 
 
 @dataclass(frozen=True)
@@ -91,11 +96,16 @@ def _resample(
 
 def estimate_weighted_tempered_normalizer(
     log_potential: LogPotential, *, dimension: int, config: WeightedSMCConfig,
+    independence_proposal: DefensiveFiniteRankGaussianMixture | None = None,
 ) -> WeightedSMCResult:
     """Estimate E_phi[g] with deterministic bridge and exact pCN MH mutation."""
 
     if isinstance(dimension, bool) or not isinstance(dimension, int) or dimension < 1:
         raise ValueError("dimension must be a positive integer")
+    if config.independence_every and (independence_proposal is None or independence_proposal.dimension != dimension):
+        raise ValueError("declared global mutation requires a dimension-matched normalized proposal")
+    if independence_proposal is not None and not config.independence_every:
+        raise ValueError("unused independence proposal")
     retained = math.sqrt(1.0 - config.pcn_scale**2)
     log_estimates: list[torch.Tensor] = []
     diagnostics: list[dict[str, object]] = []
@@ -138,14 +148,28 @@ def estimate_weighted_tempered_normalizer(
                 lineage = lineage[ancestors]
                 log_weights.fill_(-math.log(count))
             stage_accepted = 0
+            global_accepted, global_proposed = 0, 0
             if not is_final:
-                for _ in range(config.mutation_steps):
-                    noise = torch.randn(particles.shape, dtype=torch.float64, generator=generator)
-                    candidate = retained * particles + config.pcn_scale * noise
+                for mutation in range(config.mutation_steps):
+                    global_move = config.independence_every > 0 and (mutation+1) % config.independence_every == 0
+                    if global_move:
+                        assert independence_proposal is not None
+                        path_seed = int(torch.randint(0, 2**63-1, (), generator=generator))
+                        label_seed = int(torch.randint(0, 2**63-1, (), generator=generator))
+                        if label_seed == path_seed:
+                            label_seed = (label_seed+1) % (2**63-1)
+                        draw = independence_proposal.sample(count, path_seed=path_seed, label_seed=label_seed)
+                        candidate = draw.samples
+                        correction = independence_proposal.log_q_over_p(particles)-draw.log_q_over_p
+                        global_proposed += count
+                    else:
+                        noise = torch.randn(particles.shape, dtype=torch.float64, generator=generator)
+                        candidate = retained * particles + config.pcn_scale * noise
+                        correction = torch.zeros(count, dtype=torch.float64)
                     candidate_log_g = log_potential(candidate)
                     _validate_log_potential(candidate_log_g, count)
                     potential_evaluations += count
-                    log_acceptance = beta_right * (candidate_log_g - log_g)
+                    log_acceptance = beta_right * (candidate_log_g - log_g) + correction
                     uniform = torch.rand(count, dtype=torch.float64, generator=generator)
                     accept = torch.log(uniform) < torch.minimum(
                         log_acceptance, torch.zeros_like(log_acceptance),
@@ -153,6 +177,8 @@ def estimate_weighted_tempered_normalizer(
                     particles[accept] = candidate[accept]
                     log_g[accept] = candidate_log_g[accept]
                     stage_accepted += int(torch.sum(accept))
+                    if global_move:
+                        global_accepted += int(torch.sum(accept))
                     accepted_total += int(torch.sum(accept))
                     proposed_total += count
             stages.append({
@@ -167,6 +193,8 @@ def estimate_weighted_tempered_normalizer(
                     if config.mutation_steps and not is_final else None
                 ),
                 "log_normalizer": float(log_normalizer),
+                "global_mutation_proposals": global_proposed,
+                "global_mutation_accepts": global_accepted,
             })
         log_estimates.append(log_normalizer)
         diagnostics.append({

@@ -1,0 +1,21 @@
+schema: npi.post-audit.r2-bank-risk-config.v1
+mode: bank_islands
+output_path: results/post_audit/r2_bank_islands_risk_v1.json
+reference_path: results/post_audit/r15_reference_refinement_v1.json
+torch_threads: 1
+model: {spot: 100.0, maturity: 1.0, hurst: 0.05, eta: 1.5, xi: 0.04, rho: -0.7}
+cells:
+  - {id: canonical-h005-k1, threshold: 1.0}
+  - {id: high-eta200-k1, eta: 2.0, threshold: 1.0}
+parent_training_replicates: 5
+bank_candidates:
+  - {id: one-island, islands: 1, particles: 768}
+  - {id: three-islands, islands: 3, particles: 256}
+  - {id: six-islands, islands: 6, particles: 128}
+smc: {steps: 32, levels: 48, bridge_power: 4, mutation_steps: 2, pcn_scale: 0.35, resample_every: 4, resampling_scheme: stratified}
+mixture: {clusters: 2, covariance_rank: 0, defensive_mass: 0.1, covariance_shrinkage: 0.5, minimum_variance: 0.25, maximum_variance: 4.0, minimum_cluster_mass: 0.01, feature_rank: 4}
+evaluation: {bank_diagnostic_count: 4096, direct_count: 131072, batch_size: 8192}
+risk: {particles: 128, replicates: 8, levels: 48, bridge_power: 4, mutation_steps: 2, pcn_scale: 0.35, resample_every: 4, resampling_scheme: stratified, maximum_relative_se: 0.20}
+budget: {max_potential_evaluations: 12000000, max_wall_seconds: 600.0}
+qualification: {target_relative_se: 0.05, reference_se_fraction_of_method_se: 0.2, relative_equivalence_margin: 0.25, confidence_z: 1.96}
+role: matched_work_development_not_selection_or_confirmation

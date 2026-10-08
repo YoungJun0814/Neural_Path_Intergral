@@ -1,0 +1,20 @@
+schema: npi.post-audit.r2-aux-risk-config.v1
+output_path: results/post_audit/r2_auxiliary_volterra_safeguard_v7.json
+proposal_artifact_path: results/post_audit/r2_family_diagnosis_five_fit_v1.json
+method: parent-as-is
+torch_threads: 1
+training_repetitions: 5
+island_ensemble: true
+static_control: true
+volterra_guide: {amplitudes: [2.0, 4.0, 6.0, 8.0], price_amplitudes: [0.0, 2.0, 4.0], defensive_mass: 0.1}
+guide_output_mass: 0.5
+training: {islands: 4, particles: 128, levels: 48, bridge_power: 2, mutation_steps: 8, pcn_scale: 0.35, resample_every: 4, resampling_scheme: stratified}
+mixture: {clusters: 2, covariance_rank: 16, defensive_mass: 0.1, feature_rank: 4, covariance_shrinkage: 0.5, minimum_variance: 0.25, maximum_variance: 4.0}
+evaluation:
+  count: 131072
+  counts: {risk-auxiliary: 262144}
+  batch_size: 8192
+  maximum_relative_se: 0.20
+  fixed_r_block_count: 4
+budget: {max_potential_evaluations: 55000000, max_wall_seconds: 3600.0}
+role: five_fully_fresh_fits_with_fixed_physical_safeguard_not_oracle_or_speed_benchmark

@@ -204,15 +204,25 @@ class DefensiveFiniteRankGaussianMixture:
             sum(
                 self.weights[index]
                 for index, component in enumerate(self.components)
-                if component.is_natural()
+                # A near-zero shift is not globally bounded below by p on R^d.
+                # Approximate classification is diagnostic only; the density
+                # floor requires an EXACT natural Gaussian component.
+                if component.is_natural(tolerance=0.0)
             )
         )
 
     def component_log_q_over_p(self, samples: torch.Tensor) -> torch.Tensor:
-        return torch.stack(
-            [component.log_q_over_p(samples) for component in self.components],
-            dim=1,
-        )
+        _validate_samples(samples, self.dimension)
+        result = torch.empty((samples.shape[0], len(self.components)), dtype=torch.float64)
+        shifts = [i for i, component in enumerate(self.components) if component.rank == 0]
+        if shifts:
+            means = torch.stack([self.components[i].mean for i in shifts])
+            # Exact identity-covariance density; avoids quadratic cancellation.
+            result[:, shifts] = samples @ means.T - .5*means.square().sum(dim=1)
+        for i, component in enumerate(self.components):
+            if component.rank:
+                result[:, i] = component.log_q_over_p(samples)
+        return result
 
     def log_q_over_p(self, samples: torch.Tensor) -> torch.Tensor:
         components = self.component_log_q_over_p(samples)
@@ -242,8 +252,11 @@ class DefensiveFiniteRankGaussianMixture:
             dtype=torch.float64,
             generator=path_generator,
         )
-        samples = torch.empty_like(standard)
+        means = torch.stack([component.mean for component in self.components])
+        samples = standard + means[labels]
         for index, component in enumerate(self.components):
+            if not component.rank:
+                continue
             selected = labels == index
             if torch.any(selected):
                 samples[selected] = component.transform_standard_normal(standard[selected])
