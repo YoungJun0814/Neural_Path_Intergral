@@ -1,0 +1,44 @@
+schema: npi.structural-v2.reference-config.v1
+mode: pilot
+output_path: results/post_audit/structural_v2_p1_repair_v1.json
+proposal_artifact_path: results/post_audit/r2_family_diagnosis_five_fit_v1.json
+method: parent-as-is
+torch_threads: 1
+pilot_parent_rep: 0
+probability_local_A_pilot: true
+guide: {amplitudes: [2.0, 4.0, 6.0, 8.0], price_amplitudes: [0.0, 2.0, 4.0], defensive_mass: 0.1}
+schedules:
+  - {id: local-A, particles: 1024, levels: 48, bridge_power: 2, mutation_steps: 4, pcn_scale: 0.35, resample_every: 4, resampling_scheme: stratified, retain_final_particles: true}
+  - {id: local-B, particles: 512, levels: 64, bridge_power: 2, mutation_steps: 6, pcn_scale: 0.35, resample_every: 4, resampling_scheme: stratified, retain_final_particles: true}
+  - {id: global-C, particles: 256, levels: 96, bridge_power: 2, mutation_steps: 8, pcn_scale: 0.35, resample_every: 4, resampling_scheme: stratified, independence_every: 2, retain_final_particles: true}
+pilot: {whole_smc_replicates: 16, iid_count: 262144, iid_blocks: 8, batch_size: 8192}
+allocation:
+  target_relative_se: 0.015
+  safety_factor: 3.0
+  minimum_whole_smc_replicates: 32
+  maximum_whole_smc_replicates: 256
+  minimum_iid_count: 1048576
+  maximum_iid_count: 8388608
+  production_max_potential_evaluations: 160000000
+  production_max_wall_seconds: 7200.0
+  wall_safety_factor: 1.5
+qualification:
+  risk_comparisons: 30
+  probability_comparisons: 2
+  family_alpha: 0.05
+  relative_margin: 0.10
+  maximum_relative_se: 0.025
+  maximum_leave_one_out_relative_shift: 0.05
+  maximum_unit_contribution_fraction: 0.15
+  maximum_block_between_to_iid_rse_ratio: 2.0
+  bootstrap_replicates: 2000
+budget: {max_potential_evaluations: 40000000, max_wall_seconds: 3600.0, max_process_rss_bytes: 4294967296, minimum_free_disk_bytes: 10737418240}
+scope: one_bounded_repair_two_near_matched_work_local_designs_not_confirmation
+repair_baseline_path: results/post_audit/structural_v2_p1_pilot_v1.json
+repair_protocol_path: docs/plans/STRUCTURAL_V2_P1_BOUNDED_REPAIR_PROTOCOL_2026-10-08_KO.md
+repair_baseline_sha256: e2569aaa63f33a6c84bc067f56fedd06722f70787b39cbbaedab3282a9cbf93f
+repair_notes:
+  - Local work per whole run is 189440 versus 190976, a preregistered 0.81 percent difference.
+  - Same pCN scale, bridge power, resampling interval and scheme; particle versus bridge-mutation work allocation changes.
+  - One repair bundle only, at most 60 minutes. Old pilot observations are not pooled.
+  - Terminal geometry is a fixed 16-bin diagnostic, never an IID reference sample or proof of missing-mode absence.

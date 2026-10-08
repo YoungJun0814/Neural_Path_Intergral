@@ -4,17 +4,137 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Research status](https://img.shields.io/badge/status-development-orange.svg)](#research-status)
 
-> A research implementation of exact finite-grid rare-event estimation using
-> defensive importance sampling, Gaussian control-span marginalization, and
-> multilevel Monte Carlo (MLMC) for rough Bergomi and Gaussian Volterra models.
+> Exact finite-grid rare-event estimation and tail-risk diagnostics for rough
+> Bergomi / Gaussian Volterra models. The current work separates the event
+> estimator from an independently sampled auxiliary second-moment estimator.
 
 ## Research status
 
-**Current frontier (2026-08-12): V16 fail-closed exact conditional path-space
+**Current status (2026-10-08): reference-recovery development; independent precision remains unresolved, not submission-ready.**
+
+The latest bounded recovery study completed 696 checkpoint units, including
+fresh full-reference versus marginal-reference comparisons and guide-free
+population/island diagnostics. Scoped terminal-law preparation reduced measured
+evaluator time, but marginal-risk gains did not reproduce across both cells and
+replications. Guide-free risk normalizers remained highly variable. A callback-only
+wall ledger missed checkpoint I/O: the N4 phase exceeded its 30-minute cap by
+9.78 seconds. The original artifacts are preserved, N4 is an operational failure,
+and the wall/checkpoint safeguards have been corrected and regression-tested.
+Neither production references nor the P2 mesh gate are authorized.
+See the [overnight recovery result and limitations](docs/reviews/OVERNIGHT_REFERENCE_RECOVERY_RESULT_2026-10-08_KO.md)
+and [mathematical contract review](docs/theory/OVERNIGHT_REFERENCE_RECOVERY_MATHEMATICAL_REVIEW_2026-10-08_KO.md).
+
+### Earlier development history
+
+The finite-grid conditional payoff and full defensive-mixture likelihood remain
+the correctness core. Fresh R1.5 experiments identified unstable training banks,
+possible multimode compression loss, and insufficient final precision in the
+small ablations. No new dominance or top-journal claim is authorized.
+The S0/S1 precision-allocation and parent-as-is / same-family-refit / single-shift
+diagnostic pipeline is implemented. Ten freshly trained parents produced 30
+development candidates: 23 exceeded the sealed final-sample cap, and none of the
+seven completed finals passed the full accuracy qualification. This negative result
+motivated auxiliary risk evaluation before increasing model capacity.
+See the [S0/S1 execution report](docs/reviews/STRUCTURAL_IMPROVEMENT_S0_S1_EXECUTION_2026-10-07_KO.md).
+The subsequent S2 study completed 30 fresh island-allocation parents and 20
+fixed-proposal independent risk diagnostics. None passed the full direct-accuracy
+qualification; direct risk-SMC precision remained unresolved in that study. Island allocation
+alone did not establish an efficiency gain. See the [S2 bank/risk execution report](docs/reviews/STRUCTURAL_IMPROVEMENT_S2_BANK_RISK_EXECUTION_2026-10-07_KO.md).
+Risk-geometry diagnostics and an independent auxiliary-IS risk cross-check are
+now implemented. Outside-geometry second-moment contributions are an exploratory
+signal, but an independently qualified risk reference remains unresolved and the model proposal is
+unchanged. See the [risk/geometry results and gated next plan](docs/reviews/STRUCTURAL_IMPROVEMENT_RISK_GEOMETRY_AND_NEXT_PLAN_2026-10-07_KO.md).
+See the [structural review and improvement plan](docs/reviews/MODEL_STRUCTURAL_REVIEW_AND_IMPROVEMENT_PLAN_2026-10-07_KO.md)
+and [R1.5 prerequisite report](docs/reviews/POST_AUDIT_R15_R2_PREREQUISITES_2026-09-29_KO.md).
+Whole auxiliary-fit development stability now passes for all ten fixed proposals
+using a deterministic Volterra/next-price excursion safeguard: 50/50 risk estimates
+meet precision, with median M2-estimation RSE 2.57% (canonical) and 2.53% (high eta).
+This is not an event-probability performance claim. The static guide alone has lower
+observed sample-count-normalized variance than the learned/static blend, so learned
+added value is not established. The original model proposal is unchanged; independent
+reference, mesh-bias, and submission-grade end-to-end confirmation gates remain open.
+See the [whole auxiliary-fit stability report](docs/reviews/AUXILIARY_WHOLE_FIT_STABILITY_2026-10-07_KO.md).
+
+## Current model: two separate estimation tasks
+
+```mermaid
+flowchart TD
+    A["Finite-grid Gaussian Volterra / rBergomi law p"] --> B["Integrate the independent price driver analytically"]
+    B --> C["Conditional payoff g: 96 to 64 coordinates at N=32"]
+    C --> D["CE / SMC training bank: fit defensive model proposal q"]
+    D --> E["New IID samples from q: ordinary mean of g p / q"]
+    E --> F["Original event-probability estimate"]
+    D --> G["Freeze q: evaluate its second moment M2(q)"]
+    C --> G
+    G --> H["Fresh auxiliary SMC bank and Gaussian fit"]
+    I["Deterministic Volterra + next-price excursion guide"] --> J["Auxiliary r: 50% fresh fit + 50% static guide"]
+    H --> J
+    J --> K["New IID samples from r: ordinary mean of g² p² / (q r)"]
+    K --> L["Auxiliary M2 estimate and stability checks"]
+    I --> M["Static-only auxiliary control"]
+    M --> L
+```
+
+The auxiliary proposal **r does not replace or improve the original proposal q**.
+It helps detect rare, large contributions that can make a naive sample variance
+look deceptively small. Every mixture density is normalized and evaluated in full;
+final estimates are not self-normalized. Both q and r retain at least 10% exact
+standard-Gaussian mass. For the bounded conditional payoff, this implies
+`g² p² / (q r) <= 100` in the current experiments; this bound alone does not
+guarantee useful finite-sample relative precision.
+
+The static guide uses the simulator's left-monitoring Volterra directions and
+orthogonal next-price innovation directions. Its shifted identity-covariance
+Gaussian mixture has an exact likelihood. The minimum-energy interpretation is
+limited to the two declared linear mean constraints, not the nonlinear rare event.
+The current core is a classical probabilistic method, not a quantum model or an
+implemented neural operator.
+
+## Latest development evidence
+
+The v7 study uses **10 fixed q proposals, 5 fresh whole auxiliary fits per q,
+and 200 final estimators**. All ten fixed proposals pass the predeclared five-fit
+development stability checks. This is not an independent reference certificate,
+publication confirmation, or evidence of event-probability speedup.
+
+| Auxiliary method for estimating M2(q) | Canonical median RSE | High-eta median RSE | Finals with RSE <= 20% (canonical / high eta) |
+|---|---:|---:|---:|
+| Original q used directly | 43.23% | 58.15% | 2/25 / 0/25 |
+| Event-fit + static guide | 4.38% | 4.07% | 25/25 / 25/25 |
+| Risk-fit + static guide | 2.57% | 2.53% | 25/25 / 25/25 |
+| Static guide only | 3.00% | 2.93% | 25/25 / 25/25 |
+
+![Descriptive sample-count-normalized auxiliary second-moment variance](docs/figures/r2_auxiliary_risk_summary.png)
+
+Risk-fit finals use twice as many samples as the other methods. The graph therefore
+compares median `N × RSE²`, not RSE alone. **Static-only has lower observed normalized
+variance than the learned/static blend**, and avoids fitting cost. Learned added
+value is not established; these descriptive medians have no superiority confidence
+interval and omit training work. Sample RSE can miss unseen tails. Shared static
+components also prevent treating the two guided estimators as independent mechanisms.
+
+The immutable [compressed v7 artifact](results/post_audit/r2_auxiliary_volterra_safeguard_v7.json.gz)
+and [source snapshot](results/post_audit/r2_auxiliary_volterra_safeguard_v7.source.zip)
+preserve the results. Recreate the figure with:
+
+```bash
+python -m experiments.render_r2_readme_figure
+```
+
+Next: independent reference mechanisms, coupled mesh checks, then accuracy-qualified
+total-wall-time comparisons. The [gated overnight execution plan](docs/reviews/OVERNIGHT_GATED_EXECUTION_PLAN_2026-10-07_KO.md)
+is a planned protocol, not a completed experiment.
+
+<details>
+<summary>Historical research tracks and archived evidence</summary>
+
+**Historical frontier (2026-08-12): V16 fail-closed exact conditional path-space
 transport.** The V5 router integrates out the complete independent price driver,
 uses exact defensive residual/tempered Gaussian transports, and evaluates ordinary
 importance-sampling estimates with the full balance likelihood. Fresh clean-source
-confirmation authorizes finite-grid dominance claims in four named cells. The
+confirmation recorded finite-grid work-proxy claims in four named cells. These
+are historical, protocol-specific records, not current measured wall-time
+dominance claims after the post-audit review. The
 strongest-qualified-comparator/V16 training-inclusive ratios are 5.978 (canonical
 rough K1), 1.280 (rough K2 OOD), 5.023 (rough K0.5 OOD), and 1.815 (regular OOD).
 Three joint-extreme cells use an explicit V14 correctness fallback; they pass
@@ -304,6 +424,8 @@ Start with:
 - [Current model explained in Korean](docs/CURRENT_MODEL_AND_IMPLEMENTATION_GUIDE_KO.md)
 - [Novelty matrix](docs/literature/G11_NOVELTY_MATRIX.md) and [baseline scope](docs/literature/G11_BASELINE_SCOPE.md)
 
+</details>
+
 ## Why this problem matters
 
 Rare downside probabilities under rough volatility can be too expensive for ordinary
@@ -323,7 +445,10 @@ This project addresses those failure modes with four constraints:
 4. couple fine and coarse paths with the same fine proposal, label, control,
    likelihood, and Gaussian coordinate.
 
-## Method at a glance
+## Historical DCS / MLMC mechanism
+
+This earlier estimator track remains available and tested. The diagram below is
+not the current auxiliary-risk pipeline shown above.
 
 ```mermaid
 flowchart LR
@@ -380,11 +505,12 @@ the finite-grid telescoping identity.
 The current contribution is a **controlled path-measure estimator**, not a quantum
 Feynman path integral. Quantum terminology is not used as a mathematical claim.
 
-Likewise, the current rare-event proposal uses a fixed three-component deterministic
-control schedule. A neural network could later amortize proposal generation across
-tasks and parameters, but it is not part of the present exactness theorem and is not
-the core G11 contribution. Earlier neural-controller experiments remain in the
-repository as falsified or historical research tracks.
+Current development uses explicitly normalized Gaussian mixtures fitted from CE/SMC
+banks, plus a deterministic structural guide for auxiliary risk evaluation. The fixed
+three-component deterministic schedule belongs to an earlier DCS track. Neural
+amortization is a possible future extension, not an implemented current contribution
+or a prerequisite for the finite-grid likelihood identities. Earlier neural-controller
+experiments remain preserved as falsified or historical research tracks.
 
 ## Mathematical guarantees and boundaries
 
@@ -635,6 +761,13 @@ namespace.
 
 Key implementation modules:
 
+- [`rbergomi_local_volterra_transport.py`](src/path_integral/rbergomi_local_volterra_transport.py): exact finite-grid independent-price conditioning;
+- [`conditional_second_moment.py`](src/path_integral/conditional_second_moment.py): auxiliary second-moment contribution identities;
+- [`finite_rank_gaussian_transport.py`](src/path_integral/finite_rank_gaussian_transport.py): exact defensive finite-rank Gaussian mixtures;
+- [`weighted_tempered_smc.py`](src/path_integral/weighted_tempered_smc.py): weighted training banks and mutation diagnostics;
+- [`volterra_excursion_guide.py`](src/path_integral/volterra_excursion_guide.py): deterministic Volterra/price excursion mixture;
+- [`path_geometry_diagnostics.py`](src/path_integral/path_geometry_diagnostics.py): tail-contribution geometry diagnostics;
+- [`proposal_family_diagnostics.py`](src/path_integral/proposal_family_diagnostics.py): frozen-family comparison contracts;
 - [`gaussian_span_marginalization.py`](src/path_integral/gaussian_span_marginalization.py): generic control-span identities;
 - [`rbergomi_dcs_mlmc.py`](src/path_integral/rbergomi_dcs_mlmc.py): rBergomi DCS adapter and threshold construction;
 - [`rbergomi_mlmc_sampler.py`](src/path_integral/rbergomi_mlmc_sampler.py): coupled raw/DCS MLMC sampling;
@@ -674,14 +807,27 @@ baselines and stopped when their gates failed. See the phase reviews under
 
 ## What remains before a journal claim
 
-V16 closes the local finite-grid implementation, exactness, named-cell confirmation,
-and fail-closed routing gates. The remaining blockers are not hidden engineering
-tasks: two independent novelty reviews are still 0/2, no independent person/hardware
-reproduction exists, and the quantitative continuous relative mesh-bias/end-to-end
-complexity gate remains open. Joint-extreme fallback cells also do not support a
-uniform-dominance statement. The defensible status is therefore **a strong PhD-level
-working-paper core with positive frozen finite-grid results**, not a top-journal-ready
-final manuscript.
+The post-audit work has stabilized an auxiliary finite-grid second-moment evaluator
+in two development cells. It has not closed the original estimator's accuracy or
+efficiency gates. Historical V16 named-cell results are protocol-specific records,
+not evidence of current general dominance. The remaining requirements are:
+
+- cross-check event probabilities and second moments with genuinely different,
+  independently qualified reference mechanisms;
+- quantify coupled grid error and rare-contribution localization: large-contribution
+  replay currently flags paths with almost all integrated variance in one time cell;
+- demonstrate a benefit over the static-only guide, or simplify the method if
+  learning adds no value;
+- compare full offline, fitting, selection, and inference wall time only between
+  methods meeting the same accuracy contract;
+- produce sealed confirmation data with more independent original-model training
+  repetitions and external person/hardware reproduction;
+- establish a precise novelty boundary and a theorem matched to the actual method.
+
+The defensible status is **an active research implementation with useful correctness
+infrastructure and development evidence**, not an established PhD-level contribution
+or a top-journal-ready paper. See the [structural improvement plan](docs/reviews/MODEL_STRUCTURAL_REVIEW_AND_IMPROVEMENT_PLAN_2026-10-07_KO.md)
+for the gates that control the next work.
 
 ## Research integrity
 
