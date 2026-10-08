@@ -28,9 +28,10 @@ class SeedKey:
             self.task,
             self.stream,
         )
-        if any(not value or value.strip() != value for value in text_fields):
+        if any(not isinstance(value, str) or not value or value.strip() != value for value in text_fields):
             raise ValueError("seed text fields must be nonempty and already stripped")
-        if self.level < 0 or self.replicate < 0:
+        if any(isinstance(value, bool) or not isinstance(value, int) or value < 0
+               for value in (self.level, self.replicate)):
             raise ValueError("seed level and replicate must be nonnegative")
 
     def canonical_bytes(self) -> bytes:
@@ -65,7 +66,7 @@ class SeedLedger:
     def _insert(self, record: SeedRecord) -> None:
         if record.key in self._by_key:
             raise ValueError(f"duplicate seed key: {record.key}")
-        if record.seed <= 0 or record.seed >= 1 << 63:
+        if isinstance(record.seed, bool) or not isinstance(record.seed, int) or record.seed <= 0 or record.seed >= 1 << 63:
             raise ValueError("seed must be in [1, 2**63)")
         if record.seed != derive_seed(record.key):
             raise ValueError("seed does not match its canonical key")
@@ -113,7 +114,8 @@ class SeedLedger:
             if not isinstance(raw, dict) or set(raw) != {"key", "seed"}:
                 raise ValueError("invalid seed record")
             raw_key = raw["key"]
-            if not isinstance(raw_key, dict) or not isinstance(raw["seed"], int):
+            if (not isinstance(raw_key, dict) or set(raw_key) != set(SeedKey.__dataclass_fields__)
+                    or isinstance(raw["seed"], bool) or not isinstance(raw["seed"], int)):
                 raise ValueError("invalid seed record fields")
             records.append(SeedRecord(SeedKey(**raw_key), raw["seed"]))
         return cls(records)

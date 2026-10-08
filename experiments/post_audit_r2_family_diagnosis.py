@@ -48,14 +48,18 @@ from src.path_integral.weighted_tempered_smc import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def freeze_source(output: Path, config: dict[str, Any]) -> dict[str, Any]:
+def freeze_source(output: Path, config: dict[str, Any], *, extra_snapshot_paths: tuple[str, ...] = ()) -> dict[str, Any]:
     """Archive runtime source/config plus dependency declarations, before any run."""
     snapshot = output.with_suffix(".source.zip")
+    for name in extra_snapshot_paths:
+        path = (ROOT/name).resolve()
+        if not path.is_relative_to(ROOT.resolve()) or not path.is_file():
+            raise ValueError("extra snapshot paths must be existing workspace files")
     paths = subprocess.check_output((
         "git", "ls-files", "--cached", "--others", "--exclude-standard", "-z",
         "--", "src", "experiments", "configs", "tests", "pyproject.toml", "requirements.txt",
         "requirements-dev.txt", "docs/reviews/MODEL_STRUCTURAL_REVIEW_AND_IMPROVEMENT_PLAN_2026-10-07_KO.md",
-        "main.py", "train_driftnet.py",
+        "main.py", "train_driftnet.py", *extra_snapshot_paths,
     ), cwd=ROOT).split(b"\0")
     manifest = source_manifest(ROOT, config=config)
     hashes = {}

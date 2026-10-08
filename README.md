@@ -10,7 +10,22 @@
 
 ## Research status
 
-**Current status (2026-10-07): post-audit R2 risk-evaluator development, not submission-ready.**
+**Current status (2026-10-08): reference-recovery development; independent precision remains unresolved, not submission-ready.**
+
+The latest bounded recovery study completed 696 checkpoint units, including
+fresh full-reference versus marginal-reference comparisons and guide-free
+population/island diagnostics. Scoped terminal-law preparation reduced measured
+evaluator time, but marginal-risk gains did not reproduce across both cells and
+replications. Guide-free risk normalizers remained highly variable. A callback-only
+wall ledger missed checkpoint I/O: the N4 phase exceeded its 30-minute cap by
+9.78 seconds. The original artifacts are preserved, N4 is an operational failure,
+and the wall/checkpoint safeguards have been corrected and regression-tested.
+Neither production references nor the P2 mesh gate are authorized.
+See the [overnight recovery result and limitations](docs/reviews/OVERNIGHT_REFERENCE_RECOVERY_RESULT_2026-10-08_KO.md)
+and [mathematical contract review](docs/theory/OVERNIGHT_REFERENCE_RECOVERY_MATHEMATICAL_REVIEW_2026-10-08_KO.md).
+
+### Earlier development history
+
 The finite-grid conditional payoff and full defensive-mixture likelihood remain
 the correctness core. Fresh R1.5 experiments identified unstable training banks,
 possible multimode compression loss, and insufficient final precision in the
