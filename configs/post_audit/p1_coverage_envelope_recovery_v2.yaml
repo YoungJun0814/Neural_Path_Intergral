@@ -1,0 +1,13 @@
+schema: npi.p1-recovery-p2-parallel.v1
+reference_family: coverage-envelope-f64
+protocol_path: docs/plans/COVERAGE_ENVELOPE_RECOVERY_PROTOCOL_2026-10-10_KO.md
+run_directory: results/post_audit/p1_coverage_envelope_recovery_v2/session_20261010
+proposal_artifact_path: results/post_audit/r2_family_diagnosis_five_fit_v1.json
+method: parent-as-is
+replications: 8
+unit_count: 32768
+batch_size: 4096
+guide: {amplitudes: [2.0, 4.0, 6.0, 8.0], price_amplitudes: [0.0, 2.0, 4.0], defensive_mass: 0.1}
+smc: {particles: 1024, levels: 64, mutations: 4, pcn: 0.35, resample_every: 4, independence_every: 2}
+limits: {B: {work: 40000000, wall: 1800.0}}
+scope: corrected_float64_coverage_envelope_pilot_not_confirmation

@@ -1,0 +1,22 @@
+{
+  "schema": "npi.reference-coverage-joint.validation.v1",
+  "date": "2026-10-09",
+  "scope": "software_and_bounded_path_audit_not_tail_certificate",
+  "pytest": {"passed": 1268, "wall_seconds": 252.62},
+  "ruff": "pass",
+  "mypy_ci_source_files": 183,
+  "mypy_new_experiment_direct_target": "pass",
+  "artifact_audit": {
+    "status": "source_seed_q_arithmetic_path_audit_pass_not_tail_certificate",
+    "units": 640,
+    "original_simulator_replay_calls": 64,
+    "guide_preparation_calls": 128,
+    "maximum_log_contribution_difference": 7.105427357601002e-15,
+    "run_source_sha256": "b2b1ecbf158be2158dc43cf52df0001b2561b9044591813379c4d4cffa0286bd",
+    "audit_runtime_source_tree_digest": "179cb3a0afb993db1cbfca6556fc42913144646e28b5d89f299c055bbedabaef"
+  },
+  "accuracy_eligible_method_pairs": 0,
+  "production_reference_qualified": false,
+  "p2_authorized": false,
+  "note": "Original samples and source archive preserved. Auditor thread setting and original-simulator replay were added after the scientific run."
+}

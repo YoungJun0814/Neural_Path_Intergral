@@ -10,7 +10,51 @@
 
 ## Research status
 
-**Current status (2026-10-08): reference-recovery development; independent precision remains unresolved, not submission-ready.**
+**Current status (2026-10-16): scoped reference-precision recovery; full P1/P2 remain unresolved, not submission-ready.**
+
+A fresh fixed-count high-eta / parent0 validation passed the development checks
+for all four reference methods: probability RSE 0.50–0.71%, raw second-moment RSE
+0.56–1.03%, and simultaneous 10% agreement. It completed 2,016 units and
+128,680,064 potential evaluations with seed/moment replay audits. This improves
+the reference evaluator, **not the original model proposal q**, and does not
+replace the required guide-independent, all-q validation.
+
+Fresh all-ten-q allocation still failed: canonical guide-free risk variation and
+static probability precision exceed the frozen production budgets. Fine-grid
+N1024/2048/4096 diagnostics also failed the small-difference uncertainty check;
+the high-eta N4096 difference is 1.29% but its development uncertainty upper bound
+is 20.66%. A frozen-family umbrella SMC core now shares computation across distinct
+targets without dropping the product normalizer. The first five-q check failed
+its frozen precision limit and is preserved. A disjoint, reallocated high-eta
+check then completed 532 units / 95,998,080 evaluations: all three methods passed
+RSE <= 1.5%, sensitivity and simultaneous agreement for probability and all five
+M2 targets, including a genuinely guide-free kernel. This is **scoped N32
+development reference qualification**, not publication confirmation or q speedup.
+Canonical fixed-count validation completed 580 units / 116,953,216 forward
+evaluations. All 15 risk checks and all 16 agreement checks passed, but guide-free
+probability RSE was **1.5066%, above the frozen 1.5% limit**: the combined check
+failed (17/18 precision checks). The failure is preserved, not rounded into a pass.
+Fresh paired-gradient N2048/4096 diagnostics passed all four adjacent-difference
+checks (uncertainty upper bounds 5.81–9.51%), but probability RSE remained
+6.56–15.38%. This is not a continuum-bias or fine-grid accuracy certificate.
+An exact all-left-driver conditioning core reduces the N32 probability coordinates
+from 64 to 31 without changing its law; its small comparison did not qualify
+reference agreement and is not used to replace the original M2 integrand.
+Full P1/P2 and large training remain open. No accuracy gate was relaxed.
+See the [recovery results, failures and next gates](docs/reviews/P1_RECOVERY_P2_ROOT_CAUSE_AND_NEXT_GATE_REPORT_2026-10-10_KO.md)
+and [umbrella mathematical contract](docs/theory/FROZEN_FAMILY_UMBRELLA_UNNORMALIZED_MEASURE_2026-10-10_KO.md).
+
+### Earlier reference-coverage development
+
+A fresh, preregistered local variance-inflation mixture improved shifted/multimodal
+Gaussian-bump oracle diagnostics but failed the actual Volterra accuracy gate
+(19–70% relative standard errors). An exact fixed-orthogonal shift-mixture
+conditional-law core is implemented and tested; it is not yet a production nested
+sampler. No new proposal superiority or reference qualification is claimed.
+See the [coverage and joint-conditional result](docs/reviews/REFERENCE_COVERAGE_JOINT_CONDITIONAL_RESULT_2026-10-09_KO.md)
+and [coverage/conditional mathematical review](docs/theory/REFERENCE_COVERAGE_JOINT_CONDITIONAL_REVIEW_2026-10-09_KO.md).
+
+### Previous bounded recovery study
 
 The latest bounded recovery study completed 696 checkpoint units, including
 fresh full-reference versus marginal-reference comparisons and guide-free
@@ -90,7 +134,7 @@ limited to the two declared linear mean constraints, not the nonlinear rare even
 The current core is a classical probabilistic method, not a quantum model or an
 implemented neural operator.
 
-## Latest development evidence
+## Earlier auxiliary-fit evidence
 
 The v7 study uses **10 fixed q proposals, 5 fresh whole auxiliary fits per q,
 and 200 final estimators**. All ten fixed proposals pass the predeclared five-fit
