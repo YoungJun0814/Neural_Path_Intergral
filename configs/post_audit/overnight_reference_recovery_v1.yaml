@@ -1,0 +1,21 @@
+schema: npi.overnight-reference-recovery.config.v1
+run_directory: results/post_audit/overnight_reference_recovery_v1/session_20261008
+proposal_artifact_path: results/post_audit/r2_family_diagnosis_five_fit_v1.json
+method: parent-as-is
+torch_threads: 1
+unit_count: 262144
+batch_size: 8192
+replications: 2
+whole_replicates: 8
+guide: {amplitudes: [2.0, 4.0, 6.0, 8.0], price_amplitudes: [0.0, 2.0, 4.0], defensive_mass: 0.1}
+smc: {levels: 64, bridge_power: 2, mutation_steps: 1, pcn_scale: 0.35, resample_every: 4}
+limits:
+  N0: {work: 500000, wall: 120.0}
+  N1: {work: 500000, wall: 120.0}
+  N2: {work: 4000000, wall: 600.0}
+  N3: {work: 4000000, wall: 600.0}
+  N4: {work: 32000000, wall: 1800.0}
+  N5: {work: 8000000, wall: 1200.0}
+  N7: {work: 1000000, wall: 120.0}
+resources: {max_rss_bytes: 4294967296, minimum_free_disk_bytes: 10737418240, max_artifact_bytes: 2147483648}
+scope: fixed_grid_development_diagnostics_not_reference_qualification

@@ -1,0 +1,13 @@
+schema: npi.reference-coverage-joint.v1
+run_directory: results/post_audit/reference_coverage_joint_v1/session_20261009
+proposal_artifact_path: results/post_audit/r2_family_diagnosis_five_fit_v1.json
+method: parent-as-is
+replications: 8
+unit_count: 32768
+batch_size: 4096
+torch_threads: 1
+variance: 25.0
+defensive_mass: 0.1
+guide: {amplitudes: [2.0, 4.0, 6.0, 8.0], price_amplitudes: [0.0, 2.0, 4.0], defensive_mass: 0.1}
+limits: {D: {work: 3000000, wall: 900.0}}
+scope: development_coverage_diagnostic_not_reference_qualification

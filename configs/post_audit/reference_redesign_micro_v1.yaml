@@ -1,0 +1,17 @@
+schema: npi.structural-v2.reference-redesign-config.v1
+mode: micro
+output_path: results/post_audit/reference_redesign_micro_v1.json
+proposal_artifact_path: results/post_audit/r2_family_diagnosis_five_fit_v1.json
+method: parent-as-is
+pilot_parent_rep: 0
+torch_threads: 1
+guide: {amplitudes: [2.0, 4.0, 6.0, 8.0], price_amplitudes: [0.0, 2.0, 4.0], defensive_mass: 0.1}
+inner_counts: [1, 4, 16, 64]
+outer_batches: 4
+outer_batch_size: 512
+whole_replicates: 8
+kernels: [pcn, elliptical_slice]
+fixed_block_fractions: [0.25, 0.5, 0.75]
+smc: {particles: 128, levels: 64, bridge_power: 2, mutation_steps: 2, pcn_scale: 0.35, resample_every: 4, slice_maximum_attempts: 1024}
+budget: {max_potential_evaluations: 3000000, max_wall_seconds: 900.0, max_process_rss_bytes: 4294967296, minimum_free_disk_bytes: 10737418240}
+scope: fresh_development_micro_not_reference_qualification

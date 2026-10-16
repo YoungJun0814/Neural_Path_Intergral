@@ -15,6 +15,9 @@ from typing import Literal
 
 import torch
 
+from src.path_integral.elliptical_slice_kernel import elliptical_slice_transition
+from src.path_integral.finite_rank_gaussian_transport import DefensiveFiniteRankGaussianMixture
+
 LogPotential = Callable[[torch.Tensor], torch.Tensor]
 ResamplingScheme = Literal["multinomial", "stratified"]
 
@@ -30,6 +33,9 @@ class WeightedSMCConfig:
     resample_every: int = 1
     resampling_scheme: ResamplingScheme = "multinomial"
     retain_final_particles: bool = False
+    independence_every: int = 0
+    mutation_kernel: Literal["pcn", "elliptical_slice"] = "pcn"
+    slice_maximum_attempts: int = 1024
 
     def __post_init__(self) -> None:
         for name in ("particles", "replicates", "resample_every"):
@@ -52,6 +58,15 @@ class WeightedSMCConfig:
             raise ValueError("unsupported resampling scheme")
         if not isinstance(self.retain_final_particles, bool):
             raise ValueError("retain_final_particles must be boolean")
+        if isinstance(self.independence_every, bool) or not isinstance(self.independence_every, int) or self.independence_every < 0:
+            raise ValueError("independence_every must be a nonnegative integer")
+        if self.mutation_kernel not in ("pcn", "elliptical_slice"):
+            raise ValueError("unsupported mutation kernel")
+        if self.mutation_kernel == "elliptical_slice" and self.independence_every:
+            raise ValueError("ellipse reference must not use static-global mutation")
+        if (isinstance(self.slice_maximum_attempts, bool) or not isinstance(self.slice_maximum_attempts, int)
+                or self.slice_maximum_attempts < 1):
+            raise ValueError("invalid ellipse attempt cap")
 
 
 @dataclass(frozen=True)
@@ -91,11 +106,17 @@ def _resample(
 
 def estimate_weighted_tempered_normalizer(
     log_potential: LogPotential, *, dimension: int, config: WeightedSMCConfig,
+    independence_proposal: DefensiveFiniteRankGaussianMixture | None = None,
+    observer: Callable[[str, int, float, torch.Tensor, torch.Tensor], None] | None = None,
 ) -> WeightedSMCResult:
     """Estimate E_phi[g] with deterministic bridge and exact pCN MH mutation."""
 
     if isinstance(dimension, bool) or not isinstance(dimension, int) or dimension < 1:
         raise ValueError("dimension must be a positive integer")
+    if config.independence_every and (independence_proposal is None or independence_proposal.dimension != dimension):
+        raise ValueError("declared global mutation requires a dimension-matched normalized proposal")
+    if independence_proposal is not None and not config.independence_every:
+        raise ValueError("unused independence proposal")
     retained = math.sqrt(1.0 - config.pcn_scale**2)
     log_estimates: list[torch.Tensor] = []
     diagnostics: list[dict[str, object]] = []
@@ -112,6 +133,8 @@ def estimate_weighted_tempered_normalizer(
         _validate_log_potential(log_g, count)
         potential_evaluations += count
         log_weights = torch.full((count,), -math.log(count), dtype=torch.float64)
+        if observer is not None:
+            observer("initial", replicate, 0., particles.clone(), torch.exp(log_weights).clone())
         log_normalizer = torch.zeros((), dtype=torch.float64)
         lineage = torch.arange(count)
         stages: list[dict[str, object]] = []
@@ -129,6 +152,8 @@ def estimate_weighted_tempered_normalizer(
             max_weight = float(torch.max(weights))
             is_final = stage == len(config.temperatures) - 2
             should_resample = (stage + 1) % config.resample_every == 0 and not is_final
+            if observer is not None:
+                observer("pre_resample", replicate, beta_right, particles.clone(), weights.clone())
             if should_resample:
                 ancestors = _resample(
                     weights, generator=generator, scheme=config.resampling_scheme,
@@ -137,15 +162,42 @@ def estimate_weighted_tempered_normalizer(
                 log_g = log_g[ancestors]
                 lineage = lineage[ancestors]
                 log_weights.fill_(-math.log(count))
+            if observer is not None:
+                observer("post_resample", replicate, beta_right, particles.clone(), torch.exp(log_weights).clone())
             stage_accepted = 0
+            global_accepted, global_proposed = 0, 0
             if not is_final:
-                for _ in range(config.mutation_steps):
-                    noise = torch.randn(particles.shape, dtype=torch.float64, generator=generator)
-                    candidate = retained * particles + config.pcn_scale * noise
+                for mutation in range(config.mutation_steps):
+                    if config.mutation_kernel == "elliptical_slice":
+                        moved = elliptical_slice_transition(particles, log_g, beta=beta_right,
+                            log_potential=log_potential, generator=generator,
+                            maximum_attempts=config.slice_maximum_attempts)
+                        particles, log_g = moved.particles, moved.log_potential
+                        _validate_log_potential(log_g, count)
+                        potential_evaluations += moved.potential_evaluations
+                        stage_accepted += count
+                        accepted_total += count
+                        proposed_total += count
+                        continue
+                    global_move = config.independence_every > 0 and (mutation+1) % config.independence_every == 0
+                    if global_move:
+                        assert independence_proposal is not None
+                        path_seed = int(torch.randint(0, 2**63-1, (), generator=generator))
+                        label_seed = int(torch.randint(0, 2**63-1, (), generator=generator))
+                        if label_seed == path_seed:
+                            label_seed = (label_seed+1) % (2**63-1)
+                        draw = independence_proposal.sample(count, path_seed=path_seed, label_seed=label_seed)
+                        candidate = draw.samples
+                        correction = independence_proposal.log_q_over_p(particles)-draw.log_q_over_p
+                        global_proposed += count
+                    else:
+                        noise = torch.randn(particles.shape, dtype=torch.float64, generator=generator)
+                        candidate = retained * particles + config.pcn_scale * noise
+                        correction = torch.zeros(count, dtype=torch.float64)
                     candidate_log_g = log_potential(candidate)
                     _validate_log_potential(candidate_log_g, count)
                     potential_evaluations += count
-                    log_acceptance = beta_right * (candidate_log_g - log_g)
+                    log_acceptance = beta_right * (candidate_log_g - log_g) + correction
                     uniform = torch.rand(count, dtype=torch.float64, generator=generator)
                     accept = torch.log(uniform) < torch.minimum(
                         log_acceptance, torch.zeros_like(log_acceptance),
@@ -153,8 +205,12 @@ def estimate_weighted_tempered_normalizer(
                     particles[accept] = candidate[accept]
                     log_g[accept] = candidate_log_g[accept]
                     stage_accepted += int(torch.sum(accept))
+                    if global_move:
+                        global_accepted += int(torch.sum(accept))
                     accepted_total += int(torch.sum(accept))
                     proposed_total += count
+            if observer is not None:
+                observer("post_mutation", replicate, beta_right, particles.clone(), torch.exp(log_weights).clone())
             stages.append({
                 "stage": stage,
                 "beta": beta_right,
@@ -167,6 +223,9 @@ def estimate_weighted_tempered_normalizer(
                     if config.mutation_steps and not is_final else None
                 ),
                 "log_normalizer": float(log_normalizer),
+                "global_mutation_proposals": global_proposed,
+                "global_mutation_accepts": global_accepted,
+                "mutation_kernel": config.mutation_kernel,
             })
         log_estimates.append(log_normalizer)
         diagnostics.append({

@@ -78,3 +78,8 @@ tmp/
 # versioned explicitly and therefore does not match these patterns.
 results/**/*smoke*
 results/**/*progress*
+
+# Large immutable local JSON evidence; byte-identical .json.gz copies are versioned.
+results/post_audit/r2_auxiliary_island_ensemble_v5.json
+results/post_audit/r2_volterra_static_pilot_v6.json
+results/post_audit/r2_auxiliary_volterra_safeguard_v7.json

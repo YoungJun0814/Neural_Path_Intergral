@@ -1,0 +1,682 @@
+{
+  "status": "unresolved_production_budget_or_gain",
+  "failure_reasons": [
+    "incomplete_primary_pilot",
+    "no_two_cell_20_percent_nested_cost_gain",
+    "sample_cap:canonical-h005-k1/0/risk/elliptical_slice",
+    "sample_cap:canonical-h005-k1/0/probability/elliptical_slice",
+    "sample_cap:canonical-h005-k1/1/risk/elliptical_slice",
+    "sample_cap:canonical-h005-k1/2/risk/elliptical_slice",
+    "sample_cap:canonical-h005-k1/3/risk/elliptical_slice",
+    "sample_cap:canonical-h005-k1/4/risk/elliptical_slice",
+    "sample_cap:high-eta200-k1/0/risk/elliptical_slice",
+    "missing_completed_pilot:high-eta200-k1/probability/elliptical_slice",
+    "sample_cap:high-eta200-k1/1/risk/elliptical_slice",
+    "sample_cap:high-eta200-k1/2/risk/elliptical_slice",
+    "sample_cap:high-eta200-k1/3/risk/elliptical_slice",
+    "sample_cap:high-eta200-k1/4/risk/elliptical_slice",
+    "production_work_cap",
+    "production_wall_cap",
+    "incomplete_production_grid"
+  ],
+  "selected_nested_candidate": {
+    "block": null,
+    "inner": 1,
+    "worst_cv2_wall_per_outer": 0.002854330668251812,
+    "worst_ratio_to_L1": 1.0,
+    "eligible": false
+  },
+  "selected_nested_mode": "micro",
+  "production_jobs": [
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 0,
+      "estimand": "risk",
+      "method": "nested",
+      "inner": 1,
+      "block": null,
+      "count": 1245184,
+      "allocation": {
+        "required_count": 1245184,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 2490368,
+      "forecast_wall_seconds": 45.456360541284084
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 0,
+      "estimand": "risk",
+      "method": "elliptical_slice",
+      "inner": 1,
+      "block": null,
+      "count": 7314,
+      "allocation": {
+        "required_count": 7314,
+        "maximum_count": 256,
+        "status": "unresolved_sample_budget",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 1652740009,
+      "forecast_wall_seconds": 63788.44640655181
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 0,
+      "estimand": "risk",
+      "method": "static-iid",
+      "inner": 1,
+      "block": null,
+      "count": 2424832,
+      "allocation": {
+        "required_count": 2424832,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 4849664,
+      "forecast_wall_seconds": 72.69090022088494
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 0,
+      "estimand": "probability",
+      "method": "conditional",
+      "inner": 1,
+      "block": null,
+      "count": 6291456,
+      "allocation": {
+        "required_count": 6291456,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 12582912,
+      "forecast_wall_seconds": 512.1543166637421
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 0,
+      "estimand": "probability",
+      "method": "elliptical_slice",
+      "inner": 1,
+      "block": null,
+      "count": 2283,
+      "allocation": {
+        "required_count": 2283,
+        "maximum_count": 256,
+        "status": "unresolved_sample_budget",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 481000134,
+      "forecast_wall_seconds": 16137.650699032936
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 1,
+      "estimand": "risk",
+      "method": "nested",
+      "inner": 1,
+      "block": null,
+      "count": 1245184,
+      "allocation": {
+        "required_count": 1245184,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 2490368,
+      "forecast_wall_seconds": 45.456360541284084
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 1,
+      "estimand": "risk",
+      "method": "elliptical_slice",
+      "inner": 1,
+      "block": null,
+      "count": 7314,
+      "allocation": {
+        "required_count": 7314,
+        "maximum_count": 256,
+        "status": "unresolved_sample_budget",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 1652740009,
+      "forecast_wall_seconds": 63788.44640655181
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 1,
+      "estimand": "risk",
+      "method": "static-iid",
+      "inner": 1,
+      "block": null,
+      "count": 1835008,
+      "allocation": {
+        "required_count": 1835008,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 3670016,
+      "forecast_wall_seconds": 53.92414755304344
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 2,
+      "estimand": "risk",
+      "method": "nested",
+      "inner": 1,
+      "block": null,
+      "count": 1245184,
+      "allocation": {
+        "required_count": 1245184,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 2490368,
+      "forecast_wall_seconds": 45.456360541284084
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 2,
+      "estimand": "risk",
+      "method": "elliptical_slice",
+      "inner": 1,
+      "block": null,
+      "count": 7314,
+      "allocation": {
+        "required_count": 7314,
+        "maximum_count": 256,
+        "status": "unresolved_sample_budget",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 1652740009,
+      "forecast_wall_seconds": 63788.44640655181
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 2,
+      "estimand": "risk",
+      "method": "static-iid",
+      "inner": 1,
+      "block": null,
+      "count": 1835008,
+      "allocation": {
+        "required_count": 1835008,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 3670016,
+      "forecast_wall_seconds": 53.79329340043478
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 3,
+      "estimand": "risk",
+      "method": "nested",
+      "inner": 1,
+      "block": null,
+      "count": 1245184,
+      "allocation": {
+        "required_count": 1245184,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 2490368,
+      "forecast_wall_seconds": 45.456360541284084
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 3,
+      "estimand": "risk",
+      "method": "elliptical_slice",
+      "inner": 1,
+      "block": null,
+      "count": 7314,
+      "allocation": {
+        "required_count": 7314,
+        "maximum_count": 256,
+        "status": "unresolved_sample_budget",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 1652740009,
+      "forecast_wall_seconds": 63788.44640655181
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 3,
+      "estimand": "risk",
+      "method": "static-iid",
+      "inner": 1,
+      "block": null,
+      "count": 1507328,
+      "allocation": {
+        "required_count": 1507328,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 3014656,
+      "forecast_wall_seconds": 44.09566267405171
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 4,
+      "estimand": "risk",
+      "method": "nested",
+      "inner": 1,
+      "block": null,
+      "count": 1245184,
+      "allocation": {
+        "required_count": 1245184,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 2490368,
+      "forecast_wall_seconds": 45.456360541284084
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 4,
+      "estimand": "risk",
+      "method": "elliptical_slice",
+      "inner": 1,
+      "block": null,
+      "count": 7314,
+      "allocation": {
+        "required_count": 7314,
+        "maximum_count": 256,
+        "status": "unresolved_sample_budget",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 1652740009,
+      "forecast_wall_seconds": 63788.44640655181
+    },
+    {
+      "cell_id": "canonical-h005-k1",
+      "parent_training_rep": 4,
+      "estimand": "risk",
+      "method": "static-iid",
+      "inner": 1,
+      "block": null,
+      "count": 2097152,
+      "allocation": {
+        "required_count": 2097152,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 4194304,
+      "forecast_wall_seconds": 62.591892002150416
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 0,
+      "estimand": "risk",
+      "method": "nested",
+      "inner": 1,
+      "block": null,
+      "count": 1310720,
+      "allocation": {
+        "required_count": 1310720,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 2621440,
+      "forecast_wall_seconds": 57.211584001779556
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 0,
+      "estimand": "risk",
+      "method": "elliptical_slice",
+      "inner": 1,
+      "block": null,
+      "count": 7627,
+      "allocation": {
+        "required_count": 7627,
+        "maximum_count": 256,
+        "status": "unresolved_sample_budget",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 1677397530,
+      "forecast_wall_seconds": 66218.50135338464
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 0,
+      "estimand": "risk",
+      "method": "static-iid",
+      "inner": 1,
+      "block": null,
+      "count": 1310720,
+      "allocation": {
+        "required_count": 1310720,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 2621440,
+      "forecast_wall_seconds": 38.85719550191425
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 0,
+      "estimand": "probability",
+      "method": "conditional",
+      "inner": 1,
+      "block": null,
+      "count": 1048576,
+      "allocation": {
+        "required_count": 1048576,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 2097152,
+      "forecast_wall_seconds": 217.10837745666504
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 1,
+      "estimand": "risk",
+      "method": "nested",
+      "inner": 1,
+      "block": null,
+      "count": 1310720,
+      "allocation": {
+        "required_count": 1310720,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 2621440,
+      "forecast_wall_seconds": 57.211584001779556
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 1,
+      "estimand": "risk",
+      "method": "elliptical_slice",
+      "inner": 1,
+      "block": null,
+      "count": 7627,
+      "allocation": {
+        "required_count": 7627,
+        "maximum_count": 256,
+        "status": "unresolved_sample_budget",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 1677397530,
+      "forecast_wall_seconds": 66218.50135338464
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 1,
+      "estimand": "risk",
+      "method": "static-iid",
+      "inner": 1,
+      "block": null,
+      "count": 1441792,
+      "allocation": {
+        "required_count": 1441792,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 2883584,
+      "forecast_wall_seconds": 43.05295912432484
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 2,
+      "estimand": "risk",
+      "method": "nested",
+      "inner": 1,
+      "block": null,
+      "count": 1310720,
+      "allocation": {
+        "required_count": 1310720,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 2621440,
+      "forecast_wall_seconds": 57.211584001779556
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 2,
+      "estimand": "risk",
+      "method": "elliptical_slice",
+      "inner": 1,
+      "block": null,
+      "count": 7627,
+      "allocation": {
+        "required_count": 7627,
+        "maximum_count": 256,
+        "status": "unresolved_sample_budget",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 1677397530,
+      "forecast_wall_seconds": 66218.50135338464
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 2,
+      "estimand": "risk",
+      "method": "static-iid",
+      "inner": 1,
+      "block": null,
+      "count": 1835008,
+      "allocation": {
+        "required_count": 1835008,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 3670016,
+      "forecast_wall_seconds": 53.73716459842399
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 3,
+      "estimand": "risk",
+      "method": "nested",
+      "inner": 1,
+      "block": null,
+      "count": 1310720,
+      "allocation": {
+        "required_count": 1310720,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 2621440,
+      "forecast_wall_seconds": 57.211584001779556
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 3,
+      "estimand": "risk",
+      "method": "elliptical_slice",
+      "inner": 1,
+      "block": null,
+      "count": 7627,
+      "allocation": {
+        "required_count": 7627,
+        "maximum_count": 256,
+        "status": "unresolved_sample_budget",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 1677397530,
+      "forecast_wall_seconds": 66218.50135338464
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 3,
+      "estimand": "risk",
+      "method": "static-iid",
+      "inner": 1,
+      "block": null,
+      "count": 1507328,
+      "allocation": {
+        "required_count": 1507328,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 3014656,
+      "forecast_wall_seconds": 44.17758033477003
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 4,
+      "estimand": "risk",
+      "method": "nested",
+      "inner": 1,
+      "block": null,
+      "count": 1310720,
+      "allocation": {
+        "required_count": 1310720,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 2621440,
+      "forecast_wall_seconds": 57.211584001779556
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 4,
+      "estimand": "risk",
+      "method": "elliptical_slice",
+      "inner": 1,
+      "block": null,
+      "count": 7627,
+      "allocation": {
+        "required_count": 7627,
+        "maximum_count": 256,
+        "status": "unresolved_sample_budget",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 1677397530,
+      "forecast_wall_seconds": 66218.50135338464
+    },
+    {
+      "cell_id": "high-eta200-k1",
+      "parent_training_rep": 4,
+      "estimand": "risk",
+      "method": "static-iid",
+      "inner": 1,
+      "block": null,
+      "count": 1769472,
+      "allocation": {
+        "required_count": 1769472,
+        "maximum_count": 8388608,
+        "status": "allocated",
+        "target_relative_se": 0.015,
+        "safety_factor": 3.0,
+        "interpretation": "pilot_forecast_not_precision_guarantee"
+      },
+      "forecast_work": 3538944,
+      "forecast_wall_seconds": 53.877177337766625
+    }
+  ],
+  "forecast_potential_equivalent_evaluations": 17207054229,
+  "forecast_wall_seconds": 667935.7898882987,
+  "production_config": null,
+  "pilot_bindings": [
+    {
+      "path": "results/post_audit/reference_redesign_micro_v1.json",
+      "sha256": "aa50b97efc2bf6470e7fb9d749f5f963c13f9028611bbff70fd54480b4734670"
+    },
+    {
+      "path": "results/post_audit/reference_redesign_kernel_v1.json",
+      "sha256": "0d0a499a10cb8eecfbd267403b388b1f8141a0839dbc535bdfe4c1b3cadf5d40"
+    },
+    {
+      "path": "results/post_audit/structural_v2_p1_repair_v1.json",
+      "sha256": "906fccdec492fdfc4d5924adb56ed3556780aed391618a046f4f15327bd5d66e"
+    },
+    {
+      "path": "results/post_audit/reference_redesign_block_v1.json",
+      "sha256": "3ee2fb869b56dd6c97037dabb9f8e9c9147775a146f0795419dde2f44c43da6b"
+    }
+  ],
+  "p2_authorized": false,
+  "scope": "rep0_nested_and_ellipse_variability_forecast_not_uniform_q_precision_theorem"
+}

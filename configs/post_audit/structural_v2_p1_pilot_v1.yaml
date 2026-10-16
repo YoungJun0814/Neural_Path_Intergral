@@ -1,0 +1,35 @@
+schema: npi.structural-v2.reference-config.v1
+mode: pilot
+output_path: results/post_audit/structural_v2_p1_pilot_v1.json
+proposal_artifact_path: results/post_audit/r2_family_diagnosis_five_fit_v1.json
+method: parent-as-is
+torch_threads: 1
+pilot_parent_rep: 0
+guide: {amplitudes: [2.0, 4.0, 6.0, 8.0], price_amplitudes: [0.0, 2.0, 4.0], defensive_mass: 0.1}
+schedules:
+  - {id: local-A, particles: 256, levels: 96, bridge_power: 2, mutation_steps: 8, pcn_scale: 0.35, resample_every: 2, resampling_scheme: stratified}
+  - {id: local-B, particles: 256, levels: 96, bridge_power: 2, mutation_steps: 8, pcn_scale: 0.35, resample_every: 4, resampling_scheme: stratified}
+  - {id: global-C, particles: 256, levels: 96, bridge_power: 2, mutation_steps: 8, pcn_scale: 0.35, resample_every: 4, resampling_scheme: stratified, independence_every: 2}
+pilot: {whole_smc_replicates: 8, iid_count: 65536, iid_blocks: 8, batch_size: 8192}
+allocation:
+  target_relative_se: 0.015
+  safety_factor: 3.0
+  minimum_whole_smc_replicates: 32
+  maximum_whole_smc_replicates: 256
+  minimum_iid_count: 1048576
+  maximum_iid_count: 8388608
+  production_max_potential_evaluations: 160000000
+  production_max_wall_seconds: 7200.0
+  wall_safety_factor: 1.5
+qualification:
+  risk_comparisons: 30
+  probability_comparisons: 2
+  family_alpha: 0.05
+  relative_margin: 0.10
+  maximum_relative_se: 0.025
+  maximum_leave_one_out_relative_shift: 0.05
+  maximum_unit_contribution_fraction: 0.15
+  maximum_block_between_to_iid_rse_ratio: 2.0
+  bootstrap_replicates: 2000
+budget: {max_potential_evaluations: 20000000, max_wall_seconds: 1800.0, max_process_rss_bytes: 4294967296, minimum_free_disk_bytes: 10737418240}
+scope: finite_grid_development_pilot_not_reference_pass_or_confirmation

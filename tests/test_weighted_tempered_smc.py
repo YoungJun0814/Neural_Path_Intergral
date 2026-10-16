@@ -4,8 +4,13 @@ from __future__ import annotations
 
 import math
 
+import pytest
 import torch
 
+from src.path_integral.finite_rank_gaussian_transport import (
+    DefensiveFiniteRankGaussianMixture,
+    FiniteRankGaussianComponent,
+)
 from src.path_integral.weighted_tempered_smc import (
     WeightedSMCConfig,
     estimate_weighted_tempered_normalizer,
@@ -90,3 +95,28 @@ def test_invalid_resampling_configuration_rejected() -> None:
         pass
     else:
         raise AssertionError("invalid calendar was accepted")
+
+
+def test_exact_global_mh_gaussian_normalizer_and_cost() -> None:
+    guide = DefensiveFiniteRankGaussianMixture(
+        (FiniteRankGaussianComponent.natural(1), FiniteRankGaussianComponent(
+            torch.tensor([1.], dtype=torch.float64), torch.eye(1, dtype=torch.float64),
+            torch.tensor([.5], dtype=torch.float64))), torch.tensor([.1, .9], dtype=torch.float64))
+    result = estimate_weighted_tempered_normalizer(
+        lambda x: -.5*(x[:, 0]-2).square(), dimension=1,
+        config=WeightedSMCConfig(128, tuple(i/12 for i in range(13)), 2, .35, 30, 901,
+            resample_every=3, resampling_scheme="stratified", independence_every=2),
+        independence_proposal=guide)
+    oracle = math.exp(-1)/math.sqrt(2)
+    assert abs(result.mean-oracle) < 4*result.standard_error
+    assert result.potential_evaluations == 30*128*(1+11*2)
+    assert all(sum(s["global_mutation_proposals"] for s in d["stages"]) == 128*11
+               for d in result.replicate_diagnostics)
+
+
+def test_global_mh_proposal_contract_rejected() -> None:
+    config = WeightedSMCConfig(16, (0., .5, 1.), 2, .35, 1, 12, independence_every=2)
+    with pytest.raises(ValueError, match="dimension-matched"):
+        estimate_weighted_tempered_normalizer(_constant, dimension=1, config=config)
+    with pytest.raises(ValueError, match="nonnegative integer"):
+        WeightedSMCConfig(16, (0., 1.), 2, .35, 1, 12, independence_every=True)

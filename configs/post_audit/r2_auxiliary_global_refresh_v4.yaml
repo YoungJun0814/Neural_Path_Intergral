@@ -1,0 +1,12 @@
+schema: npi.post-audit.r2-aux-risk-config.v1
+output_path: results/post_audit/r2_auxiliary_global_refresh_v4.json
+proposal_artifact_path: results/post_audit/r2_family_diagnosis_five_fit_v1.json
+guide_artifact_path: results/post_audit/r2_auxiliary_covariance_v3.json
+method: parent-as-is
+torch_threads: 1
+training_repetitions: 3
+training: {islands: 4, particles: 128, levels: 48, bridge_power: 2, mutation_steps: 8, pcn_scale: 0.35, resample_every: 4, resampling_scheme: stratified, independence_every: 2}
+mixture: {clusters: 2, covariance_rank: 16, defensive_mass: 0.1, feature_rank: 4, covariance_shrinkage: 0.5, minimum_variance: 0.25, maximum_variance: 4.0}
+evaluation: {count: 131072, batch_size: 8192, maximum_relative_se: 0.20}
+budget: {max_potential_evaluations: 24000000, max_wall_seconds: 1800.0}
+role: exploratory_exact_global_mh_bank_refresh_no_model_q_change

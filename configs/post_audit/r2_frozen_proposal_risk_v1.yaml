@@ -1,0 +1,12 @@
+schema: npi.post-audit.r2-bank-risk-config.v1
+mode: frozen_proposals
+output_path: results/post_audit/r2_frozen_proposal_risk_v1.json
+proposal_artifact_path: results/post_audit/r2_family_diagnosis_five_fit_v1.json
+methods: [parent-as-is, same-family-refit]
+reference_path: results/post_audit/r15_reference_refinement_v1.json
+torch_threads: 1
+evaluation: {bank_diagnostic_count: 0, direct_count: 65536, batch_size: 8192}
+risk: {particles: 128, replicates: 8, levels: 48, bridge_power: 4, mutation_steps: 2, pcn_scale: 0.35, resample_every: 4, resampling_scheme: stratified, maximum_relative_se: 0.20}
+budget: {max_potential_evaluations: 4000000, max_wall_seconds: 300.0}
+qualification: {target_relative_se: 0.05, reference_se_fraction_of_method_se: 0.2, relative_equivalence_margin: 0.25, confidence_z: 1.96}
+role: fixed_parent_conditional_risk_diagnosis_not_fresh_training

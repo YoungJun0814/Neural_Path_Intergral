@@ -1,0 +1,26 @@
+schema: npi.structural-v2.p0-config.v1
+output_path: results/post_audit/structural_v2_p0_inventory_v1.json
+historical_artifacts:
+  - results/post_audit/r2_family_diagnosis_pilot_v1.json
+  - results/post_audit/r2_family_diagnosis_five_fit_v1.json
+  - results/post_audit/r2_risk_geometry_stability_v1.json
+  - results/post_audit/r2_auxiliary_risk_crosscheck_v1.json
+  - results/post_audit/r2_auxiliary_whole_fit_v1.json
+  - results/post_audit/r2_auxiliary_bank_mixing_v2.json
+  - results/post_audit/r2_auxiliary_covariance_v3.json
+  - results/post_audit/r2_auxiliary_global_refresh_v4.json
+  - results/post_audit/r2_auxiliary_island_ensemble_v5.json.gz
+  - results/post_audit/r2_volterra_static_pilot_v6.json.gz
+  - results/post_audit/r2_auxiliary_volterra_safeguard_v7.json.gz
+evidence_documents:
+  - docs/plans/MODEL_STRUCTURAL_IMPROVEMENT_PLAN_V2_2026-10-08_KO.md
+  - docs/reviews/OPENAI_MATH_TRANSFER_REVIEW_2026-10-08_KO.md
+  - docs/reviews/AUXILIARY_WHOLE_FIT_STABILITY_2026-10-07_KO.md
+  - docs/theory/STRUCTURAL_V2_CLAIM_LEDGER_2026-10-08_KO.md
+budget:
+  max_wall_seconds: 600
+  max_process_rss_bytes: 1073741824
+  max_new_target_samples: 0
+  max_potential_evaluations: 0
+  max_new_model_candidates: 0
+  max_whole_training_runs: 0
