@@ -470,6 +470,13 @@ source/anchor/q/seed/identity/moment/cost 및 65,536 IID draws +3 whole replay,
 cache/full law 대조 감사를 통과했다. 감사 forward 1,094,784/backward 772,096회.
 감사 통과는 통계 관문 통과와 다르며 scoped canonical flag는 false로 보존했다.
 
+2026-10-16 후속: 별도215whole μ-only fresh 검증은 RSE.7568%, static 일치 상한3.399%,
+LOO.1549%, maximum whole share.6193%로 통과했고 first/last replay도 통과했다.
+forward/backward 각각54,819,840회, phase1065.97초. 이전71whole과 pooling하지 않았다.
+이전 risk 성분과 조합한 componentwise development recovery는 true지만, 실패한580-unit
+trial의 flag와 옛 통합 P1/P2 승인 상태는 바꾸지 않는다.
+[후속 실제 실행·검토 보고서](POST_MAIN_RECOVERY_EXECUTION_2026-10-16_KO.md)를 참조한다.
+
 ### 9.4 P2의 새 작은 진단
 
 paired-grid는단순IID-envelope dimension확대대신joint Gaussian(zfine,ε)에

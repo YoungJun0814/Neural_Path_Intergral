@@ -41,8 +41,15 @@ An exact all-left-driver conditioning core reduces the N32 probability coordinat
 from 64 to 31 without changing its law; its small comparison did not qualify
 reference agreement and is not used to replace the original M2 integrand.
 Full P1/P2 and large training remain open. No accuracy gate was relaxed.
+A subsequent **fresh 215-whole canonical probability check** passed RSE 0.757%,
+sensitivity, and static-reference agreement (3.40% upper bound), with endpoint
+replay audits. Combined with immutable earlier risk components this recovers a
+componentwise N32 development inventory; it does not rewrite the failed 580-unit
+trial, reproduce one new full confirmation, or authorize P2/large training.
 See the [recovery results, failures and next gates](docs/reviews/P1_RECOVERY_P2_ROOT_CAUSE_AND_NEXT_GATE_REPORT_2026-10-10_KO.md)
 and [umbrella mathematical contract](docs/theory/FROZEN_FAMILY_UMBRELLA_UNNORMALIZED_MEASURE_2026-10-10_KO.md).
+The [post-main execution report](docs/reviews/POST_MAIN_RECOVERY_EXECUTION_2026-10-16_KO.md)
+tracks subsequent completed and running experiments separately.
 
 ### Earlier reference-coverage development
 
