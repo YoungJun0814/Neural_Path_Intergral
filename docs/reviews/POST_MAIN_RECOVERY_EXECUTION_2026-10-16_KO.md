@@ -1,6 +1,7 @@
 # Main 반영 후 reference 회복 실행 기록
 
-2026-10-16. 진행 상태와 완료 증거를 구분하는 보고서. 원래 q의 개선이나 전체 P2 통과 보고가 아니다.
+2026-10-16 작성,2026-10-19 상태 갱신. 진행 상태와 완료 증거를 구분하는 보고서.
+원래 q의 개선이나 전체 P2 통과 보고가 아니다.
 
 ## 1. main 반영과 검증 완료
 
@@ -53,7 +54,15 @@ source/manifest/failed finish를 모두 보존한다. backward64,640회는 설�
 
 v2는 같은 수학적 설계와 전체32whole를 새 namespace로 다시 생성하도록 사전 고정했다.
 whole600초/phase6시간, 원래 physical/backward 상한은 유지한다. 실패 SHA를 새 manifest에
-묶고 다른 대형 로컬 실험과 겹치지 않는다. 현재 v2는 **아직 미실행**이다.
+묶고 다른 대형 로컬 실험과 겹치지 않는다. 이후 v2를 실행했으나,20whole 완료 후
+배터리 절전으로 high-η/more-temperatures/rep4가1745.756초를 기록해600초 cap에
+실패했다. 원래 v2 result.json은 없으며 prefix를 성공으로 집계하지 않는다.
+Windows 전원 기록의 저전원 구간은 UTC21:28:28.651166–21:53:29.669933이다.
+별도 [전체 고정-seed 복구 계획](../plans/RESOURCE_V2_SLEEP_RECOVERY_2026-10-16_KO.md)에
+따라20개 immutable complete와 원래 seed의 미완료12개를 함께 복구하도록 실행했다.
+2개를 완료했으나 세 번째 복구 whole는 배터리20% guard에 실패했다.
+전체22/32개만 complete이고 두 프로토콜 모두 result.json이 없다. 새 대형 계산은 중단했다.
+원래 운영 실패와 새 계산비용은 보존하며, fresh32개 confirmation이나 wall 벤치마크가 아니다.
 근거: [운영 재시작 계획](../plans/P2_FINE_RESOURCE_OPERATIONAL_RESTART_2026-10-16_KO.md).
 
 ## 4. 저메모리 static reference
@@ -108,7 +117,7 @@ median seconds는 .39658/.24938/.16541/.11345로8threads를 고정 선택했다.
 물리 평가6144회/actual backward3072회, 전체wall15.87초였다.
 8thread full kernel의 deterministic replay 및 알려진4차원 Gaussian normalizer
 oracle도 통과했다. calibration source/result의 hash를 v2 manifest에 묶도록 구현했다.
-실행 중인 static pilot는 원래1thread 설정을 그대로 유지한다.
+당시 실행 중이던 static pilot는 원래1thread 설정을 그대로 유지했다.
 
 추정식·구현을 다시 대조한 핵심 사항:
 
@@ -138,6 +147,35 @@ CI Ruff 통과, production Mypy **198 source files 통과**, diff 공백 검사 
 신규 runner의 명시적 Mypy와 recursive-moment/8thread kernel/수학 oracle 회귀도 통과했다.
 이는 위 실패한 reference precision을 성공으로 바꾸는 결과가 아니다.
 
-다음 장시간 단계는 v2의 원래32whole 대조다. 아직 fine-grid qualification을 얻지
-못했으므로 large-training은 시작하지 않는다. 결과에 따라 physical-window guide와
-독립 reference 설계를 우선 검토하며, raw q의 실용성 문제는 별도로 유지한다.
+다음 장시간 단계로 v2의 원래32whole 대조를 실행했으나 운영 실패했다(3절).
+별도 complete-grid recovery도 전원 guard로 중단됐다. 아직 fine-grid qualification을
+얻지 못했으므로 large-training은 시작하지 않는다. raw q의 실용성 문제도 별도로 유지한다.
+
+## 8. 후속 physical-window 설계: 실제 표본 생성 전 검증
+
+373성분 G0/G1 reference core를 기존 normalized Gaussian mixture sampler/density 위에
+구현했다. G0는31point-volatility/one-cell-price, G1은15point-volatility+16window-volatility이며
+**모든31price 방향**이T/8 physical future window(만기 인접 마지막은T/16)를 쓴다.
+초기 geometry-only prototype에 남아 있던15개 one-cell price 방향은 strong grid
+consistency 가정을 만족하지 않아 실제 sampling 전에 수정했다. 원래 q/BLP/payoff는 변경하지 않았다.
+
+adjoint FFT/dense identity, exact mixture reconstruction, causal support/energy,
+Brownian price embedding, recursive paired summary, 새 복구 ledger/power guard 및 Gaussian
+toy를 합한 targeted14tests와 explicit Mypy3files를 통과했다. 전체 suite는 phase 종료 후 재검사한다.
+G0/G1 실제 성능 표본은 아직 생성하지 않았다. 별도 고정32block pilot는 complete-grid
+recovery와4whole 감사 후에만 시작하도록 구현되어 있고 현재 실행 조건을 만족하지 않는다.
+
+[조건부 density consistency 검토](../theory/PHYSICAL_WINDOW_DENSITY_CONSISTENCY_2026-10-16_KO.md)는
+고정 finite dictionary/강수렴 representer/payoff L1 수렴이라는 가정 아래 second-moment
+연속성을 유도한다. 한-cell 방향의 stable-noise/Jensen penalty는 별도 극한 결과다.
+Gaussian toy에서 priorM2=.117871, shrinking-cell noise limit=.228066,
+fixedT/4windowM2=.120742를 확인했다. 이는 실제 Volterra 효율/독창성/저널 수준의 증거가 아니다.
+
+## 9. 전원 중단 후 최종 상태
+
+2026-10-19 복귀 후에도 원래 파일/HEAD 변화가 없음을 확인했다. battery13%/AC 연결 표시를
+관측해 새 장시간 계산과 전체 로컬 suite 재실행은 보류했다. 새 변경분의 targeted14tests,
+전체 CI Ruff, production Mypy199files 및 신규3files 명시적 Mypy는 중단 전에 통과했다.
+원래20complete+새2complete+failed records의 source/archive/checksum/count 무결성 검사를
+통과했다. 새로운 complete-grid statistical summary나 numerical replay 인증은 아니다.
+[비용·중단 원인·재개 조건 상세](RESOURCE_POWER_INTERRUPTION_REVIEW_2026-10-19_KO.md).

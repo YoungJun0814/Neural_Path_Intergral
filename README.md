@@ -10,7 +10,7 @@
 
 ## Research status
 
-**Current status (2026-10-16): scoped reference-precision recovery; full P1/P2 remain unresolved, not submission-ready.**
+**Current status (2026-10-19): scoped reference-precision recovery; full P1/P2 remain unresolved, not submission-ready.**
 
 A fresh fixed-count high-eta / parent0 validation passed the development checks
 for all four reference methods: probability RSE 0.50–0.71%, raw second-moment RSE
@@ -50,6 +50,15 @@ See the [recovery results, failures and next gates](docs/reviews/P1_RECOVERY_P2_
 and [umbrella mathematical contract](docs/theory/FROZEN_FAMILY_UMBRELLA_UNNORMALIZED_MEASURE_2026-10-10_KO.md).
 The [post-main execution report](docs/reviews/POST_MAIN_RECOVERY_EXECUTION_2026-10-16_KO.md)
 tracks subsequent completed and running experiments separately.
+The N4096 resource-v2 run subsequently failed its frozen wall cap after a recorded
+battery-induced sleep. Its 20 completed units are not qualified as a prefix. A
+separate fixed-seed full-grid recovery preserved that failure and completed two
+of the 12 missing units before its battery guard stopped the run. There is no
+complete 32-unit result or qualification; it is not fresh confirmation or a
+wall-time benchmark. See the [power interruption and integrity review](docs/reviews/RESOURCE_POWER_INTERRUPTION_REVIEW_2026-10-19_KO.md).
+A matched 373-component physical-window reference is implemented with geometry
+and Gaussian-toy oracles, but its actual performance pilot has not started.
+See the [density-consistency assumptions and limits](docs/theory/PHYSICAL_WINDOW_DENSITY_CONSISTENCY_2026-10-16_KO.md).
 
 ### Earlier reference-coverage development
 
