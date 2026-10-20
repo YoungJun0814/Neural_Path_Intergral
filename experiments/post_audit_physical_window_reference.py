@@ -17,6 +17,11 @@ from experiments.post_audit_fft_static_fine_reference import merge_retaining_max
 from experiments.post_audit_p2_paired_gradient import CELLS
 from experiments.post_audit_r1_diagnostics import _problem
 from experiments.post_audit_r2_family_diagnosis import freeze_source
+from experiments.post_audit_resource_stable_recovery import (
+    check_power_pair,
+    read_power,
+    validate_power,
+)
 from src.path_integral.paired_normalizer_difference import paired_normalizer_difference
 from src.path_integral.paired_volterra_gradient_reference import PairedVolterraProbability
 from src.path_integral.physical_window_guide import PhysicalWindowGuide
@@ -26,11 +31,11 @@ from src.path_integral.structural_v2_inventory import audit_snapshot
 from src.path_integral.structural_v2_reference import log_moments, relative_equivalence, sensitivity
 
 ROOT = Path(__file__).resolve().parents[1]
-ANCHOR = "results/post_audit/p2_fine_resource_sleep_recovery_v1/session_20261016/result.json"
-RESOURCE_AUDIT = "results/post_audit/p2_fine_resource_sleep_recovery_v1/session_20261016/audit.json"
+ANCHOR = "results/post_audit/p2_fine_resource_stable_recovery_v2/session_20261019/result.json"
+RESOURCE_AUDIT = "results/post_audit/p2_fine_resource_stable_recovery_v2/session_20261019/audit.json"
 BACKEND = "results/post_audit/fine_backend_calibration_v1/session_20261016/result.json"
-PLAN = "docs/plans/PHYSICAL_WINDOW_REFERENCE_PILOT_2026-10-16_KO.md"
-DIRECTORY = "results/post_audit/physical_window_reference_v1/session_20261016"
+PLAN = "docs/plans/PHYSICAL_WINDOW_REFERENCE_EXECUTION_2026-10-19_KO.md"
+DIRECTORY = "results/post_audit/physical_window_reference_v1/session_20261019"
 METHODS: tuple[Literal["point"], Literal["mixed-window"]] = ("point", "mixed-window")
 DRAW_COUNT, CHUNK, WORK = 16384, 512, 32768
 
@@ -115,6 +120,8 @@ def summarize(records: list[dict[str, Any]]) -> dict[str, Any]:
 
 def run() -> dict[str, Any]:
     torch.set_num_threads(8)
+    power = read_power()
+    validate_power(power, minimum=30)
     if not (ROOT/ANCHOR).is_file():
         raise RuntimeError("complete and audit the original fixed resource grid recovery first")
     anchor = json.loads((ROOT/ANCHOR).read_text())
@@ -122,7 +129,7 @@ def run() -> dict[str, Any]:
         raise ValueError("incomplete resource anchor")
     audit_snapshot(ROOT, anchor["source"], anchor["config"])
     resource_audit = json.loads((ROOT/RESOURCE_AUDIT).read_text())
-    if (resource_audit["status"] != "full_fixed_grid_sleep_recovery_replay_pass"
+    if (resource_audit["status"] != "stable_power_full_fixed_grid_replay_pass"
             or resource_audit["result_sha256"] != hashlib.sha256((ROOT/ANCHOR).read_bytes()).hexdigest()):
         raise ValueError("full resource recovery replay receipt required")
     backend = json.loads((ROOT/BACKEND).read_text())
@@ -132,11 +139,13 @@ def run() -> dict[str, Any]:
     original_config = anchor["config"]["original_config"]
     config = {"model": original_config["model"], "cells": original_config["cells"],
               "guide": {"amplitudes": [2., 4., 6., 8.], "price_amplitudes": [0., 2., 4.], "defensive_mass": .1},
-              "anchors": {p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in (ANCHOR, RESOURCE_AUDIT, BACKEND)}, "torch_threads": 8}
+              "anchors": {p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in (ANCHOR, RESOURCE_AUDIT, BACKEND)},
+              "torch_threads": 8, "power_at_start": power, "minimum_battery": 25, "maximum_unit_drop": 1}
     directory = ROOT/DIRECTORY
     directory.mkdir(parents=True, exist_ok=True)
     source = freeze_source(directory/"run.json", config, extra_snapshot_paths=(
         PLAN, ANCHOR, RESOURCE_AUDIT, BACKEND, "docs/plans/PHYSICAL_WINDOW_GUIDE_ORACLE_2026-10-16_KO.md",
+        "docs/plans/PHYSICAL_WINDOW_REFERENCE_PILOT_2026-10-16_KO.md",
         "docs/theory/PHYSICAL_WINDOW_DENSITY_CONSISTENCY_2026-10-16_KO.md"))
     write_json_atomic_nonoverwriting(directory/"source.json", source)
     grid = jobs()
@@ -153,12 +162,22 @@ def run() -> dict[str, Any]:
     prep = journal.unit("preparation", phase="W", work=0, maximum_wall=60., operation=preparation)
     records = []
     for j in grid:
-        def operation(job: dict[str, Any] = j) -> dict[str, Any]:
+        before = read_power()
+        validate_power(before)
+        def operation(job: dict[str, Any] = j, power_before: dict[str, int] = before) -> dict[str, Any]:
             r = unit_values(job, prepared[(job["cell"], job["method"])])
+            r.update({"power_before": power_before, "power_after": read_power()})
             if r["actual_work"] != WORK or r["density_evaluations"] != DRAW_COUNT or r["torch_threads"] != 8:
                 raise ValueError("unit work/backend changed")
             return r
-        records.append(journal.unit(identity(j), phase="W", work=WORK, maximum_wall=180., operation=operation))
+        r = journal.unit(identity(j), phase="W", work=WORK, maximum_wall=180., operation=operation)
+        try:
+            check_power_pair(r["power_before"], r["power_after"])
+        except RuntimeError as error:
+            write_json_atomic_nonoverwriting(directory/"power_failure.json", {
+                "unit": identity(j), "before": r["power_before"], "after": r["power_after"], "error": str(error)})
+            raise
+        records.append(r)
         print(f"physical-window reference pilot {len(records)}/32", flush=True)
     output = {"config": config, "source": source, "manifest": manifest, "geometry": prep["geometry"],
               "summaries": summarize(records), "units": 32, "work": journal.accounting("W")[0],
@@ -177,8 +196,10 @@ def audit(path: Path) -> dict[str, Any]:
     output = json.loads(path.read_text())
     config, manifest = output["config"], output["manifest"]
     audit_snapshot(ROOT, output["source"], config)
+    validate_power(config["power_at_start"], minimum=30)
     if (manifest["source"] != output["source"]["snapshot_sha256"] or manifest["config"] != config
             or manifest["expected_units"] != [identity(j) for j in jobs()]
+            or config["minimum_battery"] != 25 or config["maximum_unit_drop"] != 1
             or any(hashlib.sha256((ROOT/p).read_bytes()).hexdigest() != d for p, d in config["anchors"].items())):
         raise ValueError("changed source/anchors/grid")
     prepared, journal = prepare(config), RecoveryJournal(path.parent, manifest)
@@ -191,6 +212,7 @@ def audit(path: Path) -> dict[str, Any]:
         if finish["status"] != "complete":
             raise ValueError("failed block")
         r = finish["result"]
+        check_power_pair(r["power_before"], r["power_after"])
         digest = hashlib.sha256(json.dumps([seed(j, k, role) for k in range(32) for role in ("path", "label", "augmentation")]).encode()).hexdigest()
         if (any(r[k] != v for k, v in j.items()) or r["seed_digest"] != digest or r["actual_work"] != WORK
                 or r["density_evaluations"] != DRAW_COUNT or r["time_step_forward_evaluations"] != DRAW_COUNT*6144
@@ -206,7 +228,7 @@ def audit(path: Path) -> dict[str, Any]:
             or journal.accounting("W")[0] != output["work"] or output["work"] != 1048576
             or output["density_evaluations"] != 524288 or output["time_step_forward_evaluations"] != 3221225472
             or output["linear_geometry_rows"] != 124 or (path.parent/"phase-W.violation.json").exists()
-            or (path.parent/"final_io_failure.json").exists()):
+            or (path.parent/"final_io_failure.json").exists() or (path.parent/"power_failure.json").exists()):
         raise ValueError("changed summaries/cost or operational failure")
     return {"status": "physical_window_source_geometry_seed_moment_cost_replay_pass", "replayed_blocks": replayed,
             "audit_physical_evaluations": replayed*WORK, "audit_density_evaluations": replayed*DRAW_COUNT}

@@ -50,12 +50,12 @@ See the [recovery results, failures and next gates](docs/reviews/P1_RECOVERY_P2_
 and [umbrella mathematical contract](docs/theory/FROZEN_FAMILY_UMBRELLA_UNNORMALIZED_MEASURE_2026-10-10_KO.md).
 The [post-main execution report](docs/reviews/POST_MAIN_RECOVERY_EXECUTION_2026-10-16_KO.md)
 tracks subsequent completed and running experiments separately.
-The N4096 resource-v2 run subsequently failed its frozen wall cap after a recorded
-battery-induced sleep. Its 20 completed units are not qualified as a prefix. A
-separate fixed-seed full-grid recovery preserved that failure and completed two
-of the 12 missing units before its battery guard stopped the run. There is no
-complete 32-unit result or qualification; it is not fresh confirmation or a
-wall-time benchmark. See the [power interruption and integrity review](docs/reviews/RESOURCE_POWER_INTERRUPTION_REVIEW_2026-10-19_KO.md).
+N4096 resource-v2 and subsequent recovery attempts stopped on sleep/power
+safeguards. There are now numerical records for **23 of the original 32 seeds**,
+but no complete-grid result or qualification. These are not fresh confirmation
+or a wall-time benchmark. A bounded two-thread calibration passed fixed-input
+numerical equivalence but failed the preregistered battery-capacity check despite
+a charging indicator. See the [restart, telemetry and limitations](docs/reviews/STABLE_POWER_RESTART_AND_CALIBRATION_2026-10-19_KO.md).
 A matched 373-component physical-window reference is implemented with geometry
 and Gaussian-toy oracles, but its actual performance pilot has not started.
 See the [density-consistency assumptions and limits](docs/theory/PHYSICAL_WINDOW_DENSITY_CONSISTENCY_2026-10-16_KO.md).

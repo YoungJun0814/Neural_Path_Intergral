@@ -179,3 +179,11 @@ fixedT/4windowM2=.120742를 확인했다. 이는 실제 Volterra 효율/독창�
 원래20complete+새2complete+failed records의 source/archive/checksum/count 무결성 검사를
 통과했다. 새로운 complete-grid statistical summary나 numerical replay 인증은 아니다.
 [비용·중단 원인·재개 조건 상세](RESOURCE_POWER_INTERRUPTION_REVIEW_2026-10-19_KO.md).
+
+## 10. 전원 안정 확인 후 후속 실행
+
+사용자 확인 뒤 별도 protocol로 원래 seed1개의 numerical whole를 더 저장해 기록은23/32개다.
+그러나30→26% 감소로 새 power guard가 중단시켰다. 이어2thread 고정 입력 교정의
+수치 비교는 통과했지만, 충전 표시와 RemainingCapacity 감소가 서로 맞지 않아 전원
+안정성 gate에 실패했다. 새 full-grid result는 없고 G0/G1 실제 표본은 아직0개다.
+[상세 수치·비용·가정·검토](STABLE_POWER_RESTART_AND_CALIBRATION_2026-10-19_KO.md)를 참조한다.

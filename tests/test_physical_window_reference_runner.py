@@ -2,7 +2,10 @@ import pytest
 import torch
 
 from experiments.post_audit_physical_window_reference import (
+    ANCHOR,
+    DIRECTORY,
     DRAW_COUNT,
+    RESOURCE_AUDIT,
     WORK,
     identity,
     jobs,
@@ -19,6 +22,9 @@ def test_matched_window_fixed_grid_new_seeds_and_cost():
     assert len(seeds) == len(set(seeds)) == 3072
     assert 32*WORK == 1048576 and 32*DRAW_COUNT == 524288
     assert 32*DRAW_COUNT*6144 == 3221225472
+    assert "stable_recovery_v2/session_20261019" in ANCHOR
+    assert RESOURCE_AUDIT == ANCHOR.replace("result.json", "audit.json")
+    assert DIRECTORY.endswith("physical_window_reference_v1/session_20261019")
     with pytest.raises(ValueError):
         summarize([])
 
