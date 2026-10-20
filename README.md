@@ -28,13 +28,29 @@ reallocated using an independent training bank.
 
 Each row uses 32,768 fresh final draws per method, separate from training and
 validation. All four training fits and four representative final blocks passed
-numerical replay; **1,472 tests passed**. The weak high-eta repeat still has one
+numerical replay. The weak high-eta repeat still has one
 sample contributing 52.65% of its observed squared-contribution sum. This is a
 tail-concentration warning, not a proven population variance fraction or bias.
 
-**Next gate:** fresh validation of bank-ensemble weights and full-path coverage
-diagnostics, followed by guide-independent corroboration. No certified speedup,
-all-q accuracy, continuum-bias control, or P2 authorization is claimed.
+Fresh bank-ensemble evaluation has now completed **524,800 physical evaluations**
+including preflight, with all 96 fixed physical-feature bins tracking every final
+path. At 65,536 fresh final draws per cell/method:
+
+| N4096 cell | Uniform RSE | Fit 0 | Fit 1 | Ensemble RSE |
+|---|---:|---:|---:|---:|
+| Canonical | 5.88% | 2.63% | 2.67% | **2.31%** |
+| High eta | 3.87% | 2.02% | 2.12% | **1.93%** |
+
+Eight representative blocks passed full feature/moment/seed replay, and the
+full regression suite passed **1,482 tests**. **All eight
+rows still miss 1.5%**; these are frozen-bank development results, not a certified
+variance ratio, new independent training repetitions, or proof of tail coverage.
+Broad volatility-energy paths and late peaks retain substantial observed
+contributions, so narrow-spike-only geometry is not justified by these diagnostics.
+
+**Next gate:** fresh fixed-count precision validation and guide-independent
+corroboration. No certified speedup, all-q accuracy, continuum-bias control, or P2
+authorization is claimed. See the [ensemble results and full-path limitations](docs/reviews/BANK_ENSEMBLE_FULL_PATH_RESULT_2026-10-20_KO.md).
 See the [complete results and ranked recovery options](docs/reviews/P2_RECOVERY_OPTIONS_AND_ALLOCATION_RESULT_2026-10-20_KO.md)
 and [allocation mathematical review](docs/theory/DEFENSIVE_MIXTURE_ALLOCATION_REVIEW_2026-10-20_KO.md).
 
