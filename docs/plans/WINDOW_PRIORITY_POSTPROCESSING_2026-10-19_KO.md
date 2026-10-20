@@ -1,0 +1,13 @@
+# 새 SMC 및 matched-window 실행 후 고정 분석
+
+2026-10-19. 이번새SMC/matchedpilot의전체요약을열람하기전에고정한다.
+두result와두replayreceipt의source/SHA/count를검증하고추가physics0회로분석한다.
+기존모든contrast를유지하고유리한arm/cell만선택하지않는다.
+
+componentlabel을원래고정enumeration(자연1+31templates×4volamp×3priceamp)에따라
+해독한다. 성분별관측contributionfraction,priceamp별관측질량,자연성분질량과전체
+top16의관측질량/6feature를출력한다.분모는원래전체mixture로이미계산된Y다.
+이분율은서술적ratio이며physicalmode질량/새unbiased추정치/미관측tailcoverage아님.
+SMC의미리정한최소timestepforecast선택도그대로출력하되accuracy자격으로쓰지않는다.
+다음기본결정은새두메커니즘precision설계와독립calibration을갖춘pathgeometry진단이다.
+P1/P2/large-training/동일accuracywall비교승인은모두false로유지한다.

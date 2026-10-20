@@ -17,6 +17,8 @@ from experiments.post_audit_fft_static_fine_reference import merge_retaining_max
 from experiments.post_audit_p2_paired_gradient import CELLS
 from experiments.post_audit_r1_diagnostics import _problem
 from experiments.post_audit_r2_family_diagnosis import freeze_source
+from experiments.post_audit_resource_completion import DIRECTORY as COMPLETION_DIRECTORY
+from experiments.post_audit_resource_completion import POLICY as BATTERY_POLICY
 from experiments.post_audit_resource_stable_recovery import (
     check_power_pair,
     read_power,
@@ -38,6 +40,17 @@ PLAN = "docs/plans/PHYSICAL_WINDOW_REFERENCE_EXECUTION_2026-10-19_KO.md"
 DIRECTORY = "results/post_audit/physical_window_reference_v1/session_20261019"
 METHODS: tuple[Literal["point"], Literal["mixed-window"]] = ("point", "mixed-window")
 DRAW_COUNT, CHUNK, WORK = 16384, 512, 32768
+
+
+def execution_paths(profile: str) -> tuple[str, str, str, str, str]:
+    if profile == "stable_power":
+        return ANCHOR, RESOURCE_AUDIT, DIRECTORY, PLAN, "stable_power_full_fixed_grid_replay_pass"
+    if profile == "battery_independent":
+        return (COMPLETION_DIRECTORY+"/result.json", COMPLETION_DIRECTORY+"/audit.json",
+                "results/post_audit/physical_window_reference_v1/session_20261019_battery_independent",
+                "docs/plans/BATTERY_INDEPENDENT_RECOVERY_AND_GUIDE_EXECUTION_2026-10-19_KO.md",
+                "battery_independent_full_fixed_grid_replay_pass")
+    raise ValueError("unknown execution profile")
 
 
 def jobs() -> list[dict[str, Any]]:
@@ -118,19 +131,24 @@ def summarize(records: list[dict[str, Any]]) -> dict[str, Any]:
             "p1_qualified": False, "p2_qualified": False, "large_training_authorized": False}
 
 
-def run() -> dict[str, Any]:
+def run(*, profile: str = "stable_power") -> dict[str, Any]:
     torch.set_num_threads(8)
-    power = read_power()
-    validate_power(power, minimum=30)
-    if not (ROOT/ANCHOR).is_file():
+    anchor_name, audit_name, directory_name, plan_name, receipt_status = execution_paths(profile)
+    enforce_power = profile == "stable_power"
+    power = read_power() if enforce_power else None
+    if power is not None:
+        validate_power(power, minimum=30)
+    if not (ROOT/anchor_name).is_file():
         raise RuntimeError("complete and audit the original fixed resource grid recovery first")
-    anchor = json.loads((ROOT/ANCHOR).read_text())
-    if anchor["units"] != 32 or anchor["original_protocol_pass"]:
+    anchor = json.loads((ROOT/anchor_name).read_text())
+    if (anchor["units"] != 32 or anchor.get("original_protocol_pass", False)
+            or anchor.get("historical_operational_protocols_pass", False)):
         raise ValueError("incomplete resource anchor")
     audit_snapshot(ROOT, anchor["source"], anchor["config"])
-    resource_audit = json.loads((ROOT/RESOURCE_AUDIT).read_text())
-    if (resource_audit["status"] != "stable_power_full_fixed_grid_replay_pass"
-            or resource_audit["result_sha256"] != hashlib.sha256((ROOT/ANCHOR).read_bytes()).hexdigest()):
+    resource_audit = json.loads((ROOT/audit_name).read_text())
+    if (resource_audit["status"] != receipt_status or resource_audit["replayed_wholes"] != 4
+            or resource_audit["audit_physical_forward"] != 513536 or resource_audit["audit_joint_backward"] != 256768
+            or resource_audit["result_sha256"] != hashlib.sha256((ROOT/anchor_name).read_bytes()).hexdigest()):
         raise ValueError("full resource recovery replay receipt required")
     backend = json.loads((ROOT/BACKEND).read_text())
     audit_snapshot(ROOT, backend["source"], backend["config"])
@@ -139,12 +157,15 @@ def run() -> dict[str, Any]:
     original_config = anchor["config"]["original_config"]
     config = {"model": original_config["model"], "cells": original_config["cells"],
               "guide": {"amplitudes": [2., 4., 6., 8.], "price_amplitudes": [0., 2., 4.], "defensive_mass": .1},
-              "anchors": {p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in (ANCHOR, RESOURCE_AUDIT, BACKEND)},
-              "torch_threads": 8, "power_at_start": power, "minimum_battery": 25, "maximum_unit_drop": 1}
-    directory = ROOT/DIRECTORY
+              "anchors": {p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in (anchor_name, audit_name, BACKEND)},
+              "torch_threads": 8, "execution_profile": profile,
+              "battery_policy": "enforced" if enforce_power else BATTERY_POLICY,
+              "power_at_start": power, "minimum_battery": 25 if enforce_power else None,
+              "maximum_unit_drop": 1 if enforce_power else None}
+    directory = ROOT/directory_name
     directory.mkdir(parents=True, exist_ok=True)
     source = freeze_source(directory/"run.json", config, extra_snapshot_paths=(
-        PLAN, ANCHOR, RESOURCE_AUDIT, BACKEND, "docs/plans/PHYSICAL_WINDOW_GUIDE_ORACLE_2026-10-16_KO.md",
+        plan_name, anchor_name, audit_name, BACKEND, "docs/plans/PHYSICAL_WINDOW_GUIDE_ORACLE_2026-10-16_KO.md",
         "docs/plans/PHYSICAL_WINDOW_REFERENCE_PILOT_2026-10-16_KO.md",
         "docs/theory/PHYSICAL_WINDOW_DENSITY_CONSISTENCY_2026-10-16_KO.md"))
     write_json_atomic_nonoverwriting(directory/"source.json", source)
@@ -162,21 +183,24 @@ def run() -> dict[str, Any]:
     prep = journal.unit("preparation", phase="W", work=0, maximum_wall=60., operation=preparation)
     records = []
     for j in grid:
-        before = read_power()
-        validate_power(before)
-        def operation(job: dict[str, Any] = j, power_before: dict[str, int] = before) -> dict[str, Any]:
+        before = read_power() if enforce_power else None
+        if before is not None:
+            validate_power(before)
+        def operation(job: dict[str, Any] = j, power_before: dict[str, int] | None = before) -> dict[str, Any]:
             r = unit_values(job, prepared[(job["cell"], job["method"])])
-            r.update({"power_before": power_before, "power_after": read_power()})
+            if power_before is not None:
+                r.update({"power_before": power_before, "power_after": read_power()})
             if r["actual_work"] != WORK or r["density_evaluations"] != DRAW_COUNT or r["torch_threads"] != 8:
                 raise ValueError("unit work/backend changed")
             return r
         r = journal.unit(identity(j), phase="W", work=WORK, maximum_wall=180., operation=operation)
-        try:
-            check_power_pair(r["power_before"], r["power_after"])
-        except RuntimeError as error:
-            write_json_atomic_nonoverwriting(directory/"power_failure.json", {
-                "unit": identity(j), "before": r["power_before"], "after": r["power_after"], "error": str(error)})
-            raise
+        if enforce_power:
+            try:
+                check_power_pair(r["power_before"], r["power_after"])
+            except RuntimeError as error:
+                write_json_atomic_nonoverwriting(directory/"power_failure.json", {
+                    "unit": identity(j), "before": r["power_before"], "after": r["power_after"], "error": str(error)})
+                raise
         records.append(r)
         print(f"physical-window reference pilot {len(records)}/32", flush=True)
     output = {"config": config, "source": source, "manifest": manifest, "geometry": prep["geometry"],
@@ -196,10 +220,19 @@ def audit(path: Path) -> dict[str, Any]:
     output = json.loads(path.read_text())
     config, manifest = output["config"], output["manifest"]
     audit_snapshot(ROOT, output["source"], config)
-    validate_power(config["power_at_start"], minimum=30)
+    profile = config["execution_profile"]
+    anchor_name, audit_name, _, _, _ = execution_paths(profile)
+    enforce_power = profile == "stable_power"
+    if enforce_power:
+        validate_power(config["power_at_start"], minimum=30)
+    elif config["power_at_start"] is not None:
+        raise ValueError("battery-independent run unexpectedly sampled battery state")
     if (manifest["source"] != output["source"]["snapshot_sha256"] or manifest["config"] != config
             or manifest["expected_units"] != [identity(j) for j in jobs()]
-            or config["minimum_battery"] != 25 or config["maximum_unit_drop"] != 1
+            or config["minimum_battery"] != (25 if enforce_power else None)
+            or config["maximum_unit_drop"] != (1 if enforce_power else None)
+            or config["battery_policy"] != ("enforced" if enforce_power else BATTERY_POLICY)
+            or set(config["anchors"]) != {anchor_name, audit_name, BACKEND}
             or any(hashlib.sha256((ROOT/p).read_bytes()).hexdigest() != d for p, d in config["anchors"].items())):
         raise ValueError("changed source/anchors/grid")
     prepared, journal = prepare(config), RecoveryJournal(path.parent, manifest)
@@ -212,7 +245,10 @@ def audit(path: Path) -> dict[str, Any]:
         if finish["status"] != "complete":
             raise ValueError("failed block")
         r = finish["result"]
-        check_power_pair(r["power_before"], r["power_after"])
+        if enforce_power:
+            check_power_pair(r["power_before"], r["power_after"])
+        elif any(k in r for k in ("power_before", "power_after")):
+            raise ValueError("battery-independent block unexpectedly sampled battery state")
         digest = hashlib.sha256(json.dumps([seed(j, k, role) for k in range(32) for role in ("path", "label", "augmentation")]).encode()).hexdigest()
         if (any(r[k] != v for k, v in j.items()) or r["seed_digest"] != digest or r["actual_work"] != WORK
                 or r["density_evaluations"] != DRAW_COUNT or r["time_step_forward_evaluations"] != DRAW_COUNT*6144
@@ -237,6 +273,13 @@ def audit(path: Path) -> dict[str, Any]:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--audit")
+    parser.add_argument("--battery-independent", action="store_true")
     args = parser.parse_args()
-    print(json.dumps(audit(ROOT/args.audit) if args.audit else
-                     {k: v for k, v in run().items() if k in ("units", "work", "phase_wall")}))
+    if args.audit:
+        path = ROOT/args.audit
+        receipt = {**audit(path), "result_sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+        write_json_atomic_nonoverwriting(path.parent/"audit.json", receipt)
+        print(json.dumps(receipt))
+    else:
+        print(json.dumps({k: v for k, v in run(profile="battery_independent" if args.battery_independent else "stable_power").items()
+                          if k in ("units", "work", "phase_wall")}))

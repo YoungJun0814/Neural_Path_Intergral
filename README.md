@@ -10,7 +10,35 @@
 
 ## Research status
 
-**Current status (2026-10-19): scoped reference-precision recovery; full P1/P2 remain unresolved, not submission-ready.**
+**Current status (2026-10-20): reference/mechanism diagnostics completed; full P1/P2 remain unresolved, not submission-ready.**
+
+### Latest result at a glance
+
+The latest change learns **reference-sampler allocation**, not the original
+model proposal `q`. It preserves the 373-component physical-window dictionary,
+10% natural mass, and a 10% uniform shifted floor; only the remaining 80% is
+reallocated using an independent training bank.
+
+| N4096 cell / independent fit | Uniform RSE | Learned RSE | Reaches 1.5%? |
+|---|---:|---:|---|
+| Canonical / 0 | 10.09% | 4.22% | No |
+| Canonical / 1 | 8.55% | 4.43% | No |
+| High eta / 0 | 5.66% | 2.62% | No |
+| High eta / 1 | 5.34% | 5.11% | No |
+
+Each row uses 32,768 fresh final draws per method, separate from training and
+validation. All four training fits and four representative final blocks passed
+numerical replay; **1,472 tests passed**. The weak high-eta repeat still has one
+sample contributing 52.65% of its observed squared-contribution sum. This is a
+tail-concentration warning, not a proven population variance fraction or bias.
+
+**Next gate:** fresh validation of bank-ensemble weights and full-path coverage
+diagnostics, followed by guide-independent corroboration. No certified speedup,
+all-q accuracy, continuum-bias control, or P2 authorization is claimed.
+See the [complete results and ranked recovery options](docs/reviews/P2_RECOVERY_OPTIONS_AND_ALLOCATION_RESULT_2026-10-20_KO.md)
+and [allocation mathematical review](docs/theory/DEFENSIVE_MIXTURE_ALLOCATION_REVIEW_2026-10-20_KO.md).
+
+### Reference-development history
 
 A fresh fixed-count high-eta / parent0 validation passed the development checks
 for all four reference methods: probability RSE 0.50–0.71%, raw second-moment RSE
@@ -51,14 +79,51 @@ and [umbrella mathematical contract](docs/theory/FROZEN_FAMILY_UMBRELLA_UNNORMAL
 The [post-main execution report](docs/reviews/POST_MAIN_RECOVERY_EXECUTION_2026-10-16_KO.md)
 tracks subsequent completed and running experiments separately.
 N4096 resource-v2 and subsequent recovery attempts stopped on sleep/power
-safeguards. There are now numerical records for **23 of the original 32 seeds**,
-but no complete-grid result or qualification. These are not fresh confirmation
-or a wall-time benchmark. A bounded two-thread calibration passed fixed-input
-numerical equivalence but failed the preregistered battery-capacity check despite
-a charging indicator. See the [restart, telemetry and limitations](docs/reviews/STABLE_POWER_RESTART_AND_CALIBRATION_2026-10-19_KO.md).
-A matched 373-component physical-window reference is implemented with geometry
-and Gaussian-toy oracles, but its actual performance pilot has not started.
+safeguards; their operational failures remain preserved. A separate recovery now
+completes **all 32 original seeds**, with four whole-run numerical replays passing.
+Fine probability RSE is still **6.53–11.97%**, above the 1.5% target. This is not
+fresh confirmation, a continuum-bias certificate, or a wall-time benchmark.
+New runs exclude battery checks at the user's request without changing OS power
+settings or numerical/statistical gates.
+A matched 373-component G0/G1 reference pilot also completed its fixed 32 blocks
+through a separately documented one-block interruption recovery, with four-block
+numerical replay. G1 mixed physical windows show fine RSE **4.37% / 3.05%**, versus
+G0 point guides **48.29% / 29.44%** (canonical / high eta). This is a promising
+reference-development signal, **not an improvement of the original proposal q**.
+Neither G1 cell reaches 1.5%. All eight SMC/IID cross-checks remain inconclusive
+under their adjusted 10% equivalence criterion; none detects an interval entirely
+outside that margin. Better reference precision and fresh validation remain needed.
+See the [completed calculations, failures, audits and next priorities](docs/reviews/BATTERY_INDEPENDENT_EXECUTION_2026-10-19_KO.md).
 See the [density-consistency assumptions and limits](docs/theory/PHYSICAL_WINDOW_DENSITY_CONSISTENCY_2026-10-16_KO.md).
+
+A new fixed 48-block matched ablation separates the price-direction change from
+the remaining geometry changes. Fine RSE for A (point), B (price-only window),
+and C (mixed windows) is **63.83 / 13.45 / 3.95%** in canonical and
+**45.23 / 12.25 / 3.03%** in high eta. Six representative blocks passed numerical
+replay including contribution diagnostics. This supports retaining physical
+windows as a development candidate, not a certified variance ratio or q speedup.
+All cells still miss 1.5% precision; canonical C also misses its frozen adjacent
+difference criterion (10.06% upper bound versus 10%). A separate near-work-matched
+SMC allocation pilot did not resolve reference reliability: one canonical arm
+looks precise but disagrees with the earlier G1 at the adjusted development
+criterion. It is not adopted as an oracle. See the [new diagnostics, failures,
+audits and next priorities](docs/reviews/POST_WINDOW_PRIORITY_EXECUTION_2026-10-19_KO.md).
+
+A matrix-free FFT driver-marginal reference now integrates both the conditional
+price payoff and the proposal likelihood under the original finite-grid law.
+Dense/QR/quadrature tests and two numerical block replays passed. Its fresh
+16,384-draw paired pilot did **not** qualify precision: marginal RSE was
+**13.75% / 7.78%** (canonical / high eta), above 1.5%. This is a tested development
+candidate, not a demonstrated efficiency gain, independent reference agreement,
+or P2 authorization. See the [implementation, negative result and next decisions](docs/reviews/P2_BLOCKERS_AND_DRIVER_MARGINAL_RECOVERY_2026-10-20_KO.md).
+
+A subsequent defensive fixed-dictionary allocation experiment completed two
+independent fits per cell and 287,232 physical evaluations, with bank/fit/final
+replays. Learned versus uniform fine probability RSE was **4.22 vs 10.09%,
+4.43 vs 8.55%, 2.62 vs 5.66%, and 5.11 vs 5.34%**. All miss 1.5%; the last fit
+still has strong tail concentration. This is a reference-development signal,
+not original-q improvement, certified speedup, or P2 qualification. See the
+[ranked recovery options, complete results and limitations](docs/reviews/P2_RECOVERY_OPTIONS_AND_ALLOCATION_RESULT_2026-10-20_KO.md).
 
 ### Earlier reference-coverage development
 

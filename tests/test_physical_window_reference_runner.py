@@ -7,6 +7,7 @@ from experiments.post_audit_physical_window_reference import (
     DRAW_COUNT,
     RESOURCE_AUDIT,
     WORK,
+    execution_paths,
     identity,
     jobs,
     seed,
@@ -27,6 +28,32 @@ def test_matched_window_fixed_grid_new_seeds_and_cost():
     assert DIRECTORY.endswith("physical_window_reference_v1/session_20261019")
     with pytest.raises(ValueError):
         summarize([])
+
+
+def test_battery_independent_execution_uses_complete_grid_receipt_without_changing_samples():
+    anchor, audit, directory, plan, status = execution_paths("battery_independent")
+    assert "completion_v3" in anchor and audit == anchor.replace("result.json", "audit.json")
+    assert directory.endswith("session_20261019_battery_independent")
+    assert "BATTERY_INDEPENDENT" in plan
+    assert status == "battery_independent_full_fixed_grid_replay_pass"
+    with pytest.raises(ValueError):
+        execution_paths("skip_all_checks")
+
+
+def test_disabled_profile_does_not_query_battery_even_before_missing_anchor(monkeypatch, tmp_path):
+    import experiments.post_audit_physical_window_reference as runner
+
+    def forbidden():
+        raise AssertionError("battery must not be queried in the explicitly disabled profile")
+
+    monkeypatch.setattr(runner, "ROOT", tmp_path)
+    monkeypatch.setattr(runner, "read_power", forbidden)
+    old = torch.get_num_threads()
+    try:
+        with pytest.raises(RuntimeError, match="complete and audit"):
+            runner.run(profile="battery_independent")
+    finally:
+        torch.set_num_threads(old)
 
 
 def test_complete_geometry_pilot_summary_is_not_p2_authorization():
