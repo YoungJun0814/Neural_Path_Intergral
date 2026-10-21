@@ -10,12 +10,189 @@
 
 ## Research status
 
-**Current status (2026-10-20): reference/mechanism diagnostics completed; full P1/P2 remain unresolved, not submission-ready.**
+**Current status (2026-10-21): exact residual structure reviewed, with the original invalid diagnostic preserved and a separate post-hoc numerical review. No q/G change or new learning was adopted. P1/P2 remain unresolved; not submission-ready.**
 
 ### Latest result at a glance
 
-The latest change learns **reference-sampler allocation**, not the original
-model proposal `q`. It preserves the 373-component physical-window dictionary,
+A known-answer Gaussian oracle and a deterministic N32 structural check now
+separate proposal quality from the quality of its independent risk evaluator.
+The fixed 373-component dictionary leaves coordinates **57, 61 and 63** exactly
+unshifted. Coordinate 61 changes the last **used** variance and the payoff;
+coordinate 63 changes only the **unused** terminal variance. Adding dimensions
+indiscriminately is therefore not justified.
+
+The original diagnostic is preserved as **`INVALID_STRUCTURAL_ORACLE`**:
+its bitwise density-equality check rejected floating-point differences of at
+most **3.55e-15**. A separately frozen, explicitly **post-hoc** review verified
+the exact zero-mean algebraic identity, all scalar calculations and two
+prespecified full-law replays. It does not retrospectively pass the original
+gate. Full-law versus conditional log-payoff error was at most **1.37e-12**.
+Combined production, failed audit and review used **99 full payoff evaluations**;
+the failed-audit cost is reconstructed from its stopping point.
+
+This identifies a genuine representation restriction, **not its population
+importance or a performance improvement**. Two tiny-moment contexts passed
+only an absolute quadrature criterion, not relative accuracy. Existing-q risk
+requires `E[g²|X]`, whereas a Rao–Blackwellized event estimator uses
+`E[g|X]²`; these must not be interchanged. No production estimator was replaced.
+See the [complete structural result and numerical caveats](docs/reviews/EXACT_RESIDUAL_STRUCTURAL_ORACLE_RESULT_2026-10-21_KO.md),
+[mathematical contract](docs/theory/EXACT_RESIDUAL_STRUCTURAL_CONTRACT_2026-10-21_KO.md)
+and [post-hoc review protocol](docs/plans/RESIDUAL_ORACLE_NUMERICAL_REVIEW_ADDENDUM_2026-10-21_KO.md).
+
+The complete local suite passes **1,681 tests** (85% source coverage; 98% for
+the new structural core), with CI-scope Ruff/Mypy and separate typing checks
+for both new runners. This is Windows/Python 3.10 validation, not a claim that
+the remote Linux/Python 3.11 CI has already passed.
+
+### Preceding frozen-q feature confirmation
+
+A separate bounded diagnostic kept the event proposals **q** and evaluation
+mixture **G** fixed. All 16 old stratified blocks were replayed to recover path
+features, then one shared feature rule was frozen before 16 fresh confirmation
+blocks. The selected feature was a late variance-time centroid, not an
+independently normalized sampling density or a proven causal mechanism.
+
+| N32 cell / fixed U | Fresh G mass in rule | Observed risk mass in rule | M2 RSE | Repeated blocks / 8 |
+|---|---:|---:|---:|---:|
+| Canonical | 9.98% | 74.56% | 48.16% | 4 |
+| High eta | 9.96% | 50.62% | 54.10% | 4 |
+
+The rule remained enriched in pooled point estimates, but **both cells failed**
+the frozen risk-precision/concentration gates and the required 6/8-block
+repeatability. The secondary event-KL proposal did not rescue the result.
+We do not adopt a late-time correction, infer a geometry impossibility, or
+restart D3 learning from these observations.
+
+All-array statistics/selection checks and four prespecified trace replays passed.
+Discovery replay, fresh confirmation and audit used **1,071,360 Volterra payoff
+evaluations** in total. The full local suite passes **1,662 tests** (85% source
+coverage); CI-scope lint/type checks also pass. These implementation checks do
+not turn the failed scientific confirmation into a success.
+The complete traces and stop decision are preserved in
+the [diagnostic result and limitations](docs/reviews/FROZEN_Q_RISK_PATH_ATTRIBUTION_RESULT_2026-10-21_KO.md)
+and [frozen attribution plan](docs/plans/FROZEN_Q_RISK_PATH_ATTRIBUTION_2026-10-21_KO.md).
+
+### Preceding bounded evaluation-repair cycle
+
+The fixed-budget cycle implemented direct X² diagnostics, exact proportional
+component sampling, known-stratum covariance, and a gated fresh-learning
+pipeline. Four Gaussian oracle cases passed numerical integration checks.
+The full frozen-family contrast then evaluated the same 11 proposals using
+238,080 fresh draws per cell/design, without changing dictionary geometry.
+
+| N32 cell / frozen-family design | Probability RSE | Range of 11 M2 RSEs | Endpoints passing / 12 |
+|---|---:|---:|---:|
+| Canonical / IID | 3.61% | 18.47–20.94% | 3 |
+| Canonical / stratified primary | 4.07% | 37.14–66.48% | 1 |
+| High eta / IID | 3.99% | 27.01–37.56% | 1 |
+| High eta / stratified primary | 15.82% | 86.95–92.93% | 0 |
+
+All 22 primary M2 endpoints failed the frozen precision/concentration gates.
+In high eta, a single draw contributed roughly **86–93%** of observed M2.
+Component balancing did not make within-component tail contributions stable at
+this budget. A lower realized IID RSE does not certify IID accuracy, and these
+results do not prove a population geometry limitation.
+
+All 32 production blocks completed. Source/count/cross-moment audits and eight
+prespecified bank replays passed. Production plus replay used **1,081,280 new
+Volterra payoff evaluations**, including preflight. The conditional D3 code is
+implemented and unit/mock-tested, but **no D3 production learning was run**;
+its unused budget was not redirected. No new model or speedup is adopted.
+The full local suite passes **1,646 tests** (85% source coverage). Final review
+also identified incomplete D3 I/O-cost attribution and repeated evidence-grade
+aggregation; the unexecuted D3 branch is not marked production-ready.
+See the [complete execution, limitations and stop decision](docs/reviews/BOUNDED_RESEARCH_DECISION_EXECUTION_RESULT_2026-10-20_KO.md)
+and [frozen bounded-study plan](docs/plans/BOUNDED_RESEARCH_CONTINUE_PIVOT_STOP_EXECUTION_PLAN_2026-10-20_KO.md).
+
+### Preceding same-dictionary learning result
+
+The next preregistered experiment preserved all **373 physical path components**
+and learned only their mixture weights, using matched event-KL and direct
+event-M2 objectives against the same uniform dictionary. Ten fresh fits used
+separate training, selection, final probability draws, and paired held-out risk
+draws; each arm received 262,144 final draws per repetition.
+
+| N32 cell / median final RSE | Uniform | Event-KL | Risk-M2 |
+|---|---:|---:|---:|
+| Canonical | 4.85% | 4.18% | 3.96% |
+| High eta | 10.11% | 4.43% | 9.22% |
+
+**No model passed the preregistered adoption criterion:** none of the 30 paired
+comparisons passed the combined raw/block, absolute/relative M2-reduction check.
+Risk training ESS was only **1.12–16.73 / 16,384**; held-out M2 RSE medians were
+about **42–48%**. All 20 optimizers reached the 256-iteration cap without meeting
+the strict tolerance. These observations do not prove that dictionary learning
+cannot work, nor certify the lower observed event-KL RSE as population speedup.
+
+The complete run used **263 units / 9,503,232 payoff evaluations**; two fits,
+six final blocks and two held-out banks passed numerical replay. A separately
+source-bound descriptive weight/concentration analysis used zero new paths.
+The complete local regression suite passes **1,613 tests** (85% source coverage),
+with CI-scope lint/type checks and separate experiment replay audits passing.
+Next priority is to separate bank concentration from geometry limitations, not
+expand K2 corrections, SMC schedule search, or large models. See the
+[complete results, mathematical review and next decisions](docs/reviews/PHYSICAL_DICTIONARY_MODEL_LEARNING_RESULT_2026-10-20_KO.md)
+and [frozen same-dictionary learning plan](docs/plans/PHYSICAL_DICTIONARY_MODEL_LEARNING_2026-10-20_KO.md).
+
+### Preceding K2 model restart
+
+The research workflow now separates **small-grid original-q development** from
+fine-grid reference certification. Ten fresh whole-parent fits at N32 compared
+the unchanged parent, a 373-component physical static proposal, and matched
+event/risk-target K2 corrections with independently selected blending weights.
+Training, selection, final probability draws, and paired held-out M2 draws are
+separate. This changes the actual event proposal, not only its reference sampler.
+
+| N32 cell / median final RSE | Parent | Static | Event correction | Risk correction |
+|---|---:|---:|---:|---:|
+| Canonical | 6.51% | 4.41% | 6.15% | 11.02% |
+| High eta | 10.81% | 9.59% | 9.30% | 9.21% |
+
+**No candidate passed the preregistered repeated-development criterion.** Risk
+training ESS was only 3.69–26.69 out of 8,192 draws, and independent risk estimates
+remain uncertain. We do not adopt the K2 correction as a production winner.
+The run completed 343 units / 12,772,352 payoff evaluations; two whole-parent
+fits, eight final blocks and two risk banks passed numerical replay. See the
+[model restart results, diagnosis and next structural hypothesis](docs/reviews/SMALL_GRID_MODEL_RESTART_RESULT_2026-10-20_KO.md)
+and [two-track development plan](docs/plans/SMALL_GRID_MODEL_RESTART_2026-10-20_KO.md).
+Earlier statements below about waiting for complete fine-reference qualification
+apply to certification, not to this separately scoped N32 development track.
+
+### Fine-grid reference development (separate scope)
+
+Fresh fixed-count N4096 validation of the frozen-bank ensemble now passes the
+predeclared probability precision and sensitivity checks in both cells:
+
+| Cell | New final draws | Probability estimate | RSE |
+|---|---:|---:|---:|
+| Canonical | 483,328 | 1.37653e-8 | **0.902%** |
+| High eta | 352,256 | 9.82276e-7 | **0.907%** |
+
+This is one scoped development component, **not full reference qualification**.
+The preceding fine-only guide-free SMC contrast failed precision (11.58–24.20%
+whole-run RSE), with only 6–15 of 128 initial ancestors surviving. All four
+cross-mechanism comparisons remain inconclusive under the adjusted 10% criterion.
+Four IID blocks and four SMC wholes passed numerical replay. The original `q`,
+all-q M2, mesh/continuum claims and global P1/P2 flags remain unchanged.
+The preceding local regression suite passed **1,575 tests**.
+See the [fresh precision result, independent-reference failure and next priority](docs/reviews/FRESH_ENSEMBLE_PRECISION_AND_FINE_SMC_RESULT_2026-10-20_KO.md).
+
+A fresh **equal-work early-temperature contrast** has also completed 48 SMC
+wholes (powers 2/3/4, eight independent CRN triplets per cell). Power 3 is a
+development candidate: observed canonical whole RSE falls from **11.21% to
+5.93%**, but high-eta changes only **11.53% to 11.26%**. Every arm still fails
+the frozen precision/sensitivity gate, and all six IID/SMC comparisons remain
+unresolved. Power 4 improves genealogy but worsens canonical RSE, illustrating
+why genealogy and acceptance alone are insufficient. **P1/P2 remain false.**
+All six representative wholes passed source/seed/stage/work numerical replay;
+production used 792,000 forward and 792,000 backward evaluations, with a
+separately recorded 96,000/96,000 replay cost.
+See the [equal-work results, limitations and next controlled contrast](docs/reviews/FINE_SMC_EARLY_BRIDGE_RESULT_2026-10-20_KO.md).
+
+### Previous allocation and ensemble pilots
+
+Those earlier changes learned **reference-sampler allocation**, not the original
+model proposal `q`. They preserved the 373-component physical-window dictionary,
 10% natural mass, and a 10% uniform shifted floor; only the remaining 80% is
 reallocated using an independent training bank.
 

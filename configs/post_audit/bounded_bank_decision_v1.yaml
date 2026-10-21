@@ -1,0 +1,44 @@
+namespace: bounded-bank-decision-v1
+steps: 32
+threads: 1
+rss_cap_bytes: 4294967296
+cells: [canonical-h005-k1, high-eta200-k1]
+repetitions: 5
+training_objective: event-kl
+arms: [U, E-IID, E-STRAT]
+designs: [iid, stratified]
+natural_mass: 0.1
+shifted_floor_mass: 0.1
+adaptive_mass: 0.8
+maximum_iterations: 256
+line_search_iterations: 40
+gap_tolerance: 0.000001
+alphas: [0, 0.25, 0.5]
+preflight_per_cell_design: 1240
+d2_blocks: 8
+d2_block_size: 29760
+d3_train_count_per_design: 19840
+d3_common_stratified_selection: 19840
+probability_pilot: 16384
+risk_pilot_per_design: 19840
+probability_confirmation: {minimum: 65536, maximum: 262144, multiple: 16384, target_rse: 0.05}
+risk_confirmation: {minimum: 39680, maximum: 158720, multiple: 9920, target_rse: 0.2}
+allocation_safety_factor: 2
+primary_risk_design: stratified
+maximum_block_to_raw_rse: 2
+maximum_loo_shift: 0.15
+maximum_single_fraction: 0.1
+minimum_point_m2_reduction: 0.2
+minimum_workflow_wall_reduction: 0.2
+minimum_successes_per_cell: 4
+comparison_intervals: 240
+family_alpha: 0.05
+preflight_work: 4960
+d2_work: 952320
+d3_maximum_work: 12522240
+production_cap: 13479520
+audit_cap: 1000000
+wall_caps: {preflight: 300, D2: 900, D3: 3600, total_production: 7200, audit: 1800}
+p1_qualified: false
+p2_qualified: false
+large_training_authorized: false

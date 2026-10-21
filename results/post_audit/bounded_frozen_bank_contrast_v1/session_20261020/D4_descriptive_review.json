@@ -1,0 +1,235 @@
+{
+  "status": "D4_posthoc_descriptive_review_not_a_gate",
+  "conditional_D3_production_ready": false,
+  "D3_unexecuted_review_findings": [
+    "Arm-specific checkpoint/allocation/final-I/O cost attribution is incomplete; no practical workflow claim is authorized",
+    "Rows record dual_design but repeated_decision lacks the per-cell4of5 intersection evidence-grade aggregate"
+  ],
+  "full_regression": {
+    "passed": 1646,
+    "seconds": 709.06,
+    "source_coverage_percent": 85,
+    "ci_mypy_source_files": 211,
+    "ruff": "pass"
+  },
+  "input_sha256": {
+    "D0": "4b203d0b8d78316698fabe4ca6d81a2e231e97b84202dbc476a5233eef9b91ac",
+    "D1": "d9e0b71c8deba90ab8aa5ccfb2e8887d8dc02f0e29e5c914ff4d59438fc2aaeb",
+    "D2": "323b00268d797b6e70222a748ce500ee4c5f7f1ff9da1e6724acd750cb3ee1bb",
+    "historical": "3964e74bb620da10b34a5c8256a46286b3a46a8eb5ab676031314fe647273033"
+  },
+  "new_volterra_evaluations": 0,
+  "power_table_created_after_D2": true,
+  "execution_deviation": "Advisory section5.5 table not saved before D2; gate and counts unchanged; never describe this as prospective power validation",
+  "critical_z": 3.7086911779087086,
+  "historical_power_proxy": [
+    {
+      "cell": "canonical-h005-k1",
+      "rep": 0,
+      "same_proposal": false,
+      "old_paired_relative_se": 0.07384901189154426,
+      "old_count": 131072,
+      "projected_se_cap": 0.06710947240200764,
+      "proxy_power_at_fixed_effect_020": 0.23315808087488665
+    },
+    {
+      "cell": "canonical-h005-k1",
+      "rep": 1,
+      "same_proposal": true,
+      "old_paired_relative_se": 0,
+      "old_count": 131072,
+      "projected_se_cap": 0,
+      "proxy_power_at_fixed_effect_020": null
+    },
+    {
+      "cell": "canonical-h005-k1",
+      "rep": 2,
+      "same_proposal": false,
+      "old_paired_relative_se": 0.12057333520868481,
+      "old_count": 131072,
+      "projected_se_cap": 0.10956968420225731,
+      "proxy_power_at_fixed_effect_020": 0.029825220566401134
+    },
+    {
+      "cell": "canonical-h005-k1",
+      "rep": 3,
+      "same_proposal": false,
+      "old_paired_relative_se": 0.27824732659184537,
+      "old_count": 131072,
+      "projected_se_cap": 0.25285417917671454,
+      "proxy_power_at_fixed_effect_020": 0.0017663989489522525
+    },
+    {
+      "cell": "canonical-h005-k1",
+      "rep": 4,
+      "same_proposal": false,
+      "old_paired_relative_se": 0.08904383661085982,
+      "old_count": 131072,
+      "projected_se_cap": 0.08091760123183982,
+      "proxy_power_at_fixed_effect_020": 0.10803592318897154
+    },
+    {
+      "cell": "high-eta200-k1",
+      "rep": 0,
+      "same_proposal": false,
+      "old_paired_relative_se": 0.1711564214621499,
+      "old_count": 131072,
+      "projected_se_cap": 0.15553650412289016,
+      "proxy_power_at_fixed_effect_020": 0.0077005851116001
+    },
+    {
+      "cell": "high-eta200-k1",
+      "rep": 1,
+      "same_proposal": false,
+      "old_paired_relative_se": 0.09063499264911862,
+      "old_count": 131072,
+      "projected_se_cap": 0.08236354667514023,
+      "proxy_power_at_fixed_effect_020": 0.10019654190440536
+    },
+    {
+      "cell": "high-eta200-k1",
+      "rep": 2,
+      "same_proposal": false,
+      "old_paired_relative_se": 0.0987600284507555,
+      "old_count": 131072,
+      "projected_se_cap": 0.08974708305469344,
+      "proxy_power_at_fixed_effect_020": 0.06940907538452945
+    },
+    {
+      "cell": "high-eta200-k1",
+      "rep": 3,
+      "same_proposal": true,
+      "old_paired_relative_se": 0,
+      "old_count": 131072,
+      "projected_se_cap": 0,
+      "proxy_power_at_fixed_effect_020": null
+    },
+    {
+      "cell": "high-eta200-k1",
+      "rep": 4,
+      "same_proposal": false,
+      "old_paired_relative_se": 0.08710517014220863,
+      "old_count": 131072,
+      "projected_se_cap": 0.07915585953019436,
+      "proxy_power_at_fixed_effect_020": 0.11859680550971718
+    }
+  ],
+  "toy_calibration_and_power_proxy": [
+    {
+      "case": "A",
+      "design": "iid",
+      "coverage_count_mu_m2": [
+        15,
+        15
+      ],
+      "relative_rmse_mu_m2": [
+        0.026526019454435945,
+        0.04181783695793799
+      ],
+      "proxy_independent_reduction_se_cap": 0.012257738187479723,
+      "proxy_power_at_fixed_effect_020": 1
+    },
+    {
+      "case": "A",
+      "design": "stratified",
+      "coverage_count_mu_m2": [
+        14,
+        14
+      ],
+      "relative_rmse_mu_m2": [
+        0.025422815809123655,
+        0.03495111368990272
+      ],
+      "proxy_independent_reduction_se_cap": 0.011753961952584198,
+      "proxy_power_at_fixed_effect_020": 1
+    },
+    {
+      "case": "B",
+      "design": "iid",
+      "coverage_count_mu_m2": [
+        16,
+        16
+      ],
+      "relative_rmse_mu_m2": [
+        0.012658301254457915,
+        0.022187365588057232
+      ],
+      "proxy_independent_reduction_se_cap": 0.008388824654498786,
+      "proxy_power_at_fixed_effect_020": 1
+    },
+    {
+      "case": "B",
+      "design": "stratified",
+      "coverage_count_mu_m2": [
+        16,
+        16
+      ],
+      "relative_rmse_mu_m2": [
+        0.011218124807455206,
+        0.01865543828259707
+      ],
+      "proxy_independent_reduction_se_cap": 0.00782947391431874,
+      "proxy_power_at_fixed_effect_020": 1
+    },
+    {
+      "case": "C",
+      "design": "iid",
+      "coverage_count_mu_m2": [
+        15,
+        16
+      ],
+      "relative_rmse_mu_m2": [
+        0.0254525809200049,
+        0.03057646367128353
+      ],
+      "proxy_independent_reduction_se_cap": 0.01505449278334104,
+      "proxy_power_at_fixed_effect_020": 1
+    },
+    {
+      "case": "C",
+      "design": "stratified",
+      "coverage_count_mu_m2": [
+        13,
+        13
+      ],
+      "relative_rmse_mu_m2": [
+        0.03383892371617054,
+        0.05381239499924323
+      ],
+      "proxy_independent_reduction_se_cap": 0.014502808717898039,
+      "proxy_power_at_fixed_effect_020": 1
+    },
+    {
+      "case": "D",
+      "design": "iid",
+      "coverage_count_mu_m2": [
+        16,
+        14
+      ],
+      "relative_rmse_mu_m2": [
+        0.24133528633587256,
+        0.6280327026527043
+      ],
+      "proxy_independent_reduction_se_cap": 0.17882479050162764,
+      "proxy_power_at_fixed_effect_020": 0.0047956151439130235
+    },
+    {
+      "case": "D",
+      "design": "stratified",
+      "coverage_count_mu_m2": [
+        16,
+        15
+      ],
+      "relative_rmse_mu_m2": [
+        0.14113706561122633,
+        0.38722544476505133
+      ],
+      "proxy_independent_reduction_se_cap": 0.1806356445709539,
+      "proxy_power_at_fixed_effect_020": 0.004641721392947773
+    }
+  ],
+  "power_caveat": "Stationary variance normal proxy only; fixed effect .20, not observed reduction; historical pairing retained; toy proxy assumes independent endpoints with same CV. Does not cover joint raw/block/absolute/relative or4of5 success, unresolved tails, or prove sufficient budget.",
+  "production_and_audit_volterra_evaluations": 1081280,
+  "synthetic_production_and_audit_evaluations": 2561350,
+  "global_qualification": false
+}

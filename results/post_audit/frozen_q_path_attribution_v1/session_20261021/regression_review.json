@@ -1,0 +1,30 @@
+{
+  "status": "local_full_regression_and_static_checks_pass",
+  "result_sha256": "eff4fd1406719163bdc333c62f79484377ba155ef3a6d58910c3739ba4dbd9f5",
+  "platform": "Windows",
+  "python": "3.10.11",
+  "pytest": {
+    "passed": 1662,
+    "seconds": 626.98,
+    "source_coverage_percent": 85,
+    "source_statements": 22168,
+    "source_missing_statements": 3401,
+    "new_statistics_core_coverage_percent": 94
+  },
+  "ruff_ci_scope": "pass",
+  "mypy_ci_scope": {
+    "status": "pass",
+    "source_files": 212
+  },
+  "mypy_additional_runner": {
+    "status": "pass",
+    "source_files": 1
+  },
+  "remote_ci_checked": false,
+  "python311_checked_this_run": false,
+  "existing_requests_dependency_warning_preserved": true,
+  "production_or_audit_physics_in_this_review": 0,
+  "regression_internal_physics_not_instrumented": true,
+  "scientific_decision": "STOP_FEATURE_NOT_INDEPENDENTLY_CONFIRMED",
+  "scientific_qualification_granted_by_tests": false
+}

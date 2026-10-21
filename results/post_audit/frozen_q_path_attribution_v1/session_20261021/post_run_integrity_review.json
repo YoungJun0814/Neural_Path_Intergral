@@ -1,0 +1,15 @@
+{
+  "status": "post_run_integrity_review_pass",
+  "result_sha256": "eff4fd1406719163bdc333c62f79484377ba155ef3a6d58910c3739ba4dbd9f5",
+  "numerical_snapshot_files_unchanged": 472,
+  "complete_units": 32,
+  "trace_files": 32,
+  "trace_bytes": 54521257,
+  "largest_unit_wall": 22.029421100392938,
+  "confirmation_clock_after_selection": true,
+  "production_calls": 952320,
+  "audit_calls": 119040,
+  "total_volterra_calls": 1071360,
+  "new_physics_in_this_review": 0,
+  "full_regression_recorded_separately": true
+}

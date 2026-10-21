@@ -1,0 +1,11 @@
+{
+  "status": "all_old_D2_preflight_IID_strata_plus_fresh_confirmation_seeds_disjoint",
+  "unique_seed_roles": 13198,
+  "expected": 13198,
+  "old_parent": "323b00268d797b6e70222a748ce500ee4c5f7f1ff9da1e6724acd750cb3ee1bb",
+  "result_sha256": "eff4fd1406719163bdc333c62f79484377ba155ef3a6d58910c3739ba4dbd9f5",
+  "additional_physics": 0,
+  "check_performed_after_sampling": true,
+  "intentional_discovery_reuse": "all16oldstratumblocks_source_and_moments_bound",
+  "global_qualification": false
+}

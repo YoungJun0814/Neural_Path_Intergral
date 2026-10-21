@@ -1,0 +1,46 @@
+{
+  "review_date": "2026-10-21",
+  "environment": "Windows / Python 3.10.11 / CPU",
+  "original_result_sha256": "083c03374ee6d81062359db5ac63e669b3de10b84b87c1e1049144af11cf8f0a",
+  "numerical_review_sha256": "9fa72501f8e74b60e3c7d47d7e750948a4c2778a4e24eea13054ff62cb8386b0",
+  "original_invalid_gate_preserved": true,
+  "pytest": {
+    "command": "python -m pytest -q --cov=src --cov-report=term-missing",
+    "exit_code": 0,
+    "passed": 1681,
+    "seconds": 571.76,
+    "coverage_percent_rounded": 85,
+    "source_statements": 22225,
+    "missed_statements": 3402,
+    "new_core_coverage_percent_rounded": 98,
+    "new_core_statements": 57,
+    "new_core_missed": 1
+  },
+  "ruff": {
+    "command": "python -m ruff check src tests experiments main.py train_driftnet.py",
+    "exit_code": 0
+  },
+  "mypy": {
+    "command": "python -m mypy src main.py train_driftnet.py",
+    "exit_code": 0,
+    "source_files": 213
+  },
+  "runner_mypy": {
+    "command": "python -m mypy --follow-imports=silent experiments/post_audit_exact_residual_structure.py experiments/post_audit_residual_oracle_numerical_review.py",
+    "exit_code": 0,
+    "source_files": 2
+  },
+  "snapshot_integrity": {
+    "original_files_checked": 1112,
+    "supplementary_files_checked": 1111,
+    "changed_files": [],
+    "both_archive_hashes_match": true,
+    "historical_result_audit_pairs_checked": 9,
+    "historical_hash_mismatches": 0
+  },
+  "existing_environment_warning": "RequestsDependencyWarning; dependencies not changed",
+  "remote_ci_verified_by_this_receipt": false,
+  "scientific_performance_certified": false,
+  "p2_qualified": false,
+  "D3_authorized": false
+}
