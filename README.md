@@ -20,6 +20,8 @@ The fixed 373-component dictionary leaves coordinates **57, 61 and 63** exactly
 unshifted. Coordinate 61 changes the last **used** variance and the payoff;
 coordinate 63 changes only the **unused** terminal variance. Adding dimensions
 indiscriminately is therefore not justified.
+Indices are **zero-based** in the 64 independent local Gaussian coordinates;
+the local pair is not a pair of independent physical Brownian drivers.
 
 The original diagnostic is preserved as **`INVALID_STRUCTURAL_ORACLE`**:
 its bitwise density-equality check rejected floating-point differences of at
