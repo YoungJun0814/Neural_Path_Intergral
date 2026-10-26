@@ -1,0 +1,54 @@
+{
+  "status": "LOCAL_REGRESSION_AND_STATIC_CHECKS_PASSED",
+  "review_date": "2026-10-21",
+  "timezone": "America/New_York",
+  "pytest": {
+    "command": "python -m pytest -q --cov=src --cov-report=term-missing",
+    "exit_code": 0,
+    "passed": 1724,
+    "wall_seconds_reported": 406.74,
+    "new_tests_in_this_cycle": 22,
+    "earlier_full_suite_attempt": "No final exit result was retained and no process remained; no pass credit assigned. The logged complete run supplies the final result.",
+    "log_path": "results/post_audit/analytic_residual_batch_v1/session_20261021_serialization_recovery/validation/pytest-output.txt",
+    "log_sha256": "1a9dc2dc80e872ac6c67411f66c0e88c2764d71230733b5e8119a1cf9bc15eab"
+  },
+  "statement_coverage": {
+    "total": {"statements": 22502, "missed": 3424, "percent_rounded": 85},
+    "src/path_integral/analytic_residual_batch.py": {"statements": 159, "missed": 14, "percent_rounded": 91},
+    "src/path_integral/marginal_risk_contract.py": {"statements": 39, "missed": 3, "percent_rounded": 92},
+    "src/path_integral/residual_log_quadrature.py": {"statements": 79, "missed": 5, "percent_rounded": 94},
+    "not_branch_exhaustion_or_absence_of_errors_proof": true
+  },
+  "static_checks": {
+    "ruff_command": "python -m ruff check src tests experiments main.py train_driftnet.py",
+    "ruff_exit_code": 0,
+    "mypy_command": "python -m mypy src main.py train_driftnet.py",
+    "mypy_source_files": 216,
+    "mypy_exit_code": 0,
+    "experiment_mypy_command": "python -m mypy --follow-imports=silent experiments/post_audit_analytic_residual_batch.py experiments/post_audit_analytic_residual_recovery.py",
+    "experiment_mypy_files": 2,
+    "experiment_mypy_exit_code": 0,
+    "log_path": "results/post_audit/analytic_residual_batch_v1/session_20261021_serialization_recovery/validation/static_checks-output.txt",
+    "log_sha256": "3ba870fe9d1e3b924a110030fa7d7010abefa08a8d7084c63ee319fedea7bb60"
+  },
+  "environment": {
+    "os": "Windows",
+    "python": "3.10.11",
+    "numpy": "1.26.2",
+    "scipy": "1.15.3",
+    "torch": "2.12.0.dev20260408+cu128",
+    "research_device": "cpu",
+    "research_dtype": "float64",
+    "research_threads": 1,
+    "pytest_threads": "Per-test fixture settings; not asserted to be globally one",
+    "known_requests_dependency_warning_preserved": true,
+    "dependencies_changed": false
+  },
+  "new_remote_ci_verified": false,
+  "no_new_random_research_draws_or_G_fits": true,
+  "P2_qualified": false,
+  "D3_authorized": false,
+  "large_training_authorized": false,
+  "commit_created": false,
+  "push_performed": false
+}

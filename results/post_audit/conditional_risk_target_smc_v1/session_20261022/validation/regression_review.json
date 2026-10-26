@@ -1,0 +1,57 @@
+{
+  "status": "LOCAL_REGRESSION_AND_STATIC_CHECKS_PASSED",
+  "review_date": "2026-10-22",
+  "timezone": "America/New_York",
+  "pytest": {
+    "command": "python -m pytest -q --cov=src --cov-report=term-missing",
+    "exit_code": 0,
+    "passed": 1792,
+    "wall_seconds_reported": 479.57,
+    "new_tests": 42,
+    "log_path": "results/post_audit/conditional_risk_target_smc_v1/session_20261022/validation/pytest-output.txt",
+    "log_sha256": "b82bb43845897205455a56c5cb1b9e9e57857c8c5d3914dac9701182a492bdcc"
+  },
+  "statement_coverage": {
+    "total": {"statements": 22771, "missed": 3438, "percent_rounded": 85},
+    "src/path_integral/conditional_risk_target_smc.py": {"statements": 156, "missed": 7, "percent_rounded": 96},
+    "not_branch_exhaustion_or_absence_of_errors_proof": true
+  },
+  "static_checks": {
+    "ruff_command": "python -m ruff check src tests experiments main.py train_driftnet.py",
+    "ruff_exit_code": 0,
+    "mypy_command": "python -m mypy src main.py train_driftnet.py",
+    "mypy_source_files": 218,
+    "mypy_exit_code": 0,
+    "experiment_mypy_command": "python -m mypy --follow-imports=silent experiments/post_audit_conditional_risk_target_smc.py",
+    "experiment_mypy_files": 1,
+    "experiment_mypy_exit_code": 0,
+    "log_path": "results/post_audit/conditional_risk_target_smc_v1/session_20261022/validation/static_checks-output.txt",
+    "log_sha256": "3ed960b172017d4e23f9e43dac6e27caf66b8513f5b9fdde8035b9457a555e83"
+  },
+  "environment": {
+    "os": "Windows",
+    "python": "3.10.11",
+    "numpy": "1.26.2",
+    "scipy": "1.15.3",
+    "torch": "2.12.0.dev20260408+cu128",
+    "research_device": "cpu",
+    "research_dtype": "float64",
+    "research_threads": 1,
+    "pytest_threads": "Per-test fixtures, not asserted to be globally one",
+    "known_requests_dependency_warning_preserved": true,
+    "dependencies_changed": false
+  },
+  "scientific_decision": "STOP_GENEALOGY_OR_MUTATION_UNQUALIFIED",
+  "all_16_islands_computationally_complete": true,
+  "all_final_states_re_evaluated": true,
+  "full_island_replays": ["canonical-h005-k1-component-0", "high-eta200-k1-component-0"],
+  "all_16_islands_rejected_proposals_fully_replayed": false,
+  "normalizer_for_numerical_m2_not_certified_exact_true_M2": true,
+  "actual_G_fits": 0,
+  "new_remote_ci_verified": false,
+  "P2_qualified": false,
+  "D3_authorized": false,
+  "large_training_authorized": false,
+  "commit_created": false,
+  "push_performed": false
+}

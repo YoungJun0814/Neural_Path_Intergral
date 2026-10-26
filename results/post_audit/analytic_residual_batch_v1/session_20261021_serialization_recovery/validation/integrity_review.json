@@ -1,0 +1,66 @@
+{
+  "status": "READ_ONLY_INTEGRITY_CHECKS_PASSED",
+  "review_date": "2026-10-21",
+  "timezone": "America/New_York",
+  "scope": "Uncommitted research files, README and four research source snapshots before adding this receipt and final regression summary",
+  "anchors": [
+    {
+      "path": "results/post_audit/residual_log_moments_v1/session_20261021/result.json",
+      "sha256": "53c604c5faafa573ae380605342a130f68d54dcde6cefb30393a380bc482bb6b",
+      "snapshot_files": 1114,
+      "snapshot_sha256": "8ad244b40f754e3b1653dab47d43714786031fa3e106a3d498b20d553848209b",
+      "current_frozen_files_match": true
+    },
+    {
+      "path": "results/post_audit/residual_paired_pilot_v1/session_20261021/result.json",
+      "sha256": "8645b470b638ff9860ea831915c1bf10e2111d66ca1780f31640c2c6c008ade1",
+      "snapshot_files": 1117,
+      "snapshot_sha256": "c5dc299ce614bd1b3a48364b9d6068999cc96679dcbac5241fc9c05a29d8b693",
+      "current_frozen_files_match": true
+    },
+    {
+      "path": "results/post_audit/analytic_residual_batch_v1/session_20261021/protocol.json",
+      "sha256": "3f9b314fead3b22b7756f5f74100939645f10e3e6484fd11ccafebdfdd2d4865",
+      "snapshot_files": 1125,
+      "snapshot_sha256": "1453a84330fc3063262079102777ea092f15bd3e47716d125f48b2feb8f07ea9",
+      "current_frozen_files_match": true
+    },
+    {
+      "path": "results/post_audit/analytic_residual_batch_v1/session_20261021_serialization_recovery/result.json",
+      "sha256": "a0a6a3b39c475fcf5fa92a2a6a652fdf21c3da1a311c56dbda2b0888f2896f54",
+      "snapshot_files": 1128,
+      "snapshot_sha256": "157501d98380093bf6a048a93ce8da492dfd28741ccf95aea7a6712114166564",
+      "current_frozen_files_match": true
+    }
+  ],
+  "files_checked": 54,
+  "new_files_checked": 53,
+  "archives_checked": 4,
+  "archive_members_scanned": 4488,
+  "strict_json_files_checked": 29,
+  "local_markdown_links_checked": 163,
+  "credential_patterns_found": 0,
+  "unsafe_archive_paths": 0,
+  "files_at_least_100MiB": 0,
+  "trailing_whitespace": 0,
+  "false_positive_review": "An unbounded sk pattern matched the suffix of a historical risk label at experiments/post_audit_v2_overnight_reference_recovery.py:196 in all four archives. A token-boundary-aware pattern removed the false positive; source/archive bytes were not altered.",
+  "head": "f556424360b8307284b23a6cfc0efcdee7380060",
+  "local_tracking_ref": "f556424360b8307284b23a6cfc0efcdee7380060",
+  "no_network_fetch_or_push": true,
+  "not_exhaustive_secret_or_theory_proof": true,
+  "no_new_random_draws_or_G_fits": true,
+  "final_closure_check": {
+    "status": "FINAL_CLOSURE_CHECKS_PASSED",
+    "files_checked": 58,
+    "strict_json_files": 31,
+    "local_markdown_links": 167,
+    "unique_frozen_files_current_hashes_checked": 1134,
+    "all_four_original_anchor_hashes_match": true,
+    "all_four_source_archive_hashes_match": true,
+    "regression_log_hashes_match": true,
+    "git_diff_check_passed": true,
+    "staged_paths": [],
+    "head_unchanged": "f556424360b8307284b23a6cfc0efcdee7380060",
+    "no_commit_or_push": true
+  }
+}

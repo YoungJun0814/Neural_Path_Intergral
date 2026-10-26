@@ -1,0 +1,253 @@
+C:\Users\Jun\AppData\Local\Programs\Python\Python310\lib\site-packages\requests\__init__.py:113: RequestsDependencyWarning: urllib3 (2.5.0) or chardet (6.0.0.post1)/charset_normalizer (3.4.3) doesn't match a supported version!
+  warnings.warn(
+........................................................................ [  3%]
+........................................................................ [  7%]
+........................................................................ [ 11%]
+........................................................................ [ 15%]
+........................................................................ [ 19%]
+........................................................................ [ 23%]
+........................................................................ [ 27%]
+........................................................................ [ 31%]
+........................................................................ [ 35%]
+........................................................................ [ 39%]
+........................................................................ [ 43%]
+........................................................................ [ 47%]
+........................................................................ [ 51%]
+........................................................................ [ 55%]
+........................................................................ [ 59%]
+........................................................................ [ 63%]
+........................................................................ [ 66%]
+........................................................................ [ 70%]
+........................................................................ [ 74%]
+........................................................................ [ 78%]
+........................................................................ [ 82%]
+........................................................................ [ 86%]
+........................................................................ [ 90%]
+........................................................................ [ 94%]
+........................................................................ [ 98%]
+............................                                             [100%]
+=============================== tests coverage ================================
+______________ coverage: platform win32, python 3.10.11-final-0 _______________
+
+Name                                                       Stmts   Miss  Cover   Missing
+----------------------------------------------------------------------------------------
+src\__init__.py                                                0      0   100%
+src\ai_calibrator.py                                          15     10    33%   19-34, 46-57
+src\evaluation\__init__.py                                     8      0   100%
+src\evaluation\backtest.py                                    72      2    97%   33, 41
+src\evaluation\heston_reference.py                           163     27    83%   66, 68, 70, 76, 117, 119, 121, 123, 151, 167, 202, 204, 239, 241, 243, 245, 247, 249, 294, 296, 298, 300, 302, 304, 357, 361, 376
+src\evaluation\likelihood.py                                  86     12    86%   32, 35, 53, 57, 66, 75, 99, 105-109
+src\evaluation\multilevel.py                                  53     11    79%   36, 38, 40, 44, 46, 55, 84, 86, 88, 90, 103
+src\evaluation\protocol.py                                    59     10    83%   28, 30, 32, 62, 64, 66, 68, 72, 79-80
+src\evaluation\smoothed_multilevel.py                         96      9    91%   54, 68, 81, 104, 112, 114, 116, 118, 169
+src\evaluation\statistics.py                                  49      5    90%   39, 41, 43, 47, 63
+src\evaluation\tracking.py                                    49     49     0%   8-96
+src\evaluation\volterra_branching.py                         130     13    90%   31, 33, 35, 108, 113, 115, 118, 126, 160, 189, 191, 193, 227
+src\losses\__init__.py                                         2      0   100%
+src\losses\distribution_match.py                              73     24    67%   82-93, 105-113, 123, 125, 169
+src\ml_models.py                                              74     41    45%   91, 102-117, 123-125, 147-164, 177-184, 196-212, 218-222
+src\models\__init__.py                                         0      0   100%
+src\models\volterra_transport_operator.py                    107     16    85%   44, 48, 50, 52, 82, 84, 86, 138, 140, 175, 177, 195, 213-219
+src\neural_engine.py                                         276     41    85%   142-151, 154-158, 190-193, 233, 235, 237, 305, 307, 309, 311, 328, 424, 437-444, 563-564, 584-585, 589, 592
+src\path_integral\__init__.py                                 51      0   100%
+src\path_integral\action.py                                   38      9    76%   27, 29, 31, 33, 35, 39, 74, 80-81
+src\path_integral\adjacent_latent_adapter.py                  34      3    91%   23, 43, 50
+src\path_integral\amortized_residual_transport.py            139     10    93%   36, 46, 194, 196, 201, 204, 206, 211, 255, 296
+src\path_integral\analytic_residual_batch.py                 159     14    91%   28, 35, 39, 42, 47, 61, 63, 69, 86, 106, 183, 190, 206, 214
+src\path_integral\balanced_mixture_bank.py                    53      6    89%   19, 28, 41, 43, 56, 63
+src\path_integral\bank_ensemble_coverage.py                   81      6    93%   36, 47, 58, 70, 96, 122
+src\path_integral\baseline_diagnostics.py                     97     11    89%   35, 37, 39, 41, 55, 58-60, 74, 111, 170
+src\path_integral\baseline_framework.py                      344     49    86%   127, 134, 149, 336, 338, 340, 346, 351, 354, 356, 360, 381, 391, 394, 396, 403, 405, 412, 414, 421, 436, 438, 440, 448, 453, 509, 511, 513, 577, 589, 591, 644, 658, 664, 669, 676, 697, 699, 707, 716, 722, 724, 726, 728, 737, 771, 773, 775, 777
+src\path_integral\baselines\__init__.py                        8      0   100%
+src\path_integral\baselines\cem.py                            90     14    84%   38, 40, 42, 44, 46, 52, 63, 90, 92, 94, 114, 124, 133, 135
+src\path_integral\baselines\conditional_rbergomi.py           27      5    81%   54, 56, 58, 65, 71
+src\path_integral\baselines\coupling_flow_is.py               59      8    86%   34, 36, 38, 40, 57, 59, 70, 96
+src\path_integral\baselines\crude_antithetic.py               28      5    82%   30, 50, 52, 54, 66
+src\path_integral\baselines\large_deviation_is.py            113     16    86%   39, 45, 52, 54, 56, 70-80, 107-110, 119, 137, 139, 168, 192
+src\path_integral\baselines\rbergomi_common.py                94     22    77%   38, 40, 50, 75, 77, 79, 81, 83, 85, 87, 89, 114, 120, 133, 178-190
+src\path_integral\baselines\smoothing_rqmc.py                 45      9    80%   55, 57, 63, 70, 72, 74, 91, 102, 115
+src\path_integral\baselines\weighted_conditional_ce.py       137     19    86%   43, 45, 47, 49, 51, 53, 61, 115, 117, 124, 135, 137, 141, 176-180, 187, 222, 231
+src\path_integral\benchmark_executor.py                      119     19    84%   58, 60, 62, 67, 70, 72, 77, 110, 120, 122, 124, 126, 128, 135, 150, 184, 253, 291, 300
+src\path_integral\black_scholes_oracles.py                    68      8    88%   14, 16, 26, 40, 82, 84, 86, 88
+src\path_integral\blp_cameron_martin_embedding.py            104     25    76%   37, 39, 41, 43, 45, 77, 79, 81, 102, 104, 106, 108, 110, 151, 153, 155, 157, 159, 161, 177, 183, 206, 241, 243, 251
+src\path_integral\blp_driver_error_bound.py                   23      0   100%
+src\path_integral\bounded_decision_protocol.py                37      2    95%   16, 40
+src\path_integral\cached_volterra_terminal.py                 66      4    94%   33, 47, 67, 80
+src\path_integral\cameron_martin_basis.py                     65     11    83%   30, 40, 42, 46, 58, 60, 65, 67, 76, 78, 103
+src\path_integral\cameron_martin_modes.py                    255     24    91%   21, 23, 38, 41, 44, 74, 76, 100, 129, 149-150, 175-177, 226, 228, 234, 240, 242, 244, 247, 279, 302, 312
+src\path_integral\collective_variance_reference.py            62      3    95%   51, 57, 63
+src\path_integral\comparator_qualification.py                 54      9    83%   22, 35, 51, 53, 55, 64, 66, 70, 87
+src\path_integral\complexity_certificates.py                  29      5    83%   25, 27, 29, 43, 57
+src\path_integral\conditional_excursion_reference.py          68      4    94%   37, 46, 64, 79
+src\path_integral\conditional_marginal_g.py                  113      7    94%   61, 84, 86, 101, 130, 138, 158
+src\path_integral\conditional_risk_target_smc.py             156      7    96%   64, 75, 121, 139, 171, 187, 214
+src\path_integral\conditional_second_moment.py                67      6    91%   33, 55, 60, 66, 96, 130
+src\path_integral\conditional_transport_adaptation.py        164     25    85%   38, 40, 46, 48, 50, 52, 54, 56, 58, 64, 90-100, 154, 156, 158, 166, 269
+src\path_integral\control_span_smoothing.py                  290     30    90%   116, 118, 120, 122, 124, 131, 135, 164, 183, 199, 204, 232, 234, 262-263, 276, 329, 362, 378, 380, 402, 466, 468, 470, 472, 476, 503, 537, 540, 588
+src\path_integral\controllers\__init__.py                      4      0   100%
+src\path_integral\controllers\markov.py                      140     25    82%   23, 38, 56, 58, 60, 85, 92, 117, 119, 121, 123, 127, 159, 163, 168, 259, 263, 268, 287-313
+src\path_integral\controllers\sdv.py                         125     24    81%   67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 91, 120, 139, 174, 182, 187, 245, 251-278
+src\path_integral\controllers\vfo.py                         153     13    92%   70, 75, 77, 79, 104, 152, 154, 156, 161, 247, 253, 255, 269
+src\path_integral\coverage_envelope_reference.py              65      7    89%   31, 43, 48, 57, 63, 71, 76
+src\path_integral\d1_audit.py                                123     12    90%   35, 43, 48, 50, 53, 56, 59, 70, 192, 223-224, 228
+src\path_integral\d1_stage_b_audit.py                        105      9    91%   29, 169, 173, 179-180, 183-184, 207-208
+src\path_integral\dcs_benchmark.py                            93     13    86%   51, 58, 60, 62, 64, 72, 99, 101, 103, 106, 110, 155, 161
+src\path_integral\dcs_proposal_bank.py                       129     18    86%   33, 35, 64, 66, 68, 70, 72, 74, 76, 78, 80, 84, 157, 159, 161, 163, 165, 209
+src\path_integral\dcs_proposal_bank_audit.py                  98     28    71%   50, 53, 61-67, 72, 81-94, 112-113, 116-117, 124-125, 135
+src\path_integral\defensive_mixture_allocation.py             77      6    92%   34, 48, 88, 92, 99, 127
+src\path_integral\defensive_proposal_selection.py             85     10    88%   73, 75, 78, 84, 90, 92, 94, 96, 116, 130
+src\path_integral\direct_second_moment_diagnostics.py         24      1    96%   30
+src\path_integral\divergence.py                               33      3    91%   46, 48, 50
+src\path_integral\driver_conditioned_terminal.py              63      2    97%   43, 80
+src\path_integral\ecrpt_microstudy_audit.py                   96     49    49%   44, 60-61, 68-80, 110-187
+src\path_integral\ecrpt_protocol.py                          130     10    92%   14, 20, 22, 40, 46, 190, 223, 285, 289-290
+src\path_integral\elliptical_slice_kernel.py                  40      2    95%   31, 47
+src\path_integral\fft_driver_marginal_reference.py           165     15    91%   44, 52, 79, 87, 105-107, 113, 124, 153, 156, 163, 171, 184, 200
+src\path_integral\fft_excursion_reference.py                 104      6    94%   36, 92, 113, 126, 140, 147
+src\path_integral\fft_static_shift_reference.py               76      4    95%   32, 70, 72, 95
+src\path_integral\finite_grid_small_noise.py                  58      9    84%   46, 49-51, 60, 63, 68, 70, 72
+src\path_integral\finite_rank_gaussian_transport.py          231     42    82%   36, 38, 40, 42, 47, 50, 52, 57, 70, 121, 123, 151, 154, 156, 161, 165, 167, 182, 185, 187, 189, 191, 193, 239, 241, 290, 294, 297, 330, 336, 343, 345, 350, 352, 354, 358, 371, 382, 385, 452, 454, 456
+src\path_integral\fixed_stratum_reference.py                  22      2    91%   23, 40
+src\path_integral\gaussian_bump_oracle.py                     36      2    94%   24, 33
+src\path_integral\gaussian_excursion_oracle.py               163     16    90%   40, 42, 44, 46, 79, 84, 145, 158, 180, 211, 213, 215, 217, 282, 284, 286
+src\path_integral\gaussian_mixture_marginal.py                36      3    92%   40, 42, 52
+src\path_integral\gaussian_mixture_oracle.py                  44      7    84%   14, 16, 34, 49, 51, 68, 70
+src\path_integral\gaussian_mixture_strictness.py             134     21    84%   94, 96, 98, 100, 102, 104, 109, 111, 115, 118, 127, 219, 221, 223, 225, 227, 229, 236, 243, 247, 253
+src\path_integral\gaussian_oracles.py                         46      8    83%   12, 19, 27, 39, 51, 63, 75, 95
+src\path_integral\gaussian_smoothing.py                      107     21    80%   51, 53, 75, 77, 79, 95, 111, 114, 116, 118, 130, 133, 135, 137, 161, 170, 172, 174, 177, 192, 219
+src\path_integral\gaussian_span_marginalization.py           250     53    79%   29, 33, 35, 37, 39, 58, 61, 134, 136, 138, 140, 142, 144, 164, 183, 185, 187, 189, 191, 193, 197, 218, 220, 222, 224, 234, 236, 238, 240, 242, 259, 261, 263, 265, 267, 288, 298, 342, 344, 346, 348, 350, 352, 356, 377, 379, 381, 383, 385, 387, 389, 395, 410
+src\path_integral\gradient_umbrella_smc.py                   105      5    95%   32, 45, 57, 78, 130
+src\path_integral\guide_free_block_smc.py                     74      2    97%   60, 74
+src\path_integral\heston_oracle.py                           183     18    90%   42, 55, 57, 59, 61, 63, 117, 119, 121, 123, 125, 127, 203, 209, 233, 277, 290, 444
+src\path_integral\hybrid_allocation.py                       461     78    83%   38, 42, 46, 48, 124, 126, 134, 136, 138, 141, 143, 148, 155, 175, 181, 187, 189, 196, 242, 266, 273, 278, 282-283, 287, 291, 293, 295, 297, 303, 309, 386-400, 425, 427, 429, 431, 433, 435, 437, 441, 444, 446, 451, 455, 468, 485, 569, 571, 573, 575, 577, 582, 586, 590, 675, 680, 688, 696, 706, 709, 712, 716, 767, 771, 773, 775, 778, 807, 818, 958, 975, 982-983, 985
+src\path_integral\joint_shift_conditional.py                  59      2    97%   56, 85
+src\path_integral\legacy_v16_semantic_adapter.py             105     19    82%   24-25, 40-41, 71, 77, 84, 89, 91, 94, 100, 115, 120, 125, 128, 137, 142, 150, 160
+src\path_integral\local_variance_reference.py                 38      2    95%   40, 49
+src\path_integral\low_rank_residual_flow.py                  242     27    89%   63, 82, 85, 87, 89, 91, 98, 108, 110, 136, 168, 232, 234, 237, 239, 263, 313, 315, 317, 332, 334, 336, 383, 387-391, 475
+src\path_integral\marginal_risk_contract.py                   39      3    92%   37, 39, 41
+src\path_integral\matched_window_diagnostics.py               71      7    90%   37, 50, 52, 55, 68, 99, 104
+src\path_integral\memory\__init__.py                           2      0   100%
+src\path_integral\memory\soe_bank.py                          66      9    86%   37, 43, 45, 47, 110, 121, 123, 125, 133
+src\path_integral\mixture.py                                  71     21    70%   18, 20, 22, 46, 48, 50, 52, 54, 56, 58, 60, 62, 75, 77, 79, 96, 98, 100, 102, 117, 119
+src\path_integral\mlmc.py                                    392     57    85%   25, 37, 55, 57, 70-72, 89, 91, 93, 95, 126, 187, 194, 203, 208, 225, 228, 234, 240, 242, 249, 312, 326, 336, 343, 348, 352-353, 357, 361, 363, 365, 367, 378, 423, 425, 427, 429, 431, 472, 474, 479, 481, 485-487, 511, 523, 548, 588, 608, 631, 641-643, 721
+src\path_integral\mlmc_complexity.py                          95      5    95%   122, 159-160, 210, 216
+src\path_integral\moment_matched_volterra_terminal.py         36      1    97%   39
+src\path_integral\multilevel_crossover.py                     71      7    90%   48, 58, 88, 90, 136, 145, 147
+src\path_integral\nested_reference_statistics.py              16      2    88%   16, 24
+src\path_integral\numerical_smoothing_reference.py            36      1    97%   74
+src\path_integral\paired_model_risk.py                        37      1    97%   82
+src\path_integral\paired_normalizer_difference.py             20      1    95%   24
+src\path_integral\paired_volterra_gradient_reference.py       26      1    96%   23
+src\path_integral\path_functionals.py                        103      8    92%   13, 15, 19, 31, 33, 35, 123, 125
+src\path_integral\path_geometry_diagnostics.py                49      2    96%   43, 57
+src\path_integral\physical_dictionary_learning.py            100      6    94%   68, 165, 168, 170, 176, 203
+src\path_integral\physical_window_guide.py                    79      4    95%   73, 77, 87, 107
+src\path_integral\pice.py                                     52     18    65%   38, 40, 42, 45, 47, 49, 51, 53, 55, 61-62, 83, 85, 87, 89, 91, 93, 97
+src\path_integral\policy_allocation.py                       166     20    88%   120, 122, 128, 131, 138, 148, 150, 379, 381, 387, 458-461, 491, 496, 505, 515, 518, 539
+src\path_integral\policy_audit.py                             52      5    90%   91-93, 118-119
+src\path_integral\potentials.py                               15      4    73%   31, 33, 35, 37
+src\path_integral\proposal_bridge_smc.py                     117     11    91%   46, 48, 66, 69, 71, 75, 80, 84, 90, 109, 158
+src\path_integral\proposal_family_diagnostics.py              45      5    89%   33, 37, 40, 61, 68
+src\path_integral\provenance.py                               40     15    62%   26-27, 38-39, 61-71, 74
+src\path_integral\r1_bottleneck_diagnostics.py               132     22    83%   34, 39, 60, 64-72, 82, 89, 102, 135, 141, 163, 180, 202, 231-233, 258, 271
+src\path_integral\rao_blackwell.py                            44      0   100%
+src\path_integral\rarity_router.py                           125     14    89%   27-28, 42, 47, 79, 81, 83, 88, 92, 97, 99, 172, 233-234
+src\path_integral\rate_analysis.py                           155     11    93%   39, 44, 78, 82, 168, 174, 212, 214, 246, 252, 257
+src\path_integral\rate_mesh_audit.py                          64     19    70%   18, 20, 22, 24, 26, 45, 60, 62, 64, 78, 80, 82, 96, 98, 100, 102, 104, 122, 124
+src\path_integral\rbergomi_branching.py                      222     26    88%   73, 77, 86, 89-94, 170, 172, 177, 179, 214, 216, 218, 243, 245, 268, 306, 340, 342, 344, 346, 348, 350, 426
+src\path_integral\rbergomi_cm_mesh.py                        128     16    88%   63, 65, 71, 87, 108-112, 129, 133, 135, 142, 254, 256, 259
+src\path_integral\rbergomi_cm_mlmc.py                         49      8    84%   18, 20, 22, 47, 49, 51, 53, 62
+src\path_integral\rbergomi_cm_transport.py                    89      6    93%   106, 114, 133, 168, 184, 224
+src\path_integral\rbergomi_coupling.py                       228     21    91%   82, 84, 87, 104, 137-138, 142, 144, 146, 148, 173, 175, 177, 179, 181, 183, 225, 285, 302, 323, 351
+src\path_integral\rbergomi_dcs_mlmc.py                       138     20    86%   77, 95, 104, 106, 108, 110, 130, 139, 141, 143, 148, 161, 163, 227-228, 230, 234, 272, 310, 353
+src\path_integral\rbergomi_fft.py                            181     20    89%   64, 66, 69, 109, 117, 129, 150, 153, 162, 175, 177, 185, 235, 256, 258, 263, 359, 379, 381, 386
+src\path_integral\rbergomi_hybrid.py                          75     13    83%   30, 42, 68, 70, 106, 121, 137-148
+src\path_integral\rbergomi_local_volterra_transport.py       143     18    87%   33, 51, 53, 55, 59, 64, 83, 85, 87, 89, 91, 93, 99, 101, 187, 242, 244, 246
+src\path_integral\rbergomi_mixture.py                        111     13    88%   51, 60, 86, 88, 90, 100, 103, 108, 143, 145, 152, 185, 211
+src\path_integral\rbergomi_mlmc_sampler.py                   131     18    86%   45, 47, 49, 51, 55, 79, 86, 101, 106, 115, 125, 135, 137, 207, 230, 232, 234, 236
+src\path_integral\rbergomi_multilevel.py                      91     11    88%   48, 54, 57, 74, 94, 133, 135, 142, 172, 199, 210
+src\path_integral\rbergomi_residual_mlmc.py                  148     14    91%   50, 81, 116, 140, 142, 144, 146, 149, 183, 200, 318, 331, 333, 349
+src\path_integral\rbergomi_residual_transport.py             279     43    85%   32, 46, 48, 50, 52, 69, 71, 73, 75, 77, 81, 92, 94, 124, 126, 128, 132, 136, 154, 159, 163, 202, 204, 250, 256, 258, 264, 270, 272-287, 292, 325, 362, 512, 514, 516, 519, 521, 527, 575
+src\path_integral\rbergomi_smoothing.py                      180     26    86%   106, 124, 126, 133, 160, 166, 168, 170-172, 181, 183, 193, 195, 201, 203, 257, 296-297, 300, 325, 405, 425, 524-538
+src\path_integral\rbergomi_structured_ecrpt.py               138     15    89%   43, 63, 67, 83, 85, 87, 104, 245, 247, 249, 252, 254, 260, 293, 302
+src\path_integral\rbergomi_tempered_ecrpt.py                 136     16    88%   41, 63, 65, 67, 69, 71, 73, 75, 89, 91, 93, 176, 250, 252, 269, 277
+src\path_integral\rbergomi_theory_diagnostics.py             176     27    85%   105, 147, 149, 151, 166, 196, 198, 200, 202, 252, 254, 257, 260, 262, 264, 266, 268, 271, 279, 281, 315, 317, 319, 321, 344, 346, 350
+src\path_integral\rbergomi_threshold_diagnostics.py          135     16    88%   70, 72, 74, 76, 84, 86, 88, 90, 97, 99, 104, 106, 142, 177, 207, 249
+src\path_integral\recovery_checkpoint.py                     108      9    92%   23, 50, 71, 79, 88, 97, 116, 119, 121
+src\path_integral\reference_aggregation.py                   320     70    78%   23-24, 32, 37, 43, 76, 78, 80, 82, 87, 89, 91, 93, 109, 125, 127, 137, 139, 141, 143, 145, 147, 149, 151, 153, 164, 171, 205, 316, 318, 320, 322, 324, 335, 342, 355, 359, 365, 374, 382, 391, 397, 402, 427, 431, 434, 456, 458, 496, 511, 514, 517, 520, 524, 532, 553, 555, 557, 559, 575, 577, 602, 628, 630, 635, 637, 639, 641, 648, 667
+src\path_integral\reference_execution.py                      45      5    89%   34, 38, 40, 48, 67
+src\path_integral\reference_protocol.py                      141     17    88%   41, 55, 69, 71, 86, 89, 91, 133, 135, 150, 245, 247, 263, 266, 279, 281, 290
+src\path_integral\reference_shards.py                         49      3    94%   38-39, 71
+src\path_integral\research_cost_accounting.py                 13      0   100%
+src\path_integral\research_result_audit.py                   305     37    88%   38, 44, 65, 72, 79, 90, 103, 125, 127, 135, 168, 173, 184, 188, 197, 199, 202, 207, 216, 245, 248, 251, 254, 257, 271, 277, 282, 285, 309, 311, 315, 346, 368, 370, 409, 450, 453
+src\path_integral\research_result_contract.py                 83      7    92%   84, 92, 103, 120, 141, 146, 152
+src\path_integral\residual_coupling_transport.py             205     19    91%   33, 35, 37, 39, 62, 70, 75, 78, 83, 114, 154, 156, 158, 264, 282, 310, 312, 316, 352
+src\path_integral\residual_log_quadrature.py                  79      5    94%   31, 86, 92, 94, 99
+src\path_integral\residual_smc.py                            176     21    88%   22, 47, 49, 51, 53, 55, 87, 90, 94, 111, 125, 131, 134, 143, 159, 166, 181, 192, 226, 228, 271
+src\path_integral\residual_stability.py                       44     11    75%   15, 23, 38, 40, 44, 65, 67, 72, 74, 76, 78
+src\path_integral\residual_structural_oracle.py               57      1    98%   91
+src\path_integral\residual_transport.py                      314     59    81%   38, 40, 46, 48, 53, 58, 63, 65, 68, 70, 72, 78, 129, 131, 133, 135, 137, 140, 156, 168, 183, 185, 187, 191, 201, 223, 225, 227, 232, 235, 253, 255, 257, 259, 261, 264, 271, 293, 295, 297, 304, 306, 374, 376, 378, 468, 470, 472, 474, 476, 478, 480, 482, 486, 490, 506, 515, 535, 549
+src\path_integral\resource_planner.py                         46      7    85%   21, 28, 30, 59, 61, 68, 70
+src\path_integral\risk_aware_model_correction.py             112      7    94%   65, 103, 116, 123, 136, 196, 225
+src\path_integral\risk_path_attribution.py                   109      7    94%   47, 65, 73, 87, 92, 129, 159
+src\path_integral\robust_crossover.py                        297     53    82%   114, 116, 129, 131, 133, 169, 196, 198, 200, 203, 205, 211, 229, 231, 233, 253, 259, 262, 264, 266, 272, 274, 277, 341, 343, 345, 348, 355, 357, 378, 394, 398, 402, 404, 471, 473, 480, 484, 489, 492, 494, 496, 498, 505, 507, 512, 539, 547, 553, 558, 566, 571, 585
+src\path_integral\seed_ledger.py                              85      8    91%   70, 75, 89-90, 108, 111, 115, 119
+src\path_integral\smc_mixture_oracle.py                       89      2    98%   76, 124
+src\path_integral\stable_gaussian.py                          74     15    80%   17, 21, 23, 66, 79, 92, 94, 96, 102, 113, 115, 117, 119, 121, 124
+src\path_integral\statistical_gates.py                       128     16    88%   74, 76, 97, 115, 122, 124, 149, 151, 153, 169, 205, 207, 210, 234, 236, 238
+src\path_integral\stratified_paired_risk.py                   76      7    91%   19, 32, 54, 65, 72, 84, 93
+src\path_integral\structural_v2_conditional_reference.py      61      7    89%   32, 39, 46, 49, 53, 63, 86
+src\path_integral\structural_v2_contract.py                  178     17    90%   41, 67, 73, 76, 126, 136, 139, 144, 159, 163, 180, 187, 198, 204, 208, 229, 233
+src\path_integral\structural_v2_inventory.py                 216     90    58%   92-95, 104, 145, 152, 155, 160-170, 177-256
+src\path_integral\structural_v2_reference.py                  77     12    84%   26, 29, 43, 48, 53, 65, 67, 88, 91, 95, 111, 114
+src\path_integral\structural_v2_terminal_geometry.py          38      3    92%   35, 39, 51
+src\path_integral\tail_safe_allocation.py                    257     40    84%   35, 41, 44, 46, 49, 55, 60, 66, 74, 78, 84, 111, 113, 145, 147, 199, 201, 203, 206, 211, 245, 247, 249, 252, 254, 257, 304, 314, 316, 318, 345, 347, 391, 393, 441, 465, 493, 495, 504, 508
+src\path_integral\tempered_conditional_smc.py                118     15    87%   33, 35, 37, 39, 41, 46, 51, 53, 71, 73, 75, 77, 89, 117, 195
+src\path_integral\tempered_residual_flow_mixture.py          107     15    86%   22, 35, 37, 39, 75, 77, 80, 82, 85, 88, 145, 147, 167, 171, 187
+src\path_integral\tempered_target_transport.py               171     28    84%   50, 52, 54, 56, 58, 64, 69, 77, 79, 81, 83, 88, 90, 152-153, 166-174, 187, 241, 257, 260, 262, 272, 285
+src\path_integral\threshold_stability.py                      99     15    85%   70, 72, 80, 82, 111, 152, 155, 157, 159, 167, 236, 238, 240, 242, 244
+src\path_integral\umbrella_normalizer_smc.py                 107     17    84%   40, 43, 45, 68, 70, 72, 74, 76-79, 81, 90, 95, 111, 127-128
+src\path_integral\v6_progress.py                              65     14    78%   33, 35, 59, 61, 63, 65, 70, 89, 108-111, 115-116
+src\path_integral\v6_protocol.py                             166     27    84%   27, 41, 44, 46-47, 91, 93, 111, 127, 129, 156, 159, 197, 200, 202, 204, 206, 208, 210, 212, 214, 258, 262, 266, 271, 273, 275
+src\path_integral\v6_work_ledger.py                          109     13    88%   44, 50, 56, 59, 78, 88, 110, 113, 166, 186, 188, 191, 195
+src\path_integral\v9_completion_audit.py                      48      3    94%   30, 36-37
+src\path_integral\v9_terminal_benchmark_audit.py              77     77     0%   3-146
+src\path_integral\v9_terminal_contract.py                     26      2    92%   21, 24
+src\path_integral\v9_terminal_protocol.py                    139     58    58%   45, 49, 51, 75-150, 159, 163, 193, 237, 299
+src\path_integral\v9_terminal_reference_audit.py             104     15    86%   34, 37, 59-60, 87, 93, 99, 107-108, 112-113, 118-119, 171, 175
+src\path_integral\v10_full_cem_dcs_protocol.py                41     41     0%   3-92
+src\path_integral\v10_proposal_bank.py                        64     64     0%   3-143
+src\path_integral\v10r1_bank_audit.py                         62      6    90%   37-42, 69, 74
+src\path_integral\v10r1_benchmark_audit.py                    80      5    94%   36-37, 62, 107-108
+src\path_integral\v10r1_full_latent_dcs.py                   149     25    83%   71, 78, 82, 84, 86, 99, 112, 119, 121, 123, 125, 127, 129, 131, 155, 157, 171, 243, 245, 250, 252, 254, 274, 294, 314
+src\path_integral\v10r1_proposal_bank.py                      77      8    90%   30, 32, 53, 62, 132, 134, 136, 161
+src\path_integral\v10r1_protocol.py                           80      8    90%   38, 46, 63, 67, 86, 128-130
+src\path_integral\v13_development_audit.py                   113     16    86%   63, 67, 69, 72, 74, 115-116, 153, 157-158, 160, 178, 211-212, 214, 227
+src\path_integral\v14_local_volterra_audit.py                 73      9    88%   83, 87-88, 90, 108, 143-144, 146, 164
+src\path_integral\v14_tempered_hybrid_transport.py            39      3    92%   37, 54, 81
+src\path_integral\v15_baseline_protocol.py                    56      9    84%   36, 41, 43, 45, 60, 75, 77, 82, 104
+src\path_integral\v15_result_audit.py                        109     17    84%   61, 65, 67, 71, 79, 82, 102, 105-106, 109, 111, 113, 117, 121, 127, 165-166
+src\path_integral\v16_transport_policy.py                    124     12    90%   95, 173, 229-230, 242, 247, 298, 315, 317, 366, 369, 378
+src\path_integral\volterra_action.py                          61      5    92%   38, 40, 44, 48, 50
+src\path_integral\volterra_conditional_payoffs.py             96     14    85%   21, 23, 32, 37, 70, 72, 74, 98, 100, 141, 144, 148, 153, 167
+src\path_integral\volterra_excursion_guide.py                 37      4    89%   23, 27, 29, 59
+src\path_integral\weighted_bank_mixture.py                   119      6    95%   113, 149, 161, 180, 202, 212
+src\path_integral\weighted_tempered_smc.py                   179     16    91%   46, 48, 50, 52, 54, 56, 58, 60, 64, 69, 90, 115, 119, 147, 188, 247
+src\physics_engine.py                                        492     57    88%   27, 29, 38, 121, 123, 125, 127, 252, 254, 256, 258, 309, 364-370, 412, 414, 416, 418, 420, 422, 427, 431, 474, 481, 483, 485, 535-539, 586, 684, 686, 704, 706, 708, 751, 753, 757, 821, 823, 825, 827, 829, 882, 889, 893, 929, 982, 984, 986, 988, 990
+src\training\__init__.py                                      12      0   100%
+src\training\cem.py                                          103     17    83%   30, 32, 34, 43, 98, 100, 102, 104, 107, 109, 126-129, 167, 195, 206
+src\training\heston_feedback.py                              336     66    80%   62, 64, 66, 75, 79, 81, 83, 94-95, 109, 112, 135, 137, 225, 227, 230, 234, 237, 254, 256, 259, 261, 263, 280, 285, 378, 466, 588, 644, 668-696, 710, 723, 737-759, 764-765
+src\training\markov_control.py                               229     21    91%   49, 51, 53, 55, 57, 88, 136, 163, 246, 248, 251, 257, 260, 290, 309, 324, 349, 353, 402, 406, 408
+src\training\objectives.py                                    39     30    23%   63-82, 123-142
+src\training\path_mixture.py                                 151     34    77%   34, 36, 44, 161, 163, 170, 192, 199, 252, 254, 334-380
+src\training\rbergomi_cem.py                                  70     10    86%   57, 59, 61, 63, 65, 67, 91-93, 127
+src\training\rbergomi_multilevel_cem.py                       78     12    85%   68, 70, 72, 74, 76, 78, 80, 82, 105, 150-152
+src\training\rbergomi_piecewise_cem.py                       104     14    87%   56, 65, 83, 92-98, 123, 125, 127, 129, 131, 133, 135, 142
+src\training\sdv.py                                           95     20    79%   54, 57, 60, 102, 104, 191-224
+src\training\vfo.py                                          144     16    89%   24-26, 36, 38, 92, 97, 202, 251, 255, 268, 274-279
+src\training\volterra_branching.py                           118     89    25%   21-24, 33-35, 63-115, 131-194, 206-210, 220-224
+src\training\volterra_transport_operator.py                   80     12    85%   27, 29, 31, 33, 35, 43, 45, 47, 50, 63, 71, 123
+src\utils.py                                                  67     34    49%   44, 47-49, 57, 59-60, 70-72, 86-93, 96, 99, 114-128
+----------------------------------------------------------------------------------------
+TOTAL                                                      22860   3440    85%
+1828 passed in 476.86s (0:07:56)

@@ -24,6 +24,8 @@
 results/*.json -text -diff
 results/**/*.json -text -diff
 configs/**/*.json -text -diff
+# Validation receipts also bind exact stdout bytes, not normalized text.
+results/**/validation/*-output.txt -text -diff
 
 # Shell
 *.sh text eol=lf

@@ -1,0 +1,69 @@
+{
+  "status": "CURRENT_ANCHOR_ARCHIVE_AND_PUBLIC_FILE_CHECKS_PASSED",
+  "review_date": "2026-10-21",
+  "timezone": "America/New_York",
+  "scope": "All currently uncommitted research files plus README, before this receipt and the final regression receipt were added",
+  "anchors": [
+    {
+      "path": "results/post_audit/residual_log_moments_v1/session_20261021/result.json",
+      "sha256": "53c604c5faafa573ae380605342a130f68d54dcde6cefb30393a380bc482bb6b",
+      "snapshot_sha256": "8ad244b40f754e3b1653dab47d43714786031fa3e106a3d498b20d553848209b",
+      "snapshot_files": 1114
+    },
+    {
+      "path": "results/post_audit/residual_paired_pilot_v1/session_20261021/result.json",
+      "sha256": "8645b470b638ff9860ea831915c1bf10e2111d66ca1780f31640c2c6c008ade1",
+      "snapshot_sha256": "c5dc299ce614bd1b3a48364b9d6068999cc96679dcbac5241fc9c05a29d8b693",
+      "snapshot_files": 1117
+    },
+    {
+      "path": "results/post_audit/analytic_residual_batch_v1/session_20261021/protocol.json",
+      "sha256": "3f9b314fead3b22b7756f5f74100939645f10e3e6484fd11ccafebdfdd2d4865",
+      "snapshot_sha256": "1453a84330fc3063262079102777ea092f15bd3e47716d125f48b2feb8f07ea9",
+      "snapshot_files": 1125
+    },
+    {
+      "path": "results/post_audit/analytic_residual_batch_v1/session_20261021_serialization_recovery/result.json",
+      "sha256": "a0a6a3b39c475fcf5fa92a2a6a652fdf21c3da1a311c56dbda2b0888f2896f54",
+      "snapshot_sha256": "157501d98380093bf6a048a93ce8da492dfd28741ccf95aea7a6712114166564",
+      "snapshot_files": 1128
+    },
+    {
+      "path": "results/post_audit/conditional_marginal_g_v1/session_20261021/result.json",
+      "sha256": "ecd0a93de8dc90a24a3a3e91972c125178986c573c15a8f1ff6e1c33fcf4afbd",
+      "snapshot_sha256": "0d63aa038fdb77814000f558cec563a5ed9da65c077954ff8fc522db59a668bd",
+      "snapshot_files": 1130
+    }
+  ],
+  "unique_frozen_current_files_checked": 1142,
+  "files_checked": 135,
+  "archives_checked": 5,
+  "archive_members_checked": 5619,
+  "strict_json_files": 99,
+  "local_markdown_links": 176,
+  "largest_file_bytes": 10223981,
+  "credential_pattern_findings": 0,
+  "unsafe_archive_paths": 0,
+  "files_at_least_100MiB": 0,
+  "trailing_whitespace": 0,
+  "not_exhaustive_secret_absence_or_theory_proof": true,
+  "head": "f556424360b8307284b23a6cfc0efcdee7380060",
+  "staged_paths": [],
+  "new_commit_or_push": false,
+  "final_closure": {
+    "status": "FINAL_CLOSURE_CHECKS_PASSED",
+    "files_checked": 138,
+    "strict_json_files": 101,
+    "local_markdown_links": 180,
+    "unique_frozen_current_files_checked": 1142,
+    "all_five_original_anchor_and_archive_hashes_match": true,
+    "current_runtime_tree_matches_new_run": true,
+    "regression_log_hashes_match": true,
+    "git_filtered_log_blobs_equal_raw_bytes": true,
+    "new_result_and_audit_hashes_match": true,
+    "git_diff_check_passed": true,
+    "staged_paths": [],
+    "head": "f556424360b8307284b23a6cfc0efcdee7380060",
+    "new_commit_or_push": false
+  }
+}

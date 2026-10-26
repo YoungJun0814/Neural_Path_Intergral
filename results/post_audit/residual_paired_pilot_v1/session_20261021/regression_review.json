@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-21",
+  "environment": {
+    "platform": "Windows",
+    "python": "3.10.11",
+    "numpy": "1.26.2",
+    "scipy": "1.15.3",
+    "torch": "2.12.0.dev20260408+cu128",
+    "experiment_device": "CPU float64"
+  },
+  "q0_result_sha256": "53c604c5faafa573ae380605342a130f68d54dcde6cefb30393a380bc482bb6b",
+  "q1_result_sha256": "8645b470b638ff9860ea831915c1bf10e2111d66ca1780f31640c2c6c008ade1",
+  "scientific_decision": "NO_ADOPTION_PRECISION_UNRESOLVED",
+  "pytest": {
+    "command": "python -m pytest -q --cov=src --cov-report=term-missing",
+    "exit_code": 0,
+    "passed": 1702,
+    "seconds": 478.92,
+    "coverage_percent_rounded": 85,
+    "statements": 22304,
+    "missed": 3407,
+    "new_core_coverage_percent_rounded": 94,
+    "new_core_statements": 79,
+    "new_core_missed": 5
+  },
+  "ruff": {
+    "command": "python -m ruff check src tests experiments main.py train_driftnet.py",
+    "exit_code": 0
+  },
+  "mypy": {
+    "command": "python -m mypy src main.py train_driftnet.py",
+    "exit_code": 0,
+    "files": 214
+  },
+  "runner_mypy": {
+    "command": "python -m mypy --follow-imports=silent experiments/post_audit_residual_log_moments.py experiments/post_audit_residual_paired_pilot.py",
+    "exit_code": 0,
+    "files": 2
+  },
+  "procedure_deviation": "Q0 audit replayed all three known-answer examples despite the plan specifying at most two; scalar count 49042 remained within the 50000 cap. Original plan and result preserved.",
+  "matched_wall_or_fixed_precision_benchmark_completed": false,
+  "new_research_remote_ci_verified": false,
+  "existing_requests_dependency_warning_preserved": true,
+  "P2_qualified": false,
+  "D3_authorized": false,
+  "large_training_authorized": false
+}

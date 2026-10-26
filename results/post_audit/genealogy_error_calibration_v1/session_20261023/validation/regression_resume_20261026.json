@@ -1,0 +1,26 @@
+{
+  "status": "INCOMPLETE_PRIOR_REGRESSION_PRESERVED_AND_FULL_REVALIDATION_PASSED",
+  "review_date": "2026-10-26",
+  "timezone": "America/New_York",
+  "previous_log": {
+    "path": "results/post_audit/genealogy_error_calibration_v1/session_20261023/validation/pytest-output.txt",
+    "sha256": "1bae6c5f299645d80668ed64aaf6b090adcd3370e94c84cefe3d319388b864f5",
+    "last_progress_percent_observed": 93,
+    "completion_summary_present": false,
+    "exit_code": null,
+    "original_session_unavailable": true,
+    "matching_pytest_process_present_at_resume": false,
+    "cause_of_interruption": "unknown; no OS or power cause inferred",
+    "counted_as_passed": false,
+    "bytes_preserved_without_overwrite": true
+  },
+  "resumed_full_suite_log": "results/post_audit/genealogy_error_calibration_v1/session_20261023/validation/pytest-resumed-20261026-output.txt",
+  "resumed_exit_code": 0,
+  "resumed_passed": 1849,
+  "resumed_wall_seconds_reported": 410.27,
+  "resumed_log_sha256": "e2ef1676107c35f1364407354cc9ad566599cccf6e20295d2dd44737423958af",
+  "research_experiments_rerun": false,
+  "original_numeric_source_and_results_modified": false,
+  "commit_created": false,
+  "push_performed": false
+}

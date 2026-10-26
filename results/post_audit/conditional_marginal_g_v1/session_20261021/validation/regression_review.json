@@ -1,0 +1,58 @@
+{
+  "status": "LOCAL_REGRESSION_AND_STATIC_CHECKS_PASSED",
+  "review_date": "2026-10-21",
+  "timezone": "America/New_York",
+  "pytest": {
+    "command": "python -m pytest -q --cov=src --cov-report=term-missing",
+    "exit_code": 0,
+    "passed": 1750,
+    "wall_seconds_reported": 428.51,
+    "new_tests": 26,
+    "log_path": "results/post_audit/conditional_marginal_g_v1/session_20261021/validation/pytest-output.txt",
+    "log_sha256": "0f2e986932ab2c4612bab8532f0eee3d069d298b7c3840ac71286cc568a03567"
+  },
+  "statement_coverage": {
+    "total": {"statements": 22615, "missed": 3431, "percent_rounded": 85},
+    "src/path_integral/conditional_marginal_g.py": {"statements": 113, "missed": 7, "percent_rounded": 94},
+    "not_branch_exhaustion_or_absence_of_errors_proof": true
+  },
+  "static_checks": {
+    "ruff_command": "python -m ruff check src tests experiments main.py train_driftnet.py",
+    "ruff_exit_code": 0,
+    "mypy_command": "python -m mypy src main.py train_driftnet.py",
+    "mypy_source_files": 217,
+    "mypy_exit_code": 0,
+    "experiment_mypy_command": "python -m mypy --follow-imports=silent experiments/post_audit_conditional_marginal_g.py",
+    "experiment_mypy_files": 1,
+    "experiment_mypy_exit_code": 0,
+    "log_path": "results/post_audit/conditional_marginal_g_v1/session_20261021/validation/static_checks-output.txt",
+    "log_sha256": "4dff7516947671086498cd1997603c5f8572c23ad0a2a8b9d24a1e831ab8a072"
+  },
+  "environment": {
+    "os": "Windows",
+    "python": "3.10.11",
+    "numpy": "1.26.2",
+    "scipy": "1.15.3",
+    "torch": "2.12.0.dev20260408+cu128",
+    "research_device": "cpu",
+    "research_dtype": "float64",
+    "research_threads": 1,
+    "pytest_threads": "Per-test fixtures, not asserted to be globally one",
+    "known_requests_dependency_warning_preserved": true,
+    "dependencies_changed": false
+  },
+  "infrastructure_change_after_research_source_freeze": {
+    "path": ".gitattributes",
+    "change": "Preserve exact producer bytes for results/**/validation/*-output.txt, whose SHA256 is bound by validation receipts",
+    "numeric_source_and_result_bytes_unchanged": true,
+    "git_filtered_validation_log_blobs_equal_raw_blobs": true
+  },
+  "scientific_decision": "STOP_MARGINAL_TRAINING_BANK_UNRELIABLE",
+  "successful_fitted_G_production_branch_end_to_end_verified": false,
+  "new_remote_ci_verified": false,
+  "P2_qualified": false,
+  "D3_authorized": false,
+  "large_training_authorized": false,
+  "commit_created": false,
+  "push_performed": false
+}

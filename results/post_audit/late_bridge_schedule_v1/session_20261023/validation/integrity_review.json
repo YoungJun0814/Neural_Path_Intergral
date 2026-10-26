@@ -1,0 +1,92 @@
+{
+  "status": "ANCHOR_ARCHIVE_AND_PUBLIC_FILE_CHECKS_PASSED",
+  "review_date": "2026-10-23",
+  "timezone": "America/New_York",
+  "scope": "All currently uncommitted research files plus README and .gitattributes; primary scan counts exclude this newly added receipt",
+  "anchors": [
+    {
+      "path": "results/post_audit/residual_log_moments_v1/session_20261021/result.json",
+      "sha256": "53c604c5faafa573ae380605342a130f68d54dcde6cefb30393a380bc482bb6b",
+      "snapshot_sha256": "8ad244b40f754e3b1653dab47d43714786031fa3e106a3d498b20d553848209b",
+      "snapshot_files": 1114
+    },
+    {
+      "path": "results/post_audit/residual_paired_pilot_v1/session_20261021/result.json",
+      "sha256": "8645b470b638ff9860ea831915c1bf10e2111d66ca1780f31640c2c6c008ade1",
+      "snapshot_sha256": "c5dc299ce614bd1b3a48364b9d6068999cc96679dcbac5241fc9c05a29d8b693",
+      "snapshot_files": 1117
+    },
+    {
+      "path": "results/post_audit/analytic_residual_batch_v1/session_20261021/protocol.json",
+      "sha256": "3f9b314fead3b22b7756f5f74100939645f10e3e6484fd11ccafebdfdd2d4865",
+      "snapshot_sha256": "1453a84330fc3063262079102777ea092f15bd3e47716d125f48b2feb8f07ea9",
+      "snapshot_files": 1125
+    },
+    {
+      "path": "results/post_audit/analytic_residual_batch_v1/session_20261021_serialization_recovery/result.json",
+      "sha256": "a0a6a3b39c475fcf5fa92a2a6a652fdf21c3da1a311c56dbda2b0888f2896f54",
+      "snapshot_sha256": "157501d98380093bf6a048a93ce8da492dfd28741ccf95aea7a6712114166564",
+      "snapshot_files": 1128
+    },
+    {
+      "path": "results/post_audit/conditional_marginal_g_v1/session_20261021/result.json",
+      "sha256": "ecd0a93de8dc90a24a3a3e91972c125178986c573c15a8f1ff6e1c33fcf4afbd",
+      "snapshot_sha256": "0d63aa038fdb77814000f558cec563a5ed9da65c077954ff8fc522db59a668bd",
+      "snapshot_files": 1130
+    },
+    {
+      "path": "results/post_audit/conditional_risk_target_smc_v1/session_20261022/result.json",
+      "sha256": "ac83eb5aafca2ca804ea779a9a0165b11299c6f3c20b094221a19fdbe2f4999a",
+      "snapshot_sha256": "eeb88b7d365a427e100d9242a35ebf1b33eb57723df5bbce89bec88776dfb46f",
+      "snapshot_files": 1133
+    },
+    {
+      "path": "results/post_audit/mixture_smc_oracle_v1/session_20261023/result.json",
+      "sha256": "71772960f208158868a18656c999d7ad0626ed02560569aacbd56486fc39e5d2",
+      "snapshot_sha256": "12e2e80a67b635ffda3db0e38f84097b7bdfa7cd3bacd178eff86ceb6978b704",
+      "snapshot_files": 1136
+    },
+    {
+      "path": "results/post_audit/late_bridge_schedule_v1/session_20261023/result.json",
+      "sha256": "24b2b05b03e1e706f30c81d5f51c469f818930ab7ff835cc067a0e9719aaa721",
+      "snapshot_sha256": "616b7b3191cc011803efda232934743cb6f17b0d42b4cb272a9fd51406cb56de",
+      "snapshot_files": 1138
+    }
+  ],
+  "unique_frozen_current_files_checked": 1159,
+  "current_frozen_file_mismatches": [],
+  "current_runtime_tree_matches_latest_run": true,
+  "files_checked": 270,
+  "archives_checked": 8,
+  "archive_members_checked": 9029,
+  "strict_json_files": 213,
+  "local_markdown_links": 208,
+  "largest_file_bytes": 10223981,
+  "credential_pattern_findings": 0,
+  "unsafe_archive_paths": 0,
+  "files_at_least_100MiB": 0,
+  "trailing_whitespace_lines": 0,
+  "git_filtered_json_or_validation_log_blobs_checked": 221,
+  "git_filtered_json_and_validation_log_blobs_equal_raw_bytes": true,
+  "prior_and_current_regression_log_hashes_checked": 8,
+  "new_island_artifact_hashes_checked": 80,
+  "both_new_audit_result_bindings_match": true,
+  "not_exhaustive_secret_absence_or_theory_proof": true,
+  "head": "f556424360b8307284b23a6cfc0efcdee7380060",
+  "staged_paths": [],
+  "git_diff_check_passed": true,
+  "new_commit_or_push": false,
+  "final_closure": {
+    "status": "FINAL_CLOSURE_CHECKS_PASSED",
+    "files_checked": 271,
+    "strict_json_files": 214,
+    "local_markdown_links": 209,
+    "all_eight_anchor_and_archive_hashes_match": true,
+    "current_runtime_tree_matches_latest_run": true,
+    "latest_frozen_files_checked": 1138,
+    "new_receipt_git_bytes_preserved": true,
+    "head": "f556424360b8307284b23a6cfc0efcdee7380060",
+    "staged_paths": [],
+    "new_commit_or_push": false
+  }
+}

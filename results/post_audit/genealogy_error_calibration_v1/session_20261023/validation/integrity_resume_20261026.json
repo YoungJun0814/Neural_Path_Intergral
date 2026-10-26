@@ -1,0 +1,58 @@
+{
+  "status": "RESUMED_ANCHOR_AND_PUBLIC_FILE_CHECKS_PASSED",
+  "review_date": "2026-10-26",
+  "timezone": "America/New_York",
+  "original_integrity_receipt": {
+    "path": "results/post_audit/genealogy_error_calibration_v1/session_20261023/validation/integrity_review.json",
+    "sha256": "1deebfe0c97692b8a3e194af9d174df01b5eaa6cd7bea86782b0251a3e7ace1b",
+    "original_bytes_preserved": true
+  },
+  "resume_anchor_check": {
+    "original_anchors": 9,
+    "archives_checked": 9,
+    "unique_frozen_current_files_checked": 1166,
+    "calibration_replicate_artifacts_checked": 96,
+    "current_frozen_file_mismatches": [],
+    "current_runtime_tree_matches_latest_run": true,
+    "calibration_result_sha256": "30f93470c1118881240b5845336107b1e97ff9af62ac5226d88688e80d3ed638",
+    "calibration_audit_sha256": "a269c3a7324dc94fa83caf771758d056ec00005ca63d273c901ef7ff239347f8"
+  },
+  "resume_public_scan": {
+    "scope": "All currently uncommitted files plus README and .gitattributes at scan start; then-running pytest stdout was not hash-compared; final receipts added after this scan",
+    "files_checked": 386,
+    "archives_checked": 9,
+    "archive_members_checked": 10170,
+    "strict_json_files": 317,
+    "local_markdown_links": 222,
+    "credential_pattern_findings": 0,
+    "unsafe_archive_paths": 0,
+    "files_at_least_100MiB": 0,
+    "trailing_whitespace_lines": 0,
+    "completed_artifact_git_blobs_checked": 328,
+    "largest_file_bytes": 10223981,
+    "errors": [],
+    "not_exhaustive_secret_absence_or_theory_proof": true
+  },
+  "prior_incomplete_regression_log_preserved": true,
+  "new_research_experiment_or_replay_on_resume": false,
+  "head": "f556424360b8307284b23a6cfc0efcdee7380060",
+  "staged_paths": [],
+  "git_diff_check_passed": true,
+  "new_commit_or_push": false,
+  "final_closure": {
+    "status": "FINAL_RESUME_CLOSURE_CHECKS_PASSED",
+    "files_checked": 388,
+    "strict_json_files": 319,
+    "local_markdown_links": 226,
+    "original_anchor_and_archive_hashes_checked": 9,
+    "latest_frozen_files_checked": 1140,
+    "current_runtime_tree_matches_latest_run": true,
+    "replicate_artifact_hashes_checked": 96,
+    "regression_logs_hash_checked": 10,
+    "calibration_validation_files_git_bytes_checked": 8,
+    "original_incomplete_stdout_preserved": true,
+    "head": "f556424360b8307284b23a6cfc0efcdee7380060",
+    "staged_paths": [],
+    "new_commit_or_push": false
+  }
+}

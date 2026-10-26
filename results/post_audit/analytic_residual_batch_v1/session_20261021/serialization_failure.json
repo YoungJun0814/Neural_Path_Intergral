@@ -1,0 +1,15 @@
+{
+  "status": "RESULT_PERSISTENCE_FAILED_AFTER_COMPUTATION",
+  "error": "TypeError: Object of type bool_ is not JSON serializable",
+  "failure_site": "write_json_atomic_nonoverwriting(path/result.json, result), outside the original numerical try/except",
+  "original_source_and_protocol_preserved": true,
+  "completed_kernel_and_joint_stage_inferred_from_control_flow": true,
+  "exact_kernel_scalar_count_recovered": false,
+  "kernel_scalar_upper_reservation": 12000000,
+  "joint_physical_evaluations_inferred_from_control_flow": 60,
+  "joint_scalar_evaluations_inferred_from_control_flow": 54,
+  "first_run_timings_recovered": false,
+  "first_run_numerical_result_recovered": false,
+  "not_an_audited_scientific_success": true,
+  "P2_qualified": false
+}

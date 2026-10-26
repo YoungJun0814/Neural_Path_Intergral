@@ -1,0 +1,67 @@
+{
+  "status": "LOCAL_REGRESSION_AND_STATIC_CHECKS_PASSED_AFTER_RESUME",
+  "review_date": "2026-10-26",
+  "timezone": "America/New_York",
+  "research_run_date": "2026-10-23",
+  "pytest": {
+    "command": "python -m pytest -q --cov=src --cov-report=term-missing",
+    "exit_code": 0,
+    "passed": 1849,
+    "new_tests_since_preceding_stage": 21,
+    "wall_seconds_reported": 410.27,
+    "log_path": "results/post_audit/genealogy_error_calibration_v1/session_20261023/validation/pytest-resumed-20261026-output.txt",
+    "log_sha256": "e2ef1676107c35f1364407354cc9ad566599cccf6e20295d2dd44737423958af"
+  },
+  "prior_incomplete_pytest": {
+    "log_path": "results/post_audit/genealogy_error_calibration_v1/session_20261023/validation/pytest-output.txt",
+    "log_sha256": "1bae6c5f299645d80668ed64aaf6b090adcd3370e94c84cefe3d319388b864f5",
+    "last_progress_percent": 93,
+    "exit_code": null,
+    "counted_as_passed": false,
+    "bytes_preserved_without_overwrite": true
+  },
+  "statement_coverage": {
+    "total": {"statements": 22972, "missed": 3443, "percent_rounded": 85},
+    "src/path_integral/genealogy_error_calibration.py": {"statements": 112, "missed": 3, "percent_rounded": 97},
+    "not_branch_exhaustion_or_absence_of_errors_proof": true
+  },
+  "static_checks": {
+    "ruff_command": "python -m ruff check src tests experiments main.py train_driftnet.py",
+    "ruff_exit_code": 0,
+    "mypy_command": "python -m mypy src main.py train_driftnet.py",
+    "mypy_source_files": 220,
+    "mypy_exit_code": 0,
+    "experiment_mypy_command": "python -m mypy --follow-imports=silent experiments/post_audit_genealogy_error_calibration.py",
+    "experiment_mypy_files": 1,
+    "experiment_mypy_exit_code": 0,
+    "log_path": "results/post_audit/genealogy_error_calibration_v1/session_20261023/validation/static-resumed-20261026-output.txt",
+    "log_sha256": "5118dab3462ac44d456d5dcfe600837eec3034e3405f4054301d28a07ec30549"
+  },
+  "environment": {
+    "os": "Windows",
+    "python": "3.10.11",
+    "numpy": "1.26.2",
+    "scipy": "1.15.3",
+    "torch": "2.12.0.dev20260408+cu128",
+    "research_device": "cpu",
+    "research_dtype": "float64",
+    "pytest_threads": "Per-test fixtures, not asserted to be globally one",
+    "known_requests_dependency_warning_preserved": true,
+    "dependencies_changed": false,
+    "exclusive_host_benchmark_claim": false
+  },
+  "scientific_decision": "CALIBRATION_COMPLETE_NO_RETROACTIVE_ADOPTION",
+  "original_96_replicates_and_replay_not_rerun_on_resume": true,
+  "all_96_replicates_fully_replayed_in_original_audit": true,
+  "original_numeric_source_and_result_bytes_unchanged": true,
+  "actual_Volterra_reference_qualified": false,
+  "production_gate_changed": false,
+  "actual_G_fits": 0,
+  "event_q_changed": false,
+  "P2_qualified": false,
+  "D3_authorized": false,
+  "large_training_authorized": false,
+  "new_remote_ci_verified": false,
+  "commit_created": false,
+  "push_performed": false
+}

@@ -1,0 +1,62 @@
+{
+  "status": "LOCAL_REGRESSION_AND_STATIC_CHECKS_PASSED",
+  "review_date": "2026-10-23",
+  "timezone": "America/New_York",
+  "pytest": {
+    "command": "python -m pytest -q --cov=src --cov-report=term-missing",
+    "exit_code": 0,
+    "passed": 1828,
+    "new_tests": 36,
+    "wall_seconds_reported": 476.86,
+    "log_path": "results/post_audit/late_bridge_schedule_v1/session_20261023/validation/pytest-output.txt",
+    "log_sha256": "126bce7ea1f76f2bed5edd87975d47ae63007994294e37857544cf69b90850ce"
+  },
+  "statement_coverage": {
+    "total": {"statements": 22860, "missed": 3440, "percent_rounded": 85},
+    "src/path_integral/smc_mixture_oracle.py": {"statements": 89, "missed": 2, "percent_rounded": 98},
+    "not_branch_exhaustion_or_absence_of_errors_proof": true
+  },
+  "static_checks": {
+    "ruff_command": "python -m ruff check src tests experiments main.py train_driftnet.py",
+    "ruff_exit_code": 0,
+    "mypy_command": "python -m mypy src main.py train_driftnet.py",
+    "mypy_source_files": 219,
+    "mypy_exit_code": 0,
+    "experiment_mypy_command": "python -m mypy --follow-imports=silent experiments/post_audit_mixture_oracle_late_bridge.py",
+    "experiment_mypy_files": 1,
+    "experiment_mypy_exit_code": 0,
+    "log_path": "results/post_audit/late_bridge_schedule_v1/session_20261023/validation/static_checks-output.txt",
+    "log_sha256": "5aa0f679f4b56ebca8c2c0b364448bc7d8d5c89ce5447b4460487a099121c7dc"
+  },
+  "environment": {
+    "os": "Windows",
+    "python": "3.10.11",
+    "numpy": "1.26.2",
+    "scipy": "1.15.3",
+    "torch": "2.12.0.dev20260408+cu128",
+    "research_device": "cpu",
+    "research_dtype": "float64",
+    "research_threads": 1,
+    "pytest_threads": "Per-test fixtures, not asserted to be globally one",
+    "known_requests_dependency_warning_preserved": true,
+    "dependencies_changed": false,
+    "full_regression_overlapped_Volterra_production": true,
+    "exclusive_host_benchmark_claim": false
+  },
+  "oracle_decision": "PASS_MIXTURE_ORACLE_LIMITED",
+  "oracle_all_64_islands_fully_replayed": true,
+  "Volterra_decision": "STOP_LATE_BRIDGE_BANK_UNQUALIFIED",
+  "Volterra_all_final_states_re_evaluated": true,
+  "Volterra_full_island_replays": ["canonical-h005-k1-linear-component-0", "high-eta200-k1-linear-component-0"],
+  "Volterra_all_rejected_proposals_fully_replayed": false,
+  "Volterra_maximum_final_log_m2_error": 1.7763568394002505e-15,
+  "normalizer_for_numerical_m2_not_certified_exact_true_M2": true,
+  "new_remote_ci_verified": false,
+  "actual_G_fits": 0,
+  "event_q_changed": false,
+  "P2_qualified": false,
+  "D3_authorized": false,
+  "large_training_authorized": false,
+  "commit_created": false,
+  "push_performed": false
+}

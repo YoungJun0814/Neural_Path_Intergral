@@ -1,0 +1,39 @@
+{
+  "status": "ANCHOR_ARCHIVE_AND_PUBLIC_FILE_CHECKS_PASSED",
+  "review_date": "2026-10-23",
+  "timezone": "America/New_York",
+  "scope": "All currently uncommitted research files plus README and .gitattributes; primary scan counts exclude this newly added receipt and do not hash the then-running pytest stdout",
+  "preceding_eight_anchor_inventory": {
+    "path": "results/post_audit/late_bridge_schedule_v1/session_20261023/validation/integrity_review.json",
+    "sha256": "4f866a50a2597a19b3fcba58f23c5e0a2f51c27a823f820a261330e5e5f3a359",
+    "all_eight_original_result_and_archive_hashes_rechecked": true
+  },
+  "new_anchor": {
+    "path": "results/post_audit/genealogy_error_calibration_v1/session_20261023/result.json",
+    "sha256": "30f93470c1118881240b5845336107b1e97ff9af62ac5226d88688e80d3ed638",
+    "snapshot_sha256": "0c3538b8b5086cdd35d317e1a58a05dd57aa3bd6897d63e8ca6bbc80664353d0",
+    "snapshot_files": 1140,
+    "audit_sha256": "a269c3a7324dc94fa83caf771758d056ec00005ca63d273c901ef7ff239347f8"
+  },
+  "unique_frozen_current_files_checked": 1166,
+  "current_frozen_file_mismatches": [],
+  "current_runtime_tree_matches_latest_run": true,
+  "files_checked": 382,
+  "archives_checked": 9,
+  "archive_members_checked": 10170,
+  "strict_json_files": 315,
+  "local_markdown_links": 220,
+  "largest_file_bytes": 10223981,
+  "credential_pattern_findings": 0,
+  "unsafe_archive_paths": 0,
+  "files_at_least_100MiB": 0,
+  "trailing_whitespace_lines": 0,
+  "git_filtered_json_or_completed_validation_log_blobs_checked": 324,
+  "git_filtered_checked_blobs_equal_raw_bytes": true,
+  "new_replicate_artifact_hashes_checked": 96,
+  "not_exhaustive_secret_absence_or_theory_proof": true,
+  "head": "f556424360b8307284b23a6cfc0efcdee7380060",
+  "staged_paths": [],
+  "git_diff_check_passed": true,
+  "new_commit_or_push": false
+}

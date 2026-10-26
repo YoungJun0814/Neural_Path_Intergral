@@ -10,9 +10,259 @@
 
 ## Research status
 
-**Current status (2026-10-21): exact residual structure reviewed, with the original invalid diagnostic preserved and a separate post-hoc numerical review. No q/G change or new learning was adopted. P1/P2 remain unresolved; not submission-ready.**
+**Current status (2026-10-26): rare-mode known-answer calibration confirms that genealogy, nominal ESS and small-repeat RSE are warnings, not accuracy certificates. Current Volterra banks remain unqualified (`STOP_LATE_BRIDGE_BANK_UNQUALIFIED`). No gate was relaxed, no G fitting or new event proposal was adopted, and P1/P2 remain unresolved; not submission-ready.**
 
 ### Latest result at a glance
+
+A separately frozen **genealogy-versus-error calibration** used three analytic
+1D Gaussian-mixture targets, with 32 independent repetitions per target.
+SMC and independent prior-IID importance sampling used equal potential-context
+counts. Exact-target endpoint refresh supplied a diagnostic counterexample,
+not an implementable Volterra sampler. All 96 repetitions and independent
+references were fully replayed successfully.
+
+The result is a caution about validation, **not model adoption**:
+
+- In the rare symmetric test, 19 SMC banks passed the existing full gate, but
+  15 exceeded at least one prespecified target-moment tolerance; 11 also
+  exceeded the right-mass tolerance. A passed genealogy gate was insufficient.
+- A constructed bank with one ancestor accurately represented target moments;
+  another with 128 ancestors missed a mode. These are explicit cubature
+  counterexamples, not claims of IID sampling or actual SMC success.
+- One four-repeat prior-IID group had **15.58% RSE** while underestimating the
+  known normalizer by **96.21%**. Repeatability did not certify tail coverage.
+- Exact-target refresh preserved weights, ancestry and the accumulated
+  normalizer. Better endpoint moments did not repair earlier normalizer error.
+
+These are tolerance-specific 1D stress tests, not estimated failure rates for
+the actual 62D problem. Even exact target draws have finite-sample moment
+error. No threshold was fitted or relaxed, and no past STOP was reversed.
+
+Next priority is an independently sampled **residual-stratified importance
+reference**, using the fixed unshifted residual 57 to inspect Gaussian tail
+contributions. The new design is documented but has **not yet been implemented
+or run**, and cannot rule out missed modes in other coordinates.
+See the [calibration results and limitations](docs/reviews/GENEALOGY_ERROR_CALIBRATION_RESULT_2026-10-23_KO.md),
+[frozen calibration plan](docs/plans/GENEALOGY_ERROR_CALIBRATION_2026-10-23_KO.md)
+and [next reference design](docs/plans/RESIDUAL_STRATIFIED_REFERENCE_2026-10-23_KO.md).
+
+The completed local regression suite passed **1,849 tests** on 2026-10-26
+(85% source statement coverage; 97% for the new calibration core), with
+CI-scope Ruff, Mypy on 220 source files and a separate runner typing check
+passing. The earlier 93%-progress log had no completion result and is
+preserved as incomplete; the full suite was rerun into a separate log.
+No original research samples/results were rerun or rewritten on resume.
+These are local Windows/Python 3.10 checks, not new remote CI or a proof of
+statistical correctness.
+
+### Preceding mixture oracle and late-bridge schedule study
+
+An independent **1D nontrivial Gaussian-mixture oracle** now checks the SMC
+normalizer, mean, second moment and right-half-line mass. Adaptive quadrature,
+two Gauss–Legendre orders and analytic controls agree. All **four conditions /
+64 independent islands** passed their frozen gates and complete seeded replay.
+Normalizer relative errors were **0.28–1.17%**, with island RSE **0.52–0.74%**.
+This validates a limited known-answer problem, not general Volterra accuracy.
+
+The subsequent study changed **only temperature allocation**: quartic versus
+linear, with the same 128 particles, 32 stages, kernels and resampling indices.
+Both schedules used new draws; no historical control was reused.
+
+| N32 cell | Quartic banks passing / 4 | Linear banks passing / 4 | Quartic / linear normalizer RSE |
+|---|---:|---:|---:|
+| Canonical | 0 | 3 | 17.39% / 16.13% |
+| High eta | 1 | 1 | 16.39% / 17.02% |
+
+All 16 islands completed without numerical/resource/technical failure. Both
+schedules met the development normalizer repeatability gate, but the primary
+linear banks did not all qualify. **Nominal ESS of 97–122 still coexisted with
+ancestor concentration.** Some weight imbalance shifted to earlier stages.
+Four repetitions and an internal SMC contrast do not rule out shared missed
+modes or establish population accuracy. No successful-bank subset was fitted.
+
+The limited schedule hypothesis is closed without more seed/gate tuning.
+Next decisions concern whether genealogy diagnostics predict actual error,
+an accuracy-qualified reference using a different mechanism, and whether to
+continue the performance-model direction or narrow the research scope.
+See the [result and next research decisions](docs/reviews/MIXTURE_ORACLE_AND_LATE_BRIDGE_RESULT_2026-10-23_KO.md)
+and [frozen oracle / late-bridge plan](docs/plans/MIXTURE_ORACLE_AND_LATE_BRIDGE_2026-10-23_KO.md).
+
+The local full suite passed **1,828 tests** (85% source statement coverage;
+98% for the new oracle core), with CI-scope Ruff, Mypy on 219 source files
+and a separate runner typing check passing. These checks do not certify
+statistical success or new remote CI. No G fitting, P2 or large training ran.
+
+### Preceding conditional risk-target SMC bank study
+
+A separately frozen **conditional risk-target SMC** study kept the event
+proposal q fixed and moved bank particles toward `p_X m2(X)/Dq(X)`, where
+`Dq=q_X/p_X` and `m2=E[g²|X]`. This is an auxiliary risk-evaluation bank,
+not a new event estimator. Component-centered and prior-centered pCN arms
+used equal potential-evaluation work, with four independently seeded islands
+per arm in each of two cells.
+
+All **198,656 proposed contexts** passed their individual numerical gate
+(largest diagnostic relative proxy **1.69e-12**, not a certified bias bound).
+However, the primary component-centered arm remained statistically unstable:
+
+| Cell | Qualified banks / 4 | Independent-island normalizer RSE | Largest island contribution |
+|---|---:|---:|---:|
+| Canonical | 1 | 26.43% | 38.60% |
+| High eta | 2 | 63.03% | 71.57% |
+
+The prespecified RSE limit was **20%**. All primary islands passed the
+movement checks, but ancestry/weight concentration still failed. For example,
+one high-eta island placed **84.46%** of its mass on one initial ancestor.
+Nominal particle ESS and many distinct particles did not establish reliable
+independent coverage. No successful-island subset was selected for fitting.
+
+Replay re-evaluated all final states and reproduced two prespecified primary
+islands end-to-end. Production plus audit used **225,536 physical evaluations**
+and **851,049,216 scalar nodes**, with separate recorded budgets. This is
+not an accuracy-matched speedup result, an IID bank, or a population/tail
+coverage certificate. Neither arm earned the common accuracy qualification
+needed for a performance comparison.
+
+Next priority is a nontrivial-mixture known-answer check, then at most one
+separately designed, matched-work hypothesis about late bridge concentration.
+The current failed protocol is preserved; gates and seeds are not retuned
+after observing the result. See the
+[full result and limitations](docs/reviews/CONDITIONAL_RISK_TARGET_SMC_BANK_RESULT_2026-10-22_KO.md),
+[frozen plan](docs/plans/CONDITIONAL_RISK_TARGET_SMC_BANK_2026-10-22_KO.md)
+and [mathematical contract](docs/theory/CONDITIONAL_RISK_TARGET_SMC_CONTRACT_2026-10-22_KO.md).
+
+The complete local suite passed **1,792 tests** (85% source statement coverage;
+96% for the new SMC core). CI-scope Ruff, Mypy on 218 source files, and a
+separate runner typing check passed. These are local Windows/Python 3.10
+checks, not new remote CI or a guarantee of theoretical correctness.
+
+### Preceding IID marginal-risk bank study
+
+A separately frozen marginal-G development study kept the **event proposal q
+fixed** and integrated residual 61 before constructing risk-fitting weights.
+The new normalized G family acts only on the other 62 coordinates; residual
+61 and unused 63 retain their standard-normal factors. This changes the
+auxiliary evaluator, not the event model or its target M2(q).
+
+All **8,192 fresh training profiles** passed their individual relative
+numerical gate. Aggregate quadrature proxies were about **1e-12**. But every
+independent training bank failed the frozen **ESS >= 32 / max-path <= 10%**
+criteria:
+
+| N32 cell | Rep 0 ESS / 2,048 | Rep 1 ESS / 2,048 | Largest path-mass fractions |
+|---|---:|---:|---:|
+| Canonical | 2.36 | 4.26 | 62.12%, 43.58% |
+| High eta | 8.57 | 14.56 | 30.96%, 15.81% |
+
+**No fitting, selection or final production was run.** Unused budget was not
+redirected to extra samples or a different target. Two independently seeded
+raw evaluation designs (G=q and G=p), with 4,096 draws each per cell, also
+failed their accuracy gates. Their underpowered `mean_consistency` flag is
+**not evidence of agreement**; point estimates differed drastically.
+
+The audit verified all saved seeds/sampler densities/statistics/decisions,
+64 full training profiles, their first-128-profile quadrature blocks, and
+2,048 raw payoffs. Production plus audit used **26,688 physical evaluations**
+and **32,817,408 scalar nodes**. This is a failed development study with
+recorded costs, not a fixed-precision speedup benchmark.
+
+That study's next priority was a separately designed **target-aware marginal-risk bank**,
+with independent islands, genealogy and mutation checks if using SMC.
+Repeating the same q-IID bank or enlarging the operator is not the current
+adopted direction. The fitted-G success branch is implemented and partially
+unit-tested but has not completed production end-to-end verification.
+See the [full result, limitations and next decisions](docs/reviews/MARGINAL_G_CONDITIONAL_RISK_DEVELOPMENT_RESULT_2026-10-21_KO.md)
+and [frozen bounded plan](docs/plans/MARGINAL_G_CONDITIONAL_RISK_DEVELOPMENT_2026-10-21_KO.md).
+
+That stage's complete local regression suite passed **1,750 tests** (85% source
+statement coverage; 94% for the new marginal-G core), with CI-scope Ruff,
+Mypy on 217 source files, and separate runner typing checks passing. This is
+Windows/Python 3.10 validation, not new remote CI or proof of statistical
+success. Exact-byte validation logs are preserved alongside their receipts.
+
+### Preceding analytic-split batch diagnostics
+
+Analytic critical-point splitting and vectorized log-space integration now
+compute both conditional moments together. All **262 previously observed
+development profiles** passed the relative numerical gate; maximum relative
+disagreement with the frozen adaptive references was **7.11e-15**. Three fixed
+AB/BA/AB repeats measured median kernel walls of **43.15 s / 0.589 s**.
+The decision is **`ADOPT_BATCH_DIAGNOSTIC_ONLY`**, not estimator adoption.
+
+The numerical envelopes are not outward-rounded certified intervals and can
+be wide. These checks do not prove accuracy for all future profiles or exact
+unbiasedness of numerical integration. Setup, final I/O, learning and sampling
+precision are not included in the kernel speed ratio.
+
+The joint residual formula for coordinates **57/61** matches the full N32
+hybrid law in two zero contexts, with maximum log-payoff error **9.10e-13**.
+Coordinate 63 remains unused by the current terminal payoff. This is a
+finite-grid identity, not continuous-time independence or a joint 2D model
+performance result. A finite known-answer oracle also verifies that removing
+conditional-U variance can leave marginal-X risk concentration unresolved.
+
+The first run failed while serializing a NumPy boolean after computation.
+Its protocol/source and failure receipt are preserved. A separately frozen
+serialization recovery repeated the kernel study, **expanded the scalar
+budget**, and narrowed the joint research coverage from six to two contexts.
+First-run numerical results and timings were lost; they are not counted as
+audited successes. Production/recovery/replay used **100 physical evaluations**
+(60 reconstructed from control flow), with scalar work recorded separately.
+
+The preceding paired pilot's **`NO_ADOPTION_PRECISION_UNRESOLVED`** remains
+unchanged. There were no new random paths or G fits. Next priority is a
+bounded marginal-G risk-evaluation design, not large training or automatic
+joint-dimensional expansion. See the
+[full result, recovery record and next decisions](docs/reviews/ANALYTIC_RESIDUAL_BATCH_AND_MARGINAL_RISK_RESULT_2026-10-21_KO.md),
+[frozen plan](docs/plans/ANALYTIC_RESIDUAL_BATCH_AND_MARGINAL_RISK_2026-10-21_KO.md),
+[recovery amendment](docs/plans/ANALYTIC_RESIDUAL_SERIALIZATION_RECOVERY_2026-10-21_KO.md)
+and [theoretical scope clarification](docs/theory/ANALYTIC_RESIDUAL_MARGINAL_G_SCOPE_ADDENDUM_2026-10-21_KO.md).
+In particular, `G_X ∝ p_X m2/Dq` is the ideal target for integrated conditional
+risk (or ideal conditional H), not the generic optimum for arbitrary fixed H.
+
+That stage's complete local suite passed **1,724 tests** (85% source coverage; 91% for
+the batch core and 92% for the marginal-risk core). CI-scope Ruff/Mypy and
+separate checks for both new runners pass. These are local Windows/Python
+3.10 checks, not a claim that new remote Linux/Python 3.11 CI has passed.
+Implementation checks do not resolve the failed statistical gate.
+
+### Preceding log-moment and paired residual pilot
+
+A separately frozen log-scale, split-domain quadrature implementation removes
+the absolute-only success path for tiny conditional moments. All six fixed
+profiles and all 256 fresh pilot profiles passed the **relative numerical**
+gate. Internal quadrature errors remain diagnostic proxies, not rigorous
+interval bounds or a proof of unbiased numerical integration.
+
+The subsequent N32 pilot kept **q = G = the fixed 373-component dictionary**
+(0.1 natural defensive mass, with 0.9 shared uniformly over 372 shifted components)
+and used 8 independent blocks of 16 new paths per cell. It separated `E[g²|X]`
+for the existing-q risk from `E[g|X]²` for the conditional event estimator.
+
+| Cell | Raw event RSE | Conditional event RSE | Existing-q conditional M2 RSE |
+|---|---:|---:|---:|
+| Canonical | 82.18% | 71.89% | 66.55% |
+| High eta | 58.06% | 57.60% | 66.41% |
+
+All 10 event/M2 endpoints failed the frozen sampling-precision/concentration
+gate, despite the small conditional quadrature error proxies. **No model was
+adopted.** Recorded variance/cost point estimates are ineligible development
+proxies, not population speedups or a matched-wall benchmark. The current
+per-path adaptive implementation is also expensive; we did not add samples
+after observing this failure or authorize large training.
+
+Source/seed/statistic checks and two representative full block replays passed.
+Production plus replay used **576 full Volterra evaluations**, with scalar
+quadrature work recorded separately. See the
+[complete result, numerical caveats and next decision](docs/reviews/RESIDUAL_LOG_MOMENT_AND_PAIRED_PILOT_RESULT_2026-10-21_KO.md)
+and [frozen log-moment / paired-pilot plan](docs/plans/RESIDUAL_LOG_MOMENT_AND_PAIRED_PILOT_2026-10-21_KO.md).
+
+That stage's local suite passed **1,702 tests** (85% source coverage; 94% for the
+new log-quadrature core), with CI-scope Ruff/Mypy and separate typing checks
+for the new runners. These checks validate implementation behavior, not the
+failed sampling-precision gate or publication-level performance.
+
+### Preceding exact residual structure review
 
 A known-answer Gaussian oracle and a deterministic N32 structural check now
 separate proposal quality from the quality of its independent risk evaluator.
