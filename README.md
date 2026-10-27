@@ -10,9 +10,91 @@
 
 ## Research status
 
-**Current status (2026-10-26): rare-mode known-answer calibration confirms that genealogy, nominal ESS and small-repeat RSE are warnings, not accuracy certificates. Current Volterra banks remain unqualified (`STOP_LATE_BRIDGE_BANK_UNQUALIFIED`). No gate was relaxed, no G fitting or new event proposal was adopted, and P1/P2 remain unresolved; not submission-ready.**
+**Current status (2026-10-26): a separately frozen multi-time residual/Brownian covariance study changed the actual event proposal. Its coupled candidate met the high-eta event-development precision gate, but not canonical precision or independent-risk qualification (`NO_ADOPTION_COVARIANCE_PRECISION_OR_COVERAGE_UNRESOLVED`). No gate was relaxed, no learned model was fitted, and no production method was adopted. P1/P2 remain unresolved; not submission-ready.**
 
 ### Latest result at a glance
+
+A new **mean-preserving multi-time covariance proposal** retains the physical
+373-component dictionary means and 10% natural defensive mass. Half the shifted
+mass is replaced by covariance mixtures across all 31 used local-residual /
+next-Brownian pairs. Residual-only and independent-pair arms are ablations; the
+coupled arm was fixed as primary before sampling. Each candidate nominally has
+11,905 Gaussian terms, not the same capacity as the baseline.
+
+All **96 fixed units** completed with 721,920 physical evaluations. Each direct
+arm used 65,536 fresh draws per cell:
+
+| N32 cell | Base event RSE | Residual-only | Independent pair | Coupled primary |
+|---|---:|---:|---:|---:|
+| Canonical | 36.38% | 12.02% | 6.32% | 6.92% |
+| High eta | 13.38% | 8.22% | 9.03% | 3.90% |
+
+The high-eta coupled estimate passed the prespecified **event-development**
+precision checks. This is not an accuracy certificate or population variance
+ratio. Both independent risk-evaluation geometries failed their precision,
+concentration and sensitivity checks (risk RSE about 39–90%). Their equivalence
+test was therefore not evaluated, and the candidate was **not adopted**.
+
+All 96 array statistics and six representative physics replays matched. Research
+production plus replay used 762,880 physical evaluations. Density evaluation of
+all four arms and the auxiliary reference dominated the recorded work; these
+diagnostic costs are not an isolated deployment benchmark. Fixed-precision
+speedup, fine-grid performance and continuum consistency remain unproved.
+See the [frozen execution plan](docs/plans/MULTITIME_RESIDUAL_BROWNIAN_PROPOSAL_2026-10-26_KO.md)
+and [results, theory review and adoption/stop decisions](docs/reviews/MULTITIME_RESIDUAL_BROWNIAN_RESULT_2026-10-26_KO.md).
+
+The completed local regression log reports **1,898 tests passed** (85% source
+statement coverage; 96% for the new core). CI-scope Ruff, Mypy on 222 source
+files and the new runner's separate typing check passed. These are local
+software checks, not risk qualification or new remote CI. The terminal session
+was no longer retrievable on resume; the final passing summary and full logs
+are preserved without inventing an unobserved process exit code.
+
+### Preceding conditional-intervention and sign-projection study
+
+A new **two-track execution** separates N32 event-estimator development from
+N4096 reference and mesh qualification. It does not repeat the failed
+late-variance feature search or tune another SMC schedule.
+
+The study implemented exact conditional-mixture resampling for six coordinate
+groups and a four-sign average over the unshifted residuals 57/61. The latter
+preserves the target probability and cannot increase the population second
+moment, but removes only sign variation, not rare magnitudes or other modes.
+All 80 frozen units completed, with 80 array-statistics checks and six full
+representative replays passing.
+
+| N32 cell | Original event observed RSE | Joint-sign event observed RSE | Original / joint risk-reference RSE under q |
+|---|---:|---:|---:|
+| Canonical | 7.22% | 7.06% | 44.64% / 46.02% |
+| High eta | 5.05% | 36.36% | 99.04% / 98.78% |
+
+The high-eta sign orbit exposed a very large contribution that was nearly
+absent at the original sign. Selected-extreme full-simulator checks agreed to
+at most 2.14e-14 in log payoff. This is a post-hoc numerical check, not
+independent confirmation. The observed RSE increase does not contradict the
+population projection inequality; rare finite samples can conceal variance.
+The independently seeded p-based risk estimates also remained unqualified.
+
+The candidate is **not adopted or expanded to fine grids**. Residual57
+stratification is demoted to a bounded diagnostic option, not a demonstrated
+P2 solution. Next proposal design must address multi-time residual magnitudes
+and Brownian interaction with an evaluable normalized density, rather than
+fitting one selected extreme path.
+
+For P2, one existing N4096 frozen-ensemble method has already reached about
+0.9% observed RSE; the remaining issue is a qualified different-geometry
+cross-check, signed mesh corrections and continuum error—not universally
+insufficient precision in every fine-grid method.
+See the [execution plan](docs/plans/TWO_TRACK_CONDITIONAL_INTERVENTION_2026-10-26_KO.md)
+and [results, theory checks and next decisions](docs/reviews/CONDITIONAL_INTERVENTION_AND_TWO_TRACK_RESULT_2026-10-26_KO.md).
+
+The new local full regression passed **1,872 tests** (85% source statement
+coverage; 94% for the new core). CI-scope Ruff, Mypy on 221 source files and
+separate typing checks on both new runners passed. These are software checks,
+not statistical qualification. The preceding pushed main commit `bfaf890`
+passed remote Python 3.10/3.11 CI; this subsequent work has not been pushed.
+
+### Preceding genealogy-versus-error calibration
 
 A separately frozen **genealogy-versus-error calibration** used three analytic
 1D Gaussian-mixture targets, with 32 independent repetitions per target.
@@ -38,10 +120,11 @@ These are tolerance-specific 1D stress tests, not estimated failure rates for
 the actual 62D problem. Even exact target draws have finite-sample moment
 error. No threshold was fitted or relaxed, and no past STOP was reversed.
 
-Next priority is an independently sampled **residual-stratified importance
+That stage proposed an independently sampled **residual-stratified importance
 reference**, using the fixed unshifted residual 57 to inspect Gaussian tail
-contributions. The new design is documented but has **not yet been implemented
-or run**, and cannot rule out missed modes in other coordinates.
+contributions. That design remains **unimplemented** and is now a secondary
+diagnostic option; it cannot rule out missed modes in other coordinates or
+independently qualify fine-grid P2.
 See the [calibration results and limitations](docs/reviews/GENEALOGY_ERROR_CALIBRATION_RESULT_2026-10-23_KO.md),
 [frozen calibration plan](docs/plans/GENEALOGY_ERROR_CALIBRATION_2026-10-23_KO.md)
 and [next reference design](docs/plans/RESIDUAL_STRATIFIED_REFERENCE_2026-10-23_KO.md).

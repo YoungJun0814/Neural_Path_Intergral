@@ -1,0 +1,1 @@
+{"rows":[{"cell":"canonical-h005-k1","full_log_probability_maximum_error":2.2737367544323206e-13,"full_mixture_density_sign_error":0.0},{"cell":"high-eta200-k1","full_log_probability_maximum_error":6.821210263296962e-13,"full_mixture_density_sign_error":0.0}],"work":{"full_equivalent_contexts":160,"orbit_scalar_CDFs":128,"wall_seconds":0.02730480022728443}}

@@ -1,0 +1,78 @@
+{
+  "status": "LOCAL_REGRESSION_STATIC_AND_NUMERICAL_AUDITS_PASSED",
+  "review_date": "2026-10-26",
+  "timezone": "America/New_York",
+  "pytest": {
+    "command": "python -m pytest -q --cov=src --cov-report=term-missing",
+    "exit_code": 0,
+    "passed": 1872,
+    "new_tests": 23,
+    "wall_seconds": 386.90,
+    "log_path": "results/post_audit/conditional_intervention_v1/session_20261026/validation/pytest-output.txt",
+    "log_sha256": "bbc90973178c4a5d241e82c2d7cb355d26f8cd113768c39fbe485240e36ac229"
+  },
+  "statement_coverage": {
+    "all_source_statements": 23050,
+    "all_source_missed": 3448,
+    "all_source_percent_rounded": 85,
+    "new_core_statements": 78,
+    "new_core_missed": 5,
+    "new_core_percent_rounded": 94,
+    "not_branch_exhaustion_or_absence_of_errors_proof": true
+  },
+  "static_checks": {
+    "ruff_command": "python -m ruff check src tests experiments main.py train_driftnet.py",
+    "ruff_exit_code": 0,
+    "mypy_command": "python -m mypy src main.py train_driftnet.py",
+    "mypy_files": 221,
+    "mypy_exit_code": 0,
+    "runner_mypy_command": "python -m mypy --follow-imports=silent experiments/post_audit_conditional_intervention.py experiments/post_audit_conditional_intervention_witness.py",
+    "runner_mypy_files": 2,
+    "runner_mypy_exit_code": 0,
+    "log_path": "results/post_audit/conditional_intervention_v1/session_20261026/validation/static-output.txt",
+    "log_sha256": "a51fac61ce7ddf6bf98285faa227e82072e81966bded3271ee2c497331b9ca40"
+  },
+  "numerical_audit": {
+    "main_result_sha256": "d4d1215077eef40fc842f0f78668bd7ab742cc79379646b7c3779826d55b0619",
+    "main_audit_sha256": "6b7d763a0ad6bd02a56c24d6ddcbaa047d45e96b0be02f30b8771410b51ce3a7",
+    "all_arrays_checked": 80,
+    "representative_full_replays": 6,
+    "replay_maximum_log_error": 0.0,
+    "selected_extreme_slots": 8,
+    "selected_extreme_result_sha256": "c1f4f4a948f8f2d7030eddd8bfacbd4b31ffb25e6796f088ed0257ed6b240f57",
+    "selected_extreme_full_log_error_maximum": 2.1316282072803006e-14,
+    "selected_extreme_audit_is_post_hoc_not_confirmation": true
+  },
+  "research_work_excluding_unit_and_regression_tests": {
+    "full_equivalent_contexts": 527600,
+    "orbit_scalar_CDFs": 1493152,
+    "production_and_audit_separate": true,
+    "not_total_FLOP_or_accuracy_matched_wall_benchmark": true
+  },
+  "environment": {
+    "os": "Windows",
+    "python": "3.10.11",
+    "research_device": "cpu",
+    "research_dtype": "float64",
+    "research_threads": 1,
+    "pytest_threads": "Per-test fixtures; no assertion of a global one-thread test process",
+    "known_requests_dependency_warning_preserved": true,
+    "dependencies_changed": false
+  },
+  "scientific_decision": "NO_ADOPTION_COVERAGE_OR_PRECISION_UNRESOLVED",
+  "production_adoption": false,
+  "new_G_fits": 0,
+  "event_proposal_q_changed": false,
+  "event_estimator_candidate_implemented": true,
+  "P2_qualified": false,
+  "large_training_authorized": false,
+  "git": {
+    "previous_work_pushed_to_main": "bfaf8906f2d820b8cff869b8ef8c6bfe628b3ab4",
+    "previous_work_remote_ci_run": "https://github.com/YoungJun0814/Neural_Path_Intergral/actions/runs/40270150111",
+    "previous_work_remote_ci_python_310": "success",
+    "previous_work_remote_ci_python_311": "success",
+    "new_work_committed": false,
+    "new_work_pushed": false,
+    "new_work_remote_ci_verified": false
+  }
+}

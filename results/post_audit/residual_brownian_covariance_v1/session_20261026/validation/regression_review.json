@@ -1,0 +1,89 @@
+{
+  "status": "COMPLETED_LOCAL_TEST_SUMMARY_STATIC_CHECKS_AND_NUMERICAL_AUDITS_PASSED",
+  "review_date": "2026-10-26",
+  "timezone": "America/New_York",
+  "pytest": {
+    "command": "python -m pytest -q --cov=src --cov-report=term-missing",
+    "completed_summary_observed": true,
+    "summary": "1898 passed in 579.66s (0:09:39)",
+    "passed": 1898,
+    "new_tests_since_preceding_stage": 26,
+    "wall_seconds_reported": 579.66,
+    "process_exit_code_observed": null,
+    "exit_code_note": "The original terminal session was no longer retrievable on resume. The preserved log contains the completed 100-percent progress, coverage table and final passing summary; no exit code is fabricated.",
+    "log_path": "results/post_audit/residual_brownian_covariance_v1/session_20261026/validation/pytest-output.txt",
+    "log_sha256": "f3aa432f7d5e4f36ad150e9d8c1df43863adb001a5269fb7d543e6e23efb274f"
+  },
+  "statement_coverage": {
+    "all_source_statements": 23157,
+    "all_source_missed": 3452,
+    "all_source_percent_rounded": 85,
+    "new_core_statements": 107,
+    "new_core_missed": 4,
+    "new_core_percent_rounded": 96,
+    "not_branch_exhaustion_or_absence_of_errors_proof": true
+  },
+  "static_checks": {
+    "ruff_command": "python -m ruff check src tests experiments main.py train_driftnet.py",
+    "ruff_exit_code": 0,
+    "mypy_command": "python -m mypy src main.py train_driftnet.py",
+    "mypy_files": 222,
+    "mypy_exit_code": 0,
+    "runner_mypy_command": "python -m mypy --follow-imports=silent experiments/post_audit_residual_brownian_covariance.py",
+    "runner_mypy_files": 1,
+    "runner_mypy_exit_code": 0,
+    "log_path": "results/post_audit/residual_brownian_covariance_v1/session_20261026/validation/static-output.txt",
+    "log_sha256": "670677fd9196739fe009c880c578bbea376a3ad1e9ec85cfa2eb9c1345c10932"
+  },
+  "numerical_audit": {
+    "main_result_sha256": "5dc431315907c8c645cd2eff6ea59ee995caec5c912aa57f3820b5881e666994",
+    "main_source_sha256": "7af9b67e71b781792866a3ba015853b03fbb12ea9b72869e0260f3872ce2de95",
+    "main_audit_sha256": "c101fe08776e66869ddbfcebfc0f8ba1140fc5a5eab324f8d017b176792ed3eb",
+    "all_array_units_checked": 96,
+    "representative_full_replays": 6,
+    "representative_arrays_and_witnesses_exactly_equal": true,
+    "current_frozen_files_checked": 1149,
+    "not_independent_confirmation": true
+  },
+  "research_work_excluding_software_tests": {
+    "production_and_preflight_physical": 721920,
+    "audit_physical": 40960,
+    "combined_physical": 762880,
+    "production_gaussian_component_time_scores": 25267200000,
+    "audit_gaussian_component_time_scores": 1433600000,
+    "combined_gaussian_component_time_scores": 26700800000,
+    "production_phase_wall_seconds": 724.8156780004501,
+    "audit_wall_seconds": 54.92196589987725,
+    "not_total_FLOP_or_accuracy_matched_deployment_benchmark": true,
+    "all_four_proposal_and_R_densities_evaluated_in_diagnostic_work": true
+  },
+  "environment": {
+    "os": "Windows",
+    "python": "3.10.11",
+    "research_device": "cpu",
+    "research_dtype": "float64",
+    "research_threads": 1,
+    "pytest_threads": "Per-test fixtures; not asserted to be globally one",
+    "regression_partly_overlapped_representative_replay_and_other_local_processes": true,
+    "exclusive_host_timing_benchmark_claim": false,
+    "known_requests_dependency_warning_preserved": true,
+    "dependencies_changed": false
+  },
+  "scientific_decision": "NO_ADOPTION_COVARIANCE_PRECISION_OR_COVERAGE_UNRESOLVED",
+  "primary_arm": "coupled",
+  "high_eta_direct_event_development_precision_passed": true,
+  "canonical_direct_event_development_precision_passed": false,
+  "all_independent_risk_precision_checks_passed": false,
+  "reference_equivalence_test_evaluated": false,
+  "event_proposal_candidates_changed": true,
+  "fitting_or_selection_runs": 0,
+  "production_adoption": false,
+  "P2_qualified": false,
+  "large_training_authorized": false,
+  "git": {
+    "head": "bfaf8906f2d820b8cff869b8ef8c6bfe628b3ab4",
+    "new_work_committed": false,
+    "new_work_pushed": false,
+    "new_work_remote_ci_verified": false
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "status": "PUBLIC_ARTIFACTS_FROZEN_SOURCES_AND_COMPLETED_LOGS_CHECKED",
+  "review_date": "2026-10-26",
+  "timezone": "America/New_York",
+  "scope": "All modified and nonignored untracked files before this receipt; the report gained a link to this receipt after that scan",
+  "scan_counts": {
+    "files_checked_before_this_receipt": 387,
+    "strict_json_files": 189,
+    "archives_including_npz": 179,
+    "archive_members": 3793,
+    "local_markdown_links": 184,
+    "completed_artifact_git_bytes_checked": 372,
+    "credential_pattern_findings": 0,
+    "files_at_least_100MiB": 0,
+    "trailing_whitespace_lines": 0,
+    "unsafe_archive_paths": 0,
+    "errors": []
+  },
+  "frozen_source_checks": [
+    {"run": "conditional_intervention_v1/session_20261026", "named_files": 1143},
+    {"run": "conditional_intervention_v1/session_20261026/selected_extreme_audit", "named_files": 1146},
+    {"run": "residual_brownian_covariance_v1/session_20261026", "named_files": 1149}
+  ],
+  "source_archive_hashes_and_archived_entries_checked": true,
+  "all_current_named_frozen_file_hashes_unchanged": true,
+  "new_unlisted_files_not_claimed_to_be_part_of_older_snapshots": true,
+  "completed_log_hashes_checked": {
+    "pytest": "f3aa432f7d5e4f36ad150e9d8c1df43863adb001a5269fb7d543e6e23efb274f",
+    "static": "670677fd9196739fe009c880c578bbea376a3ad1e9ec85cfa2eb9c1345c10932"
+  },
+  "research_result_hashes_checked": {
+    "intervention": "d4d1215077eef40fc842f0f78668bd7ab742cc79379646b7c3779826d55b0619",
+    "selected_extreme_audit": "c1f4f4a948f8f2d7030eddd8bfacbd4b31ffb25e6796f088ed0257ed6b240f57",
+    "covariance_proposal": "5dc431315907c8c645cd2eff6ea59ee995caec5c912aa57f3820b5881e666994"
+  },
+  "scientific_decision": "NO_ADOPTION_COVARIANCE_PRECISION_OR_COVERAGE_UNRESOLVED",
+  "reference_equivalence_test_not_evaluated_when_unqualified": true,
+  "production_adoption": false,
+  "P2_qualified": false,
+  "large_training_authorized": false,
+  "not_exhaustive_secret_absence_or_all_input_theory_proof": true,
+  "head": "bfaf8906f2d820b8cff869b8ef8c6bfe628b3ab4",
+  "staged_paths": [],
+  "new_work_committed": false,
+  "new_work_pushed": false
+}
