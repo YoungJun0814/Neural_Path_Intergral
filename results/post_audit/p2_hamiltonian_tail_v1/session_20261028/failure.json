@@ -1,0 +1,1 @@
+{"P2_qualified":false,"completed_pilot":20,"completed_precision":0,"error":"TimeoutError: fixed whole/phase/physical budget exceeded; no partial estimate","work":{"pilot":{"backward_requests_not_equal_cost_to_forward":true,"gradient_callback_requests":646592,"physical_forwards":646592,"time_step_forwards":2648440832,"wall_seconds":31403.443836399354}}}

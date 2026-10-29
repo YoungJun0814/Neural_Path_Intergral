@@ -1,0 +1,149 @@
+{
+  "status": "GLOBAL_HOLDER_BOUND_FAMILY_FLOOR_DIAGNOSTIC_COMPLETED",
+  "rows": [
+    {
+      "cell": "canonical-h005-k1",
+      "N": 4096,
+      "root_budget_family_lower_bound": 0.5063526666732724,
+      "optimistic_necessary_budget_ceiling_using_observed_mu": 1.1732582109325832e-05,
+      "floor_over_optimistic_budget": 43157.81998838856,
+      "diagnostic_log10_N_for_this_proof_family_floor_only": 96.31354993281695,
+      "checked_r": [
+        {
+          "r": 1.0001,
+          "log_computed_bound": 2.257682255457722,
+          "log_structural_floor": -0.6805218827552394
+        },
+        {
+          "r": 1.01,
+          "log_computed_bound": 2.2730804142734873,
+          "log_structural_floor": -0.6805218827552394
+        },
+        {
+          "r": 1.05,
+          "log_computed_bound": 2.333191454283339,
+          "log_structural_floor": -0.6805218827552394
+        },
+        {
+          "r": 1.1,
+          "log_computed_bound": 2.4038592506134986,
+          "log_structural_floor": -0.6805218827552394
+        },
+        {
+          "r": 1.25,
+          "log_computed_bound": 2.591200937692414,
+          "log_structural_floor": -0.6805218827552394
+        },
+        {
+          "r": 1.5,
+          "log_computed_bound": 2.8448128122721608,
+          "log_structural_floor": -0.6805218827552394
+        },
+        {
+          "r": 2.0,
+          "log_computed_bound": 3.2289987916208833,
+          "log_structural_floor": -0.6805218827552394
+        },
+        {
+          "r": 3.0,
+          "log_computed_bound": 3.789710680625016,
+          "log_structural_floor": -0.6805218827552394
+        },
+        {
+          "r": 4.0,
+          "log_computed_bound": 4.246222087342171,
+          "log_structural_floor": -0.6805218827552394
+        },
+        {
+          "r": 8.0,
+          "log_computed_bound": 5.815027852275902,
+          "log_structural_floor": -0.6805218827552394
+        },
+        {
+          "r": 16.0,
+          "log_computed_bound": 8.727353853456721,
+          "log_structural_floor": -0.6805218827552394
+        },
+        {
+          "r": 32.0,
+          "log_computed_bound": 14.437249820518169,
+          "log_structural_floor": -0.6805218827552394
+        }
+      ]
+    },
+    {
+      "cell": "high-eta200-k1",
+      "N": 4096,
+      "root_budget_family_lower_bound": 2.9520622122690794,
+      "optimistic_necessary_budget_ceiling_using_observed_mu": 9.910985341650821e-05,
+      "floor_over_optimistic_budget": 29785.75903914484,
+      "diagnostic_log10_N_for_this_proof_family_floor_only": 93.09253338453267,
+      "checked_r": [
+        {
+          "r": 1.0001,
+          "log_computed_bound": 5.012735173379754,
+          "log_structural_floor": 1.0825039811330563
+        },
+        {
+          "r": 1.01,
+          "log_computed_bound": 5.031539985554301,
+          "log_structural_floor": 1.0825039811330563
+        },
+        {
+          "r": 1.05,
+          "log_computed_bound": 5.105194212329126,
+          "log_structural_floor": 1.0825039811330563
+        },
+        {
+          "r": 1.1,
+          "log_computed_bound": 5.192452510110499,
+          "log_structural_floor": 1.0825039811330563
+        },
+        {
+          "r": 1.25,
+          "log_computed_bound": 5.4280820267077825,
+          "log_structural_floor": 1.0825039811330563
+        },
+        {
+          "r": 1.5,
+          "log_computed_bound": 5.759177571561147,
+          "log_structural_floor": 1.0825039811330563
+        },
+        {
+          "r": 2.0,
+          "log_computed_bound": 6.292740410515554,
+          "log_structural_floor": 1.0825039811330563
+        },
+        {
+          "r": 3.0,
+          "log_computed_bound": 7.142915451793925,
+          "log_structural_floor": 1.0825039811330563
+        },
+        {
+          "r": 4.0,
+          "log_computed_bound": 7.883572780319201,
+          "log_structural_floor": 1.0825039811330563
+        },
+        {
+          "r": 8.0,
+          "log_computed_bound": 10.570045673051533,
+          "log_structural_floor": 1.0825039811330563
+        },
+        {
+          "r": 16.0,
+          "log_computed_bound": 15.693116949650442,
+          "log_structural_floor": 1.0825039811330563
+        },
+        {
+          "r": 32.0,
+          "log_computed_bound": 25.81241608834336,
+          "log_structural_floor": 1.0825039811330563
+        }
+      ]
+    }
+  ],
+  "not_actual_bias_lower_bound": true,
+  "not_actual_grid_requirement": true,
+  "observed_mu_not_certified": true,
+  "P2_qualified": false
+}

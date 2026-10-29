@@ -1,0 +1,92 @@
+{
+  "status": "POSTHOC_FIXED_STAGE_LOG_NORMALIZER_DIAGNOSTIC",
+  "rows": [
+    {
+      "cell": "canonical-h005-k1",
+      "arm": "gradient-control",
+      "wholes": 8,
+      "early_ancestry_last_beta_le_004": [
+        39,
+        40,
+        36,
+        41,
+        35,
+        37,
+        39,
+        41
+      ],
+      "early_ancestry_median": 39.0,
+      "log_normalizer_covariance_shares_by_beta_0_to_004_004_to_025_025_to_1": [
+        0.7239872903518814,
+        0.2988538752382941,
+        -0.0228411655901755
+      ]
+    },
+    {
+      "cell": "canonical-h005-k1",
+      "arm": "gaussian-hmc",
+      "wholes": 8,
+      "early_ancestry_last_beta_le_004": [
+        31,
+        36,
+        28,
+        34,
+        35,
+        37,
+        40,
+        29
+      ],
+      "early_ancestry_median": 34.5,
+      "log_normalizer_covariance_shares_by_beta_0_to_004_004_to_025_025_to_1": [
+        0.43416930295514244,
+        0.5720582267286671,
+        -0.00622752968380954
+      ]
+    },
+    {
+      "cell": "high-eta200-k1",
+      "arm": "gradient-control",
+      "wholes": 8,
+      "early_ancestry_last_beta_le_004": [
+        39,
+        36,
+        39,
+        39,
+        42,
+        43,
+        34,
+        38
+      ],
+      "early_ancestry_median": 39.0,
+      "log_normalizer_covariance_shares_by_beta_0_to_004_004_to_025_025_to_1": [
+        1.0359270109854013,
+        -0.027455555813879033,
+        -0.008471455171522395
+      ]
+    },
+    {
+      "cell": "high-eta200-k1",
+      "arm": "gaussian-hmc",
+      "wholes": 8,
+      "early_ancestry_last_beta_le_004": [
+        38,
+        36,
+        29,
+        37,
+        29,
+        31,
+        35,
+        26
+      ],
+      "early_ancestry_median": 33.0,
+      "log_normalizer_covariance_shares_by_beta_0_to_004_004_to_025_025_to_1": [
+        0.4534763953319492,
+        0.5127826660986189,
+        0.03374093856943212
+      ]
+    }
+  ],
+  "not_causal_attribution": true,
+  "not_variance_decomposition_of_unbiased_probability_estimator": true,
+  "no_retuning_or_candidate_selection_performed": true
+}

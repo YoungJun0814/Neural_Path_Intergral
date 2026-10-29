@@ -1,0 +1,2 @@
+kernel {"maximum_log_error": 7.105427357601002e-15, "paired_speed_ratios": [1.2129256297916942, 1.0494593772582124, 1.084658720046296], "median_paired_speed_ratio": 1.084658720046296, "kernel_candidate": false, "fresh_window_pilot_allowed": false, "not_accuracy_matched_total_wall_or_population_gain": true}
+{"mode": "run", "status": "STOP_EXACT_KERNEL_NUMERICAL_OR_SPEED_GATE"}

@@ -1,0 +1,4 @@
+comfy-cli 1.5.4 has requirement click<=8.1.8, but you have click 8.3.1.
+gradio 3.41.2 has requirement aiofiles<24.0,>=22.0, but you have aiofiles 24.1.0.
+gradio 3.41.2 has requirement websockets<12.0,>=10.0, but you have websockets 15.0.1.
+gradio-client 0.5.0 has requirement websockets<12.0,>=10.0, but you have websockets 15.0.1.

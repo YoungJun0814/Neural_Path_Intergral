@@ -1,0 +1,14 @@
+{
+  "status": "FINAL_RECEIPT_LOGS_ANCHORS_FROZEN_SOURCES_AND_DOCS_VERIFIED",
+  "full_pytest_observed_exit_code": 0,
+  "full_pytest_passed": 1939,
+  "local_only_not_remote_CI": true,
+  "frozen_source_byte_checks": 4593,
+  "prior_result_audit_anchors_checked": 4,
+  "strict_json_files": 6,
+  "preserved_stdout_hashes_checked": 5,
+  "local_document_links_checked": 180,
+  "public_text_files_checked": 19,
+  "errors": [],
+  "commit_or_push_performed": false
+}

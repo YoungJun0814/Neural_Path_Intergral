@@ -1,0 +1,1 @@
+{"mode": "run", "status": "DETERMINISTIC_48_ROW_SCAN_COMPLETED"}

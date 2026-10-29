@@ -1,0 +1,48 @@
+preflight preflight-canonical-h005-k1-gradient-control-0
+preflight preflight-canonical-h005-k1-gaussian-hmc-0
+preflight preflight-high-eta200-k1-gradient-control-0
+preflight preflight-high-eta200-k1-gaussian-hmc-0
+pilot 1/32 pilot-canonical-h005-k1-gradient-control-0 physical=35520
+pilot 2/32 pilot-canonical-h005-k1-gradient-control-1 physical=67392
+pilot 3/32 pilot-canonical-h005-k1-gradient-control-2 physical=99264
+pilot 4/32 pilot-canonical-h005-k1-gradient-control-3 physical=131136
+pilot 5/32 pilot-canonical-h005-k1-gradient-control-4 physical=163008
+pilot 6/32 pilot-canonical-h005-k1-gradient-control-5 physical=194880
+pilot 7/32 pilot-canonical-h005-k1-gradient-control-6 physical=226752
+pilot 8/32 pilot-canonical-h005-k1-gradient-control-7 physical=258624
+pilot 9/32 pilot-canonical-h005-k1-gaussian-hmc-0 physical=290496
+pilot 10/32 pilot-canonical-h005-k1-gaussian-hmc-1 physical=322368
+pilot 11/32 pilot-canonical-h005-k1-gaussian-hmc-2 physical=354240
+pilot 12/32 pilot-canonical-h005-k1-gaussian-hmc-3 physical=386112
+pilot 13/32 pilot-canonical-h005-k1-gaussian-hmc-4 physical=417984
+pilot 14/32 pilot-canonical-h005-k1-gaussian-hmc-5 physical=449856
+pilot 15/32 pilot-canonical-h005-k1-gaussian-hmc-6 physical=481728
+pilot 16/32 pilot-canonical-h005-k1-gaussian-hmc-7 physical=513600
+pilot 17/32 pilot-high-eta200-k1-gradient-control-0 physical=545472
+pilot 18/32 pilot-high-eta200-k1-gradient-control-1 physical=577344
+pilot 19/32 pilot-high-eta200-k1-gradient-control-2 physical=609216
+pilot 20/32 pilot-high-eta200-k1-gradient-control-3 physical=641088
+Traceback (most recent call last):
+  File "C:\Users\Jun\AppData\Local\Programs\Python\Python310\lib\runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "C:\Users\Jun\AppData\Local\Programs\Python\Python310\lib\runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "C:\Users\Jun\Desktop\Thesis\Projects\Neural_Path_Integral\experiments\post_audit_p2_hamiltonian_tail.py", line 356, in <module>
+    output = run() if mode == "run" else audit()
+  File "C:\Users\Jun\Desktop\Thesis\Projects\Neural_Path_Integral\experiments\post_audit_p2_hamiltonian_tail.py", line 260, in run
+    row = unit(job, models[job["cell"]], mapping, budgets["pilot"])
+  File "C:\Users\Jun\Desktop\Thesis\Projects\Neural_Path_Integral\experiments\post_audit_p2_hamiltonian_tail.py", line 142, in unit
+    r = estimate_hamiltonian_probability(callback, dimension=cache.problem.local_dimension,
+  File "C:\Users\Jun\Desktop\Thesis\Projects\Neural_Path_Integral\src\path_integral\hamiltonian_probability_smc.py", line 75, in estimate_hamiltonian_probability
+    new_comp, new_h, new_drift = evaluate(candidate)
+  File "C:\Users\Jun\Desktop\Thesis\Projects\Neural_Path_Integral\src\path_integral\gaussian_split_hmc.py", line 70, in evaluate
+    return evaluate_family_gradient(callback, z, torch.zeros(1, dtype=torch.float64),
+  File "C:\Users\Jun\Desktop\Thesis\Projects\Neural_Path_Integral\src\path_integral\gradient_umbrella_smc.py", line 65, in evaluate_family_gradient
+    components, h, drift, _ = _evaluate_family_gradient(log_components, z, log_weights,
+  File "C:\Users\Jun\Desktop\Thesis\Projects\Neural_Path_Integral\src\path_integral\gradient_umbrella_smc.py", line 76, in _evaluate_family_gradient
+    components = log_components(leaf)
+  File "C:\Users\Jun\Desktop\Thesis\Projects\Neural_Path_Integral\experiments\post_audit_p2_hamiltonian_tail.py", line 140, in callback
+    budget.charge(len(z), start)
+  File "C:\Users\Jun\Desktop\Thesis\Projects\Neural_Path_Integral\experiments\post_audit_p2_hamiltonian_tail.py", line 115, in charge
+    raise TimeoutError("fixed whole/phase/physical budget exceeded; no partial estimate")
+TimeoutError: fixed whole/phase/physical budget exceeded; no partial estimate

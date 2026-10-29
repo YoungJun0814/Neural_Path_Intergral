@@ -1,0 +1,9 @@
+{
+  "status": "SIX_FROZEN_SOURCE_ARCHIVES_CHECKED",
+  "archive_count": 6,
+  "archive_members": 6930,
+  "frozen_file_byte_checks": 6924,
+  "new_source_files": 1169,
+  "new_source_sha256": "55b35a79528a81ef90a4671594ffa5bc86818e4a4f83799faca0952373f6e488",
+  "errors": []
+}

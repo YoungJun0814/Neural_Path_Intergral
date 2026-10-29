@@ -1,0 +1,37 @@
+preflight canonical-h005-k1-gradient-control-0
+preflight canonical-h005-k1-gradient-cyclic-0
+preflight high-eta200-k1-gradient-control-0
+preflight high-eta200-k1-gradient-cyclic-0
+complete 1/32 canonical-h005-k1-gradient-control-0 physical=35712
+complete 2/32 canonical-h005-k1-gradient-control-1 physical=67712
+complete 3/32 canonical-h005-k1-gradient-control-2 physical=99712
+complete 4/32 canonical-h005-k1-gradient-control-3 physical=131712
+complete 5/32 canonical-h005-k1-gradient-control-4 physical=163712
+complete 6/32 canonical-h005-k1-gradient-control-5 physical=195712
+complete 7/32 canonical-h005-k1-gradient-control-6 physical=227712
+complete 8/32 canonical-h005-k1-gradient-control-7 physical=259712
+complete 9/32 canonical-h005-k1-gradient-cyclic-0 physical=291712
+complete 10/32 canonical-h005-k1-gradient-cyclic-1 physical=323712
+complete 11/32 canonical-h005-k1-gradient-cyclic-2 physical=355712
+complete 12/32 canonical-h005-k1-gradient-cyclic-3 physical=387712
+complete 13/32 canonical-h005-k1-gradient-cyclic-4 physical=419712
+complete 14/32 canonical-h005-k1-gradient-cyclic-5 physical=451712
+complete 15/32 canonical-h005-k1-gradient-cyclic-6 physical=483712
+complete 16/32 canonical-h005-k1-gradient-cyclic-7 physical=515712
+complete 17/32 high-eta200-k1-gradient-control-0 physical=547712
+complete 18/32 high-eta200-k1-gradient-control-1 physical=579712
+complete 19/32 high-eta200-k1-gradient-control-2 physical=611712
+complete 20/32 high-eta200-k1-gradient-control-3 physical=643712
+complete 21/32 high-eta200-k1-gradient-control-4 physical=675712
+complete 22/32 high-eta200-k1-gradient-control-5 physical=707712
+complete 23/32 high-eta200-k1-gradient-control-6 physical=739712
+complete 24/32 high-eta200-k1-gradient-control-7 physical=771712
+complete 25/32 high-eta200-k1-gradient-cyclic-0 physical=803712
+complete 26/32 high-eta200-k1-gradient-cyclic-1 physical=835712
+complete 27/32 high-eta200-k1-gradient-cyclic-2 physical=867712
+complete 28/32 high-eta200-k1-gradient-cyclic-3 physical=899712
+complete 29/32 high-eta200-k1-gradient-cyclic-4 physical=931712
+complete 30/32 high-eta200-k1-gradient-cyclic-5 physical=963712
+complete 31/32 high-eta200-k1-gradient-cyclic-6 physical=995712
+complete 32/32 high-eta200-k1-gradient-cyclic-7 physical=1027712
+{"mode": "run", "status": "P2_UNRESOLVED_THEORETICAL_REMAINDER_AND_ANY_FAILED_EMPIRICAL_GATES"}

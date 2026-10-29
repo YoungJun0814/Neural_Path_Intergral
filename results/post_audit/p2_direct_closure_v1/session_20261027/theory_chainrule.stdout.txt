@@ -1,0 +1,20 @@
+{
+  "status": "TAIL_WEIGHTED_CHAIN_RULE_AUTOGRAD_AND_ENDPOINT_IDENTITY_ORACLES_PASSED",
+  "derivative_checks": [
+    {
+      "log_threshold_ratio": -4.605170185988091,
+      "cases": 512,
+      "maximum_absolute_derivative_difference": 3.3101920919155616e-35
+    },
+    {
+      "log_threshold_ratio": -0.3,
+      "cases": 512,
+      "maximum_absolute_derivative_difference": 8.881784197001252e-16
+    }
+  ],
+  "endpoint_integrals_checked": 4,
+  "quadrature_points": 40001,
+  "maximum_absolute_endpoint_difference": 1.653688297409417e-11,
+  "scope": "finite arbitrary endpoints only; no model moment or continuum relative-bias certification",
+  "earlier_one_threshold_smoke_had_a_detach_warning_but_passed": true
+}

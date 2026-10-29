@@ -10,9 +10,123 @@
 
 ## Research status
 
-**Current status (2026-10-26): a separately frozen multi-time residual/Brownian covariance study changed the actual event proposal. Its coupled candidate met the high-eta event-development precision gate, but not canonical precision or independent-risk qualification (`NO_ADOPTION_COVARIANCE_PRECISION_OR_COVERAGE_UNRESOLVED`). No gate was relaxed, no learned model was fitted, and no production method was adopted. P1/P2 remain unresolved; not submission-ready.**
+**Current status (2026-10-28): a guide-free Gaussian-split HMC reference and tail-aware continuum bounds were implemented and evaluated. All 32 pilot wholes completed in a same-seed operational replay after preserving the original timeout. HMC missed the required 1.5% reference RSE and was not adopted. Sharper Jensen constants reduced the continuum bounds but they remain vacuous. P1/P2 remain unresolved; no production or large-training authorization; not submission-ready.**
 
 ### Latest result at a glance
+
+A **Gaussian-split Hamiltonian MH** reference uses fresh momentum and the full
+Hamiltonian correction, without the learned dictionary or bank. A gradient
+four-move control used the same number of probability/gradient callbacks.
+
+| N4096 cell | Gradient-control RSE | Gaussian-split HMC RSE | Required |
+|---|---:|---:|---:|
+| Canonical | 8.88% | 24.76% | ≤1.5% |
+| High eta | 5.15% | 20.95% | ≤1.5% |
+
+HMC moved farther in ambient coordinates but did not improve independent-whole
+normalizer precision. Its prespecified fresh-precision allocation exceeded the
+128-whole-per-cell cap, so no extra precision samples were generated and no
+equivalence test was evaluated. This fixed candidate is **not adopted**.
+
+The first execution timed out after 20 pilot wholes; that failure is preserved.
+A separate same-seed full-family replay completed all 32 wholes and matched all
+24 originally completed pilot/preflight records, excluding wall time. The
+repeated records are not counted as additional independent samples.
+
+For continuum error, a probability-root inequality and exact time-average
+Gaussian variance in Jensen bounds were derived and implemented. N4096 absolute
+upper bounds fell from about **68.83 to 8.125** (canonical) and **5207.37 to
+118.116** (high eta), but still clip to the uninformative probability range 1.
+These are bounds, not measured biases. A structural floor identifies why more
+global-envelope/Holder constant tuning alone cannot close the current gap;
+it is not an impossibility theorem for the model or other proof methods.
+
+See the [execution plan](docs/plans/P2_HAMILTONIAN_AND_TAIL_BOUND_2026-10-28_KO.md),
+[operational replay contract](docs/plans/P2_HAMILTONIAN_OPERATIONAL_REPLAY_2026-10-28_KO.md)
+and [results, mathematical review and stop decisions](docs/reviews/P2_HAMILTONIAN_AND_TAIL_BOUND_RESULT_2026-10-28_KO.md).
+Neither remaining P2 obligation is claimed solved.
+
+Local verification passed **1,991 tests** (85% source statement coverage),
+CI-scope Ruff, Mypy on 230 source/main files and separate checks on all three
+new runners. Representative replay and eight frozen-archive checks passed.
+The test run retained one restricted-cache-write warning; the shared Python
+environment's pre-existing dependency conflicts were not modified or hidden.
+See the [verification receipt and preserved logs](results/post_audit/p2_hamiltonian_operational_replay_v1/session_20261028/verification_receipt.json).
+These checks do not certify statistical accuracy, continuum bias or remote CI.
+
+### Preceding direct paired-grid P2 study
+
+A guide-free **gradient + cyclic Gaussian-pair MH** arm was compared with a
+gradient-only control on the original paired N4096/N2048 Gaussian law. The
+cyclic proposal preserves the Gaussian prior, not the physical Volterra target;
+its MH correction re-evaluates the target. Full SMC normalizers were retained.
+
+| N4096 cell | Gradient-control RSE | Gradient-cyclic RSE | Required |
+|---|---:|---:|---:|
+| Canonical | 7.32% | 32.16% | ≤1.5% |
+| High eta | 16.50% | 18.25% | ≤1.5% |
+
+All four cases failed reference precision and maximum-whole concentration
+checks. Equivalence with the existing approximately 0.9%-RSE frozen-ensemble
+IID reference was therefore **not evaluated**. The new cyclic arm is not
+adopted or expanded. Eight wholes per case do not establish a universal
+population efficiency ordering.
+
+Covariance-aware signed adjacent differences passed the fixed 10% development
+gate in all four cases. These small paired differences are **not** a continuum
+certificate and cannot independently validate two inaccurate grid estimates.
+The current conservative continuum absolute upper bound clips to 1 in both
+cells even at N16384, so it gives no useful relative-bias certification. This
+does not prove that the actual bias is large.
+
+The run used 1,027,712 physical forwards; four whole replays used another
+128,000. All source/seed/work bindings, stored-whole checks, representative
+replays and decision recomputations passed. See the
+[frozen P2 execution plan](docs/plans/P2_DIRECT_CLOSURE_EXECUTION_2026-10-27_KO.md),
+[theory review](docs/theory/P2_DIRECT_REFERENCE_AND_CONTINUUM_REVIEW_2026-10-27_KO.md)
+and [results and remaining obligations](docs/reviews/P2_DIRECT_CLOSURE_RESULT_2026-10-27_KO.md).
+Implementation completion is not successful P2 qualification.
+
+The full local regression passed **1,960 tests** (85% source statement coverage;
+96% cyclic core / 94% continuum-bound core). CI-scope Ruff, Mypy on 226 source/main
+files and a separate runner check passed. Five frozen archives and 5,755
+file-byte comparisons remained intact. The shared global Python environment
+still has unrelated dependency conflicts; it was not modified or declared clean.
+See the [verification receipt and preserved logs](results/post_audit/p2_direct_closure_v1/session_20261027/verification_receipt.json).
+These are local software checks, not remote CI or statistical certification.
+
+### Preceding grouped-density and window-proposal study
+
+An **exact density regrouping** matched the original mixture to at most
+7.11e-15 in log density on 3,072 fresh density-only coordinates. Fixed AB/BA/AB
+timings gave speed ratios 1.213 / 1.049 / 1.085. The prespecified median gate
+failed: `STOP_EXACT_KERNEL_NUMERICAL_OR_SPEED_GATE`. This is a computational
+policy stop, not evidence that the window proposal is mathematically invalid.
+
+The new window sampler uses rank-one covariance `I + 8 w w^T` across fixed
+adjacent intervals, preserving the old local proposal's covariance trace
+increment. Dense Gaussian, sampling-moment and width-one reduction tests
+passed. Its rare-event performance remains **unevaluated**; the conditional
+80-unit fresh pilot was not run.
+
+All 384 saved extreme-contribution slots, deduplicated to **170 cell-coordinate
+pairs**, were replayed successfully. These selected examples often have sharply
+localized variance; fixed same-sign window directions cover only part of their
+latent geometry. This is a post-hoc structural diagnostic, not population mode
+coverage, a causal explanation or confirmation of a better model.
+
+The original risk/mesh qualifications remain unchanged. See the
+[frozen execution plan](docs/plans/GROUPED_DENSITY_AND_WINDOW_COUPLING_2026-10-27_KO.md)
+and [implementation, results, theoretical review and next decisions](docs/reviews/GROUPED_DENSITY_AND_WINDOW_RESULT_2026-10-27_KO.md).
+
+The full local regression passed **1,939 tests** (85% source statement coverage;
+98% for each new core). CI-scope Ruff, Mypy on 224 source/main files and a
+separate runner typing check passed. Four frozen archives and 4,593 file-byte
+comparisons remained intact. See the
+[verification receipt and preserved logs](results/post_audit/grouped_window_coupling_v1/session_20261027/verification_receipt.json).
+These are local software checks, not remote CI or statistical qualification.
+
+### Preceding multi-time residual/Brownian covariance study
 
 A new **mean-preserving multi-time covariance proposal** retains the physical
 373-component dictionary means and 10% natural defensive mass. Half the shifted

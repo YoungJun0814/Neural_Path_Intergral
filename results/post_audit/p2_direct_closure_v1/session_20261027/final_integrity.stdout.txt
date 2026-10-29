@@ -1,0 +1,20 @@
+Final source, receipt, logs and documentation integrity verification
+{
+  "status": "FINAL_RECEIPT_LOGS_ANCHORS_FROZEN_SOURCES_AND_DOCS_VERIFIED",
+  "full_pytest_observed_exit_code": 0,
+  "full_pytest_passed": 1960,
+  "local_only_not_remote_CI": true,
+  "archive_count": 5,
+  "archive_members_checked": 5760,
+  "frozen_source_byte_checks": 5755,
+  "prior_artifact_anchors_checked": 4,
+  "strict_json_files": 41,
+  "preserved_stdout_hashes_checked": 9,
+  "local_document_links_checked": 188,
+  "public_text_files_checked": 60,
+  "trailing_whitespace_lines": 0,
+  "P2_qualified": false,
+  "global_environment_clean": false,
+  "errors": [],
+  "commit_or_push_performed": false
+}

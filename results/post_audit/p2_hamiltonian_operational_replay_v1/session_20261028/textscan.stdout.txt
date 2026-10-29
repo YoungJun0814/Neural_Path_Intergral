@@ -1,0 +1,6 @@
+{
+  "status": "PUBLIC_TEXT_AND_WHITESPACE_SCAN",
+  "files_checked": 101,
+  "trailing_lines": 0,
+  "errors": []
+}

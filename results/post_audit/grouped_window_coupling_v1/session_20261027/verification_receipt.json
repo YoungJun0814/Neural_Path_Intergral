@@ -1,0 +1,58 @@
+{
+  "date_timezone": "2026-10-27 America/New_York",
+  "scope": "local implementation, numerical replay, regression and frozen-source integrity; not statistical or P2 qualification",
+  "baseline_commit": "59f280910e115e0ad873907dc5e7f68f2b80598e",
+  "commit_or_push_performed": false,
+  "result_sha256": "96a7af4bded9745fcc4f1506365f8c725e14c456b012f3cac201015f4ef2d0f5",
+  "source_sha256": "3a8f5107c10b56d3d4f203307c082a16f087316840385efa45ae8f730872d5bd",
+  "audit_sha256": "1af993a86a73b14105bb86e29b2515ca213261feaa94421499acfba82b4e2111",
+  "full_regression": {
+    "command": "python -m pytest -q --cov=src --cov-report=term-missing",
+    "observed_exit_code": 0,
+    "passed": 1939,
+    "seconds": 508.33,
+    "platform": "win32",
+    "python": "3.10.11",
+    "source_statement_coverage_percent": 85,
+    "source_statements": 23326,
+    "source_missed_statements": 3456,
+    "grouped_density_coverage_percent": 98,
+    "window_covariance_coverage_percent": 98,
+    "not_remote_CI": true
+  },
+  "static_checks": {
+    "ruff_command": "python -m ruff check src tests experiments main.py train_driftnet.py",
+    "mypy_CI_scope_command": "python -m mypy src main.py train_driftnet.py",
+    "mypy_CI_scope_files": 224,
+    "mypy_runner_command": "python -m mypy --follow-imports=silent experiments/post_audit_grouped_window_coupling.py",
+    "observed_exit_code": 0,
+    "passed": true,
+    "all_historical_experiments_typing_clean_claimed": false
+  },
+  "preserved_stdout_sha256": {
+    "audit.stdout.txt": "501c3c7cefe2b6aafab1fc5dd6e36ecaddf0e800fe3c565b3065a712f555cb1e",
+    "integrity.stdout.txt": "ed0fd60fe1bf6dd565e3f362bc7fc717dad9399db66ec14fe8ab8e8e6e6e507b",
+    "pytest.stdout.txt": "e8e138d41a2a53f3c6c4a98e0138f651aa0107cebb7c9caffc78e3444cb8ebef",
+    "run.stdout.txt": "c49b1b80498756a12b7c5dd125c7c411f87f11be84e26bc8a2d7131bb39667a3",
+    "static.stdout.txt": "b55cbfbe3b1debd4e9e045365973a68aa0aab802fea18d36b3566081a4488bfa"
+  },
+  "integrity_scan_before_final_receipt_and_doc_links": {
+    "archive_count": 4,
+    "archive_members_checked": 4597,
+    "frozen_file_byte_checks": 4593,
+    "strict_new_json_files": 5,
+    "local_doc_links_checked": 175,
+    "public_text_files_scanned": 13,
+    "trailing_whitespace_lines": 0,
+    "errors": []
+  },
+  "kernel_numerical_gate_passed": true,
+  "kernel_speed_gate_passed": false,
+  "fresh_window_pilot_started": false,
+  "unique_posthoc_selected_witnesses_replayed": 170,
+  "new_event_or_risk_performance_samples": 0,
+  "total_posthoc_witness_physics_calls_including_audit": 340,
+  "P2_qualified": false,
+  "production_adoption": false,
+  "large_training_authorized": false
+}

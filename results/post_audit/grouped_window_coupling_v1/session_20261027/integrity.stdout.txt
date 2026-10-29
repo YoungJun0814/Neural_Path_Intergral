@@ -1,0 +1,35 @@
+{
+  "archives": [
+    {
+      "path": "results/post_audit/conditional_intervention_v1/session_20261026/run.source.zip",
+      "sha256": "992adb0c8f343abc7d2b0627a5955ac4804c57b0390d26af1eb734f50e3f5080",
+      "archive_entries": 1144,
+      "frozen_files_checked": 1143
+    },
+    {
+      "path": "results/post_audit/conditional_intervention_v1/session_20261026/selected_extreme_audit/run.source.zip",
+      "sha256": "c687fe5a12e1604ff3b46f524a8915edc645977c591ab5035fa96b1fe51aee68",
+      "archive_entries": 1147,
+      "frozen_files_checked": 1146
+    },
+    {
+      "path": "results/post_audit/residual_brownian_covariance_v1/session_20261026/run.source.zip",
+      "sha256": "7af9b67e71b781792866a3ba015853b03fbb12ea9b72869e0260f3872ce2de95",
+      "archive_entries": 1150,
+      "frozen_files_checked": 1149
+    },
+    {
+      "path": "results/post_audit/grouped_window_coupling_v1/session_20261027/run.source.zip",
+      "sha256": "3a8f5107c10b56d3d4f203307c082a16f087316840385efa45ae8f730872d5bd",
+      "archive_entries": 1156,
+      "frozen_files_checked": 1155
+    }
+  ],
+  "archive_members_checked": 4597,
+  "frozen_file_byte_checks": 4593,
+  "strict_new_json_files": 5,
+  "local_doc_links_checked": 175,
+  "public_text_files_scanned": 13,
+  "trailing_whitespace_lines": 0,
+  "errors": []
+}

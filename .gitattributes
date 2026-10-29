@@ -26,6 +26,8 @@ results/**/*.json -text -diff
 configs/**/*.json -text -diff
 # Validation receipts also bind exact stdout bytes, not normalized text.
 results/**/validation/*-output.txt -text -diff
+# Frozen post-audit receipts bind these logs by producer-byte SHA-256 as well.
+results/post_audit/**/*.stdout.txt -text -diff
 
 # Shell
 *.sh text eol=lf

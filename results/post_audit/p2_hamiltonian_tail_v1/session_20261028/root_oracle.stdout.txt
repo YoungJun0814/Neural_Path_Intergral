@@ -1,0 +1,49 @@
+{
+  "status": "FINITE_KNOWN_PROBABILITY_SPACE_HOLDER_AND_ROOT_BOUND_ORACLE_PASSED",
+  "probability_atoms": 1024,
+  "theta_points": 101,
+  "holder_exponents": 8,
+  "rows": [
+    {
+      "holder_r": 1.05,
+      "maximum_derivative_bound_ratio": 0.06752641007193994,
+      "endpoint_root_bound_ratio": 0.013824906032888811
+    },
+    {
+      "holder_r": 1.1,
+      "maximum_derivative_bound_ratio": 0.0654448130374544,
+      "endpoint_root_bound_ratio": 0.013419559417886178
+    },
+    {
+      "holder_r": 1.25,
+      "maximum_derivative_bound_ratio": 0.05977133428553059,
+      "endpoint_root_bound_ratio": 0.01230431213917074
+    },
+    {
+      "holder_r": 1.5,
+      "maximum_derivative_bound_ratio": 0.051991514321232335,
+      "endpoint_root_bound_ratio": 0.010754233353991649
+    },
+    {
+      "holder_r": 2.0,
+      "maximum_derivative_bound_ratio": 0.040784041200421506,
+      "endpoint_root_bound_ratio": 0.008486827567117508
+    },
+    {
+      "holder_r": 3.0,
+      "maximum_derivative_bound_ratio": 0.028211466136566853,
+      "endpoint_root_bound_ratio": 0.005906012165493061
+    },
+    {
+      "holder_r": 4.0,
+      "maximum_derivative_bound_ratio": 0.022025796539116207,
+      "endpoint_root_bound_ratio": 0.004624972108527999
+    },
+    {
+      "holder_r": 8.0,
+      "maximum_derivative_bound_ratio": 0.014066881282918676,
+      "endpoint_root_bound_ratio": 0.002967160800497766
+    }
+  ],
+  "not_original_volterra_moment_or_relative_bias_certificate": true
+}

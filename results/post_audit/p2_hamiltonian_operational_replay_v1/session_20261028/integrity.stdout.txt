@@ -1,0 +1,49 @@
+{
+  "status": "PRE_FINAL_EIGHT_ARCHIVES_AND_RESULT_ANCHORS_VERIFIED",
+  "archives": [
+    {
+      "path": "results/post_audit/conditional_intervention_v1/session_20261026/run.source.zip",
+      "sha256": "992adb0c8f343abc7d2b0627a5955ac4804c57b0390d26af1eb734f50e3f5080",
+      "files": 1143
+    },
+    {
+      "path": "results/post_audit/conditional_intervention_v1/session_20261026/selected_extreme_audit/run.source.zip",
+      "sha256": "c687fe5a12e1604ff3b46f524a8915edc645977c591ab5035fa96b1fe51aee68",
+      "files": 1146
+    },
+    {
+      "path": "results/post_audit/residual_brownian_covariance_v1/session_20261026/run.source.zip",
+      "sha256": "7af9b67e71b781792866a3ba015853b03fbb12ea9b72869e0260f3872ce2de95",
+      "files": 1149
+    },
+    {
+      "path": "results/post_audit/grouped_window_coupling_v1/session_20261027/run.source.zip",
+      "sha256": "3a8f5107c10b56d3d4f203307c082a16f087316840385efa45ae8f730872d5bd",
+      "files": 1155
+    },
+    {
+      "path": "results/post_audit/p2_direct_closure_v1/session_20261027/run.source.zip",
+      "sha256": "0d5d7c2b948e73e30e8e0b130ffff1e13a51bb2b2fd4b28c2f8481778f4e9afb",
+      "files": 1162
+    },
+    {
+      "path": "results/post_audit/p2_hamiltonian_tail_v1/session_20261028/run.source.zip",
+      "sha256": "55b35a79528a81ef90a4671594ffa5bc86818e4a4f83799faca0952373f6e488"
+    },
+    {
+      "path": "results/post_audit/sharp_jensen_supplement_v1/session_20261028/run.source.zip",
+      "sha256": "991e1fe772277e98a31f6c700b1772fc26ee7acdf0295d7d0c1cfb2f7dae67c5"
+    },
+    {
+      "path": "results/post_audit/p2_hamiltonian_operational_replay_v1/session_20261028/run.source.zip",
+      "sha256": "496063469dd64083d006efb07c83444194454d31ee4bb5612dcb56818b7d4849"
+    }
+  ],
+  "archive_count": 8,
+  "archive_members": 9297,
+  "frozen_file_byte_checks": 9289,
+  "strict_json_files": 70,
+  "original_timeout_prefix_anchors": 28,
+  "local_document_links": 187,
+  "errors": []
+}

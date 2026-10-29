@@ -1,0 +1,32 @@
+{
+  "archives": [
+    {
+      "path": "results/post_audit/conditional_intervention_v1/session_20261026/run.source.zip",
+      "sha256": "992adb0c8f343abc7d2b0627a5955ac4804c57b0390d26af1eb734f50e3f5080",
+      "files": 1143
+    },
+    {
+      "path": "results/post_audit/conditional_intervention_v1/session_20261026/selected_extreme_audit/run.source.zip",
+      "sha256": "c687fe5a12e1604ff3b46f524a8915edc645977c591ab5035fa96b1fe51aee68",
+      "files": 1146
+    },
+    {
+      "path": "results/post_audit/residual_brownian_covariance_v1/session_20261026/run.source.zip",
+      "sha256": "7af9b67e71b781792866a3ba015853b03fbb12ea9b72869e0260f3872ce2de95",
+      "files": 1149
+    },
+    {
+      "path": "results/post_audit/grouped_window_coupling_v1/session_20261027/run.source.zip",
+      "sha256": "3a8f5107c10b56d3d4f203307c082a16f087316840385efa45ae8f730872d5bd",
+      "files": 1155
+    },
+    {
+      "path": "results/post_audit/p2_direct_closure_v1/session_20261027/run.source.zip",
+      "sha256": "0d5d7c2b948e73e30e8e0b130ffff1e13a51bb2b2fd4b28c2f8481778f4e9afb",
+      "files": 1162
+    }
+  ],
+  "frozen_byte_checks": 5755,
+  "archive_members": 5760,
+  "errors": []
+}

@@ -1,0 +1,21 @@
+Final receipt, frozen-source, original-timeout, seed and documentation audit
+{
+  "status": "FINAL_RECEIPT_LOGS_ORIGINAL_TIMEOUT_SEEDS_SOURCES_AND_DOCS_VERIFIED",
+  "full_regression_passed": 1991,
+  "full_regression_exit_code": 0,
+  "full_regression_cache_warning_preserved": true,
+  "no_cache_new_tests_passed": 31,
+  "archives": 8,
+  "archive_members": 9297,
+  "frozen_file_byte_checks": 9289,
+  "strict_json_files": 71,
+  "seed_records_semantically_checked": 298,
+  "original_prefix_anchors_checked": 28,
+  "stdout_hashes_checked": 9,
+  "local_document_links_checked": 193,
+  "public_text_files_checked": 95,
+  "trailing_whitespace_lines": 0,
+  "errors": [],
+  "P2_qualified": false,
+  "commit_or_push_performed": false
+}
