@@ -10,7 +10,40 @@
 
 ## Research status
 
-**Current status (2026-10-28): a guide-free Gaussian-split HMC reference and tail-aware continuum bounds were implemented and evaluated. All 32 pilot wholes completed in a same-seed operational replay after preserving the original timeout. HMC missed the required 1.5% reference RSE and was not adopted. Sharper Jensen constants reduced the continuum bounds but they remain vacuous. P1/P2 remain unresolved; no production or large-training authorization; not submission-ready.**
+**Current direction (2026-10-28): the primary question is now a bounded, finite-grid Volterra algorithm study: can path geometry improve reliable estimation after including all learning and inference costs? Continuum certification is a separate high-risk track, not a prerequisite for every finite-grid claim. Historical P1/P2 failures remain unresolved and unchanged. No new production winner or submission-ready result is claimed.**
+
+### Finite-grid direction-reset checkpoint
+
+The [new implementation roadmap](docs/plans/FINITE_GRID_VOLTERRA_RESEARCH_RESET_ROADMAP_2026-10-28_KO.md)
+uses FR0–FR7 rather than reinterpreting historical P2. Task/law/seed/budget contracts,
+sealed holdout guards, bounded put normalization and same-integrand **2N conditional
+MC/RQMC** adapters were implemented. The latter is distinct from the historical
+3N rank-one-smoothed RQMC baseline.
+
+A fixed reference-only pilot found all four development tasks feasible under its
+prespecified empirical criteria. MC relative SE ranged from **0.39% to 1.06%**;
+RQMC scramble-based relative SE ranged from **0.12% to 0.70%**. These are finite-grid
+development diagnostics, not exact references or continuum accuracy certificates.
+
+A separately frozen two-task, three-whole bank/family experiment then compared
+fresh CE/static banks and K2-preserving/K1-compressed refits. All planned risk
+precision and cross-reference agreement diagnostics passed, but **no contrast met
+the repeated mechanism criterion across both tasks**. The decision is
+`STOP_NO_REPLICATED_BANK_OR_FAMILY_MECHANISM`. In particular, retaining K2 did not
+establish an advantage over K1 compression in these tasks. No new kernel, larger
+model, holdout evaluation or automatic FR3 expansion was launched.
+
+See the [FR0 contract](docs/theory/FINITE_GRID_GEOMETRY_FR0_CONTRACT_2026-10-28_KO.md),
+[frozen bank/family protocol](docs/plans/FINITE_GRID_FR2_BANK_FAMILY_PROTOCOL_2026-10-28_KO.md)
+and [execution results and limitations](docs/reviews/FINITE_GRID_RESET_FR0_FR2_RESULT_2026-10-28_KO.md).
+Local verification passed the full **2,045-test** regression plus a separate
+end-to-end integration test, CI-scope Ruff/Mypy and representative whole replays.
+The integration test is not an additional scientific replicate. Source coverage
+is 85%; the three new core modules have 93% combined statement coverage.
+
+### Historical P2 checkpoint
+
+**The preceding P2 attempt implemented and evaluated a guide-free Gaussian-split HMC reference and tail-aware continuum bounds. All 32 pilot wholes completed in a same-seed operational replay after preserving the original timeout. HMC missed the required 1.5% reference RSE and was not adopted. Sharper Jensen constants reduced the continuum bounds but they remain vacuous.**
 
 ### Latest result at a glance
 

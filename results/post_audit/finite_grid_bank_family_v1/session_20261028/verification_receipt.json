@@ -1,0 +1,87 @@
+{
+  "date_timezone": "2026-10-28 America/New_York",
+  "baseline_push_commit": "51e665d705c049795f59755d1a950716f2833be5",
+  "baseline_remote_CI": "https://github.com/YoungJun0814/Neural_Path_Intergral/actions/runs/40804098936",
+  "scope": "FR0 contracts, existing and supplemental known-answer validation, FR2 fixed reference-only and bank/family development; no confirmation or production adoption",
+  "reference_pilot": {
+    "result_sha256": "76e4eb61e1729611aac5a8f7e0a1603fcccf175c859f61d57e4748b1ca7d4385",
+    "audit_sha256": "c8823fcdffbafb25f4ff6816607fca6b147199fa3addc5535e54447aaac913c4",
+    "source_sha256": "f282af8377c47850bf62afd5f33b0ba6de3f5e41ce26d7d1c1c7661e7b63f7f3",
+    "production_evaluations": 2097152,
+    "same_seed_replay_evaluations": 65536,
+    "feasible_development_cells": 4,
+    "confirmation_evaluations": 0
+  },
+  "bank_family": {
+    "result_sha256": "ae24f53131c7e3dd20a1327fd3139a74a411a0befb4bd37b3e2d865af27b0573",
+    "audit_sha256": "4c6bd0c57d62f8bddc62dbaea8576e347ade137d3141a0a5950de7604c7e3e65",
+    "source_sha256": "3937b9a4cffff7fc1e57dd0274c0728d724b2d37dd35796d6f5acb16bd1ef7bf",
+    "production_evaluations": 2052096,
+    "same_seed_replay_evaluations": 684032,
+    "independent_study_wholes": 6,
+    "final_estimators": 36,
+    "contrast_checks": 24,
+    "risk_precision_failures": 0,
+    "cross_reference_agreement_diagnostic_failures": 0,
+    "eligible_replicated_mechanism_hypotheses": 0,
+    "decision": "STOP_NO_REPLICATED_BANK_OR_FAMILY_MECHANISM"
+  },
+  "full_regression": {
+    "command": "python -m pytest -q -p no:cacheprovider --cov=src --cov-report=term-missing --junitxml=results/post_audit/finite_grid_bank_family_v1/session_20261028/pytest.xml",
+    "observed_exit_code": 0,
+    "passed": 2045,
+    "failed": 0,
+    "seconds_in_terminal_summary": 450.19,
+    "junit_sha256": "4b0874332f8deb37163eb96c54aa69e8ee1b8a992d364588d8b7b59604938bbd"
+  },
+  "additional_integration_validation": {
+    "command_scope": "tests/test_finite_grid_geometry_whole_integration.py; separate pytest invocation with coverage append",
+    "observed_exit_code": 0,
+    "passed": 1,
+    "seconds_in_terminal_summary": 40.49,
+    "physics_evaluations": 342016,
+    "namespace": "fg-geometry-integration-validation-only-v1",
+    "not_a_scientific_study_replicate": true,
+    "junit_sha256": "c0e9299eaa99e056fb3d1e276375862c52b5d1cc2da34c7dee5ad07568c10e7c"
+  },
+  "known_physics_subtotal_studies_replays_and_integration": 5240832,
+  "other_unit_test_physics_not_in_subtotal": true,
+  "coverage_after_appending_integration": {
+    "statements": 23993,
+    "missed": 3497,
+    "rounded_percent": 85,
+    "new_cores_combined_statements": 348,
+    "new_cores_combined_missed": 26,
+    "new_cores_combined_rounded_percent": 93
+  },
+  "static_checks": {
+    "ruff_CI_scope_passed": true,
+    "mypy_CI_scope_source_main_files": 233,
+    "runner_direct_scope_files": 2,
+    "runner_follow_imports": "silent",
+    "legacy_transitive_experiment_typing_issues_not_modified": 8
+  },
+  "integrity": {
+    "archives": 2,
+    "archive_entries": 2356,
+    "frozen_current_byte_checks": 2354,
+    "changed_frozen_files": 0,
+    "study_seed_records": 424,
+    "study_seed_collisions": 0,
+    "credential_pattern_and_archive_path_scan_findings": 0,
+    "not_whole_history_PRNG_or_secret_absence_proof": true
+  },
+  "environment": {
+    "platform": "Windows Python3.10.11",
+    "study_device": "cpu",
+    "study_dtype": "float64",
+    "study_torch_threads": 1,
+    "preexisting_requests_dependency_warning_preserved": true,
+    "global_dependency_upgrade_performed": false
+  },
+  "P2_qualified": false,
+  "FR3_started": false,
+  "confirmation_started": false,
+  "production_adopted": false,
+  "all_error_absence_claimed": false
+}

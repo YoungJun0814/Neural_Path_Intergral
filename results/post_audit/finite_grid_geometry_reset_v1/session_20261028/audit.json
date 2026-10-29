@@ -1,0 +1,8 @@
+{
+  "P2_qualified": false,
+  "not_new_independent_reference_samples": true,
+  "physics_evaluations": 65536,
+  "replayed_units": 8,
+  "result_sha256": "76e4eb61e1729611aac5a8f7e0a1603fcccf175c859f61d57e4748b1ca7d4385",
+  "status": "SOURCE_BINDING_DECISION_AND_FIRST_UNITS_REPLAYED"
+}

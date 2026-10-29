@@ -1,0 +1,8 @@
+{
+  "P2_qualified": false,
+  "cumulative_FR2_evaluations": 4898816,
+  "new_physics_evaluations": 684032,
+  "not_new_independent_wholes": true,
+  "result_sha256": "ae24f53131c7e3dd20a1327fd3139a74a411a0befb4bd37b3e2d865af27b0573",
+  "status": "DECISIONS_AND_TWO_REPRESENTATIVE_WHOLES_REPLAYED"
+}
